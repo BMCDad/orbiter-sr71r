@@ -200,51 +200,51 @@
     <ClCompile Include="VesselControl.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Orbiter\Textures\SR71rBody.dds" />
-    <Image Include="..\Orbiter\Textures\SR71R_100_VC1.dds" />
-    <Image Include="..\Orbiter\Textures\SR71R_100_VC2.dds" />
-    <Image Include="..\Orbiter\Textures\SR71_VCCockPit.dds" />
+    <Image Include="$(OrbiterDir)\Textures\SR71rBody.dds" />
+    <Image Include="$(OrbiterDir)\Textures\SR71R_100_VC1.dds" />
+    <Image Include="$(OrbiterDir)\Textures\SR71R_100_VC2.dds" />
+    <Image Include="$(OrbiterDir)\Textures\SR71_VCCockPit.dds" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Art\SR71rBody.xcf" />
-    <None Include="..\Art\SR71R_100_Buttons.xcf" />
-    <None Include="..\Art\SR71R_100_GuidanceComp.xcf" />
-    <None Include="..\Art\SR71R_100_Horizon.xcf" />
-    <None Include="..\Art\SR71R_100_HSI.xcf" />
-    <None Include="..\Art\SR71R_100_LeftInstrumentPanel.xcf" />
-    <None Include="..\Art\SR71R_100_LeftPanel.xcf" />
-    <None Include="..\Art\SR71R_100_MFD.xcf" />
-    <None Include="..\Art\SR71R_100_RightInstrumentPanel.xcf" />
-    <None Include="..\Art\SR71R_100_RightPanel.xcf" />
-    <None Include="..\Art\SR71R_100_VC1.xcf" />
-    <None Include="..\Art\SR71R_100_VC2.xcf" />
-    <None Include="..\Art\SR71R_VCCockpit.xcf" />
-    <None Include="..\Docs\SR71r Manual.docx" />
-    <None Include="..\Docs\SR71r Manual.pdf" />
-    <None Include="..\Orbiter\Config\Vessels\SR71r.cfg">
+    <None Include="Art\SR71rBody.xcf" />
+    <None Include="Art\SR71R_100_Buttons.xcf" />
+    <None Include="Art\SR71R_100_GuidanceComp.xcf" />
+    <None Include="Art\SR71R_100_Horizon.xcf" />
+    <None Include="Art\SR71R_100_HSI.xcf" />
+    <None Include="Art\SR71R_100_LeftInstrumentPanel.xcf" />
+    <None Include="Art\SR71R_100_LeftPanel.xcf" />
+    <None Include="Art\SR71R_100_MFD.xcf" />
+    <None Include="Art\SR71R_100_RightInstrumentPanel.xcf" />
+    <None Include="Art\SR71R_100_RightPanel.xcf" />
+    <None Include="Art\SR71R_100_VC1.xcf" />
+    <None Include="Art\SR71R_100_VC2.xcf" />
+    <None Include="Art\SR71R_VCCockpit.xcf" />
+    <None Include="Docs\SR71r Manual.docx" />
+    <None Include="Docs\SR71r Manual.pdf" />
+    <None Include="$(OrbiterDir)\Config\Vessels\SR71r.cfg">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
     </None>
-    <None Include="..\Orbiter\Meshes\SR71r.msh">
+    <None Include="$(OrbiterDir)\Meshes\SR71r.msh">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\Orbiter\Meshes\SR71rVC.msh">
+    <None Include="$(OrbiterDir)\Meshes\SR71rVC.msh">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\0 Cold Start.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\1 Power Up.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\2 Setup Flight.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\3 Ready for Takeoff.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\4 Chasing Down ISS.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\5 Rendezvous with ISS.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\6 Docked at the ISS.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\7 Lined up for Re-entry.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\8 Landing Approach.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\Moon\1 Ascent to Earth orbit.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\Moon\2 In Earth orbit.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\Moon\3 Arrival - Moon orbit.scn" />
-    <None Include="..\Orbiter\Scenarios\SR71r\Moon\4 Landed - Brighton Beach.scn" />
-    <None Include="..\SR71r.blend">
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\0 Cold Start.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\1 Power Up.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\2 Setup Flight.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\3 Ready for Takeoff.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\4 Chasing Down ISS.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\5 Rendezvous with ISS.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\6 Docked at the ISS.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\7 Lined up for Re-entry.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\8 Landing Approach.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\Moon\1 Ascent to Earth orbit.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\Moon\2 In Earth orbit.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\Moon\3 Arrival - Moon orbit.scn" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\Moon\4 Landed - Brighton Beach.scn" />
+    <None Include="Blender\SR71r.blend">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="Deploy.bat">

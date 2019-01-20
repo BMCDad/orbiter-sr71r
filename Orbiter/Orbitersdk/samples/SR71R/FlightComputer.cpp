@@ -471,7 +471,7 @@ void FC::FlightComputer::PageAscent()
 	MapKey(GCKey::F8, [this] { GetAvionics()->SetHeading(ascentHeadingAlt_); });
 
 	// Target cannot be less than lat.
-	double vlng, vlat, vrad, slope;
+	double vlng, vlat, vrad;
 	OBJHANDLE hRef = GetBaseVessel()->GetEquPos(vlng, vlat, vrad);
 
 	launchLatitude_ = vlat;

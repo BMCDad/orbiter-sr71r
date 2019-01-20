@@ -322,118 +322,116 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Orbiter\Textures\SR71rBody.dds">
+    <Image Include="$(OrbiterDir)\Textures\SR71_VCCockPit.dds">
       <Filter>Textures</Filter>
     </Image>
-    <Image Include="..\Orbiter\Textures\SR71_VCCockPit.dds">
+    <Image Include="$(OrbiterDir)\Textures\SR71R_100_VC1.dds">
       <Filter>Textures</Filter>
     </Image>
-    <Image Include="..\Orbiter\Textures\SR71R_100_VC1.dds">
+    <Image Include="$(OrbiterDir)\Textures\SR71R_100_VC2.dds">
       <Filter>Textures</Filter>
     </Image>
-    <Image Include="..\Orbiter\Textures\SR71R_100_VC2.dds">
+    <Image Include="$(OrbiterDir)\Textures\SR71rBody.dds">
       <Filter>Textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Art\SR71rBody.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Orbiter\Meshes\SR71r.msh">
-      <Filter>Meshes</Filter>
-    </None>
-    <None Include="..\Orbiter\Meshes\SR71rVC.msh">
-      <Filter>Meshes</Filter>
-    </None>
-    <None Include="..\SR71r.blend">
-      <Filter>Meshes</Filter>
-    </None>
     <None Include="Deploy.bat">
       <Filter>Deployment</Filter>
     </None>
-    <None Include="..\Docs\SR71r Manual.docx">
+    <None Include="$(OrbiterDir)\Config\Vessels\SR71r.cfg" />
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\Moon\1 Ascent to Earth orbit.scn">
+      <Filter>Scenarios\Moon</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\Moon\2 In Earth orbit.scn">
+      <Filter>Scenarios\Moon</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\Moon\3 Arrival - Moon orbit.scn">
+      <Filter>Scenarios\Moon</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\Moon\4 Landed - Brighton Beach.scn">
+      <Filter>Scenarios\Moon</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\0 Cold Start.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\1 Power Up.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\2 Setup Flight.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\3 Ready for Takeoff.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\4 Chasing Down ISS.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\5 Rendezvous with ISS.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\6 Docked at the ISS.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\7 Lined up for Re-entry.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Scenarios\SR71r\8 Landing Approach.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="Art\SR71R_100_Buttons.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_GuidanceComp.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_Horizon.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_HSI.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_LeftInstrumentPanel.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_LeftPanel.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_MFD.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_RightInstrumentPanel.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_RightPanel.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_VC1.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_100_VC2.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71R_VCCockpit.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Art\SR71rBody.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="Docs\SR71r Manual.docx">
       <Filter>Docs</Filter>
     </None>
-    <None Include="..\Docs\SR71r Manual.pdf">
+    <None Include="Docs\SR71r Manual.pdf">
       <Filter>Docs</Filter>
     </None>
-    <None Include="..\Orbiter\Config\Vessels\SR71r.cfg">
-      <Filter>Deployment</Filter>
+    <None Include="Blender\SR71r.blend">
+      <Filter>Meshes</Filter>
     </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\1 Power Up.scn">
-      <Filter>Scenarios</Filter>
+    <None Include="$(OrbiterDir)\Meshes\SR71r.msh">
+      <Filter>Meshes</Filter>
     </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\2 Setup Flight.scn">
-      <Filter>Scenarios</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\3 Ready for Takeoff.scn">
-      <Filter>Scenarios</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\4 Chasing Down ISS.scn">
-      <Filter>Scenarios</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\5 Rendezvous with ISS.scn">
-      <Filter>Scenarios</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\6 Docked at the ISS.scn">
-      <Filter>Scenarios</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\7 Lined up for Re-entry.scn">
-      <Filter>Scenarios</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\8 Landing Approach.scn">
-      <Filter>Scenarios</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\0 Cold Start.scn">
-      <Filter>Scenarios</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\Moon\1 Ascent to Earth orbit.scn">
-      <Filter>Scenarios\Moon</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\Moon\2 In Earth orbit.scn">
-      <Filter>Scenarios\Moon</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\Moon\3 Arrival - Moon orbit.scn">
-      <Filter>Scenarios\Moon</Filter>
-    </None>
-    <None Include="..\Orbiter\Scenarios\SR71r\Moon\4 Landed - Brighton Beach.scn">
-      <Filter>Scenarios\Moon</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_VC1.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_RightPanel.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_Buttons.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_RightInstrumentPanel.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_LeftInstrumentPanel.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_LeftPanel.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_GuidanceComp.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_VC2.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_Horizon.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_HSI.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_100_MFD.xcf">
-      <Filter>Art</Filter>
-    </None>
-    <None Include="..\Art\SR71R_VCCockpit.xcf">
-      <Filter>Art</Filter>
+    <None Include="$(OrbiterDir)\Meshes\SR71rVC.msh">
+      <Filter>Meshes</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
