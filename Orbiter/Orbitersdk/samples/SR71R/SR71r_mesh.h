@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 2.79 (sub 0)  Blender Tools: (1, 3, 0)
-// Date: Wed Jan 16 19:37:48 2019
+// Date: Sun Jan 20 07:25:45 2019
 
 
 #include "orbitersdk.h"
@@ -32,8 +32,8 @@ const NTVERTEX CanopyWindowSI_verts[6] = {
 {0.0597f, 0.9242f, 15.2044f, -0.7076f, -0.6178f, -0.3428f, 0.9667f, 0.0675f},
 {0.1871f, 0.9526f, 14.9490f, -0.7518f, -0.6070f, -0.2574f, 0.9147f, 0.0684f},
 {0.4044f, 0.6517f, 14.9687f, -0.7501f, -0.6076f, -0.2611f, 0.9192f, 0.1256f}};
-const DWORD TXIDX_SR71_VCCockPit_dds = 1;
-const DWORD TXIDX_SR71rBody_dds = 2;
+const DWORD TXIDX_SR71rBody_dds = 1;
+const DWORD TXIDX_SR71_VCCockPit_dds = 2;
 #define SR71r_MESH_NAME "SR71r"
 
 const UINT CockpitPanelHood_id = 0;
@@ -489,10 +489,10 @@ const NTVERTEX CanopyWindowSI_verts[6] = {
 {0.0597f, 0.9242f, 15.2044f, -0.7076f, -0.6178f, -0.3428f, 0.9667f, 0.0675f},
 {0.1871f, 0.9526f, 14.9490f, -0.7518f, -0.6070f, -0.2574f, 0.9147f, 0.0684f},
 {0.4044f, 0.6517f, 14.9687f, -0.7501f, -0.6076f, -0.2611f, 0.9192f, 0.1256f}};
-const DWORD TXIDX_SR71_VCCockPit_dds = 1;
-const DWORD TXIDX_SR71R_100_VC1_dds = 2;
-const DWORD TXIDX_SR71rBody_dds = 3;
-const DWORD TXIDX_SR71R_100_VC2_dds = 4;
+const DWORD TXIDX_SR71rBody_dds = 1;
+const DWORD TXIDX_SR71R_100_VC2_dds = 2;
+const DWORD TXIDX_SR71R_100_VC1_dds = 3;
+const DWORD TXIDX_SR71_VCCockPit_dds = 4;
 #define SR71rVC_MESH_NAME "SR71rVC"
 
 const UINT CockpitPanelHood_id = 0;
