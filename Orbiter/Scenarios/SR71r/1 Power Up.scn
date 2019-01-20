@@ -1,0 +1,89 @@
+BEGIN_HYPERDESC
+<H1>Power Up</H1>
+<p>The scenario begins with the vessel parked on runway 33 at Cape Canaveral.  
+Main fuel, RCS fuel and the cryogenic tanks are topped off.  Power is external and the main power bus is on.
+The cargo bay doors and the pilot canopy are open.</p>
+
+<p>The canopy and cargo bay doors are electrical and run off of the main bus.  
+To preserve our fuel cell we want to close these doors while still on external power.</p>
+
+<u>Cargo Bay Doors</u>
+
+<p>In the right power panel set [POWER-CRGO : UP] then on the left panel set [CARGOBAY-OPEN/CLOSE : DOWN] to close the cargo bay doors.
+The cargo bay doors are big and move slowly, so this will take a few minutes.  
+When closed set [POWER-CRGO : DOWN] to prevent accidently opening the doors.</p>
+
+<u>Canopy</u>
+
+<p>In the right power panel set [POWER-CNPY : UP] then on the left panel set [CANOPY-OPEN/CLOSE : DOWN] to close the canopy.
+When closed set [POWER-CNPY : DOWN] to prevent accidently opening the canopy.</p>
+
+<p>With the cargo bay and canopy closed we can now power up the avionics, MFDs and other components we will need to setup our flight.
+To power up the main avionics set [POWER-AVION : UP].  Enable the MFD panels by pressing the [PWR] button on the MFD panel.</p>
+
+<p>You should now be ready to setup your flight.</p>
+
+END_HYPERDESC
+
+BEGIN_ENVIRONMENT
+  System Sol
+  Date MJD 57289.7452170902
+END_ENVIRONMENT
+
+BEGIN_FOCUS
+  Ship SR-01
+END_FOCUS
+
+BEGIN_CAMERA
+  TARGET SR-01
+  MODE Extern
+  POS 1.29 -68.12 -21.24
+  TRACKMODE TargetRelative
+  FOV 40.20
+END_CAMERA
+
+BEGIN_VC
+END_VC
+
+BEGIN_SHIPS
+ISS:ProjectAlpha_ISS
+  STATUS Orbiting Earth
+  RPOS -6564829.38 1207798.07 931268.08
+  RVEL 1023.358 7278.491 -2252.462
+  AROT 110.00 -10.00 80.00
+  AFCMODE 7
+  PRPLEVEL 0:1.000000
+  IDS 0:588 100 1:586 100 2:584 100 3:582 100 4:580 100
+  NAVFREQ 0 0
+  XPDR 466
+END
+SR-01:SR71r
+  STATUS Landed Earth
+  POS -80.6825940 28.5969240
+  HEADING 330.01
+  ALT 1.807
+  AROT 67.454 33.964 10.328
+  RCSMODE 0
+  AFCMODE 7
+  PRPLEVEL 0:1.000000 1:1.000000
+  NAVFREQ 94 524
+  APU 0
+  AUTOPILOT 0 0 0 0 0
+  AVIONICS 0 90 0 1 0
+  CARGOBAY 0 1 1.000000
+  CANOPY 0 1 1.000000
+  FUELCELL 0
+  HYDROGEN 1.000000
+  GEAR 1 1.000000
+  OXYGEN 1.0000
+  POWER 1 1 0
+  PROPULSION 0
+  RCSMODE 0
+  AIRBRAKE 0
+  LIGHTS 0 0 0 0
+  CLOCK 0 0 0
+  SHUTTERS 0
+  HOVER 0 0.000
+  RETRO 0 0.000
+END
+END_SHIPS

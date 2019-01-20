@@ -1,0 +1,79 @@
+BEGIN_HYPERDESC
+<h1>Lined up for Re-entry</h1>
+<p>
+    The scenario begins with our vessel one orbit out from Cape Canaveral.  
+    We used the Map MFD to adjust our ground track so that we will fly right over the Cape.  
+    Turn retrograde and ease yourself back into the atmosphere.  Careful not to ‘overspeed’.
+</p>
+END_HYPERDESC
+
+BEGIN_ENVIRONMENT
+  System Sol
+  Date MJD 57290.6985308541
+END_ENVIRONMENT
+
+BEGIN_FOCUS
+  Ship SR-01
+END_FOCUS
+
+BEGIN_CAMERA
+  TARGET SR-01
+  MODE Cockpit
+  FOV 40.03
+END_CAMERA
+
+BEGIN_MFD Left
+  TYPE Map
+  REF Earth
+  BTARGET Cape Canaveral
+  ZOOM 8
+  POS -1.30 0.29
+END_MFD
+
+BEGIN_MFD Right
+  TYPE Orbit
+  PROJ Ship
+  FRAME Ecliptic
+  REF Earth
+END_MFD
+
+BEGIN_VC
+END_VC
+
+BEGIN_SHIPS
+ISS:ProjectAlpha_ISS
+  STATUS Orbiting Earth
+  RPOS -6624734.17 214679.93 1223165.50
+  RVEL -138.125 7403.733 -2062.709
+  AROT 113.29 -21.85 78.50
+  AFCMODE 7
+  PRPLEVEL 0:1.000000
+  IDS 0:588 100 1:586 100 2:584 100 3:582 100 4:580 100
+  NAVFREQ 0 0
+  XPDR 466
+END
+SR-01:SR71r
+  STATUS Orbiting Earth
+  RPOS -6631104.04 206480.94 1188520.98
+  RVEL -320.174 7071.714 -3022.154
+  AROT -156.50 10.03 2.68
+  VROT 0.02 -0.00 -0.07
+  RCSMODE 0
+  AFCMODE 7
+  PRPLEVEL 0:0.568831 1:0.900563
+  NAVFREQ 94 524
+  APU 0
+  AUTOPILOT 0 1 0 0 0 0
+  AVIONICS 0 14 0 1 0
+  CARGOBAY 1 0 0.000000
+  CANOPY 0 0 0.000000
+  FUELCELL 1
+  HYDROGEN 0.878481
+  GEAR 0 0.000000
+  OXYGEN 0.6203
+  POWER 1 0 1
+  PROPULSION 1
+  RCSMODE 0
+  LIGHTS 1 1 1 0
+END
+END_SHIPS

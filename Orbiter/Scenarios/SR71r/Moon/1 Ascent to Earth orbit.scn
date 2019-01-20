@@ -1,0 +1,89 @@
+BEGIN_DESC
+We are fueled, powered up and ready to begin our trip to the Moon.
+
+
+Auto pilot is set to follow a heading 90 degrees.  This won't line us up with the Moon but it will get us close.
+
+
+The goal for this step is to establish an orbit as close to that of the Moon as we can.
+END_DESC
+
+BEGIN_ENVIRONMENT
+  System Sol
+  Date MJD 57290.4577181384
+  Help CurrentState_img
+END_ENVIRONMENT
+
+BEGIN_FOCUS
+  Ship SR-01
+END_FOCUS
+
+BEGIN_CAMERA
+  TARGET SR-01
+  MODE Cockpit
+  FOV 40.03
+END_CAMERA
+
+BEGIN_HUD
+  TYPE Orbit
+  REF AUTO
+END_HUD
+
+BEGIN_MFD Left
+  TYPE OAlign
+  REF Earth
+  TARGET Moon
+END_MFD
+
+BEGIN_MFD Right
+  TYPE Orbit
+  PROJ Target
+  FRAME Ecliptic
+  ALT
+  REF Earth
+END_MFD
+
+BEGIN_VC
+END_VC
+
+BEGIN_SHIPS
+ISS:ProjectAlpha_ISS
+  STATUS Orbiting Earth
+  RPOS -1485677.048 6390096.520 -1515534.791
+  RVEL 7372.8110 1282.3022 -1790.6014
+  AROT 110.000 -10.000 80.000
+  AFCMODE 7
+  PRPLEVEL 0:1.000000
+  IDS 0:588 100 1:586 100 2:584 100 3:582 100 4:580 100
+  NAVFREQ 0 0
+  XPDR 466
+END
+SR-01:SR71r
+  STATUS Landed Earth
+  POS -80.6825940 28.5969240
+  HEADING 330.01
+  ALT 1.807
+  AROT 67.454 33.964 10.328
+  RCSMODE 0
+  AFCMODE 7
+  PRPLEVEL 0:1.000000 1:0.991257
+  NAVFREQ 94 524
+  APU 1
+  AUTOPILOT 0 1 0 0 0 0
+  AVIONICS 1 89 0 1 0
+  CARGOBAY 0 0 0.000000
+  CANOPY 0 0 0.000000
+  FUELCELL 1
+  HYDROGEN 0.9828 0
+  GEAR 1 1.000000
+  OXYGEN 0.9639 0
+  POWER 1 0 1
+  PROPULSION 0 0 0 0 0
+  AIRBRAKE 0
+  LIGHTS 1 1 1 0
+  CLOCK 61342 0 0
+  SHUTTERS 0
+  HOVER 0 0.000
+  RETRO 0 0.000
+END
+END_SHIPS

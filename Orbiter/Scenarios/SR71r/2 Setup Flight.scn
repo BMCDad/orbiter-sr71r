@@ -1,0 +1,119 @@
+BEGIN_HYPERDESC
+<h1>Setup Flight to ISS</h1>
+<p>
+    The scenario begins with the plane fueled, powered up and the cargo bay and canopy closed.  
+We now need to setup the flight systems for our flight.  
+The ISS is at an inclination of 74.51, and we are located at Cape Canaveral (28.60 latitude).  We will
+use the 'ASCENT' program of the Flight Computer to calculate our ascent heading.
+</p>
+
+<ul>
+    <li>Select the ASCENT program from the Flight Computer MENU page.</li>
+    <li>Type the target ascent into the flight computer. [7][4][.][5][1]  The number will appear on the scratch pad (the bottom line of the display).</li>
+    <li>Press the '&lt;TGT INC' button to set the new target inclination.  The SET HDG buttons will update to the new headings.</li>
+    <li>We will be taking off to the north-east, so press the 'SET HDG 18>' button.  The heading bug on the HSI will update.</li>
+    
+    <li>Enable autopilot hold heading by pressing the [HDNG] button in the AUTO PILOT section of the right panel.  
+        Make sure all other auto pilot modes are OFF.  This will put the atmospheric auto pilot in 'follow heading' 
+        when we enable the auto pilot after take off.</li>
+
+    <li>Set Throttle Limit switch, right panel top, to A/B mode [DOWN].  
+        Using limited throttle at lower altitudes will give you more control over the throttle without exceeding max speed.</li>
+
+    <li>In the POWER section of the right panel, set the FUEL CELL swith to ON [UP].  The fuel cell AVAIL light should show blue.</li>
+
+    <li>Also in the POWER section, set the F/C BUS switch to ON [UP].  This will tie the fuel cell into the main power bus.</li>
+
+    <li>Set the EXT BUS switch to OFF [DOWN] to disconnect from external power.</li>
+
+    <li>Set the avionics to 'atmosphere' mode by setting the ATM/EXO switch on the attitude indicator to ATM</li>
+
+    <li>In the left panel under LIGHTS, turn on [UP] the NAV, BEACON, and STROBE lights.</li>
+
+    <li>Turn on the API by setting the APU switch ON [UP].  Check the hydraulic pressure gauge on the left panel for full pressure.</li>
+
+    <li>Set HUD to orbit mode by setting the HUD switch to ORBIT (left instrument panel).</li>
+
+    <li>Set the right MFD to Orbit mode to monitor your ascent.</li>
+
+    <li>Set the left MFD to Align Planes mode and target [TGT] ISS.</li>
+
+    <li>Make sure all door switches (left panel, bottom) are down (closed).</li>
+</ul>
+<p>You are ready to take off.</p>
+
+END_HYPERDESC
+
+BEGIN_ENVIRONMENT
+  System Sol
+  Date MJD 57289.7485873427
+END_ENVIRONMENT
+
+BEGIN_FOCUS
+  Ship SR-01
+END_FOCUS
+
+BEGIN_CAMERA
+  TARGET SR-01
+  MODE Cockpit
+  FOV 40.03
+END_CAMERA
+
+BEGIN_MFD Left
+  TYPE Orbit
+  PROJ Frame
+  FRAME Ecliptic
+  REF Earth
+END_MFD
+
+BEGIN_MFD Right
+  TYPE Orbit
+  PROJ Frame
+  FRAME Ecliptic
+  REF Earth
+END_MFD
+
+BEGIN_VC
+END_VC
+
+BEGIN_SHIPS
+ISS:ProjectAlpha_ISS
+  STATUS Orbiting Earth
+  RPOS -5913166.07 3222354.50 236434.83
+  RVEL 3411.479 6430.577 -2475.932
+  AROT 110.00 -10.00 80.00
+  AFCMODE 7
+  PRPLEVEL 0:1.000000
+  IDS 0:588 100 1:586 100 2:584 100 3:582 100 4:580 100
+  NAVFREQ 0 0
+  XPDR 466
+END
+SR-01:SR71r
+  STATUS Landed Earth
+  POS -80.6825940 28.5969240
+  HEADING 330.01
+  ALT 1.807
+  AROT 67.454 33.964 10.328
+  RCSMODE 0
+  AFCMODE 7
+  PRPLEVEL 0:1.000000 1:1.000000
+  NAVFREQ 94 524
+  APU 0
+  AUTOPILOT 0 0 0 0 0 0
+  AVIONICS 1 90 0 1 0
+  CARGOBAY 0 0 0.000000
+  CANOPY 0 0 0.000000
+  FUELCELL 0
+  HYDROGEN 1.0000 0
+  GEAR 1 1.000000
+  OXYGEN 1.0 0
+  POWER 1 1 0
+  PROPULSION 0 0 1072693248 0 0
+  AIRBRAKE 0
+  LIGHTS 0 0 0 0
+  CLOCK 153 0 0
+  SHUTTERS 0
+  HOVER 0 0.000
+  RETRO 0 0.000
+END
+END_SHIPS

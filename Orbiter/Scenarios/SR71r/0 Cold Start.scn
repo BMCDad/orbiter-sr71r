@@ -1,0 +1,95 @@
+BEGIN_HYPERDESC
+<h1>Cold Start</h1>
+<p>The SR71r Space Plane is parked on runway 33 at Kennedy Space Center.  Fuel and cryogenic tanks are empty.
+    We are hooked up to external fuel and power sources that we will use to prepare our plane for flight. 
+    To do this we must power the plane up and start the pumps working.
+</p>
+
+<u>Power</u>
+<p>Power is managed from the right panel 'power' section.  Locate the EXT BUS switch and switch it to ON [UP].
+    This will tie the external power to the main power bus.  The yellow light next to the switch should light up.
+</p>
+<p>Now locate the MAIN power switch and switch it ON [UP] to power the vessel.</p>
+<br />
+<u>Fuel</u>
+<p>Fueling is managed from the lower section of the right panel.  With the power on, the blue 'available'
+    light should be illuminated underneath the FUEL pump switch.  Press the pump switch to start filling the
+    main fuel tank.  Monitor this process from the MAIN fuel gauge on right instrument panel.
+</p>
+<p>The RCS tank is filled by transferring fuel from the MAIN tank to the RCS tank.  Do this by putting
+    the MAIN/RCS transfer switch (bottom of right panel next to XFER button) in the RCS [DOWN] position.
+    Press the XFER button to begin transfer.  You can only transfer from MAIN to RCS when there is about
+    13,000 lbs of fuel in MAIN.
+</p>
+<p>You can also transfer from RCS to MAIN.  This is handy when you are in an atmosphere and will not be
+    using the RCS system, but could use a bit more fuel.
+</p>
+
+<u>Cryogenic Tanks</u>
+<p>With the power now on, the blue 'available' lights below the Lox and LH2 pump switches should also be illuminated.
+    Press the pump switches above to begin filling each tank.  Cryogenic tank level gauges are located on the left panel.
+</p>
+END_HYPERDESC
+
+BEGIN_ENVIRONMENT
+  System Sol
+  Date MJD 57289.7452170902
+END_ENVIRONMENT
+
+BEGIN_FOCUS
+  Ship SR-01
+END_FOCUS
+
+BEGIN_CAMERA
+  TARGET SR-01
+  MODE Extern
+  POS 2.828420 -38.294448 -21.389234
+  TRACKMODE TargetRelative
+  FOV 50.00
+END_CAMERA
+
+BEGIN_VC
+END_VC
+
+BEGIN_SHIPS
+ISS:ProjectAlpha_ISS
+  STATUS Orbiting Earth
+  RPOS -6564829.38 1207798.07 931268.08
+  RVEL 1023.358 7278.491 -2252.462
+  AROT 110.00 -10.00 80.00
+  AFCMODE 7
+  PRPLEVEL 0:1.000000
+  IDS 0:588 100 1:586 100 2:584 100 3:582 100 4:580 100
+  NAVFREQ 0 0
+  XPDR 466
+END
+SR-01:SR71r
+  STATUS Landed Earth
+  POS -80.6825940 28.5969240
+  HEADING 330.01
+  ALT 1.807
+  AROT 67.454 33.964 10.328
+  RCSMODE 0
+  AFCMODE 7
+  PRPLEVEL 0:0.000000 1:0.000000
+  NAVFREQ 94 524
+  APU 0
+  AUTOPILOT 0 0 0 0 0
+  AVIONICS 0 90 0 1 0
+  CARGOBAY 0 1 1.000000
+  CANOPY 0 1 1.000000
+  FUELCELL 0
+  HYDROGEN 0.000000
+  GEAR 1 1.000000
+  OXYGEN 0.0000
+  POWER 0 0 0
+  PROPULSION 0
+  RCSMODE 0
+  AIRBRAKE 0
+  LIGHTS 0 0 0 0
+  CLOCK 0 0 0
+  SHUTTERS 0
+  HOVER 0 0.000
+  RETRO 0 0.000
+END
+END_SHIPS
