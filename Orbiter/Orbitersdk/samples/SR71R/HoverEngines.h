@@ -68,7 +68,7 @@ private:
                                             };
         
     bco::AnimationGroup     gpFrontRight_   {   { bt_mesh::SR71r::HoverDoorSF_id },
-                                                bt_mesh::SR71r::HoverDoorAxisSA_location, bt_mesh::SR71r::HoverDoorAxisSF_location,
+                                                bt_mesh::SR71r::HoverDoorAxisSFA_location, bt_mesh::SR71r::HoverDoorAxisSFF_location,
                                                 (140 * RAD),
                                                 0, 1
                                             };

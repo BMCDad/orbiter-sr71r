@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 2.79 (sub 0)  Blender Tools: (1, 3, 0)
-// Date: Sun Jan 20 07:25:45 2019
+// Date: Sun Feb  3 07:32:50 2019
 
 
 #include "orbitersdk.h"
@@ -489,10 +489,10 @@ const NTVERTEX CanopyWindowSI_verts[6] = {
 {0.0597f, 0.9242f, 15.2044f, -0.7076f, -0.6178f, -0.3428f, 0.9667f, 0.0675f},
 {0.1871f, 0.9526f, 14.9490f, -0.7518f, -0.6070f, -0.2574f, 0.9147f, 0.0684f},
 {0.4044f, 0.6517f, 14.9687f, -0.7501f, -0.6076f, -0.2611f, 0.9192f, 0.1256f}};
-const DWORD TXIDX_SR71rBody_dds = 1;
-const DWORD TXIDX_SR71R_100_VC2_dds = 2;
-const DWORD TXIDX_SR71R_100_VC1_dds = 3;
-const DWORD TXIDX_SR71_VCCockPit_dds = 4;
+const DWORD TXIDX_SR71R_100_VC2_dds = 1;
+const DWORD TXIDX_SR71rBody_dds = 2;
+const DWORD TXIDX_SR71_VCCockPit_dds = 3;
+const DWORD TXIDX_SR71R_100_VC1_dds = 4;
 #define SR71rVC_MESH_NAME "SR71rVC"
 
 const UINT CockpitPanelHood_id = 0;
@@ -774,7 +774,7 @@ const VECTOR3 ClockTimerMinute_location = {0.0735, 0.7095, 15.2751};
 const VECTOR3 ClockSecond_location = {0.0735, 0.7095, 15.2741};
 const VECTOR3 ClockMinute_location = {0.0735, 0.7095, 15.2744};
 const VECTOR3 ClockHour_location = {0.0735, 0.7095, 15.2747};
-const VECTOR3 RCSLevelAxisFront_location = {0.1833, 0.5871, 15.2647};
+const VECTOR3 RCSLevelAxisFront_location = {0.1835, 0.5871, 15.2647};
 const VECTOR3 FuelLevelAxisFront_location = {0.1405, 0.5872, 15.2496};
 const VECTOR3 FuelFlowAxisFront_location = {0.1407, 0.6353, 15.2656};
 const VECTOR3 LightsRightAxis_location = {-0.2972, 0.4619, 15.2468};
@@ -797,11 +797,11 @@ const VECTOR3 APBankLeftTarget_location = {0.3598, 0.5111, 15.2172};
 const VECTOR3 CourseKnob_location = {0.0374, 0.5680, 15.2658};
 const VECTOR3 HSICourseNeedle_location = {0.0000, 0.5969, 15.2757};
 const VECTOR3 HSICourse_location = {0.0000, 0.5969, 15.2760};
-const VECTOR3 axisOxygenLevel_location = {-0.3085, 0.5101, 15.2323};
+const VECTOR3 axisOxygenLevel_location = {-0.3086, 0.5101, 15.2326};
 const VECTOR3 axisHydrogenLevel_location = {-0.2662, 0.5101, 15.2489};
 const VECTOR3 axisHydPress_location = {-0.3504, 0.5102, 15.2152};
 const VECTOR3 gaHydrogenLevel_location = {-0.2689, 0.5101, 15.2562};
-const VECTOR3 gaugeOxygenLevel_location = {-0.3116, 0.5101, 15.2408};
+const VECTOR3 gaugeOxygenLevel_location = {-0.3114, 0.5101, 15.2403};
 const VECTOR3 gaHydPress_location = {-0.3539, 0.5102, 15.2247};
 const VECTOR3 swFuelCellPower_location = {0.3310, 0.4971, 15.2340};
 const VECTOR3 SwAPUPower_location = {-0.2686, 0.5623, 15.2565};
