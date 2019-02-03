@@ -225,6 +225,9 @@
     <ClInclude Include="bc_orbiter\Visual.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">

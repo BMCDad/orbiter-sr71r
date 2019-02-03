@@ -34,6 +34,16 @@ bool CargoBayController::CargoBayHasPower()
 	return HasPower() && swCargoPower_.IsOn(); 
 }
 
+void CargoBayController::SetSound()
+{
+	if (animCargoBayDoors_.GetState() > 0.0 && animCargoBayDoors_.GetState() < 1.0) {
+		if (!GetBaseVessel()->IsSoundRunning(CARGO_ID)) GetBaseVessel()->SetSound(CARGO_ID, true, false);
+	}
+	else {
+		if (GetBaseVessel()->IsSoundRunning(CARGO_ID)) GetBaseVessel()->SetSound(CARGO_ID, false, true);
+	}
+}
+
 CargoBayController::CargoBayController(bco::BaseVessel* vessel, double amps) :
 PoweredComponent(vessel, amps, 26.0)
 {
@@ -52,6 +62,8 @@ void CargoBayController::Step(double simt, double simdt, double mjd)
 	{
 		animCargoBayDoors_.Step(swCargoOpen_.GetState(), simdt);
 	}
+
+	SetSound();
 }
 
 bool CargoBayController::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)

@@ -18,6 +18,7 @@
 
 #include "bco.h"
 #include "EventTarget.h"
+#include "BaseVessel.h"
 #include <functional>
 
 namespace bc_orbiter
@@ -28,18 +29,23 @@ namespace bc_orbiter
 	class PushButtonSwitch : public EventTarget
 	{
 	public:
-		PushButtonSwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0) :
+		PushButtonSwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0, BaseVessel* vessel = nullptr) :
             EventTarget(target, radius)
 		{
 			funcPressed_ = [] {};
             SetLeftMouseDownFunc([this] { Push(); });
+			this->vessel = vessel;
 		}
 
-		void Push() { if (nullptr != funcPressed_) funcPressed_();	}
+		void Push() { 
+			if (vessel) vessel->SetSound(SWITCH_ON_ID, false, false);
+			if (nullptr != funcPressed_) funcPressed_(); 
+		}
 
 		void SetPressedFunc(SwitchStopFunc func) { funcPressed_ = func; }
 
 	public:
+		BaseVessel* vessel;
 		SwitchStopFunc	funcPressed_;
 	};
 }

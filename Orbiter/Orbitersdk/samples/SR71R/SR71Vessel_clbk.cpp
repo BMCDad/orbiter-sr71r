@@ -17,6 +17,7 @@
 #include "StdAfx.h"
 
 #include "SR71Vessel.h"
+#include "XRSound.h"
 
 static const DWORD ntdvtx_geardown = 9;
 static TOUCHDOWNVTX tdvtx_geardown[ntdvtx_geardown] = {
@@ -61,10 +62,8 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	SetDockParams(bt_mesh::SR71r::DockingPort_location, _V(0, 1, 0), _V(0, 0, 1));
 	
     SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+
     SetNosewheelSteering(true);
-
-
-	SetNosewheelSteering(true);
 
 	// Setups:
 	SetupVesselComponents();

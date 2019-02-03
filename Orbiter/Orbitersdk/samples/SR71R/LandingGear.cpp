@@ -36,6 +36,42 @@ bco::OnOffSwitch& LandingGear::LandingGearSwitch()
 	return landingGearSwitch_;
 }
 
+void LandingGear::SetSound()
+{
+	if (landingGearSwitch_.GetState() == 1.0) {
+		if (animLandingGear_.GetState() < 1.0 && animLandingGear_.GetState() > 0.0) {
+			if (!gearDownSound) { 
+				GetBaseVessel()->SetSound(GEAR_DOWN_ID, false, false);
+				gearUpSound = gearUpLockedSound = gearDownLockedSound = false;
+				gearDownSound = true;
+			}
+			GetBaseVessel()->SetSound(GEAR_WHINE_ID, true, false);
+		}
+		else if(animLandingGear_.GetState() == 1.0 && !gearDownLockedSound) { 
+			GetBaseVessel()->SetSound(GEAR_WHINE_ID, false, true);
+			GetBaseVessel()->SetSound(GEAR_DOWN_LOCKED_ID, false, false); 
+			gearDownLockedSound = true;
+			gearDownSound = false;
+		}
+	}
+	else {
+		if (animLandingGear_.GetState() < 1.0 && animLandingGear_.GetState() > 0.0) {
+			if (!gearUpSound) { 
+				GetBaseVessel()->SetSound(GEAR_UP_ID, false, false);
+				gearDownSound = gearUpLockedSound = gearDownLockedSound = false;
+				gearUpSound = true; 
+			}
+			GetBaseVessel()->SetSound(GEAR_WHINE_ID, true, false);
+		}
+		else if (animLandingGear_.GetState() == 0.0 && !gearUpLockedSound) {
+			GetBaseVessel()->SetSound(GEAR_WHINE_ID, false, true);
+			GetBaseVessel()->SetSound(GEAR_UP_LOCKED_ID, false, false);
+			gearUpLockedSound = true;
+			gearUpSound = false;
+		}
+	}
+}
+
 void LandingGear::Step(double simt, double simdt, double mjd)
 {
 	// Note:  The animLandingGear can only move if there is hydraulic power, that
@@ -47,6 +83,8 @@ void LandingGear::Step(double simt, double simdt, double mjd)
 	{
 		animLandingGear_.Step(landingGearSwitch_.GetState(), simdt);
 	}
+
+	SetSound();
 }
 
 bool LandingGear::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)

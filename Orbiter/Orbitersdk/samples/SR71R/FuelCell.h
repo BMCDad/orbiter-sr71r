@@ -108,7 +108,8 @@ private:
 
 	// Config members:
 
-    bco::VCToggleSwitch swPower_        {   bt_mesh::SR71rVC::swFuelCellPower_id, 
+    bco::VCToggleSwitch swPower_        {   bt_mesh::SR71rVC::swFuelCellPower_id,
+											GetBaseVessel(),
                                             bt_mesh::SR71rVC::swFuelCellPower_location,  
                                             bt_mesh::SR71rVC::PowerTopRightAxis_location
                                         };

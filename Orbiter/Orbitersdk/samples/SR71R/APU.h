@@ -85,14 +85,21 @@ private:
 
 	const char*				ConfigKey = "APU";
 
+	bool					isSoundStopped = false;
+
     bco::VCGauge            gaugeHydrPress_{ {bt_mesh::SR71rVC::gaHydPress_id },
                                                 bt_mesh::SR71rVC::gaHydPress_location, bt_mesh::SR71rVC::axisHydPress_location,
                                                 (300 * RAD),
                                                 0.2
                                             };
 
-    bco::VCToggleSwitch     swPower_        {   bt_mesh::SR71rVC::SwAPUPower_id, 
+    bco::VCToggleSwitch     swPower_        {   bt_mesh::SR71rVC::SwAPUPower_id,
+											    GetBaseVessel(),
                                                 bt_mesh::SR71rVC::SwAPUPower_location,
                                                 bt_mesh::SR71rVC::LeftPanelTopRightAxis_location
                                             };
+
+	virtual void SetSound();
+
+	virtual void StopAllSounds();
 };

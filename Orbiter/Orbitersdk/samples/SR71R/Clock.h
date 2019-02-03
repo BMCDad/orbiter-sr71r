@@ -46,8 +46,8 @@ private:
 
 	const char*				ConfigKey = "CLOCK";
 
-    bco::PushButtonSwitch	switchResetElapsed_ { bt_mesh::SR71rVC::ClockElapsedReset_location,  0.01 };
-    bco::PushButtonSwitch	switchStopWatch_    { bt_mesh::SR71rVC::ClockTimerReset_location,    0.01 };
+    bco::PushButtonSwitch	switchResetElapsed_ { bt_mesh::SR71rVC::ClockElapsedReset_location,  0.01,  GetBaseVessel() };
+    bco::PushButtonSwitch	switchStopWatch_    { bt_mesh::SR71rVC::ClockTimerReset_location,    0.01,  GetBaseVessel() };
 
 	double					startElapsedTime_;
 	double					startTimerTime_;

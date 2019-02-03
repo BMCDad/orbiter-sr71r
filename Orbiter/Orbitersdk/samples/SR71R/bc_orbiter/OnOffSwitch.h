@@ -19,6 +19,7 @@
 #include "bco.h"
 #include "IAnimationState.h"
 #include "EventTarget.h"
+#include "BaseVessel.h"
 
 #include <functional>
 
@@ -34,17 +35,26 @@ namespace bc_orbiter
 	class OnOffSwitch : public EventTarget, public IAnimationState
 	{
 	public:
-		OnOffSwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0) :
+		OnOffSwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0, BaseVessel* vessel = nullptr) :
             EventTarget(target, radius),
             funcOn_([] {}),
             funcOff_([] {}),
 			state_(0.0)
 		{
+			this->vessel = vessel;
             SetLeftMouseDownFunc([this] { Toggle(); });
         }
 
-		void SetOn()        { state_ = 1.0; if (nullptr != funcOn_) { funcOn_(); }	}
-		void SetOff()       { state_ = 0.0; if (nullptr != funcOff_) { funcOff_(); } }
+		void SetOn() {
+			state_ = 1.0;
+			if (vessel) vessel->SetSound(SWITCH_ON_ID, false, false);
+			if (nullptr != funcOn_) funcOn_();
+		}
+		void SetOff() {
+			state_ = 0.0;
+			if (vessel) vessel->SetSound(SWITCH_OFF_ID, false, false);
+			if (nullptr != funcOff_) funcOff_();
+		}
 		void Toggle()       { (state_ == 0.0) ? SetOn() : SetOff(); }
 
 		bool IsOn() const                       { return (state_ != 0.0); }
@@ -57,6 +67,8 @@ namespace bc_orbiter
 		virtual double GetState() const override { return state_; }
 	private:
 		double			state_;
+
+		BaseVessel* vessel;
 
         SwitchStopFunc funcOn_;
         SwitchStopFunc funcOff_;

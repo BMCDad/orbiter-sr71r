@@ -33,6 +33,16 @@ bool Canopy::CanopyHasPower()
     return HasPower() && swCanopyPower_.IsOn();
 }
 
+void Canopy::SetSound()
+{
+	if (animCanopy_.GetState() > 0.0 && animCanopy_.GetState() < 1.0) {
+		if(!GetBaseVessel()->IsSoundRunning(CANOPY_ID)) GetBaseVessel()->SetSound(CANOPY_ID, true, false);
+	}
+	else {
+		if (GetBaseVessel()->IsSoundRunning(CANOPY_ID)) GetBaseVessel()->SetSound(CANOPY_ID, false, true);
+	}
+}
+
 Canopy::Canopy(bco::BaseVessel* vessel, double amps) :
     PoweredComponent(vessel, amps, 26.0)
 {
@@ -51,6 +61,8 @@ void Canopy::Step(double simt, double simdt, double mjd)
     {
         animCanopy_.Step(swCanopyOpen_.GetState(), simdt);
     }
+
+	SetSound();
 }
 
 bool Canopy::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)

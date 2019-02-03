@@ -177,19 +177,22 @@ private:
                                                 };
 	// Thrust limit
     bco::VCToggleSwitch     swThrustLimit_      {   bt_mesh::SR71rVC::swThrottleLimit_id,
+													GetBaseVessel(),
                                                     bt_mesh::SR71rVC::swThrottleLimit_location, 
                                                     bt_mesh::SR71rVC::TopRowSwitchRightAxis_location
                                                 };
 
     bco::VCToggleSwitch     swSelectTransfer_   {   bt_mesh::SR71rVC::swTransferSelect_id,
+													GetBaseVessel(),
                                                     bt_mesh::SR71rVC::swTransferSelect_location,
                                                     bt_mesh::SR71rVC::FuelTransferRightAxis_location
                                                 };
 
 	bco::TextureVisual		visTranferPumpOn_;
-    bco::PushButtonSwitch   swTransferPump_     {   bt_mesh::SR71rVC::FuelTransferSwitch_location,			0.01 };
+    bco::PushButtonSwitch   swTransferPump_     {   bt_mesh::SR71rVC::FuelTransferSwitch_location,			0.01,  GetBaseVessel() };
 
     bco::VCToggleSwitch     swDumpFuel_         {   bt_mesh::SR71rVC::swDumpFuel_id,
+													GetBaseVessel(),
                                                     bt_mesh::SR71rVC::swDumpFuel_location, 
                                                     bt_mesh::SR71rVC::FuelTransferRightAxis_location
                                                 };
@@ -197,5 +200,5 @@ private:
 	// Fill
 	bco::TextureVisual		lightFuelSupplyAvailable_;
 	bco::TextureVisual		lightFuelSupplyValveOpen_;
-	bco::PushButtonSwitch	switchFuelSupplyValveOpen_  { bt_mesh::SR71rVC::FuelValveOpenSwitch_location,    0.01 };
+	bco::PushButtonSwitch	switchFuelSupplyValveOpen_  { bt_mesh::SR71rVC::FuelValveOpenSwitch_location,    0.01,  GetBaseVessel() };
 };

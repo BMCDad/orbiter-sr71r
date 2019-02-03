@@ -34,11 +34,12 @@ namespace bc_orbiter
     public:
         VCRotorSwitch(
             UINT id,
+			BaseVessel* vessel,
             VECTOR3 target,             // The event target and the base for rotation
             VECTOR3 axis,               // vector that along with target defines the rotation axis
             double angle,               // Rotor sweep angle
             double speed = 10.0) :      // Default speed
-            RotarySwitch(target, 0.01),
+            RotarySwitch(target, 0.01, vessel),
             group_({ id }, target, axis, angle, 0.0, 1.0)
         {
         }

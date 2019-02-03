@@ -46,12 +46,15 @@ private:
 
     void EnableRetros(bool isEnabled);
 
+	void SetSound();
+
 
     THRUSTER_HANDLE     retroThrustHandles_[2];
 
     const char*	        ConfigKey = "RETRO";
 
-    bco::VCToggleSwitch swRetroDoors_   {   bt_mesh::SR71rVC::swRetroDoors_id, 
+    bco::VCToggleSwitch swRetroDoors_   {   bt_mesh::SR71rVC::swRetroDoors_id,
+											GetBaseVessel(),
                                             bt_mesh::SR71rVC::swRetroDoors_location, 
                                             bt_mesh::SR71rVC::DoorsRightAxis_location
                                         };

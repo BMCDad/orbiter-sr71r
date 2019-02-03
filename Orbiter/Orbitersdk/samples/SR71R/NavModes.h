@@ -58,12 +58,12 @@ private:
     int                     navMode1_{ 0 };
     int                     navMode2_{ 0 };
 
-    bco::PushButtonSwitch	btnKillRotation_    { bt_mesh::SR71rVC::NAVMODE_KILL_ROT_location,       0.01 };
-    bco::PushButtonSwitch	btnLevelHorizon_    { bt_mesh::SR71rVC::NAVMODE_HORZ_LEVEL_location,     0.01 };
-    bco::PushButtonSwitch	btnPrograde_        { bt_mesh::SR71rVC::NAVMODE_PRO_GRADE_location,      0.01 };
-    bco::PushButtonSwitch	btnRetrograde_      { bt_mesh::SR71rVC::NAVMODE_RETRO_GRADE_location,    0.01 };
-    bco::PushButtonSwitch	btnNormal_          { bt_mesh::SR71rVC::NAVMODE_NORMAL_PLUS_location,    0.01 };
-    bco::PushButtonSwitch	btnAntiNormal_      { bt_mesh::SR71rVC::NAVMODE_NORMAL_MINUS_location,   0.01 };
+    bco::PushButtonSwitch	btnKillRotation_    { bt_mesh::SR71rVC::NAVMODE_KILL_ROT_location,       0.01,  GetBaseVessel() };
+    bco::PushButtonSwitch	btnLevelHorizon_    { bt_mesh::SR71rVC::NAVMODE_HORZ_LEVEL_location,     0.01,  GetBaseVessel() };
+    bco::PushButtonSwitch	btnPrograde_        { bt_mesh::SR71rVC::NAVMODE_PRO_GRADE_location,      0.01,  GetBaseVessel() };
+    bco::PushButtonSwitch	btnRetrograde_      { bt_mesh::SR71rVC::NAVMODE_RETRO_GRADE_location,    0.01,  GetBaseVessel() };
+    bco::PushButtonSwitch	btnNormal_          { bt_mesh::SR71rVC::NAVMODE_NORMAL_PLUS_location,    0.01,  GetBaseVessel() };
+    bco::PushButtonSwitch	btnAntiNormal_      { bt_mesh::SR71rVC::NAVMODE_NORMAL_MINUS_location,   0.01,  GetBaseVessel() };
 
 	bco::TextureVisual		visKillRot_;
 	bco::TextureVisual		visHorzLevel_;

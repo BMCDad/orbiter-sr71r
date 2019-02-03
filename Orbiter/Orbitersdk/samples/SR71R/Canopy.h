@@ -77,17 +77,21 @@ public:
 private:
     bool CanopyHasPower();
 
+	void SetSound();
+
     const char*			    ConfigKeyCanopy = "CANOPY";
 
     bco::Animation		    animCanopy_     {   &swCanopyOpen_, 0.2};
     UINT                    idAnim_         { 0 };
 
     bco::VCToggleSwitch     swCanopyPower_  {   bt_mesh::SR71rVC::SwCanopyPower_id,
+												GetBaseVessel(),
                                                 bt_mesh::SR71rVC::SwCanopyPower_location,
                                                 bt_mesh::SR71rVC::PowerTopRightAxis_location
                                             };
 
     bco::VCToggleSwitch     swCanopyOpen_   {   bt_mesh::SR71rVC::SwCanopyOpen_id,
+												GetBaseVessel(),
                                                 bt_mesh::SR71rVC::SwCanopyOpen_location,
                                                 bt_mesh::SR71rVC::DoorsRightAxis_location
                                             };

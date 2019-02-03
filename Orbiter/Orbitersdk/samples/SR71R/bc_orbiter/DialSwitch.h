@@ -37,7 +37,6 @@ namespace bc_orbiter
 		void DialLeft() { funcDialLeft_(); }
 		void DialRight() { funcDialRight_(); }
 	private:
-
 		SwitchStopFunc		funcDialRight_;
 		SwitchStopFunc		funcDialLeft_;
 	};

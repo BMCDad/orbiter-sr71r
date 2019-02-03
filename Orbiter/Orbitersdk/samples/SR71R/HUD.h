@@ -73,6 +73,7 @@ private:
 	bool isInternalTrigger_{ false };
 
 	bco::VCRotorSwitch		swSelectMode_{	bt_mesh::SR71rVC::SwHUDMode_id,
+											GetBaseVessel(),
 											bt_mesh::SR71rVC::SwHUDMode_location,
 											bt_mesh::SR71rVC::SwHUDSelectAxis_location,
 											(120 * RAD)

@@ -70,6 +70,7 @@ private:
     //bco::PushButtonSwitch   btnLinear_      {bt_mesh::SR71rVC::RCS_LIN_location,     0.01};
 
 	bco::VCRotorSwitch		swSelectMode_{	bt_mesh::SR71rVC::SwRCSMode_id,
+											GetBaseVessel(),
 											bt_mesh::SR71rVC::SwRCSMode_location,
 											bt_mesh::SR71rVC::SwRCSSelectAxis_location,
 											(90 * RAD)

@@ -21,6 +21,7 @@
 #include "EventTarget.h"
 #include "Animation.h"
 #include "IAnimationState.h"
+#include "../Sound.h"
 
 #include <vector>
 #include <map>
@@ -99,7 +100,23 @@ namespace bc_orbiter
         virtual void clbkPostStep(double simt, double simdt, double mjd) override;
 		virtual void clbkPostCreation() override;
 
-		virtual ~BaseVessel() {}
+		/** SetSound
+		Play a sound using the sound ID.
+		Parameters:
+		soundId: Sound ID (Usually from Sound.h file)
+		loop: Loop the sound (true to loop, false to normal)
+		stop: Stop the given sound (true to stop, false to play)
+		*/
+		virtual void SetSound(int soundId, bool loop, bool stop);
+
+		/** IsSoundRunning
+		Returns true if the given sound is running, false if not.
+		Parameters:
+		soundId: Sound ID (Usually from Sound.h file)
+		*/
+		virtual bool IsSoundRunning(int soundId);
+
+		virtual ~BaseVessel() { delete soundHandle_; }
 
 		VISHANDLE       GetVisualHandle() const         { return visualHandle_; }
 		DEVMESHHANDLE   GetVirtualCockpitMesh0()        { return meshVirtualCockpit0_; }
@@ -209,6 +226,7 @@ namespace bc_orbiter
 		UINT				vcIndex0_;
         UINT                mainIndex_;
 		VESSELSTATUS2		vesselStatus_;
+		XRSound* soundHandle_;
 
         // Propellent (multiple components need this on setup, so put it in the vessel class)
         PROPELLANT_HANDLE	    mainPropellant_;
@@ -335,7 +353,47 @@ namespace bc_orbiter
 
 	inline void BaseVessel::clbkPostCreation()
 	{
+		// Create sound handler
+		soundHandle_ = XRSound::CreateInstance(this);
+
+		// Load APU sound files, values from Sound.h
+//		soundHandle_->LoadWav(APU_START_ID, APU_START_PATH, XRSound::BothViewClose);
+		soundHandle_->LoadWav(APU_RUNNING_ID, APU_RUNNING_PATH, XRSound::BothViewClose);
+//		soundHandle_->LoadWav(APU_SHUTDOWN_ID, APU_SHUTDOWN_PATH, XRSound::BothViewClose);
+
+		// Load Hydraulics sound files
+		soundHandle_->LoadWav(CANOPY_ID, HYDRAULIC_PATH, XRSound::BothViewClose);
+		soundHandle_->LoadWav(CARGO_ID, HYDRAULIC_PATH, XRSound::BothViewClose);
+		soundHandle_->LoadWav(HOVER_DOOR_ID, HYDRAULIC_PATH, XRSound::BothViewClose);
+		soundHandle_->LoadWav(RETRO_DOOR_ID, HYDRAULIC_PATH, XRSound::BothViewClose);
+		soundHandle_->LoadWav(AIRBRAKE_ID, HYDRAULIC_PATH, XRSound::BothViewClose);
+
+		// Load landing gear sound files
+		soundHandle_->LoadWav(GEAR_WHINE_ID, GEAR_WHINE_PATH, XRSound::BothViewClose);
+		soundHandle_->LoadWav(GEAR_UP_ID, GEAR_UP_PATH, XRSound::BothViewClose);
+		soundHandle_->LoadWav(GEAR_UP_LOCKED_ID, GEAR_UP_LOCKED_PATH, XRSound::BothViewClose);
+		soundHandle_->LoadWav(GEAR_DOWN_ID, GEAR_DOWN_PATH, XRSound::BothViewClose);
+		soundHandle_->LoadWav(GEAR_DOWN_LOCKED_ID, GEAR_DOWN_LOCKED_PATH, XRSound::BothViewClose);
+
+		// Load switches sound files
+		soundHandle_->LoadWav(SWITCH_ON_ID, SWITCH_ON_PATH, XRSound::InternalOnly);
+		soundHandle_->LoadWav(SWITCH_OFF_ID, SWITCH_OFF_PATH, XRSound::InternalOnly);
+
 		isCreated_ = true;
+	}
+
+	inline void BaseVessel::SetSound(int soundId, bool loop, bool stop)
+	{
+		if (isCreated_) {
+			//        Check if the file is running
+			if (stop) soundHandle_->StopWav(soundId);
+			else soundHandle_->PlayWav(soundId, loop);
+		}
+	}
+
+	inline bool BaseVessel::IsSoundRunning(int soundId)
+	{
+		return soundHandle_->IsWavPlaying(soundId);
 	}
 
  	inline bool BaseVessel::IsStoppedOrDocked()

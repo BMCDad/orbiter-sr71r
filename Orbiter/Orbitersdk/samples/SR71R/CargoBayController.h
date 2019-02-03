@@ -80,6 +80,8 @@ public:
 private:
 	bool CargoBayHasPower();
 
+	void SetSound();
+
     const char*			    ConfigKeyCargo = "CARGOBAY";
 
     bco::Animation		    animCargoBayDoors_{ &swCargoOpen_, 0.01 };
@@ -87,11 +89,13 @@ private:
     UINT idCargoAnim_{ 0 };
 
     bco::VCToggleSwitch     swCargoPower_       {   bt_mesh::SR71rVC::SwCargoPower_id,
+													GetBaseVessel(),
                                                     bt_mesh::SR71rVC::SwCargoPower_location, 
                                                     bt_mesh::SR71rVC::PowerTopRightAxis_location
                                                 };
 
     bco::VCToggleSwitch     swCargoOpen_        {   bt_mesh::SR71rVC::SwCargoOpen_id,
+													GetBaseVessel(),
                                                     bt_mesh::SR71rVC::SwCargoOpen_location,
                                                     bt_mesh::SR71rVC::DoorsRightAxis_location
                                                 };

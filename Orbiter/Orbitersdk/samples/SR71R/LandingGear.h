@@ -59,7 +59,11 @@ public:
 	bco::OnOffSwitch& LandingGearSwitch();
 
 private:
-	bco::OnOffSwitch		landingGearSwitch_;
+	void SetSound();
+
+	bool gearUpSound = false, gearUpLockedSound = false, gearDownSound = false, gearDownLockedSound = false;
+
+	bco::OnOffSwitch		landingGearSwitch_  { _V(0.0, 0.0, 0.0), 0.0, GetBaseVessel()};
     bco::EventTarget        targetGearDown_     { bt_mesh::SR71rVC::GearLeverDownTarget_location,    0.01 };
     bco::EventTarget        targetGearUp_       { bt_mesh::SR71rVC::GearLeverUpTarget_location,      0.01 };
 
