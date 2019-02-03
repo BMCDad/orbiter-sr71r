@@ -81,7 +81,7 @@ private:
                                                 };
 
     bco::AnimationGroup     gpLeftBottom_       {   { bt_mesh::SR71r::ElevonPIB_id },
-                                                    bt_mesh::SR71r::AirBrakeAxisSBI_location, bt_mesh::SR71r::AirBrakeAxisSBO_location,
+                                                    bt_mesh::SR71r::AirBrakeAxisPTI_location, bt_mesh::SR71r::AirBrakeAxisPTO_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
