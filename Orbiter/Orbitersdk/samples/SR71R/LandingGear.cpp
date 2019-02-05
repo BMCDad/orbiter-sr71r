@@ -41,15 +41,15 @@ void LandingGear::SetSound()
 	if (landingGearSwitch_.GetState() == 1.0) {
 		if (animLandingGear_.GetState() < 1.0 && animLandingGear_.GetState() > 0.0) {
 			if (!gearDownSound) { 
-				GetBaseVessel()->SetSound(GEAR_DOWN_ID, false, false);
+				GetBaseVessel()->PlaySound(GEAR_DOWN_ID, false, true);
 				gearUpSound = gearUpLockedSound = gearDownLockedSound = false;
 				gearDownSound = true;
 			}
-			GetBaseVessel()->SetSound(GEAR_WHINE_ID, true, false);
+			GetBaseVessel()->PlaySound(GEAR_WHINE_ID, true, false);
 		}
 		else if(animLandingGear_.GetState() == 1.0 && !gearDownLockedSound) { 
-			GetBaseVessel()->SetSound(GEAR_WHINE_ID, false, true);
-			GetBaseVessel()->SetSound(GEAR_DOWN_LOCKED_ID, false, false); 
+			GetBaseVessel()->StopSound(GEAR_WHINE_ID);
+			GetBaseVessel()->PlaySound(GEAR_DOWN_LOCKED_ID, false, true);
 			gearDownLockedSound = true;
 			gearDownSound = false;
 		}
@@ -57,15 +57,15 @@ void LandingGear::SetSound()
 	else {
 		if (animLandingGear_.GetState() < 1.0 && animLandingGear_.GetState() > 0.0) {
 			if (!gearUpSound) { 
-				GetBaseVessel()->SetSound(GEAR_UP_ID, false, false);
+				GetBaseVessel()->PlaySound(GEAR_UP_ID, false, true);
 				gearDownSound = gearUpLockedSound = gearDownLockedSound = false;
 				gearUpSound = true; 
 			}
-			GetBaseVessel()->SetSound(GEAR_WHINE_ID, true, false);
+			GetBaseVessel()->PlaySound(GEAR_WHINE_ID, true, false);
 		}
 		else if (animLandingGear_.GetState() == 0.0 && !gearUpLockedSound) {
-			GetBaseVessel()->SetSound(GEAR_WHINE_ID, false, true);
-			GetBaseVessel()->SetSound(GEAR_UP_LOCKED_ID, false, false);
+			GetBaseVessel()->StopSound(GEAR_WHINE_ID);
+			GetBaseVessel()->PlaySound(GEAR_UP_LOCKED_ID, false, true);
 			gearUpLockedSound = true;
 			gearUpSound = false;
 		}

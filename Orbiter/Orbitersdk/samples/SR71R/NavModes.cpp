@@ -116,6 +116,8 @@ void NavModes::ToggleMode(int mode)
 {
 	if (HasPower())
 	{
+		if (GetBaseVessel()->GetNavmodeState(mode)) GetBaseVessel()->PlaySound(AP_OFF_ID, false, true);
+		else GetBaseVessel()->PlaySound(AP_ON_ID, false, true);
 		GetBaseVessel()->ToggleNavmode(mode);
 	}
 

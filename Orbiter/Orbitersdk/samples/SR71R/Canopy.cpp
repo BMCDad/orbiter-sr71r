@@ -36,10 +36,10 @@ bool Canopy::CanopyHasPower()
 void Canopy::SetSound()
 {
 	if (animCanopy_.GetState() > 0.0 && animCanopy_.GetState() < 1.0) {
-		if(!GetBaseVessel()->IsSoundRunning(CANOPY_ID)) GetBaseVessel()->SetSound(CANOPY_ID, true, false);
+		if(!GetBaseVessel()->IsSoundRunning(CANOPY_ID)) GetBaseVessel()->PlaySound(CANOPY_ID, true, false);
 	}
 	else {
-		if (GetBaseVessel()->IsSoundRunning(CANOPY_ID)) GetBaseVessel()->SetSound(CANOPY_ID, false, true);
+		if (GetBaseVessel()->IsSoundRunning(CANOPY_ID)) GetBaseVessel()->StopSound(CANOPY_ID);
 	}
 }
 

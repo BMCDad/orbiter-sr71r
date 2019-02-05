@@ -137,9 +137,37 @@ void PropulsionController::Update(double deltaUpdate)
 //    auto trMain = GetMainFuelLevel() * (PI2 * 0.71111);	// 256 deg.
     gaFuelMain_.SetState(GetMainFuelLevel());
 
+	if(GetMainFuelLevel() == 0.0) {
+		if (!isMainDepSoundRun_) {
+			GetBaseVessel()->PlaySound(MAIN_DEP_ID, false, true);
+			isMainDepSoundRun_ = true;
+		}
+	}
+	else if (GetMainFuelLevel() <= 0.05) {
+		if (!isMainLowSoundRun_) {
+			GetBaseVessel()->PlaySound(MAIN_LOW_ID, false, true);
+			isMainLowSoundRun_ = true;
+		}
+	}
+	else isMainDepSoundRun_ = isMainLowSoundRun_ = false;
+
     // RCS
 //    auto trRCS = GetRcsFuelLevel() * (PI2 * 0.733);	// 264 deg.
     gaFuelRCS_.SetState(GetRcsFuelLevel());
+
+	if (GetRcsFuelLevel() == 0.0) {
+		if (!isRcsDepSoundRun_) {
+			GetBaseVessel()->PlaySound(RCS_DEP_ID, false, true);
+			isRcsDepSoundRun_ = true;
+		}
+	}
+	else if (GetRcsFuelLevel() <= 0.05) {
+		if (!isRcsLowSoundRun_) {
+			GetBaseVessel()->PlaySound(RCS_LOW_ID, false, true);
+			isRcsLowSoundRun_ = true;
+		}
+	}
+	else isRcsDepSoundRun_ = isRcsLowSoundRun_ = false;
 
 	vessel->UpdateUIArea(areaId_);
 }
@@ -161,21 +189,27 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
 	{
 		// Add to main.
 		auto actualFill = FillMainFuel(FUEL_FILL_RATE * deltaUpdate);
+
 		if (actualFill <= 0.0)
 		{
 			isFilling_ = false;
-		}
-	}
+			GetBaseVessel()->PlaySound(MAIN_FULL_ID, false, true);
+		} else GetBaseVessel()->PlaySound(FUEL_FLOW_ID, true, false);
+	} else if(GetBaseVessel()->IsSoundRunning(FUEL_FLOW_ID) && !isTransfering_ && !isDumping_)
+		GetBaseVessel()->StopSound(FUEL_FLOW_ID);
 
 	if (isDumping_)
 	{
+		if(!isDumpSoundRun_) { GetBaseVessel()->PlaySound(FUEL_DUMP_ID, false, true); isDumpSoundRun_ = true; }
 		// Remove from main.
 		auto actualDump = DrawMainFuel(FUEL_DUMP_RATE * deltaUpdate);
 		if (actualDump <= 0.0)
 		{
+			isDumpSoundRun_ = false;
 			isDumping_ = false;
-		}
-	}
+		} else GetBaseVessel()->PlaySound(FUEL_FLOW_ID, true, false);
+	} else if (GetBaseVessel()->IsSoundRunning(FUEL_FLOW_ID) && !isTransfering_ && !isFilling_)
+		GetBaseVessel()->StopSound(FUEL_FLOW_ID);
 
 	switch (transMode_)
 	{
@@ -183,6 +217,7 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
 
 		if (isTransfering_)
 		{
+			if (!isMainTransSoundRun_) { GetBaseVessel()->PlaySound(CRS_FED_MAIN_ID, false, true); isMainTransSoundRun_ = true; }
 			// Move from Main to RCS.
 			// Get the requested amount to move.
 			auto transferAmount = FUEL_TRANFER_RATE * deltaUpdate;
@@ -192,9 +227,11 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
 
 			if (actual != actualDrawn)
 			{
+				isMainTransSoundRun_ = isRcsTransSoundRun_ = false;
 				isTransfering_ = false;
-			}
-		}
+			} else GetBaseVessel()->PlaySound(FUEL_FLOW_ID, true, false);
+		} else if (GetBaseVessel()->IsSoundRunning(FUEL_FLOW_ID) && !isFilling_ && !isDumping_)
+			GetBaseVessel()->StopSound(FUEL_FLOW_ID);
 		break;
 
 	case TransMode::None:
@@ -202,6 +239,7 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
 		isFilling_ = false;
 		isTransfering_ = false;
 		isDumping_ = false;
+
 		break;
 
 	case TransMode::RCS:
@@ -210,19 +248,22 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
 
 		if (isTransfering_)
 		{
+			if (!isRcsTransSoundRun_) { GetBaseVessel()->PlaySound(CRS_FED_RCS_ID, false, true); isRcsTransSoundRun_ = true; }
 			// Move from Main to RCS.
 			// Get the requested amount to move.
 			auto transferAmount = FUEL_TRANFER_RATE * deltaUpdate;
 			auto actualDrawn = DrawMainFuel(transferAmount);
 
 			auto actual = FillRCSFuel(actualDrawn);
-			
 
 			if (actual != actualDrawn)
 			{
+				isMainTransSoundRun_ = isRcsTransSoundRun_ = false;
 				isTransfering_ = false;
-			}
-		}
+				GetBaseVessel()->PlaySound(RCS_FULL_ID, false, true);
+			} else GetBaseVessel()->PlaySound(FUEL_FLOW_ID, true, false);
+		} else if (GetBaseVessel()->IsSoundRunning(FUEL_FLOW_ID) && !isFilling_ && !isDumping_)
+			GetBaseVessel()->StopSound(FUEL_FLOW_ID);
 
 		// You cannot dump from RCS
 		break;

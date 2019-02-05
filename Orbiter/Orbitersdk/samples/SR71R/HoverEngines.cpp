@@ -159,10 +159,10 @@ void HoverEngines::EnableHover(bool isEnabled)
 void HoverEngines::SetSound()
 {
 	if (animHoverDoors_.GetState() > 0.0 && animHoverDoors_.GetState() < 1.0) {
-		if (!GetBaseVessel()->IsSoundRunning(HOVER_DOOR_ID)) GetBaseVessel()->SetSound(HOVER_DOOR_ID, true, false);
+		if (!GetBaseVessel()->IsSoundRunning(HOVER_DOOR_ID)) GetBaseVessel()->PlaySound(HOVER_DOOR_ID, true, false);
 	}
 	else {
-		if (GetBaseVessel()->IsSoundRunning(HOVER_DOOR_ID)) GetBaseVessel()->SetSound(HOVER_DOOR_ID, false, true);
+		if (GetBaseVessel()->IsSoundRunning(HOVER_DOOR_ID)) GetBaseVessel()->StopSound(HOVER_DOOR_ID);
 	}
 }
 

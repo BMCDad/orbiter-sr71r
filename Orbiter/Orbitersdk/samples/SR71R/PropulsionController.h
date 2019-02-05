@@ -153,6 +153,14 @@ private:
 	bool		isTransfering_;
 	bool		isDumping_;
 
+	bool        isMainTransSoundRun_ = false;
+	bool        isRcsTransSoundRun_ = false;
+	bool        isDumpSoundRun_ = false;
+	bool        isMainDepSoundRun_ = false;
+	bool        isMainLowSoundRun_ = false;
+	bool        isRcsDepSoundRun_ = false;
+	bool        isRcsLowSoundRun_ = false;
+
 
 
     bco::VCGauge            gaFuelFlow_         { {bt_mesh::SR71rVC::gaFuelFlow_id},

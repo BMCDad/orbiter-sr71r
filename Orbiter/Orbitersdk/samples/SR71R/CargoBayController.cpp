@@ -37,10 +37,10 @@ bool CargoBayController::CargoBayHasPower()
 void CargoBayController::SetSound()
 {
 	if (animCargoBayDoors_.GetState() > 0.0 && animCargoBayDoors_.GetState() < 1.0) {
-		if (!GetBaseVessel()->IsSoundRunning(CARGO_ID)) GetBaseVessel()->SetSound(CARGO_ID, true, false);
+		if (!GetBaseVessel()->IsSoundRunning(CARGO_ID)) GetBaseVessel()->PlaySound(CARGO_ID, true, false);
 	}
 	else {
-		if (GetBaseVessel()->IsSoundRunning(CARGO_ID)) GetBaseVessel()->SetSound(CARGO_ID, false, true);
+		if (GetBaseVessel()->IsSoundRunning(CARGO_ID)) GetBaseVessel()->StopSound(CARGO_ID);
 	}
 }
 

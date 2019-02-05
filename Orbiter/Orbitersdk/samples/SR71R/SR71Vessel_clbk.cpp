@@ -17,7 +17,6 @@
 #include "StdAfx.h"
 
 #include "SR71Vessel.h"
-#include "XRSound.h"
 
 static const DWORD ntdvtx_geardown = 9;
 static TOUCHDOWNVTX tdvtx_geardown[ntdvtx_geardown] = {
@@ -178,6 +177,8 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
+	isAviPowered = avionics_.CurrentDraw() != 0.0;
+
 	apu_.Step(simt, simdt, mjd);
 	avionics_.Step(simt, simdt, mjd);
 	cargoBayController_.Step(simt, simdt, mjd);

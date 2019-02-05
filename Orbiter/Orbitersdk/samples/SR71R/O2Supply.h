@@ -71,6 +71,10 @@ private:
 	int						areaId_;
 	int						pumpMouseId_;
 	double					prevTime_;
+
+	bool					isFullSoundRun_ = false;
+	bool                    isLowSoundRun_ = false;
+	bool                    isDepSoundRun_ = false;
 	
 	const char*				ConfigKey = "OXYGEN";
 

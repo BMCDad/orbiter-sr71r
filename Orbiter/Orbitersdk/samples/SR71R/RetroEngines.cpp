@@ -145,10 +145,10 @@ void RetroEngines::EnableRetros(bool isEnabled)
 void RetroEngines::SetSound()
 {
 	if (animRetroDoors_.GetState() > 0.0 && animRetroDoors_.GetState() < 1.0) {
-		if (!GetBaseVessel()->IsSoundRunning(RETRO_DOOR_ID)) GetBaseVessel()->SetSound(RETRO_DOOR_ID, true, false);
+		if (!GetBaseVessel()->IsSoundRunning(RETRO_DOOR_ID)) GetBaseVessel()->PlaySound(RETRO_DOOR_ID, true, false);
 	}
 	else {
-		if (GetBaseVessel()->IsSoundRunning(RETRO_DOOR_ID)) GetBaseVessel()->SetSound(RETRO_DOOR_ID, false, true);
+		if (GetBaseVessel()->IsSoundRunning(RETRO_DOOR_ID)) GetBaseVessel()->StopSound(RETRO_DOOR_ID);
 	}
 }
 

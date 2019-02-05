@@ -52,22 +52,23 @@ void APU::SetSound()
 	if (HasPower() && swPower_.IsOn() && propulsionControl_) {
 		// If it's starting (See note above)
 		if (status < 1.0 && status > 0.0) { 
-			if(!GetBaseVessel()->IsSoundRunning(APU_START_ID)) GetBaseVessel()->SetSound(APU_START_ID, true, false);
+			if(!GetBaseVessel()->IsSoundRunning(APU_START_ID)) GetBaseVessel()->PlaySound(APU_START_ID, true, false);
 		}
 		// If it's running
 		else if (status == 1.0) {
 			if (!GetBaseVessel()->IsSoundRunning(APU_RUNNING_ID)) {
 				StopAllSounds();
-				GetBaseVessel()->SetSound(APU_RUNNING_ID, true, false);
+				GetBaseVessel()->PlaySound(APU_RUNNING_ID, true, false);
 			}
 		}
+		if(isSoundStopped) isSoundStopped = false;
 	}
 	else {
 		// If it's shutting down (See note above)
 		if (status < 1.0 && status > 0.0) {
 			if (!GetBaseVessel()->IsSoundRunning(APU_SHUTDOWN_ID)) {
 				StopAllSounds();
-				GetBaseVessel()->SetSound(APU_SHUTDOWN_ID, true, false);
+				GetBaseVessel()->PlaySound(APU_SHUTDOWN_ID, true, false);
 			}
 		}
 		else {
@@ -78,7 +79,7 @@ void APU::SetSound()
 
 void APU::StopAllSounds()
 {
-	for (int i = APU_START_ID; i <= APU_SHUTDOWN_ID; i++) GetBaseVessel()->SetSound(i, false, true);
+	for (int i = APU_START_ID; i <= APU_SHUTDOWN_ID; i++) GetBaseVessel()->StopSound(i);
 }
 
 double APU::CurrentDraw()

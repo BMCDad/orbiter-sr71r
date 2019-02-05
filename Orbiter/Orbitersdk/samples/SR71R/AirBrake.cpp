@@ -50,16 +50,16 @@ double AirBrake::GetAirBrakeState()
 void AirBrake::SetSound()
 {
 	if (animAirBrake_.GetState() > 0.0 && animAirBrake_.GetState() < 0.33) {
-		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->SetSound(AIRBRAKE_ID, true, false);
+		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->PlaySound(AIRBRAKE_ID, true, false);
 	}
 	else if (animAirBrake_.GetState() > 0.33 && animAirBrake_.GetState() < 0.66) {
-		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->SetSound(AIRBRAKE_ID, true, false);
+		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->PlaySound(AIRBRAKE_ID, true, false);
 	}
 	else if (animAirBrake_.GetState() > 0.66 && animAirBrake_.GetState() < 1.0) {
-		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->SetSound(AIRBRAKE_ID, true, false);
+		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->PlaySound(AIRBRAKE_ID, true, false);
 	}
 	else {
-		if (GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->SetSound(AIRBRAKE_ID, false, true);
+		if (GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->PlaySound(AIRBRAKE_ID, false, true);
 	}
 }
 
