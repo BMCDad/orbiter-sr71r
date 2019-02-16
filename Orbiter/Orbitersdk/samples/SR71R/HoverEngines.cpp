@@ -36,6 +36,8 @@ void HoverEngines::Step(double simt, double simdt, double mjd)
     {
         animHoverDoors_.Step(swOpen_.GetState(), simdt);
     }
+
+	SetSound();
 }
 
 double HoverEngines::CurrentDraw()
@@ -152,6 +154,16 @@ void HoverEngines::EnableHover(bool isEnabled)
         GetBaseVessel()->SetThrusterResource(hoverThrustHandles_[1], nullptr);
         GetBaseVessel()->SetThrusterResource(hoverThrustHandles_[2], nullptr);
     }
+}
+
+void HoverEngines::SetSound()
+{
+	if (animHoverDoors_.GetState() > 0.0 && animHoverDoors_.GetState() < 1.0) {
+		if (!GetBaseVessel()->IsSoundRunning(HOVER_DOOR_ID)) GetBaseVessel()->PlaySound(HOVER_DOOR_ID, true, false);
+	}
+	else {
+		if (GetBaseVessel()->IsSoundRunning(HOVER_DOOR_ID)) GetBaseVessel()->StopSound(HOVER_DOOR_ID);
+	}
 }
 
 bool HoverEngines::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)

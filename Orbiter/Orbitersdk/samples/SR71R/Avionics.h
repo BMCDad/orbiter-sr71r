@@ -115,7 +115,7 @@ public:
 
     bool IsOverSpeed() const;
 
-    bco::DialSwitch& HeadingSetDial();
+	bco::DialSwitch& HeadingSetDial();
     bco::OnOffSwitch& PowerSwitch();
 
 private:
@@ -431,17 +431,20 @@ private:
     bco::TextureVisual      txSpeedVel_ {   bt_mesh::SR71rVC::SpeedVelocityFlag_verts, bt_mesh::SR71rVC::SpeedVelocityFlag_id};
 
     bco::VCToggleSwitch     swPower_                {   bt_mesh::SR71rVC::SwAvionics_id,
+														GetBaseVessel(),
                                                         bt_mesh::SR71rVC::SwAvionics_location,
                                                         bt_mesh::SR71rVC::PowerTopRightAxis_location
                                                     };
 
     bco::VCRotorSwitch		swSelectRadio_          {   bt_mesh::SR71rVC::SwNavSelect_id, 
+														GetBaseVessel(),
                                                         bt_mesh::SR71rVC::SwNavSelect_location, 
                                                         bt_mesh::SR71rVC::SwNavSelectAxis_location,
 														(117*RAD)
                                                     };
 
     bco::VCRotorSwitch     swAvionMode_            {   bt_mesh::SR71rVC::SwExoSelect_id,
+														GetBaseVessel(),
                                                         bt_mesh::SR71rVC::SwExoSelect_location, 
                                                         bt_mesh::SR71rVC::SwExoSelectAxis_location,
 														(117*RAD)

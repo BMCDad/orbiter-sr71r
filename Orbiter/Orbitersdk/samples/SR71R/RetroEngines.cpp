@@ -37,6 +37,8 @@ void RetroEngines::Step(double simt, double simdt, double mjd)
     {
         animRetroDoors_.Step(swRetroDoors_.GetState(), simdt);
     }
+
+	SetSound();
 }
 
 double RetroEngines::CurrentDraw()
@@ -138,6 +140,16 @@ void RetroEngines::EnableRetros(bool isEnabled)
         GetBaseVessel()->SetThrusterResource(retroThrustHandles_[0], nullptr);
         GetBaseVessel()->SetThrusterResource(retroThrustHandles_[1], nullptr);
     }
+}
+
+void RetroEngines::SetSound()
+{
+	if (animRetroDoors_.GetState() > 0.0 && animRetroDoors_.GetState() < 1.0) {
+		if (!GetBaseVessel()->IsSoundRunning(RETRO_DOOR_ID)) GetBaseVessel()->PlaySound(RETRO_DOOR_ID, true, false);
+	}
+	else {
+		if (GetBaseVessel()->IsSoundRunning(RETRO_DOOR_ID)) GetBaseVessel()->StopSound(RETRO_DOOR_ID);
+	}
 }
 
 bool RetroEngines::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)

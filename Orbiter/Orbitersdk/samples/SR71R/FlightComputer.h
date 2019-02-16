@@ -361,19 +361,19 @@ namespace FC
 
 		// Auto pilot panel
 		bco::TextureVisual		visAPMainOn_;
-		bco::PushButtonSwitch   swAPMain_{ bt_mesh::SR71rVC::SwAPMain_location, 0.01 };
+		bco::PushButtonSwitch   swAPMain_{ bt_mesh::SR71rVC::SwAPMain_location, 0.01, GetBaseVessel() };
 		
 		bco::TextureVisual		visAPHeadingOn_;
-		bco::PushButtonSwitch   swAPHeading_{ bt_mesh::SR71rVC::SwAPHeading_location, 0.01 };
+		bco::PushButtonSwitch   swAPHeading_{ bt_mesh::SR71rVC::SwAPHeading_location, 0.01, GetBaseVessel() };
 
 		bco::TextureVisual		visAPAltitudeOn_;
-		bco::PushButtonSwitch   swAPHAltitude_{ bt_mesh::SR71rVC::SwAPAltitude_location, 0.01 };
+		bco::PushButtonSwitch   swAPHAltitude_{ bt_mesh::SR71rVC::SwAPAltitude_location, 0.01, GetBaseVessel() };
 
 		bco::TextureVisual		visAPKEASOn_;
-		bco::PushButtonSwitch   swAPKEAS_{ bt_mesh::SR71rVC::SwAPKEAS_location, 0.01 };
+		bco::PushButtonSwitch   swAPKEAS_{ bt_mesh::SR71rVC::SwAPKEAS_location, 0.01, GetBaseVessel() };
 
 		bco::TextureVisual		visAPMACHOn_;
-		bco::PushButtonSwitch   swAPMACH_{ bt_mesh::SR71rVC::SwAPMACH_location, 0.01 };
+		bco::PushButtonSwitch   swAPMACH_{ bt_mesh::SR71rVC::SwAPMACH_location, 0.01, GetBaseVessel() };
 
 
     };

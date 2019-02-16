@@ -24,7 +24,6 @@
 #include "OrbiterAPI.h"
 #include "BaseVessel.h"
 #include "Animation.h"
-
 namespace bc_orbiter
 {
     /**	VCToggleSwitch
@@ -32,13 +31,14 @@ namespace bc_orbiter
     class VCToggleSwitch : public OnOffSwitch
     {
     public:
-        VCToggleSwitch(
-            UINT id, 
+		VCToggleSwitch(
+			UINT id,
+			BaseVessel* vessel,
             VECTOR3 target,             // The event target and the base for rotation
             VECTOR3 axis,               // vector that along with target defines the rotation axis
             double angle = 1.5708,      // rotation angle, default 90 deg (RAD*20)
             double speed = 10.0) :      // Default speed
-            OnOffSwitch(target, 0.01),
+            OnOffSwitch(target, 0.01, vessel),
             group_({ id }, target, axis, angle, 0.0, 1.0)
         {
         }

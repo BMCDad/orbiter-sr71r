@@ -51,7 +51,8 @@ void HydrogenSupply::Step(double simt, double simdt, double mjd)
 	if (IsFilling())
 	{
 		FillTank(HYDROGEN_FILL_RATE * simdt);
-	}
+		GetBaseVessel()->PlaySound(LH2_SUPPLY_ID, true, false);
+	} else if(GetBaseVessel()->IsSoundRunning(LH2_SUPPLY_ID)) GetBaseVessel()->StopSound(LH2_SUPPLY_ID);
 }
 
 bool HydrogenSupply::VCRedrawEvent(int id, int event, SURFHANDLE surf)

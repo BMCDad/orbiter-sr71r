@@ -61,10 +61,8 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	SetDockParams(bt_mesh::SR71r::DockingPort_location, _V(0, 1, 0), _V(0, 0, 1));
 	
     SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
+
     SetNosewheelSteering(true);
-
-
-	SetNosewheelSteering(true);
 
 	// Setups:
 	SetupVesselComponents();
@@ -179,6 +177,8 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
+	isAviPowered = avionics_.CurrentDraw() != 0.0;
+
 	apu_.Step(simt, simdt, mjd);
 	avionics_.Step(simt, simdt, mjd);
 	cargoBayController_.Step(simt, simdt, mjd);

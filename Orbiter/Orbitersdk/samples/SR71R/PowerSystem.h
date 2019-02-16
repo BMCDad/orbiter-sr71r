@@ -127,17 +127,20 @@ private:
 	bco::TextureVisual	    fuelCellConnectedLight_;
 
 
-    bco::VCToggleSwitch     swPower_                    {   bt_mesh::SR71rVC::swMainPower_id, 
+    bco::VCToggleSwitch     swPower_                    {   bt_mesh::SR71rVC::swMainPower_id,
+															GetBaseVessel(),
                                                             bt_mesh::SR71rVC::swMainPower_location, 
                                                             bt_mesh::SR71rVC::PowerTopRightAxis_location 
                                                         };
 
-    bco::VCToggleSwitch     swConnectExternal_          {   bt_mesh::SR71rVC::swConnectExternalPower_id,     
+    bco::VCToggleSwitch     swConnectExternal_          {   bt_mesh::SR71rVC::swConnectExternalPower_id,
+													        GetBaseVessel(),
                                                             bt_mesh::SR71rVC::swConnectExternalPower_location, 
                                                             bt_mesh::SR71rVC::PowerBottomRightAxis_location 
                                                         };
 
-    bco::VCToggleSwitch     swConnectFuelCell_          {   bt_mesh::SR71rVC::swConnectFuelCell_id, 
+    bco::VCToggleSwitch     swConnectFuelCell_          {   bt_mesh::SR71rVC::swConnectFuelCell_id,
+															GetBaseVessel(),
                                                             bt_mesh::SR71rVC::swConnectFuelCell_location, 
                                                             bt_mesh::SR71rVC::PowerBottomRightAxis_location 
                                                         };

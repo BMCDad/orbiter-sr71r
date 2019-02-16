@@ -39,6 +39,47 @@ void APU::Step(double simt, double simdt, double mjd)
 
         gaugeHydrPress_.SetState((fuelDraw == actualDraw) ? 1.0 : 0.0);
 	}
+
+	SetSound();
+}
+
+void APU::SetSound()
+{
+	double status = gaugeHydrPress_.GetState();
+	// TODO: NOTE: Startup and shutdown sound aren't 'true', since the status is just 0 and 1.
+	// However, the code supports shutdown and start. When the status shows the actual status, it will work.
+
+	if (HasPower() && swPower_.IsOn() && propulsionControl_) {
+		// If it's starting (See note above)
+		if (status < 1.0 && status > 0.0) { 
+			if(!GetBaseVessel()->IsSoundRunning(APU_START_ID)) GetBaseVessel()->PlaySound(APU_START_ID, true, false);
+		}
+		// If it's running
+		else if (status == 1.0) {
+			if (!GetBaseVessel()->IsSoundRunning(APU_RUNNING_ID)) {
+				StopAllSounds();
+				GetBaseVessel()->PlaySound(APU_RUNNING_ID, true, false);
+			}
+		}
+		if(isSoundStopped) isSoundStopped = false;
+	}
+	else {
+		// If it's shutting down (See note above)
+		if (status < 1.0 && status > 0.0) {
+			if (!GetBaseVessel()->IsSoundRunning(APU_SHUTDOWN_ID)) {
+				StopAllSounds();
+				GetBaseVessel()->PlaySound(APU_SHUTDOWN_ID, true, false);
+			}
+		}
+		else {
+			if (!isSoundStopped) { StopAllSounds(); isSoundStopped = true; }
+		}
+	}
+}
+
+void APU::StopAllSounds()
+{
+	for (int i = APU_START_ID; i <= APU_SHUTDOWN_ID; i++) GetBaseVessel()->StopSound(i);
 }
 
 double APU::CurrentDraw()

@@ -71,12 +71,16 @@ private:
 	int						areaId_;
 	int						pumpMouseId_;
 	double					prevTime_;
+
+	bool					isFullSoundRun_ = false;
+	bool                    isLowSoundRun_ = false;
+	bool                    isDepSoundRun_ = false;
 	
 	const char*				ConfigKey = "OXYGEN";
 
 	bco::TextureVisual		lightSupplyAvailable_;
 	bco::TextureVisual		lightValveOpen_;
-    bco::PushButtonSwitch	switchValveOpen_    { bt_mesh::SR71rVC::LOXValveOpenSwitch_location, 0.01 };
+    bco::PushButtonSwitch	switchValveOpen_    { bt_mesh::SR71rVC::LOXValveOpenSwitch_location, 0.01, GetBaseVessel() };
 
     bco::VCGauge            gaugeOxygenLevel_   { {bt_mesh::SR71rVC::gaugeOxygenLevel_id },
                                                     bt_mesh::SR71rVC::gaugeOxygenLevel_location,     

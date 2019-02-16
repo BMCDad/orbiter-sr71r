@@ -57,7 +57,9 @@ public:
 	double AirBrake::GetAirBrakeState();
 
 private:
-	bco::RotarySwitch		airBrakeSwitch_;
+	void SetSound();
+
+	bco::RotarySwitch		airBrakeSwitch_ { _V(0.0, 0.0, 0.0), 0.0, GetBaseVessel() };
     bco::EventTarget        eventIncreaseBrake_ { bt_mesh::SR71rVC::ABTargetIncrease_location, 0.01 };
     bco::EventTarget        eventDecreaseBrake_ { bt_mesh::SR71rVC::ABTargetDecrease_location, 0.01 };
 

@@ -68,21 +68,25 @@ private:
                                                     (90 * RAD), 0.0, 0.1 };
 
     bco::VCToggleSwitch     swNav_              {   bt_mesh::SR71rVC::SwitchNavLights_id, 
+													GetBaseVessel(),
                                                     bt_mesh::SR71rVC::SwitchNavLights_location, 
                                                     bt_mesh::SR71rVC::LightsRightAxis_location
                                                 };
 
     bco::VCToggleSwitch     swBeacon_           {   bt_mesh::SR71rVC::SwitchBeaconLights_id,
+													GetBaseVessel(),
                                                     bt_mesh::SR71rVC::SwitchBeaconLights_location,
                                                     bt_mesh::SR71rVC::LightsRightAxis_location
                                                 };
 
     bco::VCToggleSwitch     swStrobe_           {   bt_mesh::SR71rVC::SwitchStrobeLights_id,
+													GetBaseVessel(),
                                                     bt_mesh::SR71rVC::SwitchStrobeLights_location,
                                                     bt_mesh::SR71rVC::LightsRightAxis_location
                                                 };
 
     bco::VCToggleSwitch     swDock_             {   bt_mesh::SR71rVC::SwitchDockLights_id,
+													GetBaseVessel(),
                                                     bt_mesh::SR71rVC::SwitchDockLights_location,
                                                     bt_mesh::SR71rVC::LightsRightAxis_location
                                                 };

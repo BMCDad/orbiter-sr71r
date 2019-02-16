@@ -27,7 +27,7 @@ namespace bc_orbiter
 	class PoweredComponent : public Component
 	{
 	public:
-		PoweredComponent(BaseVessel* baseVessel, double amps, double minVolts) : 
+		PoweredComponent(BaseVessel* baseVessel, double amps, double minVolts) :
 			Component(baseVessel),
 			ampsDraw_(amps),
 			minVolts_(minVolts),

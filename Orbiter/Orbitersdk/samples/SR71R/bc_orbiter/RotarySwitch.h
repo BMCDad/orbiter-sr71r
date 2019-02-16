@@ -19,6 +19,8 @@
 #include "IAnimationState.h"
 #include "EventTarget.h"
 
+#include "BaseVessel.h"
+
 #include <functional>
 #include <vector>
 #include <memory>
@@ -37,13 +39,14 @@ namespace bc_orbiter
 	class RotarySwitch : public EventTarget, public IAnimationState
 	{
 	public:
-		RotarySwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0) :
+		RotarySwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0, BaseVessel* vessel = nullptr) :
             EventTarget(target, radius),
 			currentIndex_(0),
 			currentPosition_(0.0)
 		{
             SetLeftMouseDownFunc([this] { Decrement(); });
             SetRightMouseDownFunc([this] {Increment(); });
+			this->vessel = vessel;
         }
 
 		virtual ~RotarySwitch()	{ for (auto &p : stopFuncs)	delete p; }
@@ -89,6 +92,8 @@ namespace bc_orbiter
 		int		currentIndex_;
 		double	currentPosition_;
 
+		BaseVessel* vessel;
+
 		std::vector<SwitchStop*>		stopFuncs;
 	};
 
@@ -115,6 +120,8 @@ namespace bc_orbiter
 			return;
 		}
 
+		if(vessel) vessel->SetSound(SWITCH_ON_ID, false, false);
+
 		currentIndex_++;
 
 		currentPosition_ = stopFuncs[currentIndex_]->stop_;
@@ -129,6 +136,8 @@ namespace bc_orbiter
 		{
 			return;
 		}
+
+		if (vessel) vessel->SetSound(SWITCH_ON_ID, false, false);
 
 		currentIndex_--;
 

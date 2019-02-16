@@ -45,6 +45,7 @@ public:
 private:
 
     void EnableHover(bool isEnabled);
+	void SetSound();
 
 
     THRUSTER_HANDLE     hoverThrustHandles_[3];
@@ -54,7 +55,8 @@ private:
     int                 hoverMouseId_;
 
 
-    bco::VCToggleSwitch     swOpen_ {   bt_mesh::SR71rVC::swHoverDoor_id, 
+    bco::VCToggleSwitch     swOpen_ {   bt_mesh::SR71rVC::swHoverDoor_id,
+										GetBaseVessel(), 
                                         bt_mesh::SR71rVC::swHoverDoor_location,  
                                         bt_mesh::SR71rVC::DoorsRightAxis_location
                                     };

@@ -47,6 +47,22 @@ double AirBrake::GetAirBrakeState()
 	return animAirBrake_.GetState();
 }
 
+void AirBrake::SetSound()
+{
+	if (animAirBrake_.GetState() > 0.0 && animAirBrake_.GetState() < 0.33) {
+		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->PlaySound(AIRBRAKE_ID, true, false);
+	}
+	else if (animAirBrake_.GetState() > 0.33 && animAirBrake_.GetState() < 0.66) {
+		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->PlaySound(AIRBRAKE_ID, true, false);
+	}
+	else if (animAirBrake_.GetState() > 0.66 && animAirBrake_.GetState() < 1.0) {
+		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->PlaySound(AIRBRAKE_ID, true, false);
+	}
+	else {
+		if (GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->StopSound(AIRBRAKE_ID);
+	}
+}
+
 void AirBrake::Step(double simt, double simdt, double mjd)
 {
 	// Note:  The animAirBrake can only move if there is hydraulic power, that
@@ -61,7 +77,8 @@ void AirBrake::Step(double simt, double simdt, double mjd)
 
 	// Update drag.
 	dragFactor_ = animAirBrake_.GetState();
-//	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
+	
+	SetSound();
 }
 
 bool AirBrake::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)

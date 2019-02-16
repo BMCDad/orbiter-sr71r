@@ -54,7 +54,29 @@ void O2Supply::Step(double simt, double simdt, double mjd)
 	if (IsFilling())
 	{
 		FillTank(OXYGEN_FILL_RATE * simdt);
+		GetBaseVessel()->PlaySound(LOX_SUPPLY_ID, true, false);
 	}
+	else if (GetBaseVessel()->IsSoundRunning(LOX_SUPPLY_ID)) GetBaseVessel()->StopSound(LOX_SUPPLY_ID);
+
+	if (GetLevel() == 0.0) {
+		if (!isDepSoundRun_) {
+			GetBaseVessel()->PlaySound(LOX_DEP_ID, false, true);
+			isDepSoundRun_ = true;
+		}
+	}
+	else if (GetLevel() <= 0.05) {
+		if (!isLowSoundRun_) {
+			GetBaseVessel()->PlaySound(LOX_LOW_ID, false, true);
+			isLowSoundRun_ = true;
+		}
+	}
+	else if (GetLevel() == 1.0) {
+		if (!isFullSoundRun_) {
+			GetBaseVessel()->PlaySound(LOX_FULL_ID, false, true);
+			isFullSoundRun_ = true;
+		}
+	}
+	else isDepSoundRun_ = isLowSoundRun_ = isFullSoundRun_ = false;
 }
 
 
