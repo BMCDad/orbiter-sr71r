@@ -59,7 +59,7 @@ void AirBrake::SetSound()
 		if (!GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->PlaySound(AIRBRAKE_ID, true, false);
 	}
 	else {
-		if (GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->PlaySound(AIRBRAKE_ID, false, true);
+		if (GetBaseVessel()->IsSoundRunning(AIRBRAKE_ID)) GetBaseVessel()->StopSound(AIRBRAKE_ID);
 	}
 }
 
