@@ -147,12 +147,6 @@
     <ClInclude Include="FlightComputer.h">
       <Filter>Components\Computer</Filter>
     </ClInclude>
-    <ClInclude Include="IComputer.h">
-      <Filter>Components\Computer</Filter>
-    </ClInclude>
-    <ClInclude Include="FCProgram.h">
-      <Filter>Components\Computer</Filter>
-    </ClInclude>
     <ClInclude Include="VesselControl.h">
       <Filter>Components</Filter>
     </ClInclude>
