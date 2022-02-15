@@ -134,11 +134,9 @@
     <ClInclude Include="CargoBayController.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="CryogenicTank.h" />
-    <ClInclude Include="FCProgram.h" />
     <ClInclude Include="FlightComputer.h" />
     <ClInclude Include="HoverEngines.h" />
     <ClInclude Include="IAvionics.h" />
-    <ClInclude Include="IComputer.h" />
     <ClInclude Include="FuelCell.h" />
     <ClInclude Include="HydrogenSupply.h" />
     <ClInclude Include="IConsumable.h" />

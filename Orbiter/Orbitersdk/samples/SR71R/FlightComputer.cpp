@@ -70,9 +70,11 @@ FC::FlightComputer::FlightComputer(bco::BaseVessel * vessel, double amps) :
 	vessel->RegisterVCEventTarget(&swAPMACH_);
 }
 
+
 void FC::FlightComputer::SetClassCaps()
 {
 }
+
 
 bool FC::FlightComputer::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
@@ -136,19 +138,11 @@ void FC::FlightComputer::Boot()
 	MapKey(GCKey::PlusMinus,	[this] { HandleScratchPadKey(GCKey::PlusMinus); });
 
 	MapKey(GCKey::Home,			[this] { PageMain(); });
+	MapKey(GCKey::Previous,		[this] { });
+	MapKey(GCKey::Next,			[this] {});
+	MapKey(GCKey::Enter,		[this] {});
 	
-
-
 	PageMain();
-
-
-	//ClearScreen();
-
-	//DisplayLine(0, "ASCENT          1/1");
-	//AscentSetAltTarget(0.0);
-	//AscentSetIncTarget(0.0);
-
-	//SetScratchPad(92.3);
 	isRunning_ = true;
 }
 
@@ -163,6 +157,7 @@ void FC::FlightComputer::ChangePowerLevel(double newLevel)
 		ClearScreen();
 	}
 }
+
 
 void FC::FlightComputer::Step(double simt, double simdt, double mjd)
 {
@@ -192,8 +187,6 @@ void FC::FlightComputer::Step(double simt, double simdt, double mjd)
 
 	prevRunningProgs = runningPrograms_;
 
-
-
 	// Now call the update method for the active page.
 	if (fabs(simt - prevTime_) > 0.2)
 	{
@@ -202,11 +195,13 @@ void FC::FlightComputer::Step(double simt, double simdt, double mjd)
 	}
 }
 
+
 double FC::FlightComputer::CurrentDraw()
 {
 	// TODO: Implement power draw based on running programs.
 	return 0.0;
 }
+
 
 void FC::FlightComputer::ClearScreen()
 {
@@ -215,6 +210,7 @@ void FC::FlightComputer::ClearScreen()
 		DisplayLine(i, "                   ");
 	}
 }
+
 
 void FC::FlightComputer::DisplayLine(int row, char* mask, ...)
 {
@@ -225,6 +221,7 @@ void FC::FlightComputer::DisplayLine(int row, char* mask, ...)
 
 	isDisplayDirty_ = true;
 }
+
 
 void FC::FlightComputer::DisplayText(int row, int col, const char* text)
 {
@@ -249,6 +246,7 @@ void FC::FlightComputer::DisplayText(int row, int col, const char* text)
 	isDisplayDirty_ = true;
 }
 
+
 double FC::FlightComputer::GetScratchPad()
 {
 	auto temp = scratchValue_;
@@ -256,12 +254,14 @@ double FC::FlightComputer::GetScratchPad()
 	return temp;
 }
 
+
 void FC::FlightComputer::SetScratchPad(double value)
 {
 	scratchValue_ = value;
 
 	DisplayLine(10, "[%10.2f]", scratchValue_);
 }
+
 
 bool FC::FlightComputer::MouseEvent(int id, int event)
 {
@@ -273,6 +273,7 @@ bool FC::FlightComputer::MouseEvent(int id, int event)
 	
 	return false;
 }
+
 
 bool FC::FlightComputer::LoadVC(int id)
 {
@@ -312,12 +313,9 @@ bool FC::FlightComputer::LoadVC(int id)
         mapKey_[eid] = k.first;
     }
 
-	//allId_ = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::RedrawEvent);
-	//oapiVCRegisterArea(allId_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
-
-
     return true;
 }
+
 
 bool FC::FlightComputer::VCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
@@ -355,6 +353,7 @@ bool FC::FlightComputer::VCRedrawEvent(int id, int event, SURFHANDLE surf)
 	return true;
 }
 
+
 bool FC::FlightComputer::LoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
 {
 	if (_strnicmp(key, apConfigKey_.c_str(), apConfigKey_.length()) == 0)
@@ -364,6 +363,7 @@ bool FC::FlightComputer::LoadConfiguration(char * key, FILEHANDLE scn, const cha
 
 	return false;
 }
+
 
 bool FC::FlightComputer::LoadAPConfiguration(FILEHANDLE scn, const char* configLine)
 {
@@ -388,10 +388,12 @@ bool FC::FlightComputer::LoadAPConfiguration(FILEHANDLE scn, const char* configL
 	return true;
 }
 
+
 void FC::FlightComputer::SaveConfiguration(FILEHANDLE scn) const
 {
 	SaveAPConfiguration(scn);
 }
+
 
 void FC::FlightComputer::SaveAPConfiguration(FILEHANDLE scn) const
 {
@@ -407,6 +409,7 @@ void FC::FlightComputer::SaveAPConfiguration(FILEHANDLE scn) const
 
 	oapiWriteScenario_string(scn, (char*)apConfigKey_.c_str(), cbuf);
 }
+
 
 void FC::FlightComputer::PageMain()
 {
@@ -443,6 +446,7 @@ void FC::FlightComputer::PageAtmosphere()
 	funcUpdate_ = [this] { UpdateAtmospherePage(); };
 }
 
+
 void FC::FlightComputer::UpdateAtmospherePage()
 {
 	if (runningPrograms_ != prevRunning_)
@@ -458,6 +462,7 @@ void FC::FlightComputer::UpdateAtmospherePage()
 		prevRunning_ = runningPrograms_;
 	}
 }
+
 
 void FC::FlightComputer::PageAscent()
 {
@@ -480,6 +485,7 @@ void FC::FlightComputer::PageAscent()
 	funcUpdate_ = [this] { UpdateAscentPage(); };
 }
 
+
 void FC::FlightComputer::UpdateAscentPage()
 {
 	if (!isAscentPageDirty_) return;
@@ -490,6 +496,7 @@ void FC::FlightComputer::UpdateAscentPage()
 
 	isAscentPageDirty_ = false;
 }
+
 
 /**	SetTargetIncDeg
 	@param tgt Target Inclination in degrees.
@@ -510,6 +517,7 @@ void FC::FlightComputer::SetTargetIncDeg(double tgt)
 
 	isAscentPageDirty_ = true;
 }
+
 
 /**
 	Boots the computer if needed, checks for dirty display.
@@ -532,6 +540,7 @@ void FC::FlightComputer::Update()
     }
 }
 
+
 void FC::FlightComputer::ClearFuncKeys()
 {
 	MapKey(GCKey::F1);
@@ -546,6 +555,7 @@ void FC::FlightComputer::ClearFuncKeys()
 	MapKey(GCKey::F10);
 }
 
+
 void FC::FlightComputer::ClearScratchPad()
 {
 	scratchKeys_.clear();
@@ -553,11 +563,13 @@ void FC::FlightComputer::ClearScratchPad()
 	SetScratchPad(0.0);
 }
 
+
 void FC::FlightComputer::SetScratchError(const char* msg)
 {
 	isScratchError_ = true;
 	DisplayLine(10, "!! %s", msg);
 }
+
 
 bool FC::FlightComputer::HandleScratchPadKey(FC::GCKey key)
 {
@@ -569,7 +581,6 @@ bool FC::FlightComputer::HandleScratchPadKey(FC::GCKey key)
 	}
 
 	if (isScratchError_) return false;
-
 
 	auto evaluate = false;
 	double newValue = 0.0;
@@ -617,4 +628,3 @@ bool FC::FlightComputer::HandleScratchPadKey(FC::GCKey key)
 
 	return true;
 }
-

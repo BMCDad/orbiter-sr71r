@@ -84,10 +84,8 @@
 
 #include "SR71r_mesh.h"
 #include "IAvionics.h"
-#include "IComputer.h"
 #include "PropulsionController.h"
 #include "SurfaceController.h"
-#include "FCProgram.h"
 #include "VesselControl.h"
 
 #include <map>
@@ -96,15 +94,31 @@
 #include <iomanip>
 #include <algorithm>
 
-// Interfaces used:
-
 namespace bco = bc_orbiter;
 namespace mvc = bt_mesh::SR71rVC;
 
-
 namespace FC
 {
+	enum GCKey
+	{
+		D0, D1, D2, D3, D4, D5, D6, D7, D8, D9,
+		Decimal,
+		PlusMinus,
+		Clear,
+		Enter,
+		Previous, Next,
+		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10,
+		Home
+	};
 
+	enum FCProg
+	{
+		Main,
+		Ascent,
+		Orbit,
+		ReEntry,
+		Atmosphere
+	};
 
     /**	FlightComputer
 
@@ -155,22 +169,14 @@ namespace FC
 		bco::PushButtonSwitch   APKEASButton()		const { return swAPKEAS_; }
 		bco::PushButtonSwitch   APMACHButton()		const { return swAPMACH_; }
 
-
-
-        // IComputer
-
+        // Computer interface
 		void ClearScreen();
-
 		void DisplayLine(int row, char* mask, ...);
-
 		void DisplayText(int row, int col, const char* text);
-
         int DisplayCols() { return DISPLAY_COLS; }
         int DisplayRows() { return DISPLAY_ROWS; }
-
 		double GetScratchPad();
 		void SetScratchPad(double value);
-
 
         // Input:
 		void SetAvionics(IAvionics* av)						{ avionics_ = av; }
@@ -181,7 +187,6 @@ namespace FC
 		IAvionics*              GetAvionics()               const override { return avionics_; }
 		PropulsionController*   GetPropulsionController()   const override { return propulsionControl_; }
 		SurfaceController*      GetSurfaceController()      const override { return surfaceController_; }
-
 
 		// Page Functions
 		void PageMain();
@@ -214,7 +219,6 @@ namespace FC
 		bool LoadAPConfiguration(FILEHANDLE scn, const char* configLine);
 		void SaveAPConfiguration(FILEHANDLE scn) const;
 
-
 		std::string					configKey_{ "COMPUTER" };
 		std::string					apConfigKey_{ "AUTOPILOT" };
 
@@ -222,10 +226,8 @@ namespace FC
 		int							allId_;
 		double						prevTime_{ 0.0 };
 
-
 		bool						isRunning_{ false };
 		bool						isDisplayDirty_;
-        //std::vector<std::string>	display_;
 
 		char display_[DISPLAY_ROWS][DISPLAY_COLS] = 
 		{
@@ -284,7 +286,6 @@ namespace FC
 		void MapKey(FC::GCKey key) { mapKeyFunc_[key] = []{}; }
 		void ClearFuncKeys();
 
-
 		// Scratchpad impl
 		bool HandleScratchPadKey(FC::GCKey key);
 		void ClearScratchPad();
@@ -293,9 +294,6 @@ namespace FC
 		bool						scratchIsPos_{ true };
 		std::string					scratchKeys_;
 		double						scratchValue_ = 0.0;
-
-		/// VesselControl moved stuff VVVV
-		//VesselControl vesselCtrl_;		// << to be removed
 
 		void SetProgramState(FCProgFlags pid, bool state)
 		{
@@ -331,7 +329,6 @@ namespace FC
 			if ((pid == FCProgFlags::HoldMACH) && (IsProgramRunning(pid)))	SetProgramState(FCProgFlags::HoldKEAS, false);
 		}
 
-
 		FCProgFlags					runningPrograms_{ FCProgFlags::None };
 		FCProgFlags					prevRunningProgs{ FCProgFlags::None };
 
@@ -352,13 +349,6 @@ namespace FC
 			{FCProgFlags::HoldMACH,        &prgHoldMach_ }
 		};
 
-
-
-
-
-
-
-
 		// Auto pilot panel
 		bco::TextureVisual		visAPMainOn_;
 		bco::PushButtonSwitch   swAPMain_{ bt_mesh::SR71rVC::SwAPMain_location, 0.01 };
@@ -374,7 +364,5 @@ namespace FC
 
 		bco::TextureVisual		visAPMACHOn_;
 		bco::PushButtonSwitch   swAPMACH_{ bt_mesh::SR71rVC::SwAPMACH_location, 0.01 };
-
-
     };
 }
