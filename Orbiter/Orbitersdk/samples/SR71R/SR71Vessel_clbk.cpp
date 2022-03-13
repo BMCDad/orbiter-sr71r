@@ -38,12 +38,12 @@ static TOUCHDOWNVTX tdvtx_geardown[ntdvtx_geardown] = {
 void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 {
 	// Load mesh files:
-	mainMeshHandle_ = oapiLoadMeshGlobal(SR71r_MESH_NAME);
+	mainMeshHandle_ = oapiLoadMeshGlobal(bt_mesh::SR71r::MESH_NAME);
 	mainMeshIndex_ = AddMesh(mainMeshHandle_);
 	SetMeshVisibilityMode(mainMeshIndex_, MESHVIS_EXTERNAL);
     SetMainMeshIndex(mainMeshIndex_);
 
-	vcMeshHandle_ = oapiLoadMeshGlobal(SR71rVC_MESH_NAME);
+	vcMeshHandle_ = oapiLoadMeshGlobal(bt_mesh::SR71rVC::MESH_NAME);
 	auto idx = AddMesh(vcMeshHandle_);
 	SetMeshVisibilityMode(idx, MESHVIS_VC);
 
