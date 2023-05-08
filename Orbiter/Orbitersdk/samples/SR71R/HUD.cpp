@@ -76,7 +76,6 @@ void HUD::SaveConfiguration(FILEHANDLE scn) const
 
 bool HUD::LoadVC(int id)
 {
-    areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
     oapiVCRegisterArea(areaId_, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
 
 	// Register HUD
@@ -97,6 +96,7 @@ void HUD::SetClassCaps()
 {
 	auto vessel = GetBaseVessel();
 	swSelectMode_.Setup(vessel);
+	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 

@@ -52,12 +52,12 @@ visAntiNormal_(	bt_mesh::SR71rVC::NAVMODE_NORMAL_MINUS_verts,	bt_mesh::SR71rVC::
 
 void NavModes::SetClassCaps()
 {
+	uiArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 bool NavModes::LoadVC(int id)
 {
 	// Redraw event
-	uiArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 	oapiVCRegisterArea(uiArea_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
 	return true;
 }

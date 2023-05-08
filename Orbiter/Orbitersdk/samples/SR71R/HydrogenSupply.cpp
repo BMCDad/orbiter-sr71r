@@ -35,6 +35,7 @@ HydrogenSupply::HydrogenSupply(bco::BaseVessel* vessel, double capacity) :
 void HydrogenSupply::SetClassCaps()
 {
     gaugeHydro_.Setup(GetBaseVessel());
+	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 void HydrogenSupply::Step(double simt, double simdt, double mjd)
@@ -77,7 +78,6 @@ bool HydrogenSupply::VCRedrawEvent(int id, int event, SURFHANDLE surf)
 bool HydrogenSupply::LoadVC(int id)
 {
 	// Redraw areas:
-	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 	oapiVCRegisterArea(areaId_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
 
 	return true;

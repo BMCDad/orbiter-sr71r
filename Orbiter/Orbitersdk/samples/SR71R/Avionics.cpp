@@ -105,13 +105,14 @@ void Avionics::SetClassCaps()
     gaMachMax_.Setup(vessel);
     gaSpeed_.Setup(vessel);
     gaKies_.Setup(vessel);
+
+    redrawId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 bool Avionics::LoadVC(int id)
 {
 	// We don't need the redraw event id because Redraw just does everything.
-	auto redrawId = GetBaseVessel()->RegisterVCRedrawEvent(this);
-	oapiVCRegisterArea(redrawId, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
+	oapiVCRegisterArea(redrawId_, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
 	return true;
 }
 

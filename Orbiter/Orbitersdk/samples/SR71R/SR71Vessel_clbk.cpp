@@ -37,17 +37,20 @@ static TOUCHDOWNVTX tdvtx_geardown[ntdvtx_geardown] = {
 */
 void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 {
-	// Load mesh files:
-	mainMeshHandle_ = oapiLoadMeshGlobal(SR71r_MESH_NAME);
-	mainMeshIndex_ = AddMesh(mainMeshHandle_);
+	// Load global mesh files.  These are the 'template' meshes Orbiter will use.
+	// You use these mesh handles to the AddMesh the meshes and set how they will be viewed.
+	// If you ever need this handle again, call oapiLoadMeshGlobal with the same name and it
+	// we be returned, the mesh will not be reloaded.
+	auto mainGlobalMesh = oapiLoadMeshGlobal(SR71r_MESH_NAME);
+	mainMeshIndex_ = AddMesh(mainGlobalMesh);
 	SetMeshVisibilityMode(mainMeshIndex_, MESHVIS_EXTERNAL);
-    SetMainMeshIndex(mainMeshIndex_);
+    SetMainMeshIndex(mainMeshIndex_);  // The index will be needed when adding animations to the mesh.
 
+	// In case of the VC mesh we hold on to the mesh handle as it will be needed to get the texture
+	// that will be modified for things like MFD font painting.
 	vcMeshHandle_ = oapiLoadMeshGlobal(SR71rVC_MESH_NAME);
 	auto idx = AddMesh(vcMeshHandle_);
 	SetMeshVisibilityMode(idx, MESHVIS_VC);
-
-	// Set base vcmesh handle so components can access it.
 	SetVCMeshIndex0(idx);
 	SetVCMeshHandle0(vcMeshHandle_);
 

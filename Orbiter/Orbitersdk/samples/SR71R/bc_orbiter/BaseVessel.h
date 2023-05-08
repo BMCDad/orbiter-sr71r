@@ -101,7 +101,6 @@ namespace bc_orbiter
 
 		virtual ~BaseVessel() {}
 
-		VISHANDLE       GetVisualHandle() const         { return visualHandle_; }
 		DEVMESHHANDLE   GetVirtualCockpitMesh0()        { return meshVirtualCockpit0_; }
         MESHHANDLE      GetVCMeshHandle0()              { return vcMeshHandle0_; }
         

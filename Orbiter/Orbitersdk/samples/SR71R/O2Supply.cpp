@@ -37,6 +37,7 @@ lightValveOpen_(		bt_mesh::SR71rVC::LOXValveOpenSwitch_verts,	bt_mesh::SR71rVC::
 void O2Supply::SetClassCaps()
 {
     gaugeOxygenLevel_.Setup(GetBaseVessel());
+	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 void O2Supply::Step(double simt, double simdt, double mjd)
@@ -81,7 +82,6 @@ bool O2Supply::VCRedrawEvent(int id, int event, SURFHANDLE surf)
 bool O2Supply::LoadVC(int id)
 {
 	// Redraw areas:
-	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 	oapiVCRegisterArea(areaId_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
 
 	return true;
