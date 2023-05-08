@@ -40,6 +40,7 @@ msgRetroDoors_(         bt_mesh::SR71rVC::MsgLightRetro_verts,       bt_mesh::SR
 
 void StatusBoard::SetClassCaps()
 {
+	vcRedrawArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 bool StatusBoard::VCRedrawEvent(int id, int event, SURFHANDLE surf)
@@ -71,7 +72,6 @@ void StatusBoard::Step(double simt, double simdt, double mjd)
 
 bool StatusBoard::LoadVC(int id)
 {
-	vcRedrawArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 	oapiVCRegisterArea(vcRedrawArea_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
 	return true;
 }

@@ -404,6 +404,8 @@ void PropulsionController::SetClassCaps()
 	vessel->AddExhaust(th_att_lin[1], 0.6, 0.078, bt_mesh::SR71r::RCS_R_FORWARD_location, _V(0, 0,  1));
 
 	swThrustLimit_.SetOff();
+	
+	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 bool PropulsionController::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -464,7 +466,6 @@ void PropulsionController::SetAttitudeRotLevel(Axis axis, double level)
 bool PropulsionController::LoadVC(int id)
 {
 	// Redraw
-	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 	oapiVCRegisterArea(areaId_, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
     return true;
 }

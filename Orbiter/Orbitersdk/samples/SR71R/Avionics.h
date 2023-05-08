@@ -129,6 +129,7 @@ private:
 	void DrawHSI(DEVMESHHANDLE devMesh);
 
     bool				    isOverspeed_;
+    int                     redrawId_{ 0 };
 
     const char*			    ConfigKey = "AVIONICS";
 

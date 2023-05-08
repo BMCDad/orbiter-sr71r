@@ -59,6 +59,8 @@ void PowerSystem::SetClassCaps()
     swConnectFuelCell_.Setup(vessel);
     gaugePowerVolt_.Setup(vessel);
 	gaugePowerAmp_.Setup(vessel);
+	
+	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 bool PowerSystem::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -109,7 +111,6 @@ void PowerSystem::PostCreation()
 bool PowerSystem::LoadVC(int id)
 {
 	// Redraw areas:
-	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 	oapiVCRegisterArea(areaId_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
 
 	return true;

@@ -35,6 +35,8 @@ void RCSSystem::SetClassCaps()
 {
 	auto vessel = GetBaseVessel();
 	swSelectMode_.Setup(vessel);
+    
+	uiArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 bool RCSSystem::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -70,7 +72,6 @@ double RCSSystem::CurrentDraw()
 bool RCSSystem::LoadVC(int id)
 {
     // Redraw event
-    uiArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
     oapiVCRegisterArea(uiArea_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
     return true;
 }

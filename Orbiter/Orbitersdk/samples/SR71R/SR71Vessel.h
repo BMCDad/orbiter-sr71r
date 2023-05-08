@@ -67,7 +67,6 @@ public:
 	PropulsionController*	GetPropulsionControl() { return &propulsionController_; }
 
 private:
-	MESHHANDLE				mainMeshHandle_;
 	UINT					mainMeshIndex_;
 
 	MESHHANDLE				vcMeshHandle_;
