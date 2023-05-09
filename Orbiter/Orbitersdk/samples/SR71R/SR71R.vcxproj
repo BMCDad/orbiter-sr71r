@@ -207,6 +207,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Art\SR71rBody.xcf" />
+    <None Include="Art\SR71R_100_2DPanel.xcf" />
     <None Include="Art\SR71R_100_Buttons.xcf" />
     <None Include="Art\SR71R_100_GuidanceComp.xcf" />
     <None Include="Art\SR71R_100_Horizon.xcf" />
