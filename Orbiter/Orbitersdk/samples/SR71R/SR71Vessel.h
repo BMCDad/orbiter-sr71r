@@ -57,6 +57,8 @@ public:
 	
 	bool					clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
+	bool					clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) override;
+
 	// Setup
 	void					SetupVesselComponents();
 	void					SetupAerodynamics();

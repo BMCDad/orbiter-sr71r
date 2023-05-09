@@ -54,7 +54,11 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	SetVCMeshIndex0(idx);
 	SetVCMeshHandle0(vcMeshHandle_);
 
-	// Setup ship metrics:
+	// Load 2D Panel:
+	auto panelMeshHandle = oapiLoadMeshGlobal(bt_mesh::SR71r2D::MESH_NAME);
+	SetPanelMeshHandle0(panelMeshHandle);
+	
+		// Setup ship metrics:
 	SetSize(SHIP_SIZE);
 	SetEmptyMass(EMPTY_MASS);
 	SetPMI(PMI);
@@ -223,4 +227,42 @@ void SR71Vessel::clbkPostCreation()
 	BaseVessel::clbkPostCreation();
 
     powerSystem_.PostCreation();
+}
+
+bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
+{
+	/*	Panel definition tasks (panel 0):
+	*	viewW is the width of the Orbiter window (view port).
+	*	viewH is the height of the Orbiter window (view port).  These values are used to scale the panel.
+	*
+		- SetPanelBackground
+		- MFD setup
+		- SetPanelScale
+		- Set neighbours: oapiSetPanelNeighbours (-1,-1,1,-1);
+		- SetCameraDefaultDirection (_V(0,0,1)); // forward
+		- oapiCameraSetCockpitDir (0,0);
+
+		Other panels referenced from oapiSetPanelNeighbours will come through this call those ids.
+	*/
+
+	/*
+	* Orbiter expects the mesh size to be
+	*/
+	SetPanelBackground(
+		hPanel,
+		0,
+		0,
+		GetpanelMeshHandle0(),					// Handle to the panel mesh.
+		bt_mesh::SR71r2D::MainPanel_Width,		// Panel mesh width (mesh units)
+		bt_mesh::SR71r2D::MainPanel_Height,		// Panel mesh height (mesh units)
+		bt_mesh::SR71r2D::MainPanel_Height / 5,	// Baseline (adjust to move panel)
+		PANEL_ATTACH_BOTTOM | PANEL_MOVEOUT_BOTTOM);
+
+	// Example: viewW = 3000 and panel width = 2000 (panel too small), defscale becomes (3000/2000) = 1.5 to fit the window.
+	//			viewW = 1000 and panel width = 2000 (panel too big), defscale becomes (1000/2000) = .5 shrink panel to fit.
+	double defscale = (double)viewW / bt_mesh::SR71r2D::MainPanel_Width;
+	double extscale = max(defscale, 1.0);
+	SetPanelScaling(hPanel, defscale, extscale);
+
+	return true;
 }

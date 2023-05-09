@@ -111,6 +111,9 @@ namespace bc_orbiter
         UINT            GetVCMeshIndex() const          { return vcIndex0_; }
         UINT            GetMainMeshIndex() const        { return mainIndex_; }
 
+		void			SetPanelMeshHandle0(MESHHANDLE mh) { panelMeshHandle0_ = mh; }
+		MESHHANDLE		GetpanelMeshHandle0()			{ return panelMeshHandle0_; }
+
 		void UpdateUIArea(int area) { TriggerRedrawArea(0, 0, area); }
 
 		bool IsStoppedOrDocked();
@@ -205,6 +208,7 @@ namespace bc_orbiter
 		VISHANDLE			visualHandle_;
 		DEVMESHHANDLE		meshVirtualCockpit0_;
 		MESHHANDLE			vcMeshHandle0_;
+		MESHHANDLE			panelMeshHandle0_{ nullptr };
 		UINT				vcIndex0_;
         UINT                mainIndex_;
 		VESSELSTATUS2		vesselStatus_;
