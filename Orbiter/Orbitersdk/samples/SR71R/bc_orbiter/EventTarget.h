@@ -24,13 +24,7 @@ namespace bc_orbiter
     class EventTarget
     {
     public:
-        EventTarget(VECTOR3 location, double radius) :
-            location_(location),
-            radius_(radius),
-            funcLeftMouseDown_([] {}),		// Default null functions.
-            funcRightMouseDown_([] {}),
-            funcLeftMousePressed_([] {}),
-            funcRightMousePressed_([] {})
+        EventTarget()
         {}
 
         bool HandleMouse(int event)
@@ -77,28 +71,79 @@ namespace bc_orbiter
         void DoRightMouseClick()    { funcRightMouseDown_(); }
 
         void SetEventId(int id) { eventId_ = id; }
+        int GetEventId() const { return eventId_; }
 
-        void RegisterMouseEvents()
+        virtual void RegisterMouseEvents() 
         {
             for (auto& e : mouseEvents_)
             {
-                oapiVCRegisterArea(eventId_, PANEL_REDRAW_NEVER, e);
-                oapiVCSetAreaClickmode_Spherical(eventId_, location_, radius_);
+                RegisterMouseEvent(e);
             }
         }
 
-    private:
-        int                 eventId_;
+    protected:
+        virtual void RegisterMouseEvent(int evt) {}
 
-        double              radius_;
-        VECTOR3             location_;
+    private:
+        int                 eventId_    { 0 };
 
         std::vector<int>    mouseEvents_;
 
-        SwitchStopFunc		funcLeftMouseDown_;
-        SwitchStopFunc		funcRightMouseDown_;
+        SwitchStopFunc		funcLeftMouseDown_      { [] {} };
+        SwitchStopFunc		funcRightMouseDown_     { [] {} };
 
-        SwitchStopFunc		funcLeftMousePressed_;
-        SwitchStopFunc		funcRightMousePressed_;
+        SwitchStopFunc		funcLeftMousePressed_   { [] {} };
+        SwitchStopFunc		funcRightMousePressed_  { [] {} };
+    };
+
+    class VCEventTarget : public EventTarget
+    {
+    public:
+        VCEventTarget(VECTOR3 location, double radius) :
+            location_(location),
+            radius_(radius)
+        {}
+
+        void RegisterMouseEvent(int evt) override
+        {
+            oapiVCRegisterArea(GetEventId(), PANEL_REDRAW_NEVER, evt);
+            oapiVCSetAreaClickmode_Spherical(GetEventId(), location_, radius_);
+        }
+
+    private:
+        double              radius_;
+        VECTOR3             location_;
+    };
+
+    class PanelEventTarget : public EventTarget
+    {
+    public:
+        PanelEventTarget(const RECT rc) :
+            rect_(rc)
+        {}
+
+        void OnLoad(int panelId, PANELHANDLE pHandle, VESSEL4* vessel)
+        {
+            panelId_ = panelId;
+            pHandle_ = pHandle;
+            vessel_ = vessel;
+        }
+
+        void RegisterMouseEvent(int evt) override
+        {
+            oapiRegisterPanelArea(GetEventId(), rect_, PANEL_REDRAW_NEVER, evt);
+            vessel_->RegisterPanelArea(
+                pHandle_,
+                GetEventId(),
+                rect_,
+                PANEL_REDRAW_MOUSE,
+                PANEL_MOUSE_LBDOWN);
+        }
+
+    private:
+        RECT    rect_;
+        int         panelId_;
+        VESSEL4*    vessel_;
+        PANELHANDLE pHandle_;
     };
 }

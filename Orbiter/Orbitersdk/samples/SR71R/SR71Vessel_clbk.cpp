@@ -264,5 +264,5 @@ bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD 
 	double extscale = max(defscale, 1.0);
 	SetPanelScaling(hPanel, defscale, extscale);
 
-	return true;
+	return BaseVessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
 }

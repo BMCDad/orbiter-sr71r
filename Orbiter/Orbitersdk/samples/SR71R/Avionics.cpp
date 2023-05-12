@@ -54,7 +54,7 @@ void Avionics::Step(double simt, double simdt, double mjd)
 {
 }
 
-void Avionics::SetClassCaps()
+void Avionics::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
 
@@ -109,14 +109,14 @@ void Avionics::SetClassCaps()
     redrawId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
-bool Avionics::LoadVC(int id)
+bool Avionics::OnLoadVC(int id)
 {
 	// We don't need the redraw event id because Redraw just does everything.
 	oapiVCRegisterArea(redrawId_, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
 	return true;
 }
 
-bool Avionics::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool Avionics::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 8) != 0)
 	{
@@ -144,7 +144,7 @@ bool Avionics::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLi
 	return true;
 }
 
-void Avionics::SaveConfiguration(FILEHANDLE scn) const
+void Avionics::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
@@ -155,7 +155,7 @@ void Avionics::SaveConfiguration(FILEHANDLE scn) const
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
 }
 
-bool Avionics::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool Avionics::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
 	assert(nullptr != devMesh);

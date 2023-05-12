@@ -31,15 +31,15 @@ PoweredComponent(vessel, amps, 20.0)
 }
 
 
-void RCSSystem::SetClassCaps()
+void RCSSystem::OnSetClassCaps()
 {
 	auto vessel = GetBaseVessel();
 	swSelectMode_.Setup(vessel);
     
-	uiArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
+	vcUIArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
-bool RCSSystem::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool RCSSystem::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 9) != 0)
 	{
@@ -54,7 +54,7 @@ bool RCSSystem::LoadConfiguration(char* key, FILEHANDLE scn, const char* configL
 	return true;
 }
 
-void RCSSystem::SaveConfiguration(FILEHANDLE scn) const
+void RCSSystem::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto mode = swSelectMode_.GetStep();
@@ -69,10 +69,10 @@ double RCSSystem::CurrentDraw()
     return (GetBaseVessel()->GetAttitudeMode() == RCS_NONE) ? 0.0 : PoweredComponent::CurrentDraw();
 }
 
-bool RCSSystem::LoadVC(int id)
+bool RCSSystem::OnLoadVC(int id)
 {
     // Redraw event
-    oapiVCRegisterArea(uiArea_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
+    oapiVCRegisterArea(vcUIArea_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
     return true;
 }
 

@@ -67,11 +67,11 @@ class PowerSystem :	public bco::PoweredComponent,
 public:
 	PowerSystem(bco::BaseVessel* vessel);
 
-	virtual void SetClassCaps() override;
-	virtual bool LoadVC(int id) override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+	virtual void OnSetClassCaps() override;
+	virtual bool OnLoadVC(int id) override;
+	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
 	void Step(double simt, double simdt, double mjd);
 

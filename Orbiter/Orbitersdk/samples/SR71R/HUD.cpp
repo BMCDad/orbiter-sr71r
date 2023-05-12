@@ -49,7 +49,7 @@ void HUD::ChangePowerLevel(double newLevel)
 	}
 }
 
-bool HUD::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool HUD::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 9) != 0)
 	{
@@ -64,7 +64,7 @@ bool HUD::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 	return true;
 }
 
-void HUD::SaveConfiguration(FILEHANDLE scn) const
+void HUD::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto mode = swSelectMode_.GetStep();
@@ -74,7 +74,7 @@ void HUD::SaveConfiguration(FILEHANDLE scn) const
 }
 
 
-bool HUD::LoadVC(int id)
+bool HUD::OnLoadVC(int id)
 {
     oapiVCRegisterArea(areaId_, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
 
@@ -92,7 +92,7 @@ bool HUD::LoadVC(int id)
     return true;
 }
 
-void HUD::SetClassCaps()
+void HUD::OnSetClassCaps()
 {
 	auto vessel = GetBaseVessel();
 	swSelectMode_.Setup(vessel);

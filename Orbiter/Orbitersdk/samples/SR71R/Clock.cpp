@@ -35,7 +35,7 @@ Clock::Clock(bco::BaseVessel * vessel) :
     vessel->RegisterVCEventTarget(&switchStopWatch_);
 }
 
-void Clock::SetClassCaps()
+void Clock::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     
@@ -102,12 +102,12 @@ void Clock::Step(double simt, double simdt, double mjd)
     gaMinuteHand_.SetState(minHandT);
 }
 
-bool Clock::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool Clock::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	return false;
 }
 
-bool Clock::LoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
+bool Clock::OnLoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
 {
 	if (_strnicmp(key, ConfigKey, 5) != 0)
 	{
@@ -137,7 +137,7 @@ bool Clock::LoadConfiguration(char * key, FILEHANDLE scn, const char * configLin
 	return true;
 }
 
-void Clock::SaveConfiguration(FILEHANDLE scn) const
+void Clock::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto current = oapiGetSimTime();

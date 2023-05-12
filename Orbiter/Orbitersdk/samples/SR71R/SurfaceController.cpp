@@ -58,7 +58,7 @@ void SurfaceController::Step(double simt, double simdt, double mjd)
 	}
 }
 
-void SurfaceController::SetClassCaps()
+void SurfaceController::OnSetClassCaps()
 {
 	auto vessel = GetBaseVessel();
 

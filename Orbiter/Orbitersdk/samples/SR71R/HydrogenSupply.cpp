@@ -32,7 +32,7 @@ HydrogenSupply::HydrogenSupply(bco::BaseVessel* vessel, double capacity) :
     vessel->RegisterVCEventTarget(&switchValveOpen_);
 }
 
-void HydrogenSupply::SetClassCaps()
+void HydrogenSupply::OnSetClassCaps()
 {
     gaugeHydro_.Setup(GetBaseVessel());
 	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
@@ -55,7 +55,7 @@ void HydrogenSupply::Step(double simt, double simdt, double mjd)
 	}
 }
 
-bool HydrogenSupply::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool HydrogenSupply::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
 	assert(devMesh != nullptr);
@@ -75,7 +75,7 @@ bool HydrogenSupply::VCRedrawEvent(int id, int event, SURFHANDLE surf)
 	return true;
 }
 
-bool HydrogenSupply::LoadVC(int id)
+bool HydrogenSupply::OnLoadVC(int id)
 {
 	// Redraw areas:
 	oapiVCRegisterArea(areaId_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);

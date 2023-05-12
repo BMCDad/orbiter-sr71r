@@ -46,7 +46,7 @@ double RetroEngines::CurrentDraw()
         : 0.0;
 }
 
-void RetroEngines::SetClassCaps()
+void RetroEngines::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     auto main = vessel->GetMainMeshIndex();
@@ -90,7 +90,7 @@ void RetroEngines::SetClassCaps()
     vessel->AddExhaustStream(retroThrustHandles_[1], _V(4.38, 0, 3), &exhaust_retro);
 }
 
-bool RetroEngines::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool RetroEngines::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
     if (_strnicmp(key, ConfigKey, 5) != 0)
     {
@@ -110,7 +110,7 @@ bool RetroEngines::LoadConfiguration(char* key, FILEHANDLE scn, const char* conf
     return true;
 }
 
-void RetroEngines::SaveConfiguration(FILEHANDLE scn) const
+void RetroEngines::OnSaveConfiguration(FILEHANDLE scn) const
 {
     char cbuf[256];
     auto val = (swRetroDoors_.GetState() == 0.0) ? 0 : 1;

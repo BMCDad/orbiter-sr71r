@@ -45,7 +45,7 @@ double HoverEngines::CurrentDraw()
         : 0.0;
 }
 
-void HoverEngines::SetClassCaps()
+void HoverEngines::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     auto vcIdx = vessel->GetVCMeshIndex();
@@ -103,7 +103,7 @@ void HoverEngines::SetClassCaps()
     vessel->AddVesselAnimationComponent(aid, mIdx, &gpRight_);
 }
 
-bool HoverEngines::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool HoverEngines::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
     if (_strnicmp(key, ConfigKey, 5) != 0)
     {
@@ -124,7 +124,7 @@ bool HoverEngines::LoadConfiguration(char* key, FILEHANDLE scn, const char* conf
     return true;
 }
 
-void HoverEngines::SaveConfiguration(FILEHANDLE scn) const
+void HoverEngines::OnSaveConfiguration(FILEHANDLE scn) const
 {
     char cbuf[256];
     auto val = (swOpen_.GetState() == 0.0) ? 0 : 1;

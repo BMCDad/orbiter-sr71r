@@ -55,7 +55,7 @@ class SurfaceController : public bco::Component
 public:
 	SurfaceController(bco::BaseVessel* vessel);
 	
-	virtual void SetClassCaps() override;
+	virtual void OnSetClassCaps() override;
 
 	// Temporal
 	void Step(double simt, double simdt, double mjd);

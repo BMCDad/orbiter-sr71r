@@ -38,12 +38,12 @@ msgRetroDoors_(         bt_mesh::SR71rVC::MsgLightRetro_verts,       bt_mesh::SR
 {
 }
 
-void StatusBoard::SetClassCaps()
+void StatusBoard::OnSetClassCaps()
 {
 	vcRedrawArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
-bool StatusBoard::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool StatusBoard::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
 	assert(devMesh != nullptr);
@@ -70,7 +70,7 @@ void StatusBoard::Step(double simt, double simdt, double mjd)
 	GetBaseVessel()->UpdateUIArea(vcRedrawArea_);
 }
 
-bool StatusBoard::LoadVC(int id)
+bool StatusBoard::OnLoadVC(int id)
 {
 	oapiVCRegisterArea(vcRedrawArea_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
 	return true;

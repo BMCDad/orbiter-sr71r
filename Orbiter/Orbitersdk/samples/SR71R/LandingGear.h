@@ -44,10 +44,10 @@ class LandingGear : public bco::Component
 public:
 	LandingGear(bco::BaseVessel* vessel);
 
-	virtual void SetClassCaps() override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+	virtual void OnSetClassCaps() override;
+	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
+	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
 	void Step(double simt, double simdt, double mjd);
 
@@ -60,8 +60,8 @@ public:
 
 private:
 	bco::OnOffSwitch		landingGearSwitch_;
-    bco::EventTarget        targetGearDown_     { bt_mesh::SR71rVC::GearLeverDownTarget_location,    0.01 };
-    bco::EventTarget        targetGearUp_       { bt_mesh::SR71rVC::GearLeverUpTarget_location,      0.01 };
+    bco::VCEventTarget      targetGearDown_     { bt_mesh::SR71rVC::GearLeverDownTarget_location,    0.01 };
+    bco::VCEventTarget      targetGearUp_       { bt_mesh::SR71rVC::GearLeverUpTarget_location,      0.01 };
 
 	APU*					apu_;
 

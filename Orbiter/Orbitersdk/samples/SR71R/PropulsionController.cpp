@@ -289,7 +289,7 @@ double PropulsionController::FillRCSFuel(double amount)
 	return result;
 }
 
-void PropulsionController::SetClassCaps()
+void PropulsionController::OnSetClassCaps()
 {
 	auto vessel = GetBaseVessel();
 
@@ -408,7 +408,7 @@ void PropulsionController::SetClassCaps()
 	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
-bool PropulsionController::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool PropulsionController::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 10) != 0)
 	{
@@ -438,7 +438,7 @@ bool PropulsionController::LoadConfiguration(char* key, FILEHANDLE scn, const ch
     return true;
 }
 
-void PropulsionController::SaveConfiguration(FILEHANDLE scn) const
+void PropulsionController::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto val = (swThrustLimit_.GetState() == 0.0) ? 0 : 1;
@@ -463,14 +463,14 @@ void PropulsionController::SetAttitudeRotLevel(Axis axis, double level)
 }
 
 
-bool PropulsionController::LoadVC(int id)
+bool PropulsionController::OnLoadVC(int id)
 {
 	// Redraw
 	oapiVCRegisterArea(areaId_, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
     return true;
 }
 
-bool PropulsionController::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool PropulsionController::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
 	assert(devMesh != nullptr);

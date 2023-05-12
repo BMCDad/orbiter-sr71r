@@ -34,11 +34,11 @@ namespace bc_orbiter
 	0.0 and 1.0.  This can be used to indicate the position an animation should take.  Finally each
 	stop has a function.  When the switch moves into a step position the function fires.
 	*/
-	class RotarySwitch : public EventTarget, public IAnimationState
+	class RotarySwitch : public VCEventTarget, public IAnimationState
 	{
 	public:
 		RotarySwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0) :
-            EventTarget(target, radius),
+            VCEventTarget(target, radius),
 			currentIndex_(0),
 			currentPosition_(0.0)
 		{

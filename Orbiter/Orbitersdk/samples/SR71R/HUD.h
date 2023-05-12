@@ -43,19 +43,19 @@ class HUD : public bco::PoweredComponent
 public:
 	HUD(bco::BaseVessel* vessel, double amps);
 
-	virtual void SetClassCaps() override;
+	virtual void OnSetClassCaps() override;
 
 	/**
 	Override to manage power based on vessel HUD state.
 	*/
 	virtual double CurrentDraw() override;
 
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
 	void ChangePowerLevel(double newLevel) override;
 
-	virtual bool LoadVC(int id) override;
+	virtual bool OnLoadVC(int id) override;
 
 	bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 

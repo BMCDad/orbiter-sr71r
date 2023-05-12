@@ -27,16 +27,16 @@ bco::MFDBase(vessel, MFD_LEFT, amps)
 {
 }
 
-void LeftMFD::SetClassCaps()
+void LeftMFD::OnSetClassCaps()
 {
 }
 
-bool LeftMFD::MouseEvent(int id, int event)
+bool LeftMFD::OnVCMouseEvent(int id, int event)
 {
 	return OnMouseEvent(id, event);
 }
 
-bool LeftMFD::LoadVC(int id)
+bool LeftMFD::OnLoadVC(int id)
 {
 	auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
 	assert(vcMeshHandle != nullptr);
@@ -221,7 +221,7 @@ bool LeftMFD::LoadVC(int id)
 	return true;
 }
 
-bool LeftMFD::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool LeftMFD::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	bco::DrawBlankText(10, 13, surf, vcFont_);
 

@@ -64,7 +64,7 @@ void AirBrake::Step(double simt, double simdt, double mjd)
 //	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
 }
 
-bool AirBrake::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool AirBrake::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 4) != 0)
 	{
@@ -81,7 +81,7 @@ bool AirBrake::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLi
 	return true;
 }
 
-void AirBrake::SaveConfiguration(FILEHANDLE scn) const
+void AirBrake::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto val = airBrakeSwitch_.GetStep();
@@ -90,7 +90,7 @@ void AirBrake::SaveConfiguration(FILEHANDLE scn) const
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
 }
 
-void AirBrake::SetClassCaps()
+void AirBrake::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     auto vcIdx = vessel->GetVCMeshIndex();

@@ -50,9 +50,9 @@ class HydrogenSupply :
 public:
 	HydrogenSupply(bco::BaseVessel* vessel, double capacity);
 
-	virtual void SetClassCaps() override;
-	virtual bool LoadVC(int id) override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+	virtual void OnSetClassCaps() override;
+	virtual bool OnLoadVC(int id) override;
+	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
 
 	void Step(double simt, double simdt, double mjd);
 

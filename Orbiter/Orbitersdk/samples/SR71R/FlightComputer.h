@@ -151,12 +151,12 @@ namespace FC
 		bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
 		// Component overrides:
-        void SetClassCaps() override;
-		bool MouseEvent(int id, int event) override;
-		bool LoadVC(int id) override;
-		bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-		bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-		void SaveConfiguration(FILEHANDLE scn) const override;
+        void OnSetClassCaps() override;
+		bool OnVCMouseEvent(int id, int event) override;
+		bool OnLoadVC(int id) override;
+		bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+		bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+		void OnSaveConfiguration(FILEHANDLE scn) const override;
 
 
 		// PoweredComponent overrides:

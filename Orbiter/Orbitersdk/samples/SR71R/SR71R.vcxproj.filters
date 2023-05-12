@@ -219,6 +219,15 @@
     <ClInclude Include="bc_orbiter\Visual.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
+    <ClInclude Include="bc_orbiter\PanelElement.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\PanelButton.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\PanelTextureVisual.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">
@@ -427,6 +436,7 @@
     <None Include="$(OrbiterDir)\Meshes\SR71rVC.msh">
       <Filter>Meshes</Filter>
     </None>
+    <None Include="Art\SR71R_100_2DPanel.xcf" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SR71R.rc">

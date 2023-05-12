@@ -1,5 +1,5 @@
-//	TextureVisual - bco Orbiter Library
-//	Copyright(C) 2015  Blake Christensen
+//	PanelTextureVisual - bco Orbiter Library
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -21,41 +21,33 @@
 
 namespace bc_orbiter
 {
-	/**	TextureVisual
+	/**	PanelTextureVisual
 	Base class for a visual element that changes by altering the texture UV coordinates.
 	*/
-	class TextureVisual : public Visual
+	class PanelTextureVisual : public Visual
 	{
 		int numVerts_;
 	public:
-		TextureVisual(const NTVERTEX* verts, UINT group, int numVerts = 4) : Visual(verts, group), numVerts_(numVerts)
+		PanelTextureVisual(const NTVERTEX* verts, UINT group, int numVerts = 4) 
+			: Visual(verts, group), numVerts_(numVerts)
 		{ }
 
 		/**	Draw
 		Called to update the visual.  Implementing class needs to define how the visual
 		will be manipulated.
 		*/
-		void Draw(DEVMESHHANDLE devMesh)
+		virtual void Draw(MESHHANDLE devMesh)
 		{
-			if (NULL == devMesh)
-			{
-				return;
-			}
+			VECTOR3 trans;
 
-			auto translate = GetTranslate();
-			auto angle = GetAngle();
+			auto grp = oapiMeshGroup(devMesh, GetGroup());
+			auto vrt = GetVerts();
 
-			GROUPEDITSPEC change;
-			NTVERTEX* delta = new NTVERTEX[numVerts_];
-
-			TransformUV2d(GetVerts(), delta, numVerts_, translate, angle);
-
-			change.flags = GRPEDIT_VTXTEX;
-			change.nVtx = numVerts_;
-			change.vIdx = NULL; //Just use the mesh order
-			change.Vtx = delta;
-			oapiEditMeshGroup(devMesh, GetGroup(), &change);
-			delete[] delta;
+			trans = GetTranslate();
+			grp->Vtx[0].tu = vrt[0].tu + trans.x;
+			grp->Vtx[1].tu = vrt[1].tu + trans.x;
+			grp->Vtx[2].tu = vrt[2].tu + trans.x;
+			grp->Vtx[3].tu = vrt[3].tu + trans.x;
 		}
 	};
 }

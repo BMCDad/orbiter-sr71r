@@ -33,8 +33,8 @@ class CryogenicTank : public bco::PoweredComponent,
 public:
 	CryogenicTank(bco::BaseVessel* vessel, double capacity, double lossPerHour, char* configKey);
     
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
 	virtual void Step(double simt, double simdt, double mjd);
 

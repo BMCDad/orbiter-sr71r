@@ -32,10 +32,10 @@ public:
 	Clock(bco::BaseVessel* vessel);
 
 	// Component
-	void SetClassCaps() override;
-	bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-	bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	void SaveConfiguration(FILEHANDLE scn) const override;
+	void OnSetClassCaps() override;
+	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+	bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+	void OnSaveConfiguration(FILEHANDLE scn) const override;
 
 
 	void Step(double simt, double simdt, double mjd);

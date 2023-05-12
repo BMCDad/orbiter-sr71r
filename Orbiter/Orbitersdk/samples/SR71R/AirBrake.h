@@ -44,10 +44,10 @@ public:
 	AirBrake(bco::BaseVessel* vessel);
 
     // *** Component ***
-	virtual void SetClassCaps() override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+	virtual void OnSetClassCaps() override;
+	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
+	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
     void Step(double simt, double simdt, double mjd);
 
@@ -58,8 +58,8 @@ public:
 
 private:
 	bco::RotarySwitch		airBrakeSwitch_;
-    bco::EventTarget        eventIncreaseBrake_ { bt_mesh::SR71rVC::ABTargetIncrease_location, 0.01 };
-    bco::EventTarget        eventDecreaseBrake_ { bt_mesh::SR71rVC::ABTargetDecrease_location, 0.01 };
+    bco::VCEventTarget      eventIncreaseBrake_ { bt_mesh::SR71rVC::ABTargetIncrease_location, 0.01 };
+    bco::VCEventTarget      eventDecreaseBrake_ { bt_mesh::SR71rVC::ABTargetDecrease_location, 0.01 };
 
 	APU*					apu_;
 

@@ -25,13 +25,13 @@ namespace bc_orbiter
 	/**	PushButtonSwitch
 		A simple push button switch with a single action and no state.
 	*/
-	class PushButtonSwitch : public EventTarget
+	class PushButtonSwitch : public VCEventTarget
 	{
 	public:
-		PushButtonSwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0) :
-            EventTarget(target, radius)
+		PushButtonSwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0, SwitchStopFunc func = { [] {} }) :
+            VCEventTarget(target, radius),
+			funcPressed_(func)
 		{
-			funcPressed_ = [] {};
             SetLeftMouseDownFunc([this] { Push(); });
 		}
 
@@ -41,5 +41,21 @@ namespace bc_orbiter
 
 	public:
 		SwitchStopFunc	funcPressed_;
+	};
+
+	class PanelPushButtonSwitch : public PanelEventTarget
+	{
+	public:
+		PanelPushButtonSwitch(const RECT rc, SwitchStopFunc func = { [] {} }) :
+			PanelEventTarget(rc),
+			funcPressed_(func)
+		{
+			SetLeftMouseDownFunc([this] { Push();  });
+		}
+
+		void Push() { if (nullptr != funcPressed_) funcPressed_(); }
+
+	private:
+		SwitchStopFunc funcPressed_{ nullptr };
 	};
 }

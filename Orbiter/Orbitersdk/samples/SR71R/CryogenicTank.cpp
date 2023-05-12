@@ -75,7 +75,7 @@ void CryogenicTank::ToggleFilling()
 }
 
 // Configuration
-bool CryogenicTank::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool CryogenicTank::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, configKey_.c_str(), configKey_.size()) != 0)
 	{
@@ -99,7 +99,7 @@ bool CryogenicTank::LoadConfiguration(char* key, FILEHANDLE scn, const char* con
 Called to save the class state to a configuration file.
 @param scn File handle to the scenario file.
 */
-void CryogenicTank::SaveConfiguration(FILEHANDLE scn) const
+void CryogenicTank::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 

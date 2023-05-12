@@ -42,7 +42,7 @@ Lights::Lights(bco::BaseVessel* vessel, double amps) :
 	Update();
 }
 
-void Lights::SetClassCaps()
+void Lights::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
 
@@ -156,7 +156,7 @@ void Lights::Step(double simt, double simdt, double mjd)
 	Update();
 }
 
-bool Lights::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool Lights::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 5) != 0)
 	{
@@ -178,7 +178,7 @@ bool Lights::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine
 	return true;
 }
 
-void Lights::SaveConfiguration(FILEHANDLE scn) const
+void Lights::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto a = (swNav_.GetState() == 0.0) ? 0 : 1;

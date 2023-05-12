@@ -57,12 +57,12 @@ double FuelCell::CurrentDraw()
 	return (HasPower() && swPower_.IsOn()) ? PoweredComponent::CurrentDraw() : 0.0;
 }
 
-void FuelCell::SetClassCaps()
+void FuelCell::OnSetClassCaps()
 {
     swPower_.Setup(GetBaseVessel());
 }
 
-bool FuelCell::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool FuelCell::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 8) != 0)
 	{
@@ -78,7 +78,7 @@ bool FuelCell::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLi
 	return true;
 }
 
-void FuelCell::SaveConfiguration(FILEHANDLE scn) const
+void FuelCell::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto val = (swPower_.GetState() == 0.0) ? 0 : 1;

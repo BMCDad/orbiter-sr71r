@@ -49,7 +49,7 @@ void LandingGear::Step(double simt, double simdt, double mjd)
 	}
 }
 
-bool LandingGear::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool LandingGear::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 4) != 0)
 	{
@@ -69,7 +69,7 @@ bool LandingGear::LoadConfiguration(char* key, FILEHANDLE scn, const char* confi
 	return true;
 }
 
-void LandingGear::SaveConfiguration(FILEHANDLE scn) const
+void LandingGear::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto val = (landingGearSwitch_.GetState() == 0.0) ? 0 : 1;
@@ -78,7 +78,7 @@ void LandingGear::SaveConfiguration(FILEHANDLE scn) const
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
 }
 
-void LandingGear::SetClassCaps()
+void LandingGear::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     auto vcMeshIdx = vessel->GetVCMeshIndex();

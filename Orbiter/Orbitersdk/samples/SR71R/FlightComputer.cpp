@@ -71,7 +71,7 @@ FC::FlightComputer::FlightComputer(bco::BaseVessel * vessel, double amps) :
 }
 
 
-void FC::FlightComputer::SetClassCaps()
+void FC::FlightComputer::OnSetClassCaps()
 {
 }
 
@@ -263,7 +263,7 @@ void FC::FlightComputer::SetScratchPad(double value)
 }
 
 
-bool FC::FlightComputer::MouseEvent(int id, int event)
+bool FC::FlightComputer::OnVCMouseEvent(int id, int event)
 {
 	auto keypressed = mapKey_.find(id);
     if (keypressed != mapKey_.end())
@@ -275,7 +275,7 @@ bool FC::FlightComputer::MouseEvent(int id, int event)
 }
 
 
-bool FC::FlightComputer::LoadVC(int id)
+bool FC::FlightComputer::OnLoadVC(int id)
 {
     auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
     assert(vcMeshHandle != nullptr);
@@ -317,7 +317,7 @@ bool FC::FlightComputer::LoadVC(int id)
 }
 
 
-bool FC::FlightComputer::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool FC::FlightComputer::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
 	assert(devMesh != nullptr);
@@ -354,7 +354,7 @@ bool FC::FlightComputer::VCRedrawEvent(int id, int event, SURFHANDLE surf)
 }
 
 
-bool FC::FlightComputer::LoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
+bool FC::FlightComputer::OnLoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
 {
 	if (_strnicmp(key, apConfigKey_.c_str(), apConfigKey_.length()) == 0)
 	{
@@ -389,7 +389,7 @@ bool FC::FlightComputer::LoadAPConfiguration(FILEHANDLE scn, const char* configL
 }
 
 
-void FC::FlightComputer::SaveConfiguration(FILEHANDLE scn) const
+void FC::FlightComputer::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	SaveAPConfiguration(scn);
 }

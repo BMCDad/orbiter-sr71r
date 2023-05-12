@@ -54,7 +54,7 @@ void CargoBayController::Step(double simt, double simdt, double mjd)
 	}
 }
 
-bool CargoBayController::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool CargoBayController::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
     if (_strnicmp(key, ConfigKeyCargo, 8) != 0) return false;
 
@@ -74,7 +74,7 @@ bool CargoBayController::LoadConfiguration(char* key, FILEHANDLE scn, const char
 	return true;
 }
 
-void CargoBayController::SaveConfiguration(FILEHANDLE scn) const
+void CargoBayController::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 
@@ -86,7 +86,7 @@ void CargoBayController::SaveConfiguration(FILEHANDLE scn) const
 	oapiWriteScenario_string(scn, (char*)ConfigKeyCargo, cbuf);
 }
 
-void CargoBayController::SetClassCaps()
+void CargoBayController::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     auto mIdx = vessel->GetMainMeshIndex();

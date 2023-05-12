@@ -35,17 +35,17 @@ Shutters::Shutters(bco::BaseVessel * vessel) :
 	swShutters_.SetOff();
 }
 
-void Shutters::SetClassCaps()
+void Shutters::OnSetClassCaps()
 {
     swShutters_.Setup(GetBaseVessel());
 }
 
-bool Shutters::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool Shutters::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	return false;
 }
 
-bool Shutters::LoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
+bool Shutters::OnLoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
 {
 	if (_strnicmp(key, ConfigKey, 8) != 0)
 	{
@@ -61,7 +61,7 @@ bool Shutters::LoadConfiguration(char * key, FILEHANDLE scn, const char * config
 	return true;
 }
 
-void Shutters::SaveConfiguration(FILEHANDLE scn) const
+void Shutters::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 

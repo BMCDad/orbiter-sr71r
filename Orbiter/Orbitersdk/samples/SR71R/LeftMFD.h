@@ -30,11 +30,11 @@ class LeftMFD : public bco::MFDBase
 public:
 	LeftMFD(bco::BaseVessel* vessel, double amps);
 
-	virtual void SetClassCaps() override;
+	virtual void OnSetClassCaps() override;
 
-	virtual bool MouseEvent(int id, int event) override;
-	virtual bool LoadVC(int id) override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+	virtual bool OnVCMouseEvent(int id, int event) override;
+	virtual bool OnLoadVC(int id) override;
+	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
 
 private:
 	bco::FontInfo	vcFont_;

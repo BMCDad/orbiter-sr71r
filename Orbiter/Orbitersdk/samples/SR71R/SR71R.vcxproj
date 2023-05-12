@@ -121,6 +121,9 @@
     <ClInclude Include="bc_orbiter\MeshVisual.h" />
     <ClInclude Include="bc_orbiter\MFDBase.h" />
     <ClInclude Include="bc_orbiter\OnOffSwitch.h" />
+    <ClInclude Include="bc_orbiter\PanelButton.h" />
+    <ClInclude Include="bc_orbiter\PanelElement.h" />
+    <ClInclude Include="bc_orbiter\PanelTextureVisual.h" />
     <ClInclude Include="bc_orbiter\PoweredComponent.h" />
     <ClInclude Include="bc_orbiter\PushButtonSwitch.h" />
     <ClInclude Include="bc_orbiter\RotarySwitch.h" />

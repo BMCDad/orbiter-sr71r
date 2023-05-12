@@ -31,11 +31,11 @@ namespace bc_orbiter
         use the OnOffSwitch instance itself as a true of false
         state holder.
 	*/
-	class OnOffSwitch : public EventTarget, public IAnimationState
+	class OnOffSwitch : public VCEventTarget, public IAnimationState
 	{
 	public:
 		OnOffSwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0) :
-            EventTarget(target, radius),
+            VCEventTarget(target, radius),
             funcOn_([] {}),
             funcOff_([] {}),
 			state_(0.0)
@@ -61,4 +61,36 @@ namespace bc_orbiter
         SwitchStopFunc funcOn_;
         SwitchStopFunc funcOff_;
 	};
+
+	class VCOnOffSwitch : public VCEventTarget, public IAnimationState
+	{
+	public:
+		VCOnOffSwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0) :
+			VCEventTarget(target, radius),
+			funcOn_([] {}),
+			funcOff_([] {}),
+			state_(0.0)
+		{
+			SetLeftMouseDownFunc([this] { Toggle(); });
+		}
+
+		void SetOn() { state_ = 1.0; if (nullptr != funcOn_) { funcOn_(); } }
+		void SetOff() { state_ = 0.0; if (nullptr != funcOff_) { funcOff_(); } }
+		void Toggle() { (state_ == 0.0) ? SetOn() : SetOff(); }
+
+		bool IsOn() const { return (state_ != 0.0); }
+
+		void OnFunction(SwitchStopFunc func) { funcOn_ = func; }
+		void OffFunction(SwitchStopFunc func) { funcOff_ = func; }
+
+		void SetState(double state) { (state == 0.0) ? SetOff() : SetOn(); }
+
+		virtual double GetState() const override { return state_; }
+	private:
+		double			state_;
+
+		SwitchStopFunc funcOn_;
+		SwitchStopFunc funcOff_;
+	};
+
 }

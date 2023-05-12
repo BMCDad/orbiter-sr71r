@@ -21,11 +21,11 @@
 
 namespace bc_orbiter
 {
-	class DialSwitch : public EventTarget
+	class DialSwitch : public VCEventTarget
 	{
 	public:
 		DialSwitch(VECTOR3 target = _V(0.0, 0.0, 0.0), double radius = 0.0) :
-            EventTarget(target, radius)
+            VCEventTarget(target, radius)
         {
             SetLeftMousePressedFunc([this] {DialLeft(); });
             SetRightMousePressedFunc([this] {DialRight(); });

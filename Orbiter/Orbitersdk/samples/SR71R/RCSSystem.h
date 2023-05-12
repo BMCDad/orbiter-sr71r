@@ -41,14 +41,14 @@ class RCSSystem : public bco::PoweredComponent
 public:
 	RCSSystem(bco::BaseVessel* vessel, double amps);
 
-	virtual void SetClassCaps() override;
+	virtual void OnSetClassCaps() override;
 
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
 	virtual void ChangePowerLevel(double newLevel) override;
 
-	virtual bool LoadVC(int id) override;
+	virtual bool OnLoadVC(int id) override;
 
 	virtual double CurrentDraw() override;
 	
@@ -59,7 +59,7 @@ private:
     void SwitchPositionChanged(int mode);
 
 	const char*				ConfigKey = "RCSSWITCH";
-    int						uiArea_;
+    int						vcUIArea_;
 
 	bool					isInternalTrigger_{ false };
 

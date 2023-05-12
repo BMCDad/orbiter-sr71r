@@ -21,6 +21,7 @@
 #include "EventTarget.h"
 #include "Animation.h"
 #include "IAnimationState.h"
+#include "PanelElement.h"
 
 #include <vector>
 #include <map>
@@ -42,9 +43,9 @@ namespace bc_orbiter
 	enum VCIdMode
 	{
 		None		= 0x000,	// All off
-		MouseEvent	= 0x001,	// Mouse Event
+		OnVCMouseEvent	= 0x001,	// Mouse Event
 		RedrawEvent	= 0x002,	// Redraw Event
-		All			= MouseEvent | RedrawEvent
+		All			= OnVCMouseEvent | RedrawEvent
 	};
 
 	/**
@@ -75,29 +76,52 @@ namespace bc_orbiter
         to the caller.  When orbiter sees this id it will call the passed component to
         handle it.
         */
-        virtual int RegisterVCMouseEvent(Component* comp) { return RegisterVCEvent(comp, VCIdMode::MouseEvent); }
+        virtual int RegisterVCMouseEvent(Component* comp) { return RegisterVCEvent(comp, VCIdMode::OnVCMouseEvent); }
 
         virtual void RegisterVCEventTarget(EventTarget* target) 
         {
-            auto id = nextVCEventId_;
-            nextVCEventId_++;
+            auto id = ++nextEventId_;
 
             vcEventTargetMap_[id] = target;
             target->SetEventId(id);
         }
     
+		virtual void RegisterPanelEventTarget(PanelEventTarget* target)
+		{
+			auto id = ++nextEventId_;
+
+			pnlEventTargetMap_[id] = target;
+			target->SetEventId(id);
+		}
+
+		virtual void RegisterPanelRedrawTarget(PanelElement* el) 
+		{
+			auto id = ++nextEventId_; 
+			panelRedrawTarget_[id] = el;
+			el->SetTargetId(id);
+		}
+
+		virtual int BaseVessel::RegisterPanelRedrawEvent(Component* comp)
+		{
+			auto id = ++nextEventId_;
+			panelRedrawMap_[id] = comp;
+			return id;
+		}
 
 		// clbk overrides:
+		virtual bool clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) override;
 		virtual void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
 		virtual bool clbkLoadVC(int id) override;
+		virtual bool clbkPanelMouseEvent(int id, int event, int mx, int my) override;
+		virtual bool clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context) override;
+		virtual void clbkPostCreation() override;
+        virtual void clbkPostStep(double simt, double simdt, double mjd) override;
 		virtual void clbkSaveState(FILEHANDLE scn) override;
 		virtual void clbkSetClassCaps(FILEHANDLE cfg) override;
 		virtual bool clbkVCMouseEvent(int id, int event, VECTOR3 &p) override;
 		virtual bool clbkVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
 		virtual void clbkVisualCreated(VISHANDLE visHandle, int refCount) override;
 		virtual void clbkVisualDestroyed(VISHANDLE vis, int refcount) override;
-        virtual void clbkPostStep(double simt, double simdt, double mjd) override;
-		virtual void clbkPostCreation() override;
 
 		virtual ~BaseVessel() {}
 
@@ -192,16 +216,22 @@ namespace bc_orbiter
 		}
 
 		std::vector<Component*>		vesselComponents_;
-		std::map<int, Component*>	redrawHandlers;
 
+		// Manage components registering for redraw events.  We maintain a separate
+		// map for VC and Panels.
 		std::map<int, Component*>	vcRedrawMap_;
+		std::map<int, Component*>	panelRedrawMap_;
+		
 		std::map<int, Component*>	vcMouseEventMap_;
 
         std::map<int, EventTarget*> vcEventTargetMap_;
+		std::map<int, PanelEventTarget*> pnlEventTargetMap_;
 
         std::map<UINT, std::unique_ptr<IAnimation>>      animations_;
 
-		int		nextVCEventId_;
+		int		nextEventId_		{ 0 };
+
+		std::map<int, PanelElement*> panelRedrawTarget_;
 
 		bool isCreated_{ false };	// Set true after clbkPostCreation
 
@@ -220,7 +250,6 @@ namespace bc_orbiter
 
 	inline BaseVessel::BaseVessel(OBJHANDLE hvessel, int flightmodel) :
 		VESSEL4(hvessel, flightmodel),
-		nextVCEventId_(1),
 		visualHandle_(nullptr),
 		meshVirtualCockpit0_(nullptr),
 		vcMeshHandle0_(nullptr)
@@ -233,14 +262,17 @@ namespace bc_orbiter
 	inline void BaseVessel::RegisterComponent(Component* comp)
 	{
 		vesselComponents_.push_back(comp);
+		auto redrawId = ++nextEventId_;
+		vcRedrawMap_[redrawId] = comp;
+		panelRedrawMap_[redrawId] = comp;
+		comp->SetRedrawId(redrawId);
 	}
 
 	inline int BaseVessel::RegisterVCEvent(Component* comp, VCIdMode mode)
 	{
-		auto id = nextVCEventId_;
-		nextVCEventId_++;
+		auto id = ++nextEventId_;
 
-		if (IsModeSet(VCIdMode::MouseEvent, mode))	vcMouseEventMap_[id] = comp;
+		if (IsModeSet(VCIdMode::OnVCMouseEvent, mode))	vcMouseEventMap_[id] = comp;
 		if (IsModeSet(VCIdMode::RedrawEvent, mode))	vcRedrawMap_[id] = comp;
 
 		return id;
@@ -256,7 +288,7 @@ namespace bc_orbiter
 
 			for (auto &p : vesselComponents_)
 			{
-				if (p->LoadConfiguration(line, scn, line))
+				if (p->OnLoadConfiguration(line, scn, line))
 				{
 					handled = true;
 					break;
@@ -272,7 +304,7 @@ namespace bc_orbiter
 
 	inline bool BaseVessel::clbkLoadVC(int id)
 	{
-		for (auto& p : vesselComponents_)	p->LoadVC(id);
+		for (auto& p : vesselComponents_)	p->OnLoadVC(id);
 
         for (auto& et : vcEventTargetMap_)	et.second->RegisterMouseEvents();
 
@@ -283,18 +315,18 @@ namespace bc_orbiter
 	{
 		VESSEL3::clbkSaveState(scn);	// Save default state.
 
-		for (auto &p : vesselComponents_)	p->SaveConfiguration(scn);
+		for (auto &p : vesselComponents_)	p->OnSaveConfiguration(scn);
 	}
 
 	inline void BaseVessel::clbkSetClassCaps(FILEHANDLE cfg)
 	{
-		for (auto &p : vesselComponents_)	p->SetClassCaps();
+		for (auto &p : vesselComponents_)	p->OnSetClassCaps();
 	}
 
 	inline bool BaseVessel::clbkVCMouseEvent(int id, int event, VECTOR3 &p)
 	{
 		auto eh = vcMouseEventMap_.find(id);
-		if (eh != vcMouseEventMap_.end())	return eh->second->MouseEvent(id, event);
+		if (eh != vcMouseEventMap_.end())	return eh->second->OnVCMouseEvent(id, event);
 
         auto el = vcEventTargetMap_.find(id);
         if (el != vcEventTargetMap_.end())	return el->second->HandleMouse(event);
@@ -307,7 +339,7 @@ namespace bc_orbiter
 		if (nullptr == meshVirtualCockpit0_)	return false;
 
 		auto eh = vcRedrawMap_.find(id);
-		if (eh != vcRedrawMap_.end())		return eh->second->VCRedrawEvent(id, event, surf);
+		if (eh != vcRedrawMap_.end())		return eh->second->OnVCRedrawEvent(id, event, surf);
 
 		return false;
 	}
@@ -348,4 +380,37 @@ namespace bc_orbiter
 		return ((vesselStatus_.status == 1) || (DockingStatus(0) == 1));
 	}
 
+	inline bool BaseVessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
+	{
+		for (auto& et : pnlEventTargetMap_)
+		{
+			et.second->OnLoad(id, hPanel, (VESSEL4*)this);
+			et.second->RegisterMouseEvents();
+		}
+
+		for (auto& p : vesselComponents_)	p->OnLoadPanel2D(id, hPanel);
+		return true;
+	}
+
+	inline bool BaseVessel::clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context)
+	{
+		//auto eh = panelRedrawTarget_.find(id);
+		//if (eh != panelRedrawTarget_.end())
+		//{
+		//	eh->second->Draw(GetpanelMeshHandle0());
+		//	return true;
+		//}
+		auto eh = panelRedrawMap_.find(id);
+		if (eh != panelRedrawMap_.end())		return eh->second->OnPanelRedrawEvent(id, event);
+
+		return true;
+	}
+
+	inline bool BaseVessel::clbkPanelMouseEvent(int id, int event, int mx, int my)
+	{
+		auto el = pnlEventTargetMap_.find(id);
+		if (el != pnlEventTargetMap_.end())	return el->second->HandleMouse(event);
+
+		return true;
+	}
 }

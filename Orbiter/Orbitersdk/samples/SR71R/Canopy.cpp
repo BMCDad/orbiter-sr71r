@@ -53,7 +53,7 @@ void Canopy::Step(double simt, double simdt, double mjd)
     }
 }
 
-bool Canopy::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool Canopy::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
     if (_strnicmp(key, ConfigKeyCanopy, 6) != 0) return false;
 
@@ -72,7 +72,7 @@ bool Canopy::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine
     return true;
 }
 
-void Canopy::SaveConfiguration(FILEHANDLE scn) const
+void Canopy::OnSaveConfiguration(FILEHANDLE scn) const
 {
     char cbuf[256];
 
@@ -83,7 +83,7 @@ void Canopy::SaveConfiguration(FILEHANDLE scn) const
 
     oapiWriteScenario_string(scn, (char*)ConfigKeyCanopy, cbuf);
 }
-void Canopy::SetClassCaps()
+void Canopy::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     auto vcIdx = vessel->GetVCMeshIndex();

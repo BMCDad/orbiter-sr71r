@@ -50,7 +50,7 @@ void PowerSystem::Step(double simt, double simdt, double mjd)
 	}
 }
 
-void PowerSystem::SetClassCaps()
+void PowerSystem::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     
@@ -63,7 +63,7 @@ void PowerSystem::SetClassCaps()
 	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
-bool PowerSystem::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool PowerSystem::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 5) != 0)
 	{
@@ -90,7 +90,7 @@ bool PowerSystem::LoadConfiguration(char* key, FILEHANDLE scn, const char* confi
 	return true;
 }
 
-void PowerSystem::SaveConfiguration(FILEHANDLE scn) const
+void PowerSystem::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 	auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
@@ -108,7 +108,7 @@ void PowerSystem::PostCreation()
     Update();
 }
 
-bool PowerSystem::LoadVC(int id)
+bool PowerSystem::OnLoadVC(int id)
 {
 	// Redraw areas:
 	oapiVCRegisterArea(areaId_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
@@ -116,7 +116,7 @@ bool PowerSystem::LoadVC(int id)
 	return true;
 }
 
-bool PowerSystem::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool PowerSystem::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
 	assert(devMesh != nullptr);

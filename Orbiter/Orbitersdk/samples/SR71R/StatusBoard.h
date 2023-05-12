@@ -35,13 +35,13 @@ class StatusBoard : public bco::PoweredComponent
 public:
 	StatusBoard(bco::BaseVessel* vessel, double amps);
 
-	virtual void SetClassCaps() override;
+	virtual void OnSetClassCaps() override;
 
 	void Step(double simt, double simdt, double mjd);
 	
-	virtual bool MouseEvent(int id, int event) override { return false; }
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-	virtual bool LoadVC(int id) override;
+	virtual bool OnVCMouseEvent(int id, int event) override { return false; }
+	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+	virtual bool OnLoadVC(int id) override;
 
 	void SetCargoBay(		CargoBayController* cb)	{ cargoBay_ = cb; }
     void SetCanopy(         Canopy* c)              { canopy_ = c; }

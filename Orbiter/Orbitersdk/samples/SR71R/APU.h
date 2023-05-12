@@ -65,10 +65,10 @@ public:
 	virtual double CurrentDraw() override;
 
 	// *** Component ***
-    virtual void SetClassCaps() override;
-    virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+    virtual void OnSetClassCaps() override;
+    virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
+	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
     
     // *** IAnimationState ***
     virtual double GetState() const override { return GetHydraulicLevel(); }
