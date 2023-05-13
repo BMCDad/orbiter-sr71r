@@ -89,9 +89,9 @@ void HoverEngines::OnSetClassCaps()
     };
 
     for (auto i = 0; i < 3; i++) vessel->AddExhaust(es_hover + i);
-    vessel->AddExhaustStream(hoverThrustHandles_[0], bt_mesh::SR71r::ThrustHoverF_location, &exhaust_hover);
-    vessel->AddExhaustStream(hoverThrustHandles_[1], bt_mesh::SR71r::ThrustHoverP_location, &exhaust_hover);
-    vessel->AddExhaustStream(hoverThrustHandles_[2], bt_mesh::SR71r::ThrustHoverS_location, &exhaust_hover);
+    vessel->AddExhaustStream(hoverThrustHandles_[0], bm::main::ThrustHoverF_location, &exhaust_hover);
+    vessel->AddExhaustStream(hoverThrustHandles_[1], bm::main::ThrustHoverP_location, &exhaust_hover);
+    vessel->AddExhaustStream(hoverThrustHandles_[2], bm::main::ThrustHoverS_location, &exhaust_hover);
 
 
     swOpen_.Setup(vessel);

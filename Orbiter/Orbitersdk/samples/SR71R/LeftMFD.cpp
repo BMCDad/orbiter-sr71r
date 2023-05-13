@@ -41,7 +41,7 @@ bool LeftMFD::OnLoadVC(int id)
 	auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
 	assert(vcMeshHandle != nullptr);
 
-	SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bt_mesh::SR71rVC::TXIDX_SR71R_100_VC2_dds);
+	SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
 
 	// Init our font:
 	vcFont_.surfSource = surfHandle;
@@ -52,7 +52,7 @@ bool LeftMFD::OnLoadVC(int id)
 	vcFont_.blankX = 1600;
 	vcFont_.blankY = 2021;
 
-	static VCMFDSPEC mfds_left = { 1, bt_mesh::SR71rVC::VCMfdLeft_id };
+	static VCMFDSPEC mfds_left = { 1, bm::vc::VCMfdLeft_id };
 	oapiVCRegisterMFD(MFD_LEFT, &mfds_left);   // left MFD
 
 	// Button 1
@@ -65,7 +65,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 0);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftL1_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftL1_location, MFDBRAD);
 
 	// Button 2
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -78,7 +78,7 @@ bool LeftMFD::OnLoadVC(int id)
 		surfHandle);
 	AssignKey(eventId, 1);
 
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftL2_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftL2_location, MFDBRAD);
 
 	// Button 3
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -90,7 +90,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 2);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftL3_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftL3_location, MFDBRAD);
 
 	// Button 4
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -102,7 +102,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 3);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftL4_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftL4_location, MFDBRAD);
 
 	// Button 5
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -114,7 +114,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 4);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftL5_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftL5_location, MFDBRAD);
 
 	// Button 6
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -126,7 +126,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 5);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftL6_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftL6_location, MFDBRAD);
 
 	// Button R1
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -138,7 +138,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 6);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftR1_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftR1_location, MFDBRAD);
 
 	// Button R2
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -150,7 +150,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 7);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftR2_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftR2_location, MFDBRAD);
 
 	// Button R3
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -162,7 +162,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 8);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftR3_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftR3_location, MFDBRAD);
 
 	// Button R4
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -174,7 +174,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 9);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftR4_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftR4_location, MFDBRAD);
 
 	// Button R5
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -186,7 +186,7 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 10);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftR5_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftR5_location, MFDBRAD);
 
 	// Button 6
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
@@ -198,26 +198,26 @@ bool LeftMFD::OnLoadVC(int id)
 		PANEL_MAP_BACKGROUND,
 		surfHandle);
 	AssignKey(eventId, 11);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftR6_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftR6_location, MFDBRAD);
 
 
 	// PWR
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
 	AssignPwrKey(eventId);
 	oapiVCRegisterArea(eventId, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftPWR_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftPWR_location, MFDBRAD);
 
 	// SEL
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
 	AssignSelect(eventId);
 	oapiVCRegisterArea(eventId, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftSEL_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftSEL_location, MFDBRAD);
 
 	// MNU
 	eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
 	AssignMenu(eventId);
 	oapiVCRegisterArea(eventId, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
-	oapiVCSetAreaClickmode_Spherical(eventId, bt_mesh::SR71rVC::MFCLeftMNU_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(eventId, bm::vc::MFCLeftMNU_location, MFDBRAD);
 	return true;
 }
 

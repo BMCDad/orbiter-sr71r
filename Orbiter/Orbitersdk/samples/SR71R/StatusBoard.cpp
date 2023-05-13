@@ -24,17 +24,17 @@
 StatusBoard::StatusBoard(bco::BaseVessel* vessel, double amps) :
 bco::PoweredComponent(vessel, amps, 20.0),
 cargoBay_(nullptr),
-msgCanopy_(				bt_mesh::SR71rVC::MsgLightCanopy_verts,		bt_mesh::SR71rVC::MsgLightCanopy_id),
-msgCargoBay_(			bt_mesh::SR71rVC::MsgLightBay_verts,			bt_mesh::SR71rVC::MsgLightBay_id),
-msgKeasWarning_(		bt_mesh::SR71rVC::MsgLightKeasWarn_verts,	bt_mesh::SR71rVC::MsgLightKeasWarn_id),
-msgBattery_(			bt_mesh::SR71rVC::MsgLightBattery_verts,		bt_mesh::SR71rVC::MsgLightBattery_id),
-msgThrustLimit_(		bt_mesh::SR71rVC::MsgLightThrustLimit_verts,	bt_mesh::SR71rVC::MsgLightThrustLimit_id),
-msgApu_(				bt_mesh::SR71rVC::MsgLightAPU_verts,			bt_mesh::SR71rVC::MsgLightAPU_id),
-msgDock_(				bt_mesh::SR71rVC::MsgLightDock_verts,		bt_mesh::SR71rVC::MsgLightDock_id),
-msgFuel_(				bt_mesh::SR71rVC::MsgLightFuelWarn_verts,	bt_mesh::SR71rVC::MsgLightFuelWarn_id),
-msgAirBrake_(			bt_mesh::SR71rVC::MsgLightSpeedBrake_verts,	bt_mesh::SR71rVC::MsgLightSpeedBrake_id),
-msgHoverDoors_(         bt_mesh::SR71rVC::MsgLightHover_verts,       bt_mesh::SR71rVC::MsgLightHover_id),
-msgRetroDoors_(         bt_mesh::SR71rVC::MsgLightRetro_verts,       bt_mesh::SR71rVC::MsgLightRetro_id)
+msgCanopy_(				bm::vc::MsgLightCanopy_verts,		bm::vc::MsgLightCanopy_id),
+msgCargoBay_(			bm::vc::MsgLightBay_verts,			bm::vc::MsgLightBay_id),
+msgKeasWarning_(		bm::vc::MsgLightKeasWarn_verts,	bm::vc::MsgLightKeasWarn_id),
+msgBattery_(			bm::vc::MsgLightBattery_verts,		bm::vc::MsgLightBattery_id),
+msgThrustLimit_(		bm::vc::MsgLightThrustLimit_verts,	bm::vc::MsgLightThrustLimit_id),
+msgApu_(				bm::vc::MsgLightAPU_verts,			bm::vc::MsgLightAPU_id),
+msgDock_(				bm::vc::MsgLightDock_verts,		bm::vc::MsgLightDock_id),
+msgFuel_(				bm::vc::MsgLightFuelWarn_verts,	bm::vc::MsgLightFuelWarn_id),
+msgAirBrake_(			bm::vc::MsgLightSpeedBrake_verts,	bm::vc::MsgLightSpeedBrake_id),
+msgHoverDoors_(         bm::vc::MsgLightHover_verts,       bm::vc::MsgLightHover_id),
+msgRetroDoors_(         bm::vc::MsgLightRetro_verts,       bm::vc::MsgLightRetro_id)
 {
 }
 

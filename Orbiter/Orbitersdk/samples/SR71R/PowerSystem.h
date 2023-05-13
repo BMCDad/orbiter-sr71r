@@ -127,31 +127,31 @@ private:
 	bco::TextureVisual	    fuelCellConnectedLight_;
 
 
-    bco::VCToggleSwitch     swPower_                    {   bt_mesh::SR71rVC::swMainPower_id, 
-                                                            bt_mesh::SR71rVC::swMainPower_location, 
-                                                            bt_mesh::SR71rVC::PowerTopRightAxis_location 
+    bco::VCToggleSwitch     swPower_                    {   bm::vc::swMainPower_id, 
+                                                            bm::vc::swMainPower_location, 
+                                                            bm::vc::PowerTopRightAxis_location 
                                                         };
 
-    bco::VCToggleSwitch     swConnectExternal_          {   bt_mesh::SR71rVC::swConnectExternalPower_id,     
-                                                            bt_mesh::SR71rVC::swConnectExternalPower_location, 
-                                                            bt_mesh::SR71rVC::PowerBottomRightAxis_location 
+    bco::VCToggleSwitch     swConnectExternal_          {   bm::vc::swConnectExternalPower_id,     
+                                                            bm::vc::swConnectExternalPower_location, 
+                                                            bm::vc::PowerBottomRightAxis_location 
                                                         };
 
-    bco::VCToggleSwitch     swConnectFuelCell_          {   bt_mesh::SR71rVC::swConnectFuelCell_id, 
-                                                            bt_mesh::SR71rVC::swConnectFuelCell_location, 
-                                                            bt_mesh::SR71rVC::PowerBottomRightAxis_location 
+    bco::VCToggleSwitch     swConnectFuelCell_          {   bm::vc::swConnectFuelCell_id, 
+                                                            bm::vc::swConnectFuelCell_location, 
+                                                            bm::vc::PowerBottomRightAxis_location 
                                                         };
 
-    bco::VCGauge            gaugePowerVolt_				{  {bt_mesh::SR71rVC::gaugeVoltMeter_id },
-                                                            bt_mesh::SR71rVC::VoltMeterFrontAxis_location,   
-															bt_mesh::SR71rVC::gaugeVoltMeter_location,
+    bco::VCGauge            gaugePowerVolt_				{  {bm::vc::gaugeVoltMeter_id },
+                                                            bm::vc::VoltMeterFrontAxis_location,   
+															bm::vc::gaugeVoltMeter_location,
                                                             (120 * RAD), 
                                                             0.2
                                                         };
 
-	bco::VCGauge            gaugePowerAmp_				{ { bt_mesh::SR71rVC::gaugeAmpMeter_id },
-															bt_mesh::SR71rVC::gaugeAmpMeter_location,
-															bt_mesh::SR71rVC::VoltMeterFrontAxis_location,
+	bco::VCGauge            gaugePowerAmp_				{ { bm::vc::gaugeAmpMeter_id },
+															bm::vc::gaugeAmpMeter_location,
+															bm::vc::VoltMeterFrontAxis_location,
 															(120 * RAD),
 															0.2
 														};

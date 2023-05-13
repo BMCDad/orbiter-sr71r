@@ -23,7 +23,7 @@
 
 #include <assert.h>
 
-namespace msh = bt_mesh::SR71rVC;
+namespace msh = bm::vc;
 
 Avionics::Avionics(bco::BaseVessel* vessel, double amps) :
 	bco::PoweredComponent(vessel, amps, AV_MIN_VOLT)

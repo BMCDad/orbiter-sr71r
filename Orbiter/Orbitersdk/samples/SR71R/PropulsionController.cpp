@@ -29,9 +29,9 @@ PoweredComponent(vessel, amps, 5.0),
 mainFuelLevel_(0.0),
 rcsFuelLevel_(0.0),
 transMode_(TransMode::None),
-lightFuelSupplyAvailable_(	bt_mesh::SR71rVC::FuelSupplyOnLight_verts,		bt_mesh::SR71rVC::FuelSupplyOnLight_id),
-lightFuelSupplyValveOpen_(	bt_mesh::SR71rVC::FuelValveOpenSwitch_verts,	bt_mesh::SR71rVC::FuelValveOpenSwitch_id),
-visTranferPumpOn_(			bt_mesh::SR71rVC::FuelTransferSwitch_verts,		bt_mesh::SR71rVC::FuelTransferSwitch_id)
+lightFuelSupplyAvailable_(	bm::vc::FuelSupplyOnLight_verts,		bm::vc::FuelSupplyOnLight_id),
+lightFuelSupplyValveOpen_(	bm::vc::FuelValveOpenSwitch_verts,	bm::vc::FuelValveOpenSwitch_id),
+visTranferPumpOn_(			bm::vc::FuelTransferSwitch_verts,		bm::vc::FuelTransferSwitch_id)
 {
 	maxMainFlow_ = (ENGINE_THRUST / THRUST_ISP) * 2;
 
@@ -304,14 +304,14 @@ void PropulsionController::OnSetClassCaps()
 
 	//	Start with max thrust (ENGINE_THRUST) this will change base on the max thrust selector.
 	mainThrustHandles_[0] = vessel->CreateThruster(
-        bt_mesh::SR71r::ThrusterP_location,  
+        bm::main::ThrusterP_location,  
         _V(0, 0, 1), 
         ENGINE_THRUST, 
         vessel->MainPropellant(), 
         THRUST_ISP);
 
 	mainThrustHandles_[1] = vessel->CreateThruster(
-        bt_mesh::SR71r::ThrusterS_location, 
+        bm::main::ThrusterS_location, 
         _V(0, 0, 1), 
         ENGINE_THRUST, 
         vessel->MainPropellant(), 
@@ -349,14 +349,14 @@ void PropulsionController::OnSetClassCaps()
 	vessel->CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_DOWN);
 
 	// Exhaust visuals
-	vessel->AddExhaust(th_att_rot[0], 0.6 , 0.078, bt_mesh::SR71r::RCS_FL_DOWN_location, _V(0, -1, 0));
-	vessel->AddExhaust(th_att_rot[0], 0.6 , 0.078, bt_mesh::SR71r::RCS_FR_DOWN_location, _V(0, -1, 0));
-	vessel->AddExhaust(th_att_rot[1], 0.79, 0.103, bt_mesh::SR71r::RCS_RL_UP_location,   _V(0,  1, 0));
-	vessel->AddExhaust(th_att_rot[1], 0.79, 0.103, bt_mesh::SR71r::RCS_RR_UP_location,   _V(0,  1, 0));
-	vessel->AddExhaust(th_att_rot[2], 0.6 , 0.078, bt_mesh::SR71r::RCS_FL_UP_location,   _V(0,  1, 0));
-	vessel->AddExhaust(th_att_rot[2], 0.6 , 0.078, bt_mesh::SR71r::RCS_FR_UP_location,   _V(0,  1, 0));
-	vessel->AddExhaust(th_att_rot[3], 0.79, 0.103, bt_mesh::SR71r::RCS_RL_DOWN_location, _V(0, -1, 0));
-	vessel->AddExhaust(th_att_rot[3], 0.79, 0.103, bt_mesh::SR71r::RCS_RR_DOWN_location, _V(0, -1, 0));
+	vessel->AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FL_DOWN_location, _V(0, -1, 0));
+	vessel->AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_DOWN_location, _V(0, -1, 0));
+	vessel->AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RL_UP_location,   _V(0,  1, 0));
+	vessel->AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RR_UP_location,   _V(0,  1, 0));
+	vessel->AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_UP_location,   _V(0,  1, 0));
+	vessel->AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FR_UP_location,   _V(0,  1, 0));
+	vessel->AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RL_DOWN_location, _V(0, -1, 0));
+	vessel->AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RR_DOWN_location, _V(0, -1, 0));
 
 
 	// Yaw left and right simplified at 10 meters.
@@ -370,10 +370,10 @@ void PropulsionController::OnSetClassCaps()
 	vessel->CreateThrusterGroup(th_att_lin    , 2, THGROUP_ATT_LEFT);
 	vessel->CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_RIGHT);
 
-	vessel->AddExhaust(th_att_rot[0], 0.6 , 0.078, bt_mesh::SR71r::RCS_FR_RIGHT_location, _V( 1, 0, 0));
-	vessel->AddExhaust(th_att_rot[1], 0.94, 0.122, bt_mesh::SR71r::RCS_RL_LEFT_location,  _V(-1, 0, 0));
-	vessel->AddExhaust(th_att_rot[2], 0.6 , 0.078, bt_mesh::SR71r::RCS_FL_LEFT_location,  _V(-1, 0, 0));
-	vessel->AddExhaust(th_att_rot[3], 0.94, 0.122, bt_mesh::SR71r::RCS_RR_RIGHT_location, _V( 1, 0, 0));
+	vessel->AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_RIGHT_location, _V( 1, 0, 0));
+	vessel->AddExhaust(th_att_rot[1], 0.94, 0.122, bm::main::RCS_RL_LEFT_location,  _V(-1, 0, 0));
+	vessel->AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_LEFT_location,  _V(-1, 0, 0));
+	vessel->AddExhaust(th_att_rot[3], 0.94, 0.122, bm::main::RCS_RR_RIGHT_location, _V( 1, 0, 0));
 
 	// Bank left and right.
 
@@ -385,10 +385,10 @@ void PropulsionController::OnSetClassCaps()
 	vessel->CreateThrusterGroup(th_att_rot    , 2, THGROUP_ATT_BANKLEFT);
 	vessel->CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_BANKRIGHT);
 
-	vessel->AddExhaust(th_att_rot[0], 1.03, 0.134, bt_mesh::SR71r::RCS_L_TOP_location,    _V(0,  1, 0));
-	vessel->AddExhaust(th_att_rot[1], 1.03, 0.134, bt_mesh::SR71r::RCS_R_BOTTOM_location, _V(0, -1, 0));
-	vessel->AddExhaust(th_att_rot[2], 1.03, 0.134, bt_mesh::SR71r::RCS_R_TOP_location,    _V(0,  1, 0));
-	vessel->AddExhaust(th_att_rot[3], 1.03, 0.134, bt_mesh::SR71r::RCS_L_BOTTOM_location, _V(0, -1, 0));
+	vessel->AddExhaust(th_att_rot[0], 1.03, 0.134, bm::main::RCS_L_TOP_location,    _V(0,  1, 0));
+	vessel->AddExhaust(th_att_rot[1], 1.03, 0.134, bm::main::RCS_R_BOTTOM_location, _V(0, -1, 0));
+	vessel->AddExhaust(th_att_rot[2], 1.03, 0.134, bm::main::RCS_R_TOP_location,    _V(0,  1, 0));
+	vessel->AddExhaust(th_att_rot[3], 1.03, 0.134, bm::main::RCS_L_BOTTOM_location, _V(0, -1, 0));
 
 
 	// Forward and back
@@ -398,10 +398,10 @@ void PropulsionController::OnSetClassCaps()
 	vessel->CreateThrusterGroup(th_att_lin    , 1, THGROUP_ATT_FORWARD);
 	vessel->CreateThrusterGroup(th_att_lin + 1, 1, THGROUP_ATT_BACK);
 
-	vessel->AddExhaust(th_att_lin[0], 0.6, 0.078, bt_mesh::SR71r::RCS_RL_LEFT_location,   _V(0, 0, -1));
-	vessel->AddExhaust(th_att_lin[0], 0.6, 0.078, bt_mesh::SR71r::RCS_RR_RIGHT_location,  _V(0, 0, -1));
-	vessel->AddExhaust(th_att_lin[1], 0.6, 0.078, bt_mesh::SR71r::RCS_L_FORWARD_location, _V(0, 0,  1));
-	vessel->AddExhaust(th_att_lin[1], 0.6, 0.078, bt_mesh::SR71r::RCS_R_FORWARD_location, _V(0, 0,  1));
+	vessel->AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RL_LEFT_location,   _V(0, 0, -1));
+	vessel->AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RR_RIGHT_location,  _V(0, 0, -1));
+	vessel->AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_L_FORWARD_location, _V(0, 0,  1));
+	vessel->AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_R_FORWARD_location, _V(0, 0,  1));
 
 	swThrustLimit_.SetOff();
 	

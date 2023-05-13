@@ -20,15 +20,15 @@
 
 static const DWORD ntdvtx_geardown = 9;
 static TOUCHDOWNVTX tdvtx_geardown[ntdvtx_geardown] = {
-    { bt_mesh::SR71r::LandingTouchF_location,    1e6, 1e5, 1.6, 0.1 },      // front
-    { bt_mesh::SR71r::LandingTouchS_location,    1e6, 1e5, 3.0, 0.2 },      // right back
-    { bt_mesh::SR71r::LandingTouchP_location,    1e6, 1e5, 3.0, 0.2 },      // left back
-    { bt_mesh::SR71r::TPNose_location,           1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPHood_location,           1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPRudder_location,         1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPTail_location,           1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPWingS_location,          1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPWingP_location,          1e7, 1e5, 3.0 }
+    { bm::main::LandingTouchF_location,    1e6, 1e5, 1.6, 0.1 },      // front
+    { bm::main::LandingTouchS_location,    1e6, 1e5, 3.0, 0.2 },      // right back
+    { bm::main::LandingTouchP_location,    1e6, 1e5, 3.0, 0.2 },      // left back
+    { bm::main::TPNose_location,           1e7, 1e5, 3.0 },
+    { bm::main::TPHood_location,           1e7, 1e5, 3.0 },
+    { bm::main::TPRudder_location,         1e7, 1e5, 3.0 },
+    { bm::main::TPTail_location,           1e7, 1e5, 3.0 },
+    { bm::main::TPWingS_location,          1e7, 1e5, 3.0 },
+    { bm::main::TPWingP_location,          1e7, 1e5, 3.0 }
 };
 
 
@@ -41,21 +41,21 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	// You use these mesh handles to the AddMesh the meshes and set how they will be viewed.
 	// If you ever need this handle again, call oapiLoadMeshGlobal with the same name and it
 	// we be returned, the mesh will not be reloaded.
-	auto mainGlobalMesh = oapiLoadMeshGlobal(bt_mesh::SR71r::MESH_NAME);
+	auto mainGlobalMesh = oapiLoadMeshGlobal(bm::main::MESH_NAME);
 	mainMeshIndex_ = AddMesh(mainGlobalMesh);
 	SetMeshVisibilityMode(mainMeshIndex_, MESHVIS_EXTERNAL);
     SetMainMeshIndex(mainMeshIndex_);  // The index will be needed when adding animations to the mesh.
 
 	// In case of the VC mesh we hold on to the mesh handle as it will be needed to get the texture
 	// that will be modified for things like MFD font painting.
-	vcMeshHandle_ = oapiLoadMeshGlobal(bt_mesh::SR71rVC::MESH_NAME);
+	vcMeshHandle_ = oapiLoadMeshGlobal(bm::vc::MESH_NAME);
 	auto idx = AddMesh(vcMeshHandle_);
 	SetMeshVisibilityMode(idx, MESHVIS_VC);
 	SetVCMeshIndex0(idx);
 	SetVCMeshHandle0(vcMeshHandle_);
 
 	// Load 2D Panel:
-	auto panelMeshHandle = oapiLoadMeshGlobal(bt_mesh::SR71r2D::MESH_NAME);
+	auto panelMeshHandle = oapiLoadMeshGlobal(bm::pnl::MESH_NAME);
 	SetPanelMeshHandle0(panelMeshHandle);
 	
 		// Setup ship metrics:
@@ -65,7 +65,7 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	SetCrossSections(CROSSSECTIONS);
 	SetRotDrag(ROTDRAG);
 
-	SetDockParams(bt_mesh::SR71r::DockingPort_location, _V(0, 1, 0), _V(0, 0, 1));
+	SetDockParams(bm::main::DockingPort_location, _V(0, 1, 0), _V(0, 0, 1));
 	
     SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
     SetNosewheelSteering(true);
@@ -78,7 +78,7 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 
 	SetupAerodynamics();
 
-	SetCameraOffset(bt_mesh::SR71r::PilotPOV_location);
+	SetCameraOffset(bm::main::PilotPOV_location);
 
     // Propellent, move to setup method:
     CreateMainPropellant(MAX_FUEL);
@@ -253,14 +253,14 @@ bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD 
 		0,
 		0,
 		GetpanelMeshHandle0(),					// Handle to the panel mesh.
-		bt_mesh::SR71r2D::MainPanel_Width,		// Panel mesh width (mesh units)
-		bt_mesh::SR71r2D::MainPanel_Height,		// Panel mesh height (mesh units)
-		bt_mesh::SR71r2D::MainPanel_Height / 5,	// Baseline (adjust to move panel)
+		bm::pnl::MainPanel_Width,		// Panel mesh width (mesh units)
+		bm::pnl::MainPanel_Height,		// Panel mesh height (mesh units)
+		bm::pnl::MainPanel_Height / 5,	// Baseline (adjust to move panel)
 		PANEL_ATTACH_BOTTOM | PANEL_MOVEOUT_BOTTOM);
 
 	// Example: viewW = 3000 and panel width = 2000 (panel too small), defscale becomes (3000/2000) = 1.5 to fit the window.
 	//			viewW = 1000 and panel width = 2000 (panel too big), defscale becomes (1000/2000) = .5 shrink panel to fit.
-	double defscale = (double)viewW / bt_mesh::SR71r2D::MainPanel_Width;
+	double defscale = (double)viewW / bm::pnl::MainPanel_Width;
 	double extscale = max(defscale, 1.0);
 	SetPanelScaling(hPanel, defscale, extscale);
 

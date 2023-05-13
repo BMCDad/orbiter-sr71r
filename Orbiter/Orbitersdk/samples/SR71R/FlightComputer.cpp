@@ -20,15 +20,15 @@
 
 #include <assert.h>
 
-namespace mvc = bt_mesh::SR71rVC;
+namespace mvc = bm::vc;
 
 FC::FlightComputer::FlightComputer(bco::BaseVessel * vessel, double amps) :
 	bco::PoweredComponent(vessel, 10.0, 25.0),
-	visAPMainOn_(		bt_mesh::SR71rVC::SwAPMain_verts,		bt_mesh::SR71rVC::SwAPMain_id),
-	visAPHeadingOn_(	bt_mesh::SR71rVC::SwAPHeading_verts,	bt_mesh::SR71rVC::SwAPHeading_id),
-	visAPAltitudeOn_(	bt_mesh::SR71rVC::SwAPAltitude_verts,	bt_mesh::SR71rVC::SwAPAltitude_id),
-	visAPKEASOn_(		bt_mesh::SR71rVC::SwAPKEAS_verts,		bt_mesh::SR71rVC::SwAPKEAS_id),
-	visAPMACHOn_(		bt_mesh::SR71rVC::SwAPMACH_verts,		bt_mesh::SR71rVC::SwAPMACH_id),
+	visAPMainOn_(		bm::vc::SwAPMain_verts,		bm::vc::SwAPMain_id),
+	visAPHeadingOn_(	bm::vc::SwAPHeading_verts,	bm::vc::SwAPHeading_id),
+	visAPAltitudeOn_(	bm::vc::SwAPAltitude_verts,	bm::vc::SwAPAltitude_id),
+	visAPKEASOn_(		bm::vc::SwAPKEAS_verts,		bm::vc::SwAPKEAS_id),
+	visAPMACHOn_(		bm::vc::SwAPMACH_verts,		bm::vc::SwAPMACH_id),
 	prgHoldAltitude_(	*this),
 	prgHoldHeading_(	*this),
 	prgHoldKeas_(		*this),
@@ -280,7 +280,7 @@ bool FC::FlightComputer::OnLoadVC(int id)
     auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
     assert(vcMeshHandle != nullptr);
 
-    SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bt_mesh::SR71rVC::TXIDX_SR71R_100_VC2_dds);
+    SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
 
     // Init our font:
     vcFont_.surfSource = surfHandle;

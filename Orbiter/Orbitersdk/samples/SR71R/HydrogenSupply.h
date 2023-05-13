@@ -66,11 +66,11 @@ private:
 
 	bco::TextureVisual		lightSupplyAvailable_;
 	bco::TextureVisual		lightValveOpen_;
-    bco::PushButtonSwitch	switchValveOpen_        { bt_mesh::SR71rVC::LH2ValveOpenSwitch_location,     0.01 };
+    bco::PushButtonSwitch	switchValveOpen_        { bm::vc::LH2ValveOpenSwitch_location,     0.01 };
 
-    bco::VCGauge            gaugeHydro_{ {bt_mesh::SR71rVC::gaHydrogenLevel_id },
-                                                        bt_mesh::SR71rVC::gaHydrogenLevel_location, 
-                                                        bt_mesh::SR71rVC::axisHydrogenLevel_location,
+    bco::VCGauge            gaugeHydro_{ {bm::vc::gaHydrogenLevel_id },
+                                                        bm::vc::gaHydrogenLevel_location, 
+                                                        bm::vc::axisHydrogenLevel_location,
                                                         (300 * RAD), 
                                                         0.2
                                                     };

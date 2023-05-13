@@ -109,5 +109,5 @@ void AirBrake::OnSetClassCaps()
     vessel->AddVesselAnimationComponent(aid, exIdx, &gpRightBottom_);
 
 	// Setup drag.
-	GetBaseVessel()->CreateVariableDragElement(animAirBrake_.GetStatePtr(), 10.0, bt_mesh::SR71r::BrakeDragPoint_location);
+	GetBaseVessel()->CreateVariableDragElement(animAirBrake_.GetStatePtr(), 10.0, bm::main::BrakeDragPoint_location);
 }

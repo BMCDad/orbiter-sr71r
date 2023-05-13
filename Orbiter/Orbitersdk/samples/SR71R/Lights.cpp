@@ -61,7 +61,7 @@ void Lights::OnSetClassCaps()
 	specBeaconTop_.col          = &colRed;
 	specBeaconTop_.duration     = 0.1;
 	specBeaconTop_.falloff      = 0.6;
-	specBeaconTop_.pos          = const_cast<VECTOR3*>(&bt_mesh::SR71r::BeaconTop_location);
+	specBeaconTop_.pos          = const_cast<VECTOR3*>(&bm::main::BeaconTop_location);
 	specBeaconTop_.shape        = BEACONSHAPE_STAR;
 	specBeaconTop_.size         = 0.55;
 	specBeaconTop_.tofs         = 0.0;
@@ -70,7 +70,7 @@ void Lights::OnSetClassCaps()
 	specBeaconBottom_.col       = &colRed;
 	specBeaconBottom_.duration  = 0.1;
 	specBeaconBottom_.falloff   = 0.6;
-	specBeaconBottom_.pos       = const_cast<VECTOR3*>(&bt_mesh::SR71r::BeaconBottom_location);
+	specBeaconBottom_.pos       = const_cast<VECTOR3*>(&bm::main::BeaconBottom_location);
 	specBeaconBottom_.shape     = BEACONSHAPE_STAR;
 	specBeaconBottom_.size      = 0.55;
 	specBeaconBottom_.tofs      = 0.2;
@@ -80,7 +80,7 @@ void Lights::OnSetClassCaps()
 	specNavLeft_.col            = &colRed;
 	specNavLeft_.duration       = 0.1;
 	specNavLeft_.falloff        = 0.4;
-	specNavLeft_.pos            = const_cast<VECTOR3*>(&bt_mesh::SR71r::NavLightP_location);
+	specNavLeft_.pos            = const_cast<VECTOR3*>(&bm::main::NavLightP_location);
 	specNavLeft_.shape          = BEACONSHAPE_DIFFUSE;
 	specNavLeft_.size           = 0.3;
 	specNavLeft_.tofs           = 0.2;
@@ -89,7 +89,7 @@ void Lights::OnSetClassCaps()
 	specNavRight_.col           = &colGreen;
 	specNavRight_.duration      = 0.1;
 	specNavRight_.falloff       = 0.4;
-	specNavRight_.pos           = const_cast<VECTOR3*>(&bt_mesh::SR71r::NavLightS_location);
+	specNavRight_.pos           = const_cast<VECTOR3*>(&bm::main::NavLightS_location);
 	specNavRight_.shape         = BEACONSHAPE_DIFFUSE;
 	specNavRight_.size          = 0.3;
 	specNavRight_.tofs          = 0.2;
@@ -98,7 +98,7 @@ void Lights::OnSetClassCaps()
 	specNavRear_.col            = &colWhite;
 	specNavRear_.duration       = 0.1;
 	specNavRear_.falloff        = 0.4;
-	specNavRear_.pos            = const_cast<VECTOR3*>(&bt_mesh::SR71r::NavLightTail_location);
+	specNavRear_.pos            = const_cast<VECTOR3*>(&bm::main::NavLightTail_location);
 	specNavRear_.shape          = BEACONSHAPE_DIFFUSE;
 	specNavRear_.size           = 0.3;
 	specNavRear_.tofs           = 0.2;
@@ -108,7 +108,7 @@ void Lights::OnSetClassCaps()
 	specStrobeLeft_.col         = &colWhite;
 	specStrobeLeft_.duration    = 0.05;
 	specStrobeLeft_.falloff     = 0.6;
-	specStrobeLeft_.pos         = const_cast<VECTOR3*>(&bt_mesh::SR71r::StrobeLightP_location);
+	specStrobeLeft_.pos         = const_cast<VECTOR3*>(&bm::main::StrobeLightP_location);
 	specStrobeLeft_.shape       = BEACONSHAPE_DIFFUSE;
 	specStrobeLeft_.size        = 0.3;
 	specStrobeLeft_.tofs        = 0.5;
@@ -117,7 +117,7 @@ void Lights::OnSetClassCaps()
 	specStrobeRight_.col        = &colWhite;
 	specStrobeRight_.duration   = 0.05;
 	specStrobeRight_.falloff    = 0.6;
-	specStrobeRight_.pos        = const_cast<VECTOR3*>(&bt_mesh::SR71r::StrobeLightS_location);
+	specStrobeRight_.pos        = const_cast<VECTOR3*>(&bm::main::StrobeLightS_location);
 	specStrobeRight_.shape      = BEACONSHAPE_DIFFUSE;
 	specStrobeRight_.size       = 0.3;
 	specStrobeRight_.tofs       = 0.6;

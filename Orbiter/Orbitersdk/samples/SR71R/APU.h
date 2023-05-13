@@ -85,14 +85,14 @@ private:
 
 	const char*				ConfigKey = "APU";
 
-    bco::VCGauge            gaugeHydrPress_{ {bt_mesh::SR71rVC::gaHydPress_id },
-                                                bt_mesh::SR71rVC::gaHydPress_location, bt_mesh::SR71rVC::axisHydPress_location,
+    bco::VCGauge            gaugeHydrPress_{ {bm::vc::gaHydPress_id },
+                                                bm::vc::gaHydPress_location, bm::vc::axisHydPress_location,
                                                 (300 * RAD),
                                                 0.2
                                             };
 
-    bco::VCToggleSwitch     swPower_        {   bt_mesh::SR71rVC::SwAPUPower_id, 
-                                                bt_mesh::SR71rVC::SwAPUPower_location,
-                                                bt_mesh::SR71rVC::LeftPanelTopRightAxis_location
+    bco::VCToggleSwitch     swPower_        {   bm::vc::SwAPUPower_id, 
+                                                bm::vc::SwAPUPower_location,
+                                                bm::vc::LeftPanelTopRightAxis_location
                                             };
 };

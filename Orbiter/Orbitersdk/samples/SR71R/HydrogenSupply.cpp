@@ -25,8 +25,8 @@
 
 HydrogenSupply::HydrogenSupply(bco::BaseVessel* vessel, double capacity) :
 	CryogenicTank(vessel, capacity, HYDRO_NER, "HYDROGEN"),
-	lightSupplyAvailable_(	bt_mesh::SR71rVC::LH2SupplyOnLight_verts,	bt_mesh::SR71rVC::LH2SupplyOnLight_id),
-	lightValveOpen_(		bt_mesh::SR71rVC::LH2ValveOpenSwitch_verts,	bt_mesh::SR71rVC::LH2ValveOpenSwitch_id)
+	lightSupplyAvailable_(	bm::vc::LH2SupplyOnLight_verts,	bm::vc::LH2SupplyOnLight_id),
+	lightValveOpen_(		bm::vc::LH2ValveOpenSwitch_verts,	bm::vc::LH2ValveOpenSwitch_id)
 {
 	switchValveOpen_.SetPressedFunc([this] {ToggleFilling(); });
     vessel->RegisterVCEventTarget(&switchValveOpen_);

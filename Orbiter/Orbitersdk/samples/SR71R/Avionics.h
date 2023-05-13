@@ -140,45 +140,45 @@ private:
 	AvionMode				avionMode_{ AvionMode::AvionAtmo };
 	NavRadio				navRadio_{ NavRadio::Nav1 };
 
-    bco::DialSwitch		    dialHeadingSet_     { bt_mesh::SR71rVC::HeadingKnob_location,        0.007 };
-    bco::DialSwitch		    dialCourseSet_      { bt_mesh::SR71rVC::CourseKnob_location,         0.007 };
+    bco::DialSwitch		    dialHeadingSet_     { bm::vc::HeadingKnob_location,        0.007 };
+    bco::DialSwitch		    dialCourseSet_      { bm::vc::CourseKnob_location,         0.007 };
 
 
     /* Attitude Indicator */
-    bco::TextureVisual		attitudeIndicator_  { bt_mesh::SR71rVC::AttitudeIndicator_verts,     bt_mesh::SR71rVC::AttitudeIndicator_id };
+    bco::TextureVisual		attitudeIndicator_  { bm::vc::AttitudeIndicator_verts,     bm::vc::AttitudeIndicator_id };
 
-    bco::TextureVisual		txAttitudeOff_      { bt_mesh::SR71rVC::AttitudeFlagOff_verts,       bt_mesh::SR71rVC::AttitudeFlagOff_id };
+    bco::TextureVisual		txAttitudeOff_      { bm::vc::AttitudeFlagOff_verts,       bm::vc::AttitudeFlagOff_id };
 
 
     /* COM Status */
-    bco::TextureVisual      comStatus_          { bt_mesh::SR71rVC::COMStatusPanel_verts,        bt_mesh::SR71rVC::COMStatusPanel_id };
+    bco::TextureVisual      comStatus_          { bm::vc::COMStatusPanel_verts,        bm::vc::COMStatusPanel_id };
 
 
     /* HSI */
-    bco::VCGaugeWrap        gaBearingArrow_{	{bt_mesh::SR71rVC::HSIBearingArrow_id},
-                                                bt_mesh::SR71rVC::HSIBearingArrow_location,
-                                                bt_mesh::SR71rVC::HSIAxis_location,
+    bco::VCGaugeWrap        gaBearingArrow_{	{bm::vc::HSIBearingArrow_id},
+                                                bm::vc::HSIBearingArrow_location,
+                                                bm::vc::HSIAxis_location,
                                                 (360 * RAD),
                                                 1.0
     };
 
-    bco::VCGaugeWrap        gaRoseCompass_{ {bt_mesh::SR71rVC::RoseCompass_id},
-                                                        bt_mesh::SR71rVC::RoseCompass_location,
-                                                        bt_mesh::SR71rVC::HSIAxis_location,
+    bco::VCGaugeWrap        gaRoseCompass_{ {bm::vc::RoseCompass_id},
+                                                        bm::vc::RoseCompass_location,
+                                                        bm::vc::HSIAxis_location,
                                                         (360 * RAD),
                                                         1.0
     };
 
-    bco::VCGaugeWrap        gaHeadingBug_{ {bt_mesh::SR71rVC::HSICompassHeading_id},
-                                                        bt_mesh::SR71rVC::HSICompassHeading_location,
-                                                        bt_mesh::SR71rVC::HSIAxis_location,
+    bco::VCGaugeWrap        gaHeadingBug_{ {bm::vc::HSICompassHeading_id},
+                                                        bm::vc::HSICompassHeading_location,
+                                                        bm::vc::HSIAxis_location,
                                                         (360 * RAD),
                                                         0.3
     };
 
-    bco::VCGaugeWrap        gaCourse_{ {   bt_mesh::SR71rVC::HSICourse_id},
-                                                        bt_mesh::SR71rVC::HSICourse_location,
-                                                        bt_mesh::SR71rVC::HSIAxis_location,
+    bco::VCGaugeWrap        gaCourse_{ {   bm::vc::HSICourse_id},
+                                                        bm::vc::HSICourse_location,
+                                                        bm::vc::HSIAxis_location,
                                                         (360 * RAD),
                                                         1.0
     };
@@ -186,30 +186,30 @@ private:
 
     // The same mesh will have both texture and mesh transform.
     //   bco::MeshVisual			courseErrorMesh_        {   bt_mesh::SR71rVC::HSICourseNeedle_verts,		bt_mesh::SR71rVC::HSICourseNeedleId };
-	bco::VCGaugeWrap		gaCoureError_{ {	bt_mesh::SR71rVC::HSICourseNeedle_id},
-												bt_mesh::SR71rVC::HSICourseNeedle_location,
-												bt_mesh::SR71rVC::HSIAxis_location,
+	bco::VCGaugeWrap		gaCoureError_{ {	bm::vc::HSICourseNeedle_id},
+												bm::vc::HSICourseNeedle_location,
+												bm::vc::HSIAxis_location,
 												(360 * RAD),
 												1.0
 	};
 
-    bco::TextureVisual		courseErrorTex_{ bt_mesh::SR71rVC::HSICourseNeedle_verts,		bt_mesh::SR71rVC::HSICourseNeedle_id, };
+    bco::TextureVisual		courseErrorTex_{ bm::vc::HSICourseNeedle_verts,		bm::vc::HSICourseNeedle_id, };
 
 
-    bco::MeshVisual			gsNeedle_{ bt_mesh::SR71rVC::GlideSlopeNeedle_verts,	bt_mesh::SR71rVC::GlideSlopeNeedle_id, };
+    bco::MeshVisual			gsNeedle_{ bm::vc::GlideSlopeNeedle_verts,	bm::vc::GlideSlopeNeedle_id, };
 
 
     /* Altimeter */
-    bco::VCGaugeWrap        gaAlt1Needle_{ {bt_mesh::SR71rVC::gaAlt1Needle_id},
-                                                        bt_mesh::SR71rVC::gaAlt1Needle_location,
-                                                        bt_mesh::SR71rVC::AltimeterAxis_location,
+    bco::VCGaugeWrap        gaAlt1Needle_{ {bm::vc::gaAlt1Needle_id},
+                                                        bm::vc::gaAlt1Needle_location,
+                                                        bm::vc::AltimeterAxis_location,
                                                         (360 * RAD),
                                                         2.0
     };
 
-    bco::VCGaugeWrap        gaAlt10Needle_{ {bt_mesh::SR71rVC::gaAlt10Needle_id},
-                                                        bt_mesh::SR71rVC::gaAlt10Needle_location,
-                                                        bt_mesh::SR71rVC::AltimeterAxis_location,
+    bco::VCGaugeWrap        gaAlt10Needle_{ {bm::vc::gaAlt10Needle_id},
+                                                        bm::vc::gaAlt10Needle_location,
+                                                        bm::vc::AltimeterAxis_location,
                                                         (360 * RAD),
                                                         2.0
     };
@@ -231,220 +231,220 @@ private:
 	//	0		0.0
 
 
-    bco::VCGaugeWrap        gaAlt100Needle_{ {bt_mesh::SR71rVC::gaAlt100Needle_id},
-                                                        bt_mesh::SR71rVC::gaAlt100Needle_location,
-                                                        bt_mesh::SR71rVC::AltimeterAxis_location,
+    bco::VCGaugeWrap        gaAlt100Needle_{ {bm::vc::gaAlt100Needle_id},
+                                                        bm::vc::gaAlt100Needle_location,
+                                                        bm::vc::AltimeterAxis_location,
                                                         (360 * RAD),
                                                         2.0
     };
 
-    bco::TextureVisual		txAltimeterOff_ { bt_mesh::SR71rVC::AltimeterOffFlag_verts, bt_mesh::SR71rVC::AltimeterOffFlag_id };
-    bco::TextureVisual		txAltimeterGnd_{ bt_mesh::SR71rVC::AltimeterGround_verts, bt_mesh::SR71rVC::AltimeterGround_id };
+    bco::TextureVisual		txAltimeterOff_ { bm::vc::AltimeterOffFlag_verts, bm::vc::AltimeterOffFlag_id };
+    bco::TextureVisual		txAltimeterGnd_{ bm::vc::AltimeterGround_verts, bm::vc::AltimeterGround_id };
 
     /* VSI */
-    bco::VCGauge            gaVSINeedle_{ {bt_mesh::SR71rVC::gaVSINeedle_id},
-                                                        bt_mesh::SR71rVC::gaVSINeedle_location,
-                                                        bt_mesh::SR71rVC::VSIAxis_location,
+    bco::VCGauge            gaVSINeedle_{ {bm::vc::gaVSINeedle_id},
+                                                        bm::vc::gaVSINeedle_location,
+                                                        bm::vc::VSIAxis_location,
                                                         (340 * RAD),
                                                         2.0
     };
 
-    bco::TextureVisual		txVSIOff_{ bt_mesh::SR71rVC::VSIOffFlag_verts, bt_mesh::SR71rVC::VSIOffFlag_id, };
+    bco::TextureVisual		txVSIOff_{ bm::vc::VSIOffFlag_verts, bm::vc::VSIOffFlag_id, };
 
 
     /* HSI Course odo */
-    bco::VCGaugeWrap        gaCrsOnes_{ {bt_mesh::SR71rVC::CrsOnes_id},
-                                                        bt_mesh::SR71rVC::CrsOnes_location,
-                                                        bt_mesh::SR71rVC::CrsOdoAxis_location,
+    bco::VCGaugeWrap        gaCrsOnes_{ {bm::vc::CrsOnes_id},
+                                                        bm::vc::CrsOnes_location,
+                                                        bm::vc::CrsOdoAxis_location,
                                                         (360 * RAD),
                                                         1.0
     };
 
-    bco::VCGaugeWrap        gaCrsTens_{ { bt_mesh::SR71rVC::CrsTens_id },
-                                                        bt_mesh::SR71rVC::CrsTens_location,
-                                                        bt_mesh::SR71rVC::CrsOdoAxis_location,
+    bco::VCGaugeWrap        gaCrsTens_{ { bm::vc::CrsTens_id },
+                                                        bm::vc::CrsTens_location,
+                                                        bm::vc::CrsOdoAxis_location,
                                                         (360 * RAD),
                                                         1.0
     };
 
-    bco::VCGaugeWrap        gaCrsHund_{ { bt_mesh::SR71rVC::CrsHundreds_id },
-                                                        bt_mesh::SR71rVC::CrsHundreds_location,
-                                                        bt_mesh::SR71rVC::CrsOdoAxis_location,
+    bco::VCGaugeWrap        gaCrsHund_{ { bm::vc::CrsHundreds_id },
+                                                        bm::vc::CrsHundreds_location,
+                                                        bm::vc::CrsOdoAxis_location,
                                                         (360 * RAD),
                                                         1.0
     };
 
     /* HSI Miles */
-    bco::VCGaugeWrap        gaMilesOnes_{ {bt_mesh::SR71rVC::MilesOnes_id},
-                                                        bt_mesh::SR71rVC::MilesOnes_location,
-                                                        bt_mesh::SR71rVC::CrsOdoAxis_location,
+    bco::VCGaugeWrap        gaMilesOnes_{ {bm::vc::MilesOnes_id},
+                                                        bm::vc::MilesOnes_location,
+                                                        bm::vc::CrsOdoAxis_location,
                                                         (360 * RAD),
                                                         1.0
     };
 
-    bco::VCGaugeWrap        gaMilesTens_{ { bt_mesh::SR71rVC::MilesTens_id },
-                                                        bt_mesh::SR71rVC::MilesTens_location,
-                                                        bt_mesh::SR71rVC::CrsOdoAxis_location,
+    bco::VCGaugeWrap        gaMilesTens_{ { bm::vc::MilesTens_id },
+                                                        bm::vc::MilesTens_location,
+                                                        bm::vc::CrsOdoAxis_location,
                                                         (360 * RAD),
                                                         1.0
     };
 
-    bco::VCGaugeWrap        gaMilesHund_            { { bt_mesh::SR71rVC::MilesHundred_id },
-                                                        bt_mesh::SR71rVC::MilesHundred_location,
-                                                        bt_mesh::SR71rVC::CrsOdoAxis_location,
+    bco::VCGaugeWrap        gaMilesHund_            { { bm::vc::MilesHundred_id },
+                                                        bm::vc::MilesHundred_location,
+                                                        bm::vc::CrsOdoAxis_location,
                                                         (360 * RAD),
                                                         1.0
                                                     };
 
-    bco::TextureVisual		txHSIOff_{ bt_mesh::SR71rVC::HSIOffFlag_verts, bt_mesh::SR71rVC::HSIOffFlag_id };
-    bco::TextureVisual		txHSIExo_{ bt_mesh::SR71rVC::HSIExoFlag_verts, bt_mesh::SR71rVC::HSIExoFlag_id };
+    bco::TextureVisual		txHSIOff_{ bm::vc::HSIOffFlag_verts, bm::vc::HSIOffFlag_id };
+    bco::TextureVisual		txHSIExo_{ bm::vc::HSIExoFlag_verts, bm::vc::HSIExoFlag_id };
 
     /* TDI barrels */
     /* KEAS */
-    bco::VCGaugeWrap        gaKeasOnes_             { {bt_mesh::SR71rVC::TDIKeasOnes_id}, 
-                                                        bt_mesh::SR71rVC::TDIKeasOnes_location, 
-                                                        bt_mesh::SR71rVC::KEASAxis_location, 
+    bco::VCGaugeWrap        gaKeasOnes_             { {bm::vc::TDIKeasOnes_id}, 
+                                                        bm::vc::TDIKeasOnes_location, 
+                                                        bm::vc::KEASAxis_location, 
                                                         (360 * RAD), 
                                                         1.0 
                                                     };
 
-    bco::VCGaugeWrap        gaKeasTens_             { { bt_mesh::SR71rVC::TDIKeasTens_id },
-                                                        bt_mesh::SR71rVC::TDIKeasTens_location,
-                                                        bt_mesh::SR71rVC::KEASAxis_location,
+    bco::VCGaugeWrap        gaKeasTens_             { { bm::vc::TDIKeasTens_id },
+                                                        bm::vc::TDIKeasTens_location,
+                                                        bm::vc::KEASAxis_location,
                                                         (360 * RAD),
                                                         1.0
                                                     };
 
-    bco::VCGaugeWrap        gaKeasHund_             { { bt_mesh::SR71rVC::TDIKeasHund_id },
-                                                        bt_mesh::SR71rVC::TDIKeasHund_location,
-                                                        bt_mesh::SR71rVC::KEASAxis_location,
+    bco::VCGaugeWrap        gaKeasHund_             { { bm::vc::TDIKeasHund_id },
+                                                        bm::vc::TDIKeasHund_location,
+                                                        bm::vc::KEASAxis_location,
                                                         (360 * RAD),
                                                         1.0
                                                     };
 
     /* Altitude */
-    bco::VCGaugeWrap        gaTDIAltOnes_           { {bt_mesh::SR71rVC::TDIAltOnes_id}, 
-                                                        bt_mesh::SR71rVC::TDIAltOnes_location, 
-                                                        bt_mesh::SR71rVC::TDIAltAxis_location, 
+    bco::VCGaugeWrap        gaTDIAltOnes_           { {bm::vc::TDIAltOnes_id}, 
+                                                        bm::vc::TDIAltOnes_location, 
+                                                        bm::vc::TDIAltAxis_location, 
                                                         (360*RAD), 
                                                         1.0
                                                     };
 
-    bco::VCGaugeWrap        gaTDIAltTens_           { { bt_mesh::SR71rVC::TDIAltTens_id },
-                                                        bt_mesh::SR71rVC::TDIAltTens_location,
-                                                        bt_mesh::SR71rVC::TDIAltAxis_location,
+    bco::VCGaugeWrap        gaTDIAltTens_           { { bm::vc::TDIAltTens_id },
+                                                        bm::vc::TDIAltTens_location,
+                                                        bm::vc::TDIAltAxis_location,
                                                         (360 * RAD),
                                                         1.0
                                                     };
 
-    bco::VCGaugeWrap        gaTDIAltHund_           { { bt_mesh::SR71rVC::TDIAltHund_id },
-                                                        bt_mesh::SR71rVC::TDIAltHund_location,
-                                                        bt_mesh::SR71rVC::TDIAltAxis_location,
+    bco::VCGaugeWrap        gaTDIAltHund_           { { bm::vc::TDIAltHund_id },
+                                                        bm::vc::TDIAltHund_location,
+                                                        bm::vc::TDIAltAxis_location,
                                                         (360 * RAD),
                                                         1.0
                                                     };
 
-    bco::VCGaugeWrap        gaTDIAltThous_          { { bt_mesh::SR71rVC::TDIAltThous_id },
-                                                        bt_mesh::SR71rVC::TDIAltThous_location,
-                                                        bt_mesh::SR71rVC::TDIAltAxis_location,
+    bco::VCGaugeWrap        gaTDIAltThous_          { { bm::vc::TDIAltThous_id },
+                                                        bm::vc::TDIAltThous_location,
+                                                        bm::vc::TDIAltAxis_location,
                                                         (360 * RAD),
                                                         1.0
                                                     };
 
-    bco::VCGaugeWrap        gaTDIAltTenThou_        { { bt_mesh::SR71rVC::TDIAltTenThous_id },
-                                                        bt_mesh::SR71rVC::TDIAltTenThous_location,
-                                                        bt_mesh::SR71rVC::TDIAltAxis_location,
+    bco::VCGaugeWrap        gaTDIAltTenThou_        { { bm::vc::TDIAltTenThous_id },
+                                                        bm::vc::TDIAltTenThous_location,
+                                                        bm::vc::TDIAltAxis_location,
                                                         (360 * RAD),
                                                         1.0
                                                     };
 
     /* Mach */
-    bco::VCGaugeWrap        gaTDIMachOnes_          { {bt_mesh::SR71rVC::TDIMachOne_id}, 
-                                                        bt_mesh::SR71rVC::TDIMachOne_location, 
-                                                        bt_mesh::SR71rVC::TDIMachAxis_location, 
+    bco::VCGaugeWrap        gaTDIMachOnes_          { {bm::vc::TDIMachOne_id}, 
+                                                        bm::vc::TDIMachOne_location, 
+                                                        bm::vc::TDIMachAxis_location, 
                                                         (360 * RAD), 
                                                         1.0
                                                     };
 
-    bco::VCGaugeWrap        gaTDIMachTens_          { { bt_mesh::SR71rVC::TDIMachTens_id },
-                                                        bt_mesh::SR71rVC::TDIMachTens_location,
-                                                        bt_mesh::SR71rVC::TDIMachAxis_location,
+    bco::VCGaugeWrap        gaTDIMachTens_          { { bm::vc::TDIMachTens_id },
+                                                        bm::vc::TDIMachTens_location,
+                                                        bm::vc::TDIMachAxis_location,
                                                         (360 * RAD),
                                                         1.0
                                                     };
 
-    bco::VCGaugeWrap        gaTDIMachHund_          { { bt_mesh::SR71rVC::TDIMachHund_id },
-                                                        bt_mesh::SR71rVC::TDIMachHund_location,
-                                                        bt_mesh::SR71rVC::TDIMachAxis_location,
+    bco::VCGaugeWrap        gaTDIMachHund_          { { bm::vc::TDIMachHund_id },
+                                                        bm::vc::TDIMachHund_location,
+                                                        bm::vc::TDIMachAxis_location,
                                                         (360 * RAD),
                                                         1.0
                                                     };
 
 
     /* Accelerometer */
-    bco::VCGauge            gaAccel_                { {bt_mesh::SR71rVC::AccelNeedle_id}, 
-                                                        bt_mesh::SR71rVC::AccelNeedle_location, 
-                                                        bt_mesh::SR71rVC::AccelAxis_location,
+    bco::VCGauge            gaAccel_                { {bm::vc::AccelNeedle_id}, 
+                                                        bm::vc::AccelNeedle_location, 
+                                                        bm::vc::AccelAxis_location,
                                                         (295*RAD), 
                                                         2.0
                                                     };
 
     /* Trim */
-    bco::VCGauge            gaTrim_                 { {bt_mesh::SR71rVC::TrimNeedle_id}, 
-                                                        bt_mesh::SR71rVC::TrimNeedle_location, 
-                                                        bt_mesh::SR71rVC::TrimAxis_location, 
+    bco::VCGauge            gaTrim_                 { {bm::vc::TrimNeedle_id}, 
+                                                        bm::vc::TrimNeedle_location, 
+                                                        bm::vc::TrimAxis_location, 
                                                         (180*RAD), 
                                                         2.0 
                                                     };
 
     /* AOA */
-    bco::VCGauge            gaAOA_                  { {bt_mesh::SR71rVC::AOANeedle_id},
-                                                        bt_mesh::SR71rVC::AOANeedle_location,
-                                                        bt_mesh::SR71rVC::AOAAxis_location,
+    bco::VCGauge            gaAOA_                  { {bm::vc::AOANeedle_id},
+                                                        bm::vc::AOANeedle_location,
+                                                        bm::vc::AOAAxis_location,
                                                         (78*RAD),
                                                         2.0
                                                     };
 
     /* Speed */
-    bco::VCGauge            gaMachMax_              { {bt_mesh::SR71rVC::SpeedNeedleMax_id},
-                                                        bt_mesh::SR71rVC::SpeedNeedleMax_location,
-                                                        bt_mesh::SR71rVC::SpeedAxis_location,
+    bco::VCGauge            gaMachMax_              { {bm::vc::SpeedNeedleMax_id},
+                                                        bm::vc::SpeedNeedleMax_location,
+                                                        bm::vc::SpeedAxis_location,
                                                         (300*RAD),
                                                         2.0
                                                     };
 
-    bco::VCGauge            gaKies_                 { {bt_mesh::SR71rVC::SpeedIndicatorKies_id},
-                                                        bt_mesh::SR71rVC::SpeedIndicatorKies_location,
-                                                        bt_mesh::SR71rVC::SpeedAxisBack_location,
+    bco::VCGauge            gaKies_                 { {bm::vc::SpeedIndicatorKies_id},
+                                                        bm::vc::SpeedIndicatorKies_location,
+                                                        bm::vc::SpeedAxisBack_location,
                                                         (300*RAD), 
                                                         2.0
                                                     };
 
-    bco::VCGauge        gaSpeed_                    { {bt_mesh::SR71rVC::SpeedNeedle_id},
-                                                        bt_mesh::SR71rVC::SpeedNeedle_location,
-                                                        bt_mesh::SR71rVC::SpeedAxis_location,
+    bco::VCGauge        gaSpeed_                    { {bm::vc::SpeedNeedle_id},
+                                                        bm::vc::SpeedNeedle_location,
+                                                        bm::vc::SpeedAxis_location,
                                                         (300*RAD),
                                                         2.0
                                                     };
 
-    bco::TextureVisual		txSpeedOff_ {   bt_mesh::SR71rVC::SpeedFlagOff_verts, bt_mesh::SR71rVC::SpeedFlagOff_id };
+    bco::TextureVisual		txSpeedOff_ {   bm::vc::SpeedFlagOff_verts, bm::vc::SpeedFlagOff_id };
 
-    bco::TextureVisual      txSpeedVel_ {   bt_mesh::SR71rVC::SpeedVelocityFlag_verts, bt_mesh::SR71rVC::SpeedVelocityFlag_id};
+    bco::TextureVisual      txSpeedVel_ {   bm::vc::SpeedVelocityFlag_verts, bm::vc::SpeedVelocityFlag_id};
 
-    bco::VCToggleSwitch     swPower_                {   bt_mesh::SR71rVC::SwAvionics_id,
-                                                        bt_mesh::SR71rVC::SwAvionics_location,
-                                                        bt_mesh::SR71rVC::PowerTopRightAxis_location
+    bco::VCToggleSwitch     swPower_                {   bm::vc::SwAvionics_id,
+                                                        bm::vc::SwAvionics_location,
+                                                        bm::vc::PowerTopRightAxis_location
                                                     };
 
-    bco::VCRotorSwitch		swSelectRadio_          {   bt_mesh::SR71rVC::SwNavSelect_id, 
-                                                        bt_mesh::SR71rVC::SwNavSelect_location, 
-                                                        bt_mesh::SR71rVC::SwNavSelectAxis_location,
+    bco::VCRotorSwitch		swSelectRadio_          {   bm::vc::SwNavSelect_id, 
+                                                        bm::vc::SwNavSelect_location, 
+                                                        bm::vc::SwNavSelectAxis_location,
 														(117*RAD)
                                                     };
 
-    bco::VCRotorSwitch     swAvionMode_            {   bt_mesh::SR71rVC::SwExoSelect_id,
-                                                        bt_mesh::SR71rVC::SwExoSelect_location, 
-                                                        bt_mesh::SR71rVC::SwExoSelectAxis_location,
+    bco::VCRotorSwitch     swAvionMode_            {   bm::vc::SwExoSelect_id,
+                                                        bm::vc::SwExoSelect_location, 
+                                                        bm::vc::SwExoSelectAxis_location,
 														(117*RAD)
                                                     };
 

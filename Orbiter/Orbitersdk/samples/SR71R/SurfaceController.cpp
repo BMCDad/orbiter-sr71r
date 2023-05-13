@@ -63,16 +63,16 @@ void SurfaceController::OnSetClassCaps()
 	auto vessel = GetBaseVessel();
 
 	// Left Aileron Animation
-	static UINT groupLeftAileron = bt_mesh::SR71r::LeftOuterElevon_id;
-	static VECTOR3 leftAileronAxis = bt_mesh::SR71r::AileronAxisPO_location - bt_mesh::SR71r::AileronAxisPI_location;
-	static VECTOR3 leftElevatorAxis = bt_mesh::SR71r::AileronAxisPI_location - bt_mesh::SR71r::AileronAxisPO_location;
+	static UINT groupLeftAileron = bm::main::LeftOuterElevon_id;
+	static VECTOR3 leftAileronAxis = bm::main::AileronAxisPO_location - bm::main::AileronAxisPI_location;
+	static VECTOR3 leftElevatorAxis = bm::main::AileronAxisPI_location - bm::main::AileronAxisPO_location;
 
 	normalise(leftAileronAxis);
 	static MGROUP_ROTATE animGroupLeftAileron(
 		0,
 		&groupLeftAileron,
 		1,
-		bt_mesh::SR71r::AileronAxisPI_location,
+		bm::main::AileronAxisPI_location,
 		leftAileronAxis,
 		AILERON_RANGE);
 
@@ -81,7 +81,7 @@ void SurfaceController::OnSetClassCaps()
 		0,
 		&groupLeftAileron,
 		1,
-		bt_mesh::SR71r::AileronAxisPI_location,
+		bm::main::AileronAxisPI_location,
 		leftElevatorAxis,
 		AILERON_RANGE);
 
@@ -93,15 +93,15 @@ void SurfaceController::OnSetClassCaps()
 
 
 	// Right Aileron Animation
-	static UINT groupRightAileron[1] = { bt_mesh::SR71r::RightOuterElevon_id };
-	static VECTOR3 rightAileronAxis = bt_mesh::SR71r::AileronAxisSO_location - bt_mesh::SR71r::AileronAxisSI_location;
+	static UINT groupRightAileron[1] = { bm::main::RightOuterElevon_id };
+	static VECTOR3 rightAileronAxis = bm::main::AileronAxisSO_location - bm::main::AileronAxisSI_location;
 
 	normalise(rightAileronAxis);
 	static MGROUP_ROTATE animGroupRightAileron(
 		0,
 		groupRightAileron,
 		1,
-		bt_mesh::SR71r::AileronAxisSI_location,
+		bm::main::AileronAxisSI_location,
 		rightAileronAxis,
 		AILERON_RANGE);
 
@@ -109,7 +109,7 @@ void SurfaceController::OnSetClassCaps()
 		0,
 		groupRightAileron,
 		1,
-		bt_mesh::SR71r::AileronAxisSI_location,
+		bm::main::AileronAxisSI_location,
 		rightAileronAxis,
 		AILERON_RANGE);
 
@@ -121,29 +121,29 @@ void SurfaceController::OnSetClassCaps()
 
 
 	// Left Rudder Animation
-	static UINT groupLeftRudder = bt_mesh::SR71r::LeftRudder_id;
-	static VECTOR3 leftRudderAxis = bt_mesh::SR71r::RudderAxisPB_location - bt_mesh::SR71r::RudderAxisPT_location;
+	static UINT groupLeftRudder = bm::main::LeftRudder_id;
+	static VECTOR3 leftRudderAxis = bm::main::RudderAxisPB_location - bm::main::RudderAxisPT_location;
 
 	normalise(leftRudderAxis);
 	static MGROUP_ROTATE animGroupLeftRudder(
 		0,
 		&groupLeftRudder,
 		1,
-		bt_mesh::SR71r::RudderAxisPB_location,
+		bm::main::RudderAxisPB_location,
 		leftRudderAxis,
 		AILERON_RANGE);
 
 
 	// Right Rudder Animation
-	static UINT groupRightRudder = bt_mesh::SR71r::RightRudder_id;
-	static VECTOR3 rightRudderAxis = bt_mesh::SR71r::RudderAxisSB_location - bt_mesh::SR71r::RudderAxisST_location;
+	static UINT groupRightRudder = bm::main::RightRudder_id;
+	static VECTOR3 rightRudderAxis = bm::main::RudderAxisSB_location - bm::main::RudderAxisST_location;
 
 	normalise(rightRudderAxis);
 	static MGROUP_ROTATE animGroupRightRudder(
 		0,
 		&groupRightRudder,
 		1,
-		bt_mesh::SR71r::RudderAxisSB_location,
+		bm::main::RudderAxisSB_location,
 		rightRudderAxis,
 		AILERON_RANGE);
 

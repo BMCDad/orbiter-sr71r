@@ -69,9 +69,9 @@ private:
     //bco::PushButtonSwitch   btnRotation_    {bt_mesh::SR71rVC::RCS_ROT_location,     0.01};
     //bco::PushButtonSwitch   btnLinear_      {bt_mesh::SR71rVC::RCS_LIN_location,     0.01};
 
-	bco::VCRotorSwitch		swSelectMode_{	bt_mesh::SR71rVC::SwRCSMode_id,
-											bt_mesh::SR71rVC::SwRCSMode_location,
-											bt_mesh::SR71rVC::SwRCSSelectAxis_location,
+	bco::VCRotorSwitch		swSelectMode_{	bm::vc::SwRCSMode_id,
+											bm::vc::SwRCSMode_location,
+											bm::vc::SwRCSSelectAxis_location,
 											(90 * RAD)
 	};
 };

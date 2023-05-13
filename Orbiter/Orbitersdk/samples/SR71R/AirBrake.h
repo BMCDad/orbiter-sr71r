@@ -58,8 +58,8 @@ public:
 
 private:
 	bco::RotarySwitch		airBrakeSwitch_;
-    bco::VCEventTarget      eventIncreaseBrake_ { bt_mesh::SR71rVC::ABTargetIncrease_location, 0.01 };
-    bco::VCEventTarget      eventDecreaseBrake_ { bt_mesh::SR71rVC::ABTargetDecrease_location, 0.01 };
+    bco::VCEventTarget      eventIncreaseBrake_ { bm::vc::ABTargetIncrease_location, 0.01 };
+    bco::VCEventTarget      eventDecreaseBrake_ { bm::vc::ABTargetDecrease_location, 0.01 };
 
 	APU*					apu_;
 
@@ -69,31 +69,31 @@ private:
 
     bco::Animation			animAirBrake_       {   &airBrakeSwitch_, 2.0 };
 
-    bco::AnimationGroup     gpBrakeHandle_      {   { bt_mesh::SR71rVC::AirBrakeLever_id },
-                                                    bt_mesh::SR71rVC::SpBrakeAxisRight_location, bt_mesh::SR71rVC::SpBrakeAxisLeft_location,
+    bco::AnimationGroup     gpBrakeHandle_      {   { bm::vc::AirBrakeLever_id },
+                                                    bm::vc::SpBrakeAxisRight_location, bm::vc::SpBrakeAxisLeft_location,
                                                     (58 * RAD),
                                                     0.0, 1.0 };
 
-    bco::AnimationGroup     gpLeftTop_          {   { bt_mesh::SR71r::ElevonPIT_id },
-                                                    bt_mesh::SR71r::AirBrakeAxisPTO_location, bt_mesh::SR71r::AirBrakeAxisPTI_location,
+    bco::AnimationGroup     gpLeftTop_          {   { bm::main::ElevonPIT_id },
+                                                    bm::main::AirBrakeAxisPTO_location, bm::main::AirBrakeAxisPTI_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpLeftBottom_       {   { bt_mesh::SR71r::ElevonPIB_id },
-                                                    bt_mesh::SR71r::AirBrakeAxisPTI_location, bt_mesh::SR71r::AirBrakeAxisPTO_location,
+    bco::AnimationGroup     gpLeftBottom_       {   { bm::main::ElevonPIB_id },
+                                                    bm::main::AirBrakeAxisPTI_location, bm::main::AirBrakeAxisPTO_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpRightTop_         {   { bt_mesh::SR71r::ElevonSIT_id },
-                                                    bt_mesh::SR71r::AirBrakeAxisSTO_location, bt_mesh::SR71r::AirBrakeAxisSTI_location,
+    bco::AnimationGroup     gpRightTop_         {   { bm::main::ElevonSIT_id },
+                                                    bm::main::AirBrakeAxisSTO_location, bm::main::AirBrakeAxisSTI_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpRightBottom_      {   { bt_mesh::SR71r::ElevonSIB_id },
-                                                    bt_mesh::SR71r::AirBrakeAxisSBI_location, bt_mesh::SR71r::AirBrakeAxisSBO_location,
+    bco::AnimationGroup     gpRightBottom_      {   { bm::main::ElevonSIB_id },
+                                                    bm::main::AirBrakeAxisSBI_location, bm::main::AirBrakeAxisSBO_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };

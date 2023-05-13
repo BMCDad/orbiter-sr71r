@@ -62,29 +62,29 @@ private:
 
     double                  ampsPerLight_;
 
-    bco::AnimationGroup     rnavPower           {   {bt_mesh::SR71rVC::SwitchNavLights_id },
-                                                    bt_mesh::SR71rVC::LightsRightAxis_location, 
-													bt_mesh::SR71rVC::LightsRightAxis_location,
+    bco::AnimationGroup     rnavPower           {   {bm::vc::SwitchNavLights_id },
+                                                    bm::vc::LightsRightAxis_location, 
+													bm::vc::LightsRightAxis_location,
                                                     (90 * RAD), 0.0, 0.1 };
 
-    bco::VCToggleSwitch     swNav_              {   bt_mesh::SR71rVC::SwitchNavLights_id, 
-                                                    bt_mesh::SR71rVC::SwitchNavLights_location, 
-                                                    bt_mesh::SR71rVC::LightsRightAxis_location
+    bco::VCToggleSwitch     swNav_              {   bm::vc::SwitchNavLights_id, 
+                                                    bm::vc::SwitchNavLights_location, 
+                                                    bm::vc::LightsRightAxis_location
                                                 };
 
-    bco::VCToggleSwitch     swBeacon_           {   bt_mesh::SR71rVC::SwitchBeaconLights_id,
-                                                    bt_mesh::SR71rVC::SwitchBeaconLights_location,
-                                                    bt_mesh::SR71rVC::LightsRightAxis_location
+    bco::VCToggleSwitch     swBeacon_           {   bm::vc::SwitchBeaconLights_id,
+                                                    bm::vc::SwitchBeaconLights_location,
+                                                    bm::vc::LightsRightAxis_location
                                                 };
 
-    bco::VCToggleSwitch     swStrobe_           {   bt_mesh::SR71rVC::SwitchStrobeLights_id,
-                                                    bt_mesh::SR71rVC::SwitchStrobeLights_location,
-                                                    bt_mesh::SR71rVC::LightsRightAxis_location
+    bco::VCToggleSwitch     swStrobe_           {   bm::vc::SwitchStrobeLights_id,
+                                                    bm::vc::SwitchStrobeLights_location,
+                                                    bm::vc::LightsRightAxis_location
                                                 };
 
-    bco::VCToggleSwitch     swDock_             {   bt_mesh::SR71rVC::SwitchDockLights_id,
-                                                    bt_mesh::SR71rVC::SwitchDockLights_location,
-                                                    bt_mesh::SR71rVC::LightsRightAxis_location
+    bco::VCToggleSwitch     swDock_             {   bm::vc::SwitchDockLights_id,
+                                                    bm::vc::SwitchDockLights_location,
+                                                    bm::vc::LightsRightAxis_location
                                                 };
 
 

@@ -76,11 +76,11 @@ private:
 
 	bco::TextureVisual		lightSupplyAvailable_;
 	bco::TextureVisual		lightValveOpen_;
-    bco::PushButtonSwitch	switchValveOpen_    { bt_mesh::SR71rVC::LOXValveOpenSwitch_location, 0.01 };
+    bco::PushButtonSwitch	switchValveOpen_    { bm::vc::LOXValveOpenSwitch_location, 0.01 };
 
-    bco::VCGauge            gaugeOxygenLevel_   { {bt_mesh::SR71rVC::gaugeOxygenLevel_id },
-                                                    bt_mesh::SR71rVC::gaugeOxygenLevel_location,     
-                                                    bt_mesh::SR71rVC::axisOxygenLevel_location,
+    bco::VCGauge            gaugeOxygenLevel_   { {bm::vc::gaugeOxygenLevel_id },
+                                                    bm::vc::gaugeOxygenLevel_location,     
+                                                    bm::vc::axisOxygenLevel_location,
                                                     (300 * RAD), 
                                                     0.2
                                                 };

@@ -72,9 +72,9 @@ private:
 
 	bool isInternalTrigger_{ false };
 
-	bco::VCRotorSwitch		swSelectMode_{	bt_mesh::SR71rVC::SwHUDMode_id,
-											bt_mesh::SR71rVC::SwHUDMode_location,
-											bt_mesh::SR71rVC::SwHUDSelectAxis_location,
+	bco::VCRotorSwitch		swSelectMode_{	bm::vc::SwHUDMode_id,
+											bm::vc::SwHUDMode_location,
+											bm::vc::SwHUDSelectAxis_location,
 											(120 * RAD)
 	};
 };

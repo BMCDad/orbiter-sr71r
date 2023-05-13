@@ -42,9 +42,9 @@ private:
 
 	const char*				ConfigKey = "SHUTTERS";
 
-    bco::VCToggleSwitch     swShutters_     {   bt_mesh::SR71rVC::swShutter_id, 
-                                                bt_mesh::SR71rVC::swShutter_location, 
-                                                bt_mesh::SR71rVC::DoorsRightAxis_location
+    bco::VCToggleSwitch     swShutters_     {   bm::vc::swShutter_id, 
+                                                bm::vc::swShutter_location, 
+                                                bm::vc::DoorsRightAxis_location
                                             };
 
 	bco::TextureVisual		visShuttersSideLeft_;

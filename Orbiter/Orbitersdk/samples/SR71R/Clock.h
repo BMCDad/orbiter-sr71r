@@ -46,8 +46,8 @@ private:
 
 	const char*				ConfigKey = "CLOCK";
 
-    bco::PushButtonSwitch	switchResetElapsed_ { bt_mesh::SR71rVC::ClockElapsedReset_location,  0.01 };
-    bco::PushButtonSwitch	switchStopWatch_    { bt_mesh::SR71rVC::ClockTimerReset_location,    0.01 };
+    bco::PushButtonSwitch	switchResetElapsed_ { bm::vc::ClockElapsedReset_location,  0.01 };
+    bco::PushButtonSwitch	switchStopWatch_    { bm::vc::ClockTimerReset_location,    0.01 };
 
 	double					startElapsedTime_;
 	double					startTimerTime_;
@@ -57,30 +57,30 @@ private:
 	int						eidResetElapsed_;
 	int						eidResetTimer_;
 
-    bco::VCGaugeWrap        gaSecondHand_{ {bt_mesh::SR71rVC::ClockSecond_id },
-                                                    bt_mesh::SR71rVC::ClockSecond_location,
-                                                    bt_mesh::SR71rVC::ClockAxisFront_location,
+    bco::VCGaugeWrap        gaSecondHand_{ {bm::vc::ClockSecond_id },
+                                                    bm::vc::ClockSecond_location,
+                                                    bm::vc::ClockAxisFront_location,
                                                     (360*RAD),
                                                     0.4
                                                 };
 
-    bco::VCGaugeWrap        gaTimerMinute_{ {bt_mesh::SR71rVC::ClockTimerMinute_id },
-                                                    bt_mesh::SR71rVC::ClockTimerMinute_location,
-                                                    bt_mesh::SR71rVC::ClockAxisFront_location, 
+    bco::VCGaugeWrap        gaTimerMinute_{ {bm::vc::ClockTimerMinute_id },
+                                                    bm::vc::ClockTimerMinute_location,
+                                                    bm::vc::ClockAxisFront_location, 
                                                     (360 * RAD), 
                                                     0.4 
                                                 };
 
-    bco::VCGaugeWrap        gaHourHand_{ {bt_mesh::SR71rVC::ClockHour_id },
-                                                    bt_mesh::SR71rVC::ClockHour_location,
-                                                    bt_mesh::SR71rVC::ClockAxisFront_location,
+    bco::VCGaugeWrap        gaHourHand_{ {bm::vc::ClockHour_id },
+                                                    bm::vc::ClockHour_location,
+                                                    bm::vc::ClockAxisFront_location,
                                                     (360 * RAD),
                                                     0.4
                                                 };
 
-    bco::VCGaugeWrap        gaMinuteHand_{ {bt_mesh::SR71rVC::ClockMinute_id },
-                                                    bt_mesh::SR71rVC::ClockMinute_location,
-                                                    bt_mesh::SR71rVC::ClockAxisFront_location,
+    bco::VCGaugeWrap        gaMinuteHand_{ {bm::vc::ClockMinute_id },
+                                                    bm::vc::ClockMinute_location,
+                                                    bm::vc::ClockAxisFront_location,
                                                     (360 * RAD),
                                                     0.4
                                                 };

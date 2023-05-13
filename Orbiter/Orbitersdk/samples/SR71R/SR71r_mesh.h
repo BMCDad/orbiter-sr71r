@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Mon May  8 20:25:18 2023
+// Date: Fri May 12 18:18:09 2023
 
 
 #include "orbitersdk.h"
@@ -7,12 +7,12 @@
 #ifndef __SR71r_H
 #define __SR71r_H
 
-namespace bt_mesh 
+namespace bm 
 {
 
 // Scene SR71r
 
-  namespace SR71r 
+  namespace main 
   {
     const NTVERTEX WindowSFI_verts[3] = {
     {0.3303f, 0.5991f, 15.2599f, -0.6322f, -0.6280f, -0.4539f, 0.8423f, 0.0694f},
@@ -195,34 +195,34 @@ namespace bt_mesh
 
 // Scene SR71r2D
 
-  namespace SR71r2D 
+  namespace pnl 
   {
-    const NTVERTEX APKillRot_verts[4] = {
+    const NTVERTEX pnlNavKillrot_verts[4] = {
     {14.7212f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3479f, 0.1950f},
     {84.7212f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3828f, 0.1950f},
     {14.7212f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3479f, 0.1601f},
     {84.7212f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3828f, 0.1601f}    };
-    const NTVERTEX APHorzLevel_verts[4] = {
+    const NTVERTEX pnlNavHorzLvl_verts[4] = {
     {90.0864f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3479f, 0.2340f},
     {160.0864f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3828f, 0.2340f},
     {90.0864f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3479f, 0.1991f},
     {160.0864f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3828f, 0.1991f}    };
-    const NTVERTEX APPrograde_verts[4] = {
+    const NTVERTEX pnlNavPrograde_verts[4] = {
     {170.0577f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.2340f},
     {240.0577f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4602f, 0.2340f},
     {170.0577f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.1991f},
     {240.0577f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4602f, 0.1991f}    };
-    const NTVERTEX APRetro_verts[4] = {
+    const NTVERTEX pnlNavRetro_verts[4] = {
     {244.9969f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.2731f},
     {314.9969f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4602f, 0.2731f},
     {244.9969f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.2382f},
     {314.9969f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4602f, 0.2382f}    };
-    const NTVERTEX APNormal_verts[4] = {
+    const NTVERTEX pnlNavNorm_verts[4] = {
     {324.8236f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3479f, 0.2731f},
     {394.8236f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3827f, 0.2731f},
     {324.8236f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3479f, 0.2382f},
     {394.8236f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3827f, 0.2382f}    };
-    const NTVERTEX APAntiNormal_verts[4] = {
+    const NTVERTEX pnlNavAntiNorm_verts[4] = {
     {399.9081f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3479f, 0.3122f},
     {469.9081f, 86.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3827f, 0.3122f},
     {399.9081f, 16.4150f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3479f, 0.2773f},
@@ -232,53 +232,53 @@ namespace bt_mesh
     constexpr auto MESH_NAME = "SR71r2D";
 
     const UINT MainPanel_id = 0;
-    const UINT APKillRot_id = 1;
-    const UINT APHorzLevel_id = 2;
-    const UINT APPrograde_id = 3;
-    const UINT APRetro_id = 4;
-    const UINT APNormal_id = 5;
-    const UINT APAntiNormal_id = 6;
+    const UINT pnlNavKillrot_id = 1;
+    const UINT pnlNavHorzLvl_id = 2;
+    const UINT pnlNavPrograde_id = 3;
+    const UINT pnlNavRetro_id = 4;
+    const UINT pnlNavNorm_id = 5;
+    const UINT pnlNavAntiNorm_id = 6;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
-    constexpr RECT APKillRot_RC = {15, 17, 85, 87};
-    constexpr RECT APHorzLevel_RC = {91, 17, 161, 87};
-    constexpr RECT APPrograde_RC = {171, 17, 241, 87};
-    constexpr RECT APRetro_RC = {245, 17, 315, 87};
-    constexpr RECT APNormal_RC = {325, 17, 395, 87};
-    constexpr RECT APAntiNormal_RC = {400, 17, 470, 87};
+    constexpr RECT pnlNavKillrot_RC = {15, 17, 85, 87};
+    constexpr RECT pnlNavHorzLvl_RC = {91, 17, 161, 87};
+    constexpr RECT pnlNavPrograde_RC = {171, 17, 241, 87};
+    constexpr RECT pnlNavRetro_RC = {245, 17, 315, 87};
+    constexpr RECT pnlNavNorm_RC = {325, 17, 395, 87};
+    constexpr RECT pnlNavAntiNorm_RC = {400, 17, 470, 87};
 
   }
 
 // Scene SR71rVC
 
-  namespace SR71rVC 
+  namespace vc 
   {
     const NTVERTEX AttitudeIndicator_verts[4] = {
     {-0.0381f, 0.7333f, 15.2770f, 0.0000f, 0.0000f, -1.0000f, 0.3711f, 0.1478f},
     {0.0381f, 0.7333f, 15.2770f, 0.0000f, 0.0000f, -1.0000f, 0.5171f, 0.1478f},
     {-0.0381f, 0.6571f, 15.2770f, 0.0000f, 0.0000f, -1.0000f, 0.3711f, 0.2939f},
     {0.0381f, 0.6571f, 15.2770f, 0.0000f, 0.0000f, -1.0000f, 0.5172f, 0.2939f}    };
-    const NTVERTEX NAVMODE_NORMAL_MINUS_verts[4] = {
+    const NTVERTEX vcNavAntiNorm_verts[4] = {
     {-0.1718f, 0.5902f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3475f, 0.2771f},
     {-0.1535f, 0.5902f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3829f, 0.2771f},
     {-0.1718f, 0.5719f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3475f, 0.3125f},
     {-0.1535f, 0.5719f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3829f, 0.3125f}    };
-    const NTVERTEX NAVMODE_RETRO_GRADE_verts[4] = {
+    const NTVERTEX vcNavRetro_verts[4] = {
     {-0.1894f, 0.5902f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2380f},
     {-0.1711f, 0.5902f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2380f},
     {-0.1894f, 0.5719f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2733f},
     {-0.1711f, 0.5719f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2733f}    };
-    const NTVERTEX NAVMODE_HORZ_LEVEL_verts[4] = {
+    const NTVERTEX vcNavHorzLvl_verts[4] = {
     {-0.2072f, 0.5902f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3477f, 0.1990f},
     {-0.1889f, 0.5902f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3831f, 0.1990f},
     {-0.2072f, 0.5719f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3477f, 0.2343f},
     {-0.1889f, 0.5719f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3831f, 0.2343f}    };
-    const NTVERTEX NAVMODE_NORMAL_PLUS_verts[4] = {
+    const NTVERTEX vcNavNorm_verts[4] = {
     {-0.1718f, 0.6079f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3478f, 0.2379f},
     {-0.1535f, 0.6079f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3831f, 0.2379f},
     {-0.1718f, 0.5896f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3478f, 0.2733f},
     {-0.1535f, 0.5896f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3831f, 0.2733f}    };
-    const NTVERTEX NAVMODE_PRO_GRADE_verts[4] = {
+    const NTVERTEX vcNavProGrade_verts[4] = {
     {-0.1895f, 0.6079f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.1989f},
     {-0.1712f, 0.6079f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.1989f},
     {-0.1895f, 0.5896f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.2343f},
@@ -463,7 +463,7 @@ namespace bt_mesh
     {-0.0192f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5293f, 0.6899f},
     {-0.0370f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4952f, 0.7005f},
     {-0.0192f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5293f, 0.7005f}    };
-    const NTVERTEX NAVMODE_KILL_ROT_verts[4] = {
+    const NTVERTEX vcNavKillRot_verts[4] = {
     {-0.2072f, 0.6079f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3478f, 0.1599f},
     {-0.1889f, 0.6079f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3831f, 0.1599f},
     {-0.2072f, 0.5896f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3478f, 0.1952f},
@@ -597,11 +597,11 @@ namespace bt_mesh
     const UINT CompassFace_id = 43;
     const UINT AttitudeIndicator_id = 44;
     const UINT CockpitPanelHoodTop_id = 45;
-    const UINT NAVMODE_NORMAL_MINUS_id = 46;
-    const UINT NAVMODE_RETRO_GRADE_id = 47;
-    const UINT NAVMODE_HORZ_LEVEL_id = 48;
-    const UINT NAVMODE_NORMAL_PLUS_id = 49;
-    const UINT NAVMODE_PRO_GRADE_id = 50;
+    const UINT vcNavAntiNorm_id = 46;
+    const UINT vcNavRetro_id = 47;
+    const UINT vcNavHorzLvl_id = 48;
+    const UINT vcNavNorm_id = 49;
+    const UINT vcNavProGrade_id = 50;
     const UINT AccelNeedle_id = 51;
     const UINT SwAPMACH_id = 52;
     const UINT SwAPKEAS_id = 53;
@@ -663,7 +663,7 @@ namespace bt_mesh
     const UINT MsgLightHover_id = 109;
     const UINT TrimNeedle_id = 110;
     const UINT gaVSINeedle_id = 111;
-    const UINT NAVMODE_KILL_ROT_id = 112;
+    const UINT vcNavKillRot_id = 112;
     const UINT ForwardWindowInsideLeft_id = 113;
     const UINT WindowSFI_id = 114;
     const UINT gaFuelFlow_id = 115;
@@ -732,11 +732,11 @@ namespace bt_mesh
     constexpr VECTOR3 MFCLeftL1_location =     {-0.2012, 0.5328, 15.2751};
     constexpr VECTOR3 SwRCSSelectAxis_location =     {-0.1748, 0.6298, 15.2628};
     constexpr VECTOR3 SwHUDSelectAxis_location =     {-0.1480, 0.6552, 15.2632};
-    constexpr VECTOR3 NAVMODE_NORMAL_MINUS_location =     {-0.1626, 0.5816, 15.2755};
-    constexpr VECTOR3 NAVMODE_RETRO_GRADE_location =     {-0.1803, 0.5816, 15.2755};
-    constexpr VECTOR3 NAVMODE_HORZ_LEVEL_location =     {-0.1980, 0.5816, 15.2755};
-    constexpr VECTOR3 NAVMODE_NORMAL_PLUS_location =     {-0.1627, 0.5993, 15.2752};
-    constexpr VECTOR3 NAVMODE_PRO_GRADE_location =     {-0.1803, 0.5993, 15.2752};
+    constexpr VECTOR3 vcNavAntiNorm_location =     {-0.1626, 0.5816, 15.2755};
+    constexpr VECTOR3 vcNavRetro_location =     {-0.1803, 0.5816, 15.2755};
+    constexpr VECTOR3 vcNavHorzLvl_location =     {-0.1980, 0.5816, 15.2755};
+    constexpr VECTOR3 vcNavNorm_location =     {-0.1627, 0.5993, 15.2752};
+    constexpr VECTOR3 vcNavProGrade_location =     {-0.1803, 0.5993, 15.2752};
     constexpr VECTOR3 AccelNeedle_location =     {-0.1379, 0.5817, 15.2753};
     constexpr VECTOR3 SwRCSMode_location =     {-0.1748, 0.6298, 15.2708};
     constexpr VECTOR3 SwHUDMode_location =     {-0.1480, 0.6552, 15.2708};
@@ -885,7 +885,7 @@ namespace bt_mesh
     constexpr VECTOR3 LGHandle_location =     {-0.2354, 0.5512, 15.2866};
     constexpr VECTOR3 AOANeedle_location =     {-0.0661, 0.7037, 15.2753};
     constexpr VECTOR3 gaVSINeedle_location =     {0.0864, 0.5973, 15.2753};
-    constexpr VECTOR3 NAVMODE_KILL_ROT_location =     {-0.1980, 0.5993, 15.2752};
+    constexpr VECTOR3 vcNavKillRot_location =     {-0.1980, 0.5993, 15.2752};
     constexpr VECTOR3 SpeedNeedle_location =     {-0.0883, 0.6591, 15.2752};
     constexpr VECTOR3 gaAlt1Needle_location =     {0.0866, 0.6607, 15.2748};
     constexpr VECTOR3 gaAlt10Needle_location =     {0.0866, 0.6607, 15.2751};

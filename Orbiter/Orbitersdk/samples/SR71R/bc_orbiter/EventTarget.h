@@ -141,9 +141,9 @@ namespace bc_orbiter
         }
 
     private:
-        RECT    rect_;
-        int         panelId_;
-        VESSEL4*    vessel_;
-        PANELHANDLE pHandle_;
+        RECT        rect_;
+        int         panelId_    { 0 };
+        VESSEL4* vessel_        { nullptr };
+        PANELHANDLE pHandle_    { nullptr };
     };
 }

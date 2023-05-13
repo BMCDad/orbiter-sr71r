@@ -95,7 +95,7 @@
 #include <algorithm>
 
 namespace bco = bc_orbiter;
-namespace mvc = bt_mesh::SR71rVC;
+namespace mvc = bm::vc;
 
 namespace FC
 {
@@ -351,18 +351,18 @@ namespace FC
 
 		// Auto pilot panel
 		bco::TextureVisual		visAPMainOn_;
-		bco::PushButtonSwitch   swAPMain_{ bt_mesh::SR71rVC::SwAPMain_location, 0.01 };
+		bco::PushButtonSwitch   swAPMain_{ bm::vc::SwAPMain_location, 0.01 };
 		
 		bco::TextureVisual		visAPHeadingOn_;
-		bco::PushButtonSwitch   swAPHeading_{ bt_mesh::SR71rVC::SwAPHeading_location, 0.01 };
+		bco::PushButtonSwitch   swAPHeading_{ bm::vc::SwAPHeading_location, 0.01 };
 
 		bco::TextureVisual		visAPAltitudeOn_;
-		bco::PushButtonSwitch   swAPHAltitude_{ bt_mesh::SR71rVC::SwAPAltitude_location, 0.01 };
+		bco::PushButtonSwitch   swAPHAltitude_{ bm::vc::SwAPAltitude_location, 0.01 };
 
 		bco::TextureVisual		visAPKEASOn_;
-		bco::PushButtonSwitch   swAPKEAS_{ bt_mesh::SR71rVC::SwAPKEAS_location, 0.01 };
+		bco::PushButtonSwitch   swAPKEAS_{ bm::vc::SwAPKEAS_location, 0.01 };
 
 		bco::TextureVisual		visAPMACHOn_;
-		bco::PushButtonSwitch   swAPMACH_{ bt_mesh::SR71rVC::SwAPMACH_location, 0.01 };
+		bco::PushButtonSwitch   swAPMACH_{ bm::vc::SwAPMACH_location, 0.01 };
     };
 }

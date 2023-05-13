@@ -1,5 +1,5 @@
 //	NavModes - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -28,19 +28,6 @@
 NavModes::NavModes(bco::BaseVessel* vessel, double amps) :
 PoweredComponent(vessel, amps, 20.0)
 {
-    vessel->RegisterVCEventTarget(&btnKillRotation_);
-    vessel->RegisterVCEventTarget(&btnLevelHorizon_);
-    vessel->RegisterVCEventTarget(&btnPrograde_);
-    vessel->RegisterVCEventTarget(&btnRetrograde_);
-    vessel->RegisterVCEventTarget(&btnNormal_);
-    vessel->RegisterVCEventTarget(&btnAntiNormal_);
-
-	vessel->RegisterPanelEventTarget(&pnlBtnKillRotation_);
-	vessel->RegisterPanelEventTarget(&pnlBtnHorzLevel_);
-	vessel->RegisterPanelEventTarget(&pnlBtnPrograde_);
-	vessel->RegisterPanelEventTarget(&pnlBtnRetrograde_);
-	vessel->RegisterPanelEventTarget(&pnlBtnNormal_);
-	vessel->RegisterPanelEventTarget(&pnlBtnAntiNormal_);
 }
 
 void NavModes::OnSetClassCaps()
@@ -49,8 +36,22 @@ void NavModes::OnSetClassCaps()
 
 bool NavModes::OnLoadVC(int id)
 {
-	// Redraw event
-	oapiVCRegisterArea(GetRedrawId(), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
+	for (auto& a : data_)
+	{
+		oapiVCRegisterArea(a.Id, PANEL_REDRAW_NEVER, PANEL_MOUSE_DOWN);
+		oapiVCSetAreaClickmode_Spherical(a.Id, a.vcLocation, .01);
+	}
+
+	return true;
+}
+
+bool NavModes::OnVCMouseEvent(int id, int event)
+{
+	if (event != PANEL_MOUSE_LBDOWN) return false;
+
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const NavData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+	GetBaseVessel()->ToggleNavmode(m->Mode);
 	return true;
 }
 
@@ -63,45 +64,30 @@ bool NavModes::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 	const double offset = 0.0352;
 	double trans = 0.0;
 
-    navMode1_ = 0;
-    navMode2_ = 0;
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const NavData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+	trans = vessel->GetNavmodeState(m->Mode) ? offset : 0.0;
 
-	trans = vessel->GetNavmodeState(NAVMODE_KILLROT) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_KILLROT;
-	visKillRot_.SetTranslate(_V(trans, 0.0, 0.0));
-	visKillRot_.Draw(devMesh);
+	GROUPEDITSPEC change{};
+	NTVERTEX* delta = new NTVERTEX[4];
 
-	trans = vessel->GetNavmodeState(NAVMODE_HLEVEL) ? offset : 0.0;
-    if (trans != 0.0) navMode2_ = NAVMODE_HLEVEL;
-	visHorzLevel_.SetTranslate(_V(trans, 0.0, 0.0));
-	visHorzLevel_.Draw(devMesh);
+	bco::TransformUV2d(m->vcVerts, delta, 4, _V(trans, 0.0, 0.0), 0.0);
 
-	trans = vessel->GetNavmodeState(NAVMODE_PROGRADE) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_PROGRADE;
-    visProGrade_.SetTranslate(_V(trans, 0.0, 0.0));
-	visProGrade_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_RETROGRADE) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_RETROGRADE;
-	visRetroGrade_.SetTranslate(_V(trans, 0.0, 0.0));
-	visRetroGrade_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_NORMAL) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_NORMAL;
-	visNormal_.SetTranslate(_V(trans, 0.0, 0.0));
-	visNormal_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_ANTINORMAL) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_ANTINORMAL;
-	visAntiNormal_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAntiNormal_.Draw(devMesh);
+	change.flags = GRPEDIT_VTXTEX;
+	change.nVtx = 4;
+	change.vIdx = NULL; //Just use the mesh order
+	change.Vtx = delta;
+	auto res = oapiEditMeshGroup(devMesh, m->vcGroupId, &change);
+	delete[] delta;
 
 	return true;
 }
 
 void NavModes::OnNavMode(int mode, bool active)
 {
-	Update();
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const NavData& o) { return o.Mode == mode; });
+	if (m == data_.end()) return;
+	GetBaseVessel()->TriggerRedrawArea(0, 0, m->Id);
 }
 
 void NavModes::ToggleMode(int mode)
@@ -128,8 +114,6 @@ void NavModes::Update()
 		vessel->DeactivateNavmode(NAVMODE_NORMAL);
 		vessel->DeactivateNavmode(NAVMODE_ANTINORMAL);
 	}
-
-	GetBaseVessel()->TriggerRedrawArea(0, 0, GetRedrawId());
 }
 
 bool NavModes::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
@@ -186,51 +170,37 @@ bool NavModes::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 
 bool NavModes::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 {
-	GetBaseVessel()->RegisterPanelArea(hPanel, GetRedrawId(), _R(0,0,0,0), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
+	for (auto& a : data_)
+	{
+		oapiRegisterPanelArea(a.Id, a.pnlRect, PANEL_REDRAW_USER);
+		GetBaseVessel()->RegisterPanelArea(hPanel, a.Id, a.pnlRect, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+	}
+
 	return true;
 }
 
 bool NavModes::OnPanelRedrawEvent(int id, int event)
 {
-	auto devMesh = GetBaseVessel()->GetpanelMeshHandle0();
-	assert(devMesh != nullptr);
-
-	auto vessel = GetBaseVessel();
-	const double offset = 0.0352;
 	double trans = 0.0;
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const NavData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
 
-	navMode1_ = 0;
-	navMode2_ = 0;
+	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), m->pnlGroupId);
+	auto vrt = m->pnlVerts;
 
-	trans = vessel->GetNavmodeState(NAVMODE_KILLROT) ? offset : 0.0;
-	if (trans != 0.0) navMode1_ = NAVMODE_KILLROT;
-	pnlKillRot_.SetTranslate(_V(trans, 0.0, 0.0));
-	pnlKillRot_.Draw(devMesh);
+	trans = GetBaseVessel()->GetNavmodeState(m->Mode) ? 0.0352 : 0.0;
+	grp->Vtx[0].tu = vrt[0].tu + trans;
+	grp->Vtx[1].tu = vrt[1].tu + trans;
+	grp->Vtx[2].tu = vrt[2].tu + trans;
+	grp->Vtx[3].tu = vrt[3].tu + trans;
 
-	trans = vessel->GetNavmodeState(NAVMODE_HLEVEL) ? offset : 0.0;
-	if (trans != 0.0) navMode1_ = NAVMODE_HLEVEL;
-	pnlHorzLevel_.SetTranslate(_V(trans, 0.0, 0.0));
-	pnlHorzLevel_.Draw(devMesh);
+	return true;
+}
 
-	trans = vessel->GetNavmodeState(NAVMODE_PROGRADE) ? offset : 0.0;
-	if (trans != 0.0) navMode1_ = NAVMODE_PROGRADE;
-	pnlProGrade_.SetTranslate(_V(trans, 0.0, 0.0));
-	pnlProGrade_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_RETROGRADE) ? offset : 0.0;
-	if (trans != 0.0) navMode1_ = NAVMODE_RETROGRADE;
-	pnlRetroGrade_.SetTranslate(_V(trans, 0.0, 0.0));
-	pnlRetroGrade_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_NORMAL) ? offset : 0.0;
-	if (trans != 0.0) navMode1_ = NAVMODE_NORMAL;
-	pnlNormal_.SetTranslate(_V(trans, 0.0, 0.0));
-	pnlNormal_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_ANTINORMAL) ? offset : 0.0;
-	if (trans != 0.0) navMode1_ = NAVMODE_ANTINORMAL;
-	pnlAntiNormal_.SetTranslate(_V(trans, 0.0, 0.0));
-	pnlAntiNormal_.Draw(devMesh);
-
+bool NavModes::OnPanelMouseEvent(int id, int event)
+{
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const NavData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+	GetBaseVessel()->ToggleNavmode(m->Mode);
 	return true;
 }

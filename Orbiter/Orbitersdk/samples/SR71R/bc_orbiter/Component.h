@@ -82,6 +82,8 @@ namespace bc_orbiter
 		*/
 		virtual bool OnPanelRedrawEvent(int id, int event) { return false; }
 
+		virtual bool OnPanelMouseEvent(int id, int event) { return false; }
+
 		void SetRedrawId(int id) { redrawId_ = id; }
 		int GetRedrawId() const { return redrawId_; }
 

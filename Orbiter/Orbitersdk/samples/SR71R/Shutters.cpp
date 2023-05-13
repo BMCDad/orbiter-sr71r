@@ -24,10 +24,10 @@
 
 Shutters::Shutters(bco::BaseVessel * vessel) :
 	bco::Component(vessel),
-	visShuttersSideLeft_(	bt_mesh::SR71rVC::CanopyWindowInsideLeft_verts,		bt_mesh::SR71rVC::CanopyWindowInsideLeft_id, 6),
-	visShuttersSideRight_(	bt_mesh::SR71rVC::CanopyWindowSI_verts,		bt_mesh::SR71rVC::CanopyWindowSI_id, 6),
-	visShuttersFrontLeft_(	bt_mesh::SR71rVC::ForwardWindowInsideLeft_verts,		bt_mesh::SR71rVC::ForwardWindowInsideLeft_id, 3),
-	visShuttersFrontRight_(	bt_mesh::SR71rVC::WindowSFI_verts,	bt_mesh::SR71rVC::WindowSFI_id, 3)
+	visShuttersSideLeft_(	bm::vc::CanopyWindowInsideLeft_verts,		bm::vc::CanopyWindowInsideLeft_id, 6),
+	visShuttersSideRight_(	bm::vc::CanopyWindowSI_verts,		bm::vc::CanopyWindowSI_id, 6),
+	visShuttersFrontLeft_(	bm::vc::ForwardWindowInsideLeft_verts,		bm::vc::ForwardWindowInsideLeft_id, 3),
+	visShuttersFrontRight_(	bm::vc::WindowSFI_verts,	bm::vc::WindowSFI_id, 3)
 {
 	swShutters_.OnFunction([this] {Update(); });
 	swShutters_.OffFunction([this] {Update(); });

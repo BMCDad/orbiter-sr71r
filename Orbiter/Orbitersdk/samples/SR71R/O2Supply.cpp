@@ -27,8 +27,8 @@
 O2Supply::O2Supply(bco::BaseVessel* vessel, double capacity) :
 CryogenicTank(vessel, capacity, O2_NER, "OXYGEN"),
 prevTime_(0.0),
-lightSupplyAvailable_(	bt_mesh::SR71rVC::LOXSupplyOnLight_verts,	bt_mesh::SR71rVC::LOXSupplyOnLight_id),
-lightValveOpen_(		bt_mesh::SR71rVC::LOXValveOpenSwitch_verts,	bt_mesh::SR71rVC::LOXValveOpenSwitch_id)
+lightSupplyAvailable_(	bm::vc::LOXSupplyOnLight_verts,	bm::vc::LOXSupplyOnLight_id),
+lightValveOpen_(		bm::vc::LOXValveOpenSwitch_verts,	bm::vc::LOXValveOpenSwitch_id)
 {
 	switchValveOpen_.SetPressedFunc([this] {ToggleFilling(); });
     vessel->RegisterVCEventTarget(&switchValveOpen_);

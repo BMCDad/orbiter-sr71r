@@ -58,14 +58,14 @@ void RetroEngines::OnSetClassCaps()
 
 
     retroThrustHandles_[0] = vessel->CreateThruster(
-        bt_mesh::SR71r::ThrustRetroP_location,
+        bm::main::ThrustRetroP_location,
         _V(0, 0, -1),
         RETRO_THRUST,
         vessel->MainPropellant(),
         THRUST_ISP);
 
     retroThrustHandles_[1] = vessel->CreateThruster(
-        bt_mesh::SR71r::ThrustRetroS_location,
+        bm::main::ThrustRetroS_location,
         _V(0, 0, -1),
         RETRO_THRUST,
         vessel->MainPropellant(),

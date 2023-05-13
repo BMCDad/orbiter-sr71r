@@ -86,36 +86,36 @@ private:
 
     UINT idCargoAnim_{ 0 };
 
-    bco::VCToggleSwitch     swCargoPower_       {   bt_mesh::SR71rVC::SwCargoPower_id,
-                                                    bt_mesh::SR71rVC::SwCargoPower_location, 
-                                                    bt_mesh::SR71rVC::PowerTopRightAxis_location
+    bco::VCToggleSwitch     swCargoPower_       {   bm::vc::SwCargoPower_id,
+                                                    bm::vc::SwCargoPower_location, 
+                                                    bm::vc::PowerTopRightAxis_location
                                                 };
 
-    bco::VCToggleSwitch     swCargoOpen_        {   bt_mesh::SR71rVC::SwCargoOpen_id,
-                                                    bt_mesh::SR71rVC::SwCargoOpen_location,
-                                                    bt_mesh::SR71rVC::DoorsRightAxis_location
+    bco::VCToggleSwitch     swCargoOpen_        {   bm::vc::SwCargoOpen_id,
+                                                    bm::vc::SwCargoOpen_location,
+                                                    bm::vc::DoorsRightAxis_location
                                                 };
 
-    bco::AnimationGroup     gpCargoLeftFront_   {   { bt_mesh::SR71r::BayDoorPF_id },
-                                                    bt_mesh::SR71r::Bay1AxisPA_location, bt_mesh::SR71r::Bay1AxisPF_location,
+    bco::AnimationGroup     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
+                                                    bm::main::Bay1AxisPA_location, bm::main::Bay1AxisPF_location,
                                                     (160 * RAD),
                                                     0.51, 0.74
                                                 };
 
-    bco::AnimationGroup     gpCargoRightFront_  {   { bt_mesh::SR71r::BayDoorSF_id },
-                                                    bt_mesh::SR71r::Bay1AxisSF_location, bt_mesh::SR71r::Bay1AxisSA_location,
+    bco::AnimationGroup     gpCargoRightFront_  {   { bm::main::BayDoorSF_id },
+                                                    bm::main::Bay1AxisSF_location, bm::main::Bay1AxisSA_location,
                                                     (160 * RAD),
                                                     0.76, 1.0
                                                 };
 
-    bco::AnimationGroup     gpCargoLeftMain_    {   { bt_mesh::SR71r::BayDoorPA_id },
-                                                    bt_mesh::SR71r::Bay2AxisPA_location, bt_mesh::SR71r::Bay2AxisPF_location,
+    bco::AnimationGroup     gpCargoLeftMain_    {   { bm::main::BayDoorPA_id },
+                                                    bm::main::Bay2AxisPA_location, bm::main::Bay2AxisPF_location,
                                                     (160 * RAD),
                                                     0.0, 0.24
                                                 };
 
-    bco::AnimationGroup     gpCargoRightMain_   {   { bt_mesh::SR71r::BayDoorSA_id },
-                                                    bt_mesh::SR71r::Bay2AxisSF_location, bt_mesh::SR71r::Bay2AxisSA_location,
+    bco::AnimationGroup     gpCargoRightMain_   {   { bm::main::BayDoorSA_id },
+                                                    bm::main::Bay2AxisSF_location, bm::main::Bay2AxisSA_location,
                                                     (160 * RAD),
                                                     0.26, 0.49
                                                 };

@@ -209,6 +209,13 @@ namespace bc_orbiter
             auto eh = animations_.find(id);
             if (eh != animations_.end())	eh->second->SetState(state);
         }
+
+		int GetIdForComponent(Component* comp)
+		{
+			auto id = ++nextEventId_;
+			idComponentMap_[id] = comp;
+			return id;
+		}
 	private:
 		bool IsModeSet(VCIdMode test, VCIdMode mode) const
 		{
@@ -226,6 +233,9 @@ namespace bc_orbiter
 
         std::map<int, EventTarget*> vcEventTargetMap_;
 		std::map<int, PanelEventTarget*> pnlEventTargetMap_;
+
+		// Map a control id to its component so we know who to call.
+		std::map<int, Component*>	idComponentMap_;
 
         std::map<UINT, std::unique_ptr<IAnimation>>      animations_;
 
@@ -331,6 +341,13 @@ namespace bc_orbiter
         auto el = vcEventTargetMap_.find(id);
         if (el != vcEventTargetMap_.end())	return el->second->HandleMouse(event);
 
+		// New mode...
+		auto c = idComponentMap_.find(id);
+		if (c != idComponentMap_.end())
+		{
+			return c->second->OnVCMouseEvent(id, event);
+		}
+
 		return false;
 	}
 
@@ -339,7 +356,19 @@ namespace bc_orbiter
 		if (nullptr == meshVirtualCockpit0_)	return false;
 
 		auto eh = vcRedrawMap_.find(id);
-		if (eh != vcRedrawMap_.end())		return eh->second->OnVCRedrawEvent(id, event, surf);
+		if (eh != vcRedrawMap_.end())
+		{
+			return eh->second->OnVCRedrawEvent(id, event, surf);
+		}
+		else
+		{
+			// New mode...
+			auto c = idComponentMap_.find(id);
+			if (c != idComponentMap_.end())
+			{
+				return c->second->OnVCRedrawEvent(id, event, surf);
+			}
+		}
 
 		return false;
 	}
@@ -403,6 +432,13 @@ namespace bc_orbiter
 		auto eh = panelRedrawMap_.find(id);
 		if (eh != panelRedrawMap_.end())		return eh->second->OnPanelRedrawEvent(id, event);
 
+		// New mode...
+		auto c = idComponentMap_.find(id);
+		if (c != idComponentMap_.end())
+		{
+			return c->second->OnPanelRedrawEvent(id, event);
+		}
+
 		return true;
 	}
 
@@ -410,6 +446,13 @@ namespace bc_orbiter
 	{
 		auto el = pnlEventTargetMap_.find(id);
 		if (el != pnlEventTargetMap_.end())	return el->second->HandleMouse(event);
+
+		// New mode...
+		auto c = idComponentMap_.find(id);
+		if (c != idComponentMap_.end())
+		{
+			return c->second->OnPanelMouseEvent(id, event);
+		}
 
 		return true;
 	}

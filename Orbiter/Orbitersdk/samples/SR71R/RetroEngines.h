@@ -51,14 +51,14 @@ private:
 
     const char*	        ConfigKey = "RETRO";
 
-    bco::VCToggleSwitch swRetroDoors_   {   bt_mesh::SR71rVC::swRetroDoors_id, 
-                                            bt_mesh::SR71rVC::swRetroDoors_location, 
-                                            bt_mesh::SR71rVC::DoorsRightAxis_location
+    bco::VCToggleSwitch swRetroDoors_   {   bm::vc::swRetroDoors_id, 
+                                            bm::vc::swRetroDoors_location, 
+                                            bm::vc::DoorsRightAxis_location
                                         };
 
     bco::Animation      animRetroDoors_ {   &swRetroDoors_, 0.2};
 
-    bco::AnimationGroup gpDoors_        {   {bt_mesh::SR71r::EngineCone_id },
+    bco::AnimationGroup gpDoors_        {   {bm::main::EngineCone_id },
                                             _V(0, 0, -1.2), 
                                             0.0, 1.0 
                                         };

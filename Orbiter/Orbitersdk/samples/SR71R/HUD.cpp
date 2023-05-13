@@ -82,7 +82,7 @@ bool HUD::OnLoadVC(int id)
 	static VCHUDSPEC huds =
 	{
 		1,							// Mesh number (VC)
-		bt_mesh::SR71rVC::HUD_id,		// mesh group
+		bm::vc::HUD_id,		// mesh group
 		{ 0.0, 0.8, 15.25 },			// hud center (location)
 		0.12						// hud size
 	};

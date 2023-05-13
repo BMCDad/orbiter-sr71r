@@ -82,31 +82,31 @@ private:
     bco::Animation		    animCanopy_     {   &swCanopyOpen_, 0.2};
     UINT                    idAnim_         { 0 };
 
-    bco::VCToggleSwitch     swCanopyPower_  {   bt_mesh::SR71rVC::SwCanopyPower_id,
-                                                bt_mesh::SR71rVC::SwCanopyPower_location,
-                                                bt_mesh::SR71rVC::PowerTopRightAxis_location
+    bco::VCToggleSwitch     swCanopyPower_  {   bm::vc::SwCanopyPower_id,
+                                                bm::vc::SwCanopyPower_location,
+                                                bm::vc::PowerTopRightAxis_location
                                             };
 
-    bco::VCToggleSwitch     swCanopyOpen_   {   bt_mesh::SR71rVC::SwCanopyOpen_id,
-                                                bt_mesh::SR71rVC::SwCanopyOpen_location,
-                                                bt_mesh::SR71rVC::DoorsRightAxis_location
+    bco::VCToggleSwitch     swCanopyOpen_   {   bm::vc::SwCanopyOpen_id,
+                                                bm::vc::SwCanopyOpen_location,
+                                                bm::vc::DoorsRightAxis_location
                                             };
 
-    bco::AnimationGroup     gpCanopy_       { { bt_mesh::SR71r::CanopyFO_id,
-                                                bt_mesh::SR71r::ForwardCanopyWindow_id,
-                                                bt_mesh::SR71r::CanopyFI_id,
-												bt_mesh::SR71r::CanopyWindowSI_id,
-												bt_mesh::SR71r::CanopyWindowInsideLeft_id},
-                                                bt_mesh::SR71r::CockpitAxisS_location, bt_mesh::SR71r::CockpitAxisP_location,
+    bco::AnimationGroup     gpCanopy_       { { bm::main::CanopyFO_id,
+                                                bm::main::ForwardCanopyWindow_id,
+                                                bm::main::CanopyFI_id,
+												bm::main::CanopyWindowSI_id,
+												bm::main::CanopyWindowInsideLeft_id},
+                                                bm::main::CockpitAxisS_location, bm::main::CockpitAxisP_location,
                                                 (55 * RAD),
                                                 0, 1
                                             };
 
-    bco::AnimationGroup     gpCanopyVC_     { { bt_mesh::SR71rVC::CanopyFI_id,
-                                                bt_mesh::SR71rVC::CanopyFO_id,
-                                                bt_mesh::SR71rVC::CanopyWindowInsideLeft_id,
-                                                bt_mesh::SR71rVC::CanopyWindowSI_id },
-                                                bt_mesh::SR71r::CockpitAxisS_location, bt_mesh::SR71r::CockpitAxisP_location,
+    bco::AnimationGroup     gpCanopyVC_     { { bm::vc::CanopyFI_id,
+                                                bm::vc::CanopyFO_id,
+                                                bm::vc::CanopyWindowInsideLeft_id,
+                                                bm::vc::CanopyWindowSI_id },
+                                                bm::main::CockpitAxisS_location, bm::main::CockpitAxisP_location,
                                                 (55 * RAD),
                                                 0, 1
                                             };

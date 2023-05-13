@@ -155,47 +155,47 @@ private:
 
 
 
-    bco::VCGauge            gaFuelFlow_         { {bt_mesh::SR71rVC::gaFuelFlow_id},
-                                                    bt_mesh::SR71rVC::gaFuelFlow_location,   
-                                                    bt_mesh::SR71rVC::FuelFlowAxisFront_location,
+    bco::VCGauge            gaFuelFlow_         { {bm::vc::gaFuelFlow_id},
+                                                    bm::vc::gaFuelFlow_location,   
+                                                    bm::vc::FuelFlowAxisFront_location,
                                                     (RAD*270), 
                                                     1.0
                                                 };
 
-    bco::VCGauge            gaFuelMain_         { {bt_mesh::SR71rVC::gaMainFuel_id },
-                                                    bt_mesh::SR71rVC::gaMainFuel_location, 
-                                                    bt_mesh::SR71rVC::FuelLevelAxisFront_location, 
+    bco::VCGauge            gaFuelMain_         { {bm::vc::gaMainFuel_id },
+                                                    bm::vc::gaMainFuel_location, 
+                                                    bm::vc::FuelLevelAxisFront_location, 
                                                     (RAD*256), 
                                                     1.0 
                                                 };
 
-    bco::VCGauge            gaFuelRCS_          { {bt_mesh::SR71rVC::gaRCSFuel_id },
-                                                    bt_mesh::SR71rVC::gaRCSFuel_location, 
-                                                    bt_mesh::SR71rVC::RCSLevelAxisFront_location, 
+    bco::VCGauge            gaFuelRCS_          { {bm::vc::gaRCSFuel_id },
+                                                    bm::vc::gaRCSFuel_location, 
+                                                    bm::vc::RCSLevelAxisFront_location, 
                                                     (RAD*264), 
                                                     1.0
                                                 };
 	// Thrust limit
-    bco::VCToggleSwitch     swThrustLimit_      {   bt_mesh::SR71rVC::swThrottleLimit_id,
-                                                    bt_mesh::SR71rVC::swThrottleLimit_location, 
-                                                    bt_mesh::SR71rVC::TopRowSwitchRightAxis_location
+    bco::VCToggleSwitch     swThrustLimit_      {   bm::vc::swThrottleLimit_id,
+                                                    bm::vc::swThrottleLimit_location, 
+                                                    bm::vc::TopRowSwitchRightAxis_location
                                                 };
 
-    bco::VCToggleSwitch     swSelectTransfer_   {   bt_mesh::SR71rVC::swTransferSelect_id,
-                                                    bt_mesh::SR71rVC::swTransferSelect_location,
-                                                    bt_mesh::SR71rVC::FuelTransferRightAxis_location
+    bco::VCToggleSwitch     swSelectTransfer_   {   bm::vc::swTransferSelect_id,
+                                                    bm::vc::swTransferSelect_location,
+                                                    bm::vc::FuelTransferRightAxis_location
                                                 };
 
 	bco::TextureVisual		visTranferPumpOn_;
-    bco::PushButtonSwitch   swTransferPump_     {   bt_mesh::SR71rVC::FuelTransferSwitch_location,			0.01 };
+    bco::PushButtonSwitch   swTransferPump_     {   bm::vc::FuelTransferSwitch_location,			0.01 };
 
-    bco::VCToggleSwitch     swDumpFuel_         {   bt_mesh::SR71rVC::swDumpFuel_id,
-                                                    bt_mesh::SR71rVC::swDumpFuel_location, 
-                                                    bt_mesh::SR71rVC::FuelTransferRightAxis_location
+    bco::VCToggleSwitch     swDumpFuel_         {   bm::vc::swDumpFuel_id,
+                                                    bm::vc::swDumpFuel_location, 
+                                                    bm::vc::FuelTransferRightAxis_location
                                                 };
 
 	// Fill
 	bco::TextureVisual		lightFuelSupplyAvailable_;
 	bco::TextureVisual		lightFuelSupplyValveOpen_;
-	bco::PushButtonSwitch	switchFuelSupplyValveOpen_  { bt_mesh::SR71rVC::FuelValveOpenSwitch_location,    0.01 };
+	bco::PushButtonSwitch	switchFuelSupplyValveOpen_  { bm::vc::FuelValveOpenSwitch_location,    0.01 };
 };

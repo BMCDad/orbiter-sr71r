@@ -54,33 +54,33 @@ private:
     int                 hoverMouseId_;
 
 
-    bco::VCToggleSwitch     swOpen_ {   bt_mesh::SR71rVC::swHoverDoor_id, 
-                                        bt_mesh::SR71rVC::swHoverDoor_location,  
-                                        bt_mesh::SR71rVC::DoorsRightAxis_location
+    bco::VCToggleSwitch     swOpen_ {   bm::vc::swHoverDoor_id, 
+                                        bm::vc::swHoverDoor_location,  
+                                        bm::vc::DoorsRightAxis_location
                                     };
 
     bco::Animation          animHoverDoors_ {   &swOpen_, 0.2};
 
-    bco::AnimationGroup     gpFrontLeft_    {   { bt_mesh::SR71r::HoverDoorPF_id },
-                                                bt_mesh::SR71r::HoverDoorAxisPFF_location, bt_mesh::SR71r::HoverDoorAxisPFA_location,
+    bco::AnimationGroup     gpFrontLeft_    {   { bm::main::HoverDoorPF_id },
+                                                bm::main::HoverDoorAxisPFF_location, bm::main::HoverDoorAxisPFA_location,
                                                 (140 * RAD),
                                                 0, 1
                                             };
         
-    bco::AnimationGroup     gpFrontRight_   {   { bt_mesh::SR71r::HoverDoorSF_id },
-                                                bt_mesh::SR71r::HoverDoorAxisSFA_location, bt_mesh::SR71r::HoverDoorAxisSFF_location,
+    bco::AnimationGroup     gpFrontRight_   {   { bm::main::HoverDoorSF_id },
+                                                bm::main::HoverDoorAxisSFA_location, bm::main::HoverDoorAxisSFF_location,
                                                 (140 * RAD),
                                                 0, 1
                                             };
 
-    bco::AnimationGroup     gpLeft_         {   { bt_mesh::SR71r::HoverDoorPA_id } ,
-                                                bt_mesh::SR71r::HoverDoorAxisPF_location, bt_mesh::SR71r::HoverDoorAxisPA_location,
+    bco::AnimationGroup     gpLeft_         {   { bm::main::HoverDoorPA_id } ,
+                                                bm::main::HoverDoorAxisPF_location, bm::main::HoverDoorAxisPA_location,
                                                 (100 * RAD),
                                                 0, 1
                                             };
 
-    bco::AnimationGroup     gpRight_        {   { bt_mesh::SR71r::HoverDoorSA_id } ,
-                                                bt_mesh::SR71r::HoverDoorAxisSA_location, bt_mesh::SR71r::HoverDoorAxisSF_location, 
+    bco::AnimationGroup     gpRight_        {   { bm::main::HoverDoorSA_id } ,
+                                                bm::main::HoverDoorAxisSA_location, bm::main::HoverDoorAxisSF_location, 
                                                 (100 * RAD),
                                                 0, 1
                                             };

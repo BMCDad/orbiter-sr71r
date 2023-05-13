@@ -60,8 +60,8 @@ public:
 
 private:
 	bco::OnOffSwitch		landingGearSwitch_;
-    bco::VCEventTarget      targetGearDown_     { bt_mesh::SR71rVC::GearLeverDownTarget_location,    0.01 };
-    bco::VCEventTarget      targetGearUp_       { bt_mesh::SR71rVC::GearLeverUpTarget_location,      0.01 };
+    bco::VCEventTarget      targetGearDown_     { bm::vc::GearLeverDownTarget_location,    0.01 };
+    bco::VCEventTarget      targetGearUp_       { bm::vc::GearLeverUpTarget_location,      0.01 };
 
 	APU*					apu_;
 
@@ -77,83 +77,83 @@ private:
     UINT                    idAnim_             { 0 };
 
     // VC Animations
-    bco::AnimationGroup     lgHandle_           {   {bt_mesh::SR71rVC::LGHandle_id },
-                                                    bt_mesh::SR71rVC::LGHandle_location, bt_mesh::SR71rVC::LGHandleAxis_location, 
+    bco::AnimationGroup     lgHandle_           {   {bm::vc::LGHandle_id },
+                                                    bm::vc::LGHandle_location, bm::vc::LGHandleAxis_location, 
                                                     (40 * RAD),
                                                     0.0, 1.0
                                                 };
 
     // External:
-    bco::AnimationGroup     gpRightFrontDoor_   {   { bt_mesh::SR71r::LGDoorSF_id },
-                                                    bt_mesh::SR71r::LGFRBackPivot_location, bt_mesh::SR71r::LGFRFrontPivot_location,
+    bco::AnimationGroup     gpRightFrontDoor_   {   { bm::main::LGDoorSF_id },
+                                                    bm::main::LGFRBackPivot_location, bm::main::LGFRFrontPivot_location,
                                                     (90 * RAD),
                                                     0.0, 0.3 
                                                 };
 
-    bco::AnimationGroup     gpLeftFrontDoor_    {   { bt_mesh::SR71r::LGDoorPF_id },
-                                                    bt_mesh::SR71r::LGFLFrontPivot_location, bt_mesh::SR71r::LGFLBackPivot_location, 		
+    bco::AnimationGroup     gpLeftFrontDoor_    {   { bm::main::LGDoorPF_id },
+                                                    bm::main::LGFLFrontPivot_location, bm::main::LGFLBackPivot_location, 		
                                                     (90 * RAD),
                                                     0.0, 0.3 
                                                 };
 
-    bco::AnimationGroup     gpFrontGear_        {   { bt_mesh::SR71r::LGFrontArm_id,
-                                                      bt_mesh::SR71r::LGFrontAxel_id,
-                                                      bt_mesh::SR71r::LGCrossF_id,
-                                                      bt_mesh::SR71r::LGFrontLeftWheel_id,
-                                                      bt_mesh::SR71r::LGFrontRightWheel_id },
-                                                    bt_mesh::SR71r::LGFrontRightPivot_location, bt_mesh::SR71r::LGFrontLeftPivot_location, 
+    bco::AnimationGroup     gpFrontGear_        {   { bm::main::LGFrontArm_id,
+                                                      bm::main::LGFrontAxel_id,
+                                                      bm::main::LGCrossF_id,
+                                                      bm::main::LGFrontLeftWheel_id,
+                                                      bm::main::LGFrontRightWheel_id },
+                                                    bm::main::LGFrontRightPivot_location, bm::main::LGFrontLeftPivot_location, 
                                                     (90 * RAD),
                                                     0.2, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpLeftOuterDoor_    {   { bt_mesh::SR71r::LGDoorPO_id },
-                                                    bt_mesh::SR71r::LGDoorAxisPOA_location, bt_mesh::SR71r::LGDoorAxisPOF_location,
+    bco::AnimationGroup     gpLeftOuterDoor_    {   { bm::main::LGDoorPO_id },
+                                                    bm::main::LGDoorAxisPOA_location, bm::main::LGDoorAxisPOF_location,
                                                     (-100 * RAD),
                                                     0.1, 1.0
                                                 };
 
-    bco::AnimationGroup     gpLeftInnerDoor_    {   { bt_mesh::SR71r::LGDoorPI_id },
-                                                    bt_mesh::SR71r::LGDoorAxisPIA_location, bt_mesh::SR71r::LGDoorAxisPIF_location,
+    bco::AnimationGroup     gpLeftInnerDoor_    {   { bm::main::LGDoorPI_id },
+                                                    bm::main::LGDoorAxisPIA_location, bm::main::LGDoorAxisPIF_location,
                                                     (100 * RAD),
                                                     0.0, 0.3
                                                 };
 
-    bco::AnimationGroup     gpLeftGearUpper_    {   { bt_mesh::SR71r::LGLArm_id },
-                                                    bt_mesh::SR71r::LGCrossAxisPA_location, bt_mesh::SR71r::LGCrossAxisPF_location,
+    bco::AnimationGroup     gpLeftGearUpper_    {   { bm::main::LGLArm_id },
+                                                    bm::main::LGCrossAxisPA_location, bm::main::LGCrossAxisPF_location,
                                                     (-90 * RAD),
                                                     0.2, 1.0
                                                 };
 
-    bco::AnimationGroup     gpLeftGearLower_    {   { bt_mesh::SR71r::LGLFork_id,
-                                                      bt_mesh::SR71r::LGLWheel1_id,
-                                                      bt_mesh::SR71r::LGLWheel2_id,
-                                                      bt_mesh::SR71r::LGLWheel3_id },
+    bco::AnimationGroup     gpLeftGearLower_    {   { bm::main::LGLFork_id,
+                                                      bm::main::LGLWheel1_id,
+                                                      bm::main::LGLWheel2_id,
+                                                      bm::main::LGLWheel3_id },
                                                     _V(-0.39, 0, 0),
                                                     0.5, 0.8
                                                 };
 
-    bco::AnimationGroup     gpRightOuterDoor_   {   { bt_mesh::SR71r::LGDoorSO_id },
-                                                    bt_mesh::SR71r::LGDoorAxisSOA_location, bt_mesh::SR71r::LGDoorAxisSOF_location,
+    bco::AnimationGroup     gpRightOuterDoor_   {   { bm::main::LGDoorSO_id },
+                                                    bm::main::LGDoorAxisSOA_location, bm::main::LGDoorAxisSOF_location,
                                                     (100 * RAD),
                                                     0.2, 1.0
                                                 };
 
-    bco::AnimationGroup     gpRightInnerDoor_   {   { bt_mesh::SR71r::LGDoorSI_id },
-                                                    bt_mesh::SR71r::LGDoorAxisSIA_location, bt_mesh::SR71r::LGDoorAxisSIF_location,
+    bco::AnimationGroup     gpRightInnerDoor_   {   { bm::main::LGDoorSI_id },
+                                                    bm::main::LGDoorAxisSIA_location, bm::main::LGDoorAxisSIF_location,
                                                     (-100 * RAD),
                                                     0.0, 0.3
                                                 };
 
-    bco::AnimationGroup     gpRightGearUpper_   {   { bt_mesh::SR71r::LGRArm_id },
-                                                    bt_mesh::SR71r::LGCrossAxisSA_location, bt_mesh::SR71r::LGCrossAxisSF_location,
+    bco::AnimationGroup     gpRightGearUpper_   {   { bm::main::LGRArm_id },
+                                                    bm::main::LGCrossAxisSA_location, bm::main::LGCrossAxisSF_location,
                                                     (90 * RAD),
                                                     0.2, 1.0
                                                 };
 
-    bco::AnimationGroup     gpRightGearLower_   {   { bt_mesh::SR71r::LGRFork_id, 
-                                                      bt_mesh::SR71r::LGRWheel1_id, 
-                                                      bt_mesh::SR71r::LGRWheel2_id, 
-                                                      bt_mesh::SR71r::LGRWheel3_id },
+    bco::AnimationGroup     gpRightGearLower_   {   { bm::main::LGRFork_id, 
+                                                      bm::main::LGRWheel1_id, 
+                                                      bm::main::LGRWheel2_id, 
+                                                      bm::main::LGRWheel3_id },
                                                     _V(0.39, 0, 0),
                                                     0.5, 0.8
                                                 };
