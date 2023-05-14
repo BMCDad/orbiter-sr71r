@@ -43,38 +43,46 @@ class HUD : public bco::PoweredComponent
 public:
 	HUD(bco::BaseVessel* vessel, double amps);
 
-	virtual void OnSetClassCaps() override;
+	bool OnLoadVC(int id) override;
+	bool OnVCMouseEvent(int id, int event) override;
+	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+
+	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+	bool OnPanelMouseEvent(int id, int event) override;
+	bool OnPanelRedrawEvent(int id, int event) override;
+
 
 	/**
 	Override to manage power based on vessel HUD state.
 	*/
 	virtual double CurrentDraw() override;
 
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
-
 	void ChangePowerLevel(double newLevel) override;
 
-	virtual bool OnLoadVC(int id) override;
 
 	bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
 	void OnHudMode(int mode);
 
 private:
-	void SwitchPositionChanged(int mode);
+	void OnChanged(int mode);
 
+	struct HUDData
+	{
+		int Id;
+		int mode;
+		const RECT pnlRect;
+		const UINT pnlGroupId;
+		const NTVERTEX* pnlVerts;
+		const UINT vcGroupId;
+		const VECTOR3& vcLocation;
+		const NTVERTEX* vcVerts;
+	};
 
-    const char*	        ConfigKey = "HUDSWITCH";
-
-    int hudMode_{ HUD_NONE };
-    int areaId_;
-
-	bool isInternalTrigger_{ false };
-
-	bco::VCRotorSwitch		swSelectMode_{	bm::vc::SwHUDMode_id,
-											bm::vc::SwHUDMode_location,
-											bm::vc::SwHUDSelectAxis_location,
-											(120 * RAD)
+	std::vector<HUDData> data_
+	{
+		{ GetBaseVessel()->GetIdForComponent(this), HUD_DOCKING, bm::pnl::pnlHUDDock_RC,	bm::pnl::pnlHUDDock_id,	 bm::pnl::pnlHUDDock_verts,	 bm::vc::vcHUDDock_id,	bm::vc::vcHUDDock_location,	 bm::vc::vcHUDDock_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), HUD_SURFACE, bm::pnl::pnlHUDSurf_RC,	bm::pnl::pnlHUDSurf_id,	 bm::pnl::pnlHUDSurf_verts,	 bm::vc::vcHUDSURF_id,	bm::vc::vcHUDSURF_location,	 bm::vc::vcHUDSURF_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), HUD_ORBIT,	 bm::pnl::pnlHUDOrbit_RC,	bm::pnl::pnlHUDOrbit_id, bm::pnl::pnlHUDOrbit_verts, bm::vc::vcHUDOrbit_id,	bm::vc::vcHUDOrbit_location, bm::vc::vcHUDOrbit_verts }
 	};
 };

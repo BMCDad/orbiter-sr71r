@@ -22,11 +22,6 @@
 HUD::HUD(bco::BaseVessel* vessel, double amps)
 	: PoweredComponent(vessel, amps, 20.0)
 {
-	swSelectMode_.AddStopFunc(0.0, [this] {SwitchPositionChanged(HUD_DOCKING); });
-	swSelectMode_.AddStopFunc(0.33, [this] {SwitchPositionChanged(HUD_SURFACE); });
-	swSelectMode_.AddStopFunc(0.66, [this] {SwitchPositionChanged(HUD_ORBIT); });
-	swSelectMode_.AddStopFunc(1.0, [this] {SwitchPositionChanged(HUD_NONE); });
-	swSelectMode_.SetStep(3);
 }
 
 double HUD::CurrentDraw()
@@ -39,122 +34,129 @@ void HUD::ChangePowerLevel(double newLevel)
 	PoweredComponent::ChangePowerLevel(newLevel);
 	if (!HasPower())
 	{
-		isInternalTrigger_ = true;
 		oapiSetHUDMode(HUD_NONE);
-		isInternalTrigger_ = false;
-	}
-	else
-	{
-		swSelectMode_.SetStep(swSelectMode_.GetStep());
 	}
 }
-
-bool HUD::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
-{
-	if (_strnicmp(key, ConfigKey, 9) != 0)
-	{
-		return false;
-	}
-
-	int mode;
-
-	sscanf_s(configLine + 8, "%i", &mode);
-
-	swSelectMode_.SetStep(mode);
-	return true;
-}
-
-void HUD::OnSaveConfiguration(FILEHANDLE scn) const
-{
-	char cbuf[256];
-	auto mode = swSelectMode_.GetStep();
-
-	sprintf_s(cbuf, "%i", mode);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
-}
-
 
 bool HUD::OnLoadVC(int id)
 {
-    oapiVCRegisterArea(areaId_, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
+	for (auto& a : data_)
+	{
+		oapiVCRegisterArea(a.Id, PANEL_REDRAW_NEVER, PANEL_MOUSE_DOWN);
+		oapiVCSetAreaClickmode_Spherical(a.Id, a.vcLocation, .01);
+	}
 
 	// Register HUD
 	static VCHUDSPEC huds =
 	{
-		1,							// Mesh number (VC)
-		bm::vc::HUD_id,		// mesh group
-		{ 0.0, 0.8, 15.25 },			// hud center (location)
-		0.12						// hud size
+		1,						// Mesh number (VC)
+		bm::vc::HUD_id,			// mesh group
+		{ 0.0, 0.8, 15.25 },	// hud center (location)
+		0.12					// hud size
 	};
 
-	oapiVCRegisterHUD(&huds); // HUD parameters
-
-    return true;
+	oapiVCRegisterHUD(&huds);	// HUD parameters
+	return true;
 }
 
-void HUD::OnSetClassCaps()
+bool HUD::OnVCMouseEvent(int id, int event)
 {
-	auto vessel = GetBaseVessel();
-	swSelectMode_.Setup(vessel);
-	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
+	if (event != PANEL_MOUSE_LBDOWN) return false;
+
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const HUDData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+	OnChanged(m->mode);
+	return true;
 }
 
+bool HUD::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
+{
+	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
+	assert(devMesh != nullptr);
+
+	const double offset = 0.0352;
+	double trans = 0.0;
+
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const HUDData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+	trans = oapiGetHUDMode() == m->mode ? offset : 0.0;
+
+	GROUPEDITSPEC change{};
+	NTVERTEX* delta = new NTVERTEX[4];
+
+	bco::TransformUV2d(m->vcVerts, delta, 4, _V(trans, 0.0, 0.0), 0.0);
+
+	change.flags = GRPEDIT_VTXTEX;
+	change.nVtx = 4;
+	change.vIdx = NULL; //Just use the mesh order
+	change.Vtx = delta;
+	auto res = oapiEditMeshGroup(devMesh, m->vcGroupId, &change);
+	delete[] delta;
+
+	return true;
+}
+
+bool HUD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+	for (auto& a : data_)
+	{
+		oapiRegisterPanelArea(a.Id, a.pnlRect, PANEL_REDRAW_USER);
+		GetBaseVessel()->RegisterPanelArea(hPanel, a.Id, a.pnlRect, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+	}
+
+	return true;
+}
+
+bool HUD::OnPanelMouseEvent(int id, int event)
+{
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const HUDData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+	OnChanged(m->mode);
+	return true;
+}
+
+bool HUD::OnPanelRedrawEvent(int id, int event)
+{
+	double trans = 0.0;
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const HUDData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+
+	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), m->pnlGroupId);
+	auto vrt = m->pnlVerts;
+
+	trans = (oapiGetHUDMode() == m->mode) ? 0.0352 : 0.0;
+	grp->Vtx[0].tu = vrt[0].tu + trans;
+	grp->Vtx[1].tu = vrt[1].tu + trans;
+	grp->Vtx[2].tu = vrt[2].tu + trans;
+	grp->Vtx[3].tu = vrt[3].tu + trans;
+
+	return true;
+}
 
 void HUD::OnHudMode(int mode)
 {
-	if (!isInternalTrigger_)
+	// HUD mode is changing, if it is NOT changing to NONE, and we don't have power, turn it off.
+	if ((HUD_NONE != mode) && (!HasPower()))
 	{
-		// Probably change due to key.  If we don't have power,
-		// we will have to reverse the setting.  If we do, we
-		// need to update the switch.
-		if ((HUD_NONE != mode) && (!HasPower()))
-		{
-			oapiSetHUDMode(HUD_NONE);
-		}
+		oapiSetHUDMode(HUD_NONE);
+	}
 
-		switch (mode)
-		{
-		case HUD_NONE:
-			swSelectMode_.SetStep(3);
-			break;
-
-		case HUD_ORBIT:
-			swSelectMode_.SetStep(2);
-			break;
-
-		case HUD_SURFACE:
-			swSelectMode_.SetStep(1);
-			break;
-
-		case HUD_DOCKING:
-			swSelectMode_.SetStep(0);
-			break;
-		}
+	// Trigger all buttons:
+	for (auto& a : data_)
+	{
+		GetBaseVessel()->TriggerRedrawArea(0, 0, a.Id);
 	}
 }
 
-void HUD::SwitchPositionChanged(int mode)
+void HUD::OnChanged(int mode)
 {
-	if (mode == oapiGetHUDMode()) return;
-
-	isInternalTrigger_ = true;
+	auto currentMode = oapiGetHUDMode();
 
 	if (GetBaseVessel()->IsCreated())
 	{
-		if (mode != HUD_NONE)
-		{
-			if (HasPower())
-			{
-				oapiSetHUDMode(mode);
-			}
-		}
-		else
-		{
-			oapiSetHUDMode(HUD_NONE);
-		}
+		auto newMode = ((mode == currentMode) || !HasPower()) ? HUD_NONE : mode;
+		oapiSetHUDMode(newMode);;
 	}
-
-	isInternalTrigger_ = false;
 }
 
 

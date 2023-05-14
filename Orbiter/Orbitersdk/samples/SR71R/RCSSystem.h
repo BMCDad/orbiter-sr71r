@@ -26,14 +26,6 @@ namespace bco = bc_orbiter;
 class VESSEL3;
 
 /** RCSMode
-	
-	Configure the RCS Mode switch position.  It is possible for the switch
-	to be in teh LIN or ROT position, but the vessel is in 'None' mode.  This
-	will happen when the vessel has no power.
-
-	Configuration:
-	RCSSWITCH a
-	a - 0/1/2.  0=LIN, 1=RCS, 2=OFF
 */
 
 class RCSSystem : public bco::PoweredComponent
@@ -41,14 +33,17 @@ class RCSSystem : public bco::PoweredComponent
 public:
 	RCSSystem(bco::BaseVessel* vessel, double amps);
 
-	virtual void OnSetClassCaps() override;
+	void OnSetClassCaps() override;
 
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
+	bool OnLoadVC(int id) override;
+	bool OnVCMouseEvent(int id, int event) override;
+	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+
+	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+	bool OnPanelMouseEvent(int id, int event) override;
+	bool OnPanelRedrawEvent(int id, int event) override;
 
 	virtual void ChangePowerLevel(double newLevel) override;
-
-	virtual bool OnLoadVC(int id) override;
 
 	virtual double CurrentDraw() override;
 	
@@ -56,22 +51,23 @@ public:
 	void OnRCSMode(int mode);
 
 private:
-    void SwitchPositionChanged(int mode);
+    void OnChanged(int mode);
 
-	const char*				ConfigKey = "RCSSWITCH";
-    int						vcUIArea_;
+	struct RCSData
+	{
+		int Id;
+		int mode;
+		const RECT pnlRect;
+		const UINT pnlGroupId;
+		const NTVERTEX* pnlVerts;
+		const UINT vcGroupId;
+		const VECTOR3& vcLocation;
+		const NTVERTEX* vcVerts;
+	};
 
-	bool					isInternalTrigger_{ false };
-
-    //bco::TextureVisual		visRCSRot_;
-    //bco::TextureVisual		visRCSLin_;
-
-    //bco::PushButtonSwitch   btnRotation_    {bt_mesh::SR71rVC::RCS_ROT_location,     0.01};
-    //bco::PushButtonSwitch   btnLinear_      {bt_mesh::SR71rVC::RCS_LIN_location,     0.01};
-
-	bco::VCRotorSwitch		swSelectMode_{	bm::vc::SwRCSMode_id,
-											bm::vc::SwRCSMode_location,
-											bm::vc::SwRCSSelectAxis_location,
-											(90 * RAD)
+	std::vector<RCSData> data_
+	{
+		{ GetBaseVessel()->GetIdForComponent(this), RCS_LIN, bm::pnl::pnlRCSLin_RC,	bm::pnl::pnlRCSLin_id,	bm::pnl::pnlRCSLin_verts,	bm::vc::vcRCSLin_id,	bm::vc::vcRCSLin_location,	bm::vc::vcRCSLin_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), RCS_ROT, bm::pnl::pnlRCSRot_RC,	bm::pnl::pnlRCSRot_id,	bm::pnl::pnlRCSRot_verts,	bm::vc::vcRCSRot_id,	bm::vc::vcRCSRot_location,	bm::vc::vcRCSRot_verts }
 	};
 };

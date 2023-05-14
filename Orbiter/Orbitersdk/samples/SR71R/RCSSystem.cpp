@@ -1,5 +1,5 @@
 //	RCSSystem - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -16,53 +16,23 @@
 
 #include "StdAfx.h"
 
-#include "RCSSystem.h"
 #include "Orbitersdk.h"
+#include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter\Tools.h"
+
+#include "RCSSystem.h"
 #include "SR71r_mesh.h"
 
 
 RCSSystem::RCSSystem(bco::BaseVessel* vessel, double amps) :
 PoweredComponent(vessel, amps, 20.0)
 {
-	swSelectMode_.AddStopFunc(0.0, [this] {SwitchPositionChanged(RCS_LIN); });
-	swSelectMode_.AddStopFunc(0.5, [this] {SwitchPositionChanged(RCS_ROT); });
-	swSelectMode_.AddStopFunc(1.0, [this] {SwitchPositionChanged(RCS_NONE); });
-	swSelectMode_.SetStep(2);
 }
 
 
 void RCSSystem::OnSetClassCaps()
 {
-	auto vessel = GetBaseVessel();
-	swSelectMode_.Setup(vessel);
-    
-	vcUIArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
-
-bool RCSSystem::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
-{
-	if (_strnicmp(key, ConfigKey, 9) != 0)
-	{
-		return false;
-	}
-
-	int mode;
-
-	sscanf_s(configLine + 8, "%i", &mode);
-
-	swSelectMode_.SetStep(mode);
-	return true;
-}
-
-void RCSSystem::OnSaveConfiguration(FILEHANDLE scn) const
-{
-	char cbuf[256];
-	auto mode = swSelectMode_.GetStep();
-
-	sprintf_s(cbuf, "%i", mode);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
-}
-
 
 double RCSSystem::CurrentDraw()
 {
@@ -71,9 +41,88 @@ double RCSSystem::CurrentDraw()
 
 bool RCSSystem::OnLoadVC(int id)
 {
-    // Redraw event
-    oapiVCRegisterArea(vcUIArea_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
-    return true;
+	for (auto& a : data_)
+	{
+		oapiVCRegisterArea(a.Id, PANEL_REDRAW_NEVER, PANEL_MOUSE_DOWN);
+		oapiVCSetAreaClickmode_Spherical(a.Id, a.vcLocation, .01);
+	}
+
+	return true;
+}
+
+bool RCSSystem::OnVCMouseEvent(int id, int event)
+{
+	if (event != PANEL_MOUSE_LBDOWN) return false;
+
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const RCSData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+	OnChanged(m->mode);
+	return true;
+}
+
+bool RCSSystem::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
+{
+	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
+	assert(devMesh != nullptr);
+
+	auto vessel = GetBaseVessel();
+	const double offset = 0.0352;
+	double trans = 0.0;
+
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const RCSData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+	trans = GetBaseVessel()->GetAttitudeMode() == m->mode ? offset : 0.0;
+
+	GROUPEDITSPEC change{};
+	NTVERTEX* delta = new NTVERTEX[4];
+
+	bco::TransformUV2d(m->vcVerts, delta, 4, _V(trans, 0.0, 0.0), 0.0);
+
+	change.flags = GRPEDIT_VTXTEX;
+	change.nVtx = 4;
+	change.vIdx = NULL; //Just use the mesh order
+	change.Vtx = delta;
+	auto res = oapiEditMeshGroup(devMesh, m->vcGroupId, &change);
+	delete[] delta;
+
+	return true;
+}
+
+bool RCSSystem::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+	for (auto& a : data_)
+	{
+		oapiRegisterPanelArea(a.Id, a.pnlRect, PANEL_REDRAW_USER);
+		GetBaseVessel()->RegisterPanelArea(hPanel, a.Id, a.pnlRect, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+	}
+
+	return true;
+}
+
+bool RCSSystem::OnPanelMouseEvent(int id, int event)
+{
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const RCSData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+	OnChanged(m->mode);
+	return true;
+}
+
+bool RCSSystem::OnPanelRedrawEvent(int id, int event)
+{
+	double trans = 0.0;
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const RCSData& o) { return o.Id == id; });
+	if (m == data_.end()) false;
+
+	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), m->pnlGroupId);
+	auto vrt = m->pnlVerts;
+
+	trans = (GetBaseVessel()->GetAttitudeMode() == m->mode) ? 0.0352 : 0.0;
+	grp->Vtx[0].tu = vrt[0].tu + trans;
+	grp->Vtx[1].tu = vrt[1].tu + trans;
+	grp->Vtx[2].tu = vrt[2].tu + trans;
+	grp->Vtx[3].tu = vrt[3].tu + trans;
+
+	return true;
 }
 
 void RCSSystem::ChangePowerLevel(double newLevel)
@@ -81,18 +130,10 @@ void RCSSystem::ChangePowerLevel(double newLevel)
 	PoweredComponent::ChangePowerLevel(newLevel);
 	if (!HasPower())
 	{
-		isInternalTrigger_ = true;
-
 		if (GetBaseVessel()->IsCreated())
 		{
 			GetBaseVessel()->SetAttitudeMode(RCS_NONE);
 		}
-
-		isInternalTrigger_ = false;
-	}
-	else
-	{
-		swSelectMode_.SetStep(swSelectMode_.GetStep());
 	}
 }
 
@@ -100,53 +141,25 @@ void RCSSystem::ChangePowerLevel(double newLevel)
 // Callback:
 void RCSSystem::OnRCSMode(int mode)
 {
-	if (!isInternalTrigger_)
+	if ((RCS_NONE != mode) && (!HasPower()))
 	{
-		// Probably change due to key.  If we don't have power,
-		// we will have to reverse the setting.  If we do, we
-		// need to update the switch.
-		if ((RCS_NONE != mode) && (!HasPower()))
-		{
-			GetBaseVessel()->SetAttitudeMode(RCS_NONE);
-		}
+		GetBaseVessel()->SetAttitudeMode(RCS_NONE);
+	}
 
-		switch (mode)
-		{
-		case RCS_NONE:
-			swSelectMode_.SetStep(2);
-			break;
-
-		case RCS_ROT:
-			swSelectMode_.SetStep(1);
-			break;
-
-		case RCS_LIN:
-			swSelectMode_.SetStep(0);
-			break;
-		}
+	// Trigger all buttons:
+	for (auto& a : data_)
+	{
+		GetBaseVessel()->TriggerRedrawArea(0, 0, a.Id);
 	}
 }
 
-void RCSSystem::SwitchPositionChanged(int mode)
+void RCSSystem::OnChanged(int mode)
 {
-	if (mode == GetBaseVessel()->GetAttitudeMode()) return;
-
-	isInternalTrigger_ = true;
+	auto currentMode = GetBaseVessel()->GetAttitudeMode();
 
 	if (GetBaseVessel()->IsCreated())
 	{
-		if (mode != RCS_NONE)
-		{
-			if (HasPower())
-			{
-				GetBaseVessel()->SetAttitudeMode(mode);
-			}
-		}
-		else
-		{
-			GetBaseVessel()->SetAttitudeMode(RCS_NONE);
-		}
+		auto newMode = ((mode == currentMode) || !HasPower()) ? RCS_NONE : mode;
+		GetBaseVessel()->SetAttitudeMode(newMode);
 	}
-
-	isInternalTrigger_ = false;
 }

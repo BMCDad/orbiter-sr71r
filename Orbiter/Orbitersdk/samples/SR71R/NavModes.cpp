@@ -17,7 +17,6 @@
 #include "StdAfx.h"
 
 #include "Orbitersdk.h"
-
 #include "bc_orbiter\BaseVessel.h"
 
 #include "NavModes.h"
