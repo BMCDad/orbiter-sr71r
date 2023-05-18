@@ -178,7 +178,7 @@ bool NavModes::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 	return true;
 }
 
-bool NavModes::OnPanelRedrawEvent(int id, int event)
+bool NavModes::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	double trans = 0.0;
 	auto m = std::find_if(data_.begin(), data_.end(), [&](const NavData& o) { return o.Id == id; });

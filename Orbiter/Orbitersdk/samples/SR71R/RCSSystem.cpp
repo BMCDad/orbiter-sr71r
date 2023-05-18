@@ -107,7 +107,7 @@ bool RCSSystem::OnPanelMouseEvent(int id, int event)
 	return true;
 }
 
-bool RCSSystem::OnPanelRedrawEvent(int id, int event)
+bool RCSSystem::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	double trans = 0.0;
 	auto m = std::find_if(data_.begin(), data_.end(), [&](const RCSData& o) { return o.Id == id; });

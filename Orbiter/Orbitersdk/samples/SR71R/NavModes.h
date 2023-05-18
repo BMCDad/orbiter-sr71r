@@ -41,7 +41,7 @@ public:
 	// Component overrides:
 	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
 	bool OnLoadVC(int id) override;
-	bool OnPanelRedrawEvent(int id, int event) override;
+	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
 	bool OnPanelMouseEvent(int id, int event) override;
 	void OnSetClassCaps() override;
 	bool OnVCMouseEvent(int id, int event) override;

@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Sun May 14 15:06:15 2023
+// Date: Wed May 17 18:12:05 2023
 
 
 #include "orbitersdk.h"
@@ -252,8 +252,19 @@ namespace bm
     {98.0000f, 416.7473f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5384f, 0.3412f},
     {28.0000f, 360.7473f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5036f, 0.3132f},
     {98.0000f, 360.7473f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5384f, 0.3132f}    };
+    const NTVERTEX pnlMFDLeft_verts[4] = {
+    {245.0833f, 557.3519f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0000f, 1.0000f},
+    {653.0833f, 557.3519f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 1.0000f, 1.0000f},
+    {245.0833f, 149.3518f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0f, 0.0f},
+    {653.0833f, 149.3518f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 1.0000f, 0.0000f}    };
+    const NTVERTEX pnlMFDRight_verts[4] = {
+    {1907.3347f, 557.3519f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0000f, 1.0000f},
+    {2315.3347f, 557.3519f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 1.0000f, 1.0000f},
+    {1907.3347f, 149.3518f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0f, 0.0f},
+    {2315.3347f, 149.3518f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 1.0000f, 0.0000f}    };
     const DWORD TXIDX_SR71R_100_2DPanel_dds = 1;
     const DWORD TXIDX_SR71R_100_VC1_dds = 2;
+    const DWORD TXIDX_SR71R_100_VC2_dds = 3;
     constexpr auto MESH_NAME = "SR71r2D";
 
     const UINT MainPanel_id = 0;
@@ -268,6 +279,8 @@ namespace bm
     const UINT pnlHUDDock_id = 9;
     const UINT pnlHUDSurf_id = 10;
     const UINT pnlHUDOrbit_id = 11;
+    const UINT pnlMFDLeft_id = 12;
+    const UINT pnlMFDRight_id = 13;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {15, 17, 85, 87};
@@ -281,6 +294,13 @@ namespace bm
     constexpr RECT pnlHUDDock_RC = {29, 245, 99, 301};
     constexpr RECT pnlHUDSurf_RC = {29, 303, 99, 359};
     constexpr RECT pnlHUDOrbit_RC = {29, 361, 99, 417};
+    const double pnlMFDLeft_Width = 408.0;
+    const double pnlMFDLeft_Height = 408.0000305175781;
+    constexpr VECTOR3 pnlMFDLLTop_location =     {150.0000, 195.0000, -1.0000};
+    constexpr VECTOR3 pnlMFDBtnRight_location =     {206.0000, 195.0000, -1.0000};
+    constexpr VECTOR3 pnlMFDRowTwoTop_location =     {596.2580, 584.7822, -1.0000};
+    const double pnlMFDRight_Width = 408.0;
+    const double pnlMFDRight_Height = 408.0000305175781;
 
   }
 
@@ -793,7 +813,6 @@ namespace bm
     constexpr VECTOR3 MFCLeftL3_location =     {-0.2012, 0.5042, 15.2751};
     constexpr VECTOR3 MFCLeftL2_location =     {-0.2012, 0.5185, 15.2751};
     constexpr VECTOR3 MFCLeftL1_location =     {-0.2012, 0.5328, 15.2751};
-    constexpr VECTOR3 SwHUDSelectAxis_location =     {-0.1480, 0.6552, 15.2632};
     constexpr VECTOR3 vcNavAntiNorm_location =     {-0.1626, 0.5816, 15.2755};
     constexpr VECTOR3 vcNavRetro_location =     {-0.1803, 0.5816, 15.2755};
     constexpr VECTOR3 vcNavHorzLvl_location =     {-0.1980, 0.5816, 15.2755};

@@ -209,6 +209,7 @@
     <Image Include="$(OrbiterDir)\Textures\SR71_VCCockPit.dds" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\Meshes\SR71r2D.msh" />
     <None Include="Art\SR71rBody.xcf" />
     <None Include="Art\SR71R_100_2DPanel.xcf" />
     <None Include="Art\SR71R_100_Buttons.xcf" />

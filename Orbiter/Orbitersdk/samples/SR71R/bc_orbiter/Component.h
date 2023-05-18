@@ -80,7 +80,7 @@ namespace bc_orbiter
 		/**
 		Override to handle 2D panel redraw events.  Called from clbkPanelRedrawEvent.
 		*/
-		virtual bool OnPanelRedrawEvent(int id, int event) { return false; }
+		virtual bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) { return false; }
 
 		virtual bool OnPanelMouseEvent(int id, int event) { return false; }
 

@@ -19,33 +19,10 @@
 
 // VC MFD Mesh coordinates:
 
-// Mesh button column center points (x)
-const double MFDLLX = -0.2009;
-const double MFDLRX = -0.0638;
-const double MFDRLX = 0.0638;
-const double MFDRRX = 0.2009;
-
 const double MFDY = 15.2765;
 
 // Mesh button row center points (z)
-const double MFDBR1 = 0.5495;
-const double MFDBR2 = 0.5286;
-const double MFDBR3 = 0.5082;
-const double MFDBR4 = 0.4881;
-const double MFDBR5 = 0.4680;
-const double MFDBR6 = 0.4476;
 const double MFDBRAD = 0.006;	// Radius to use for hit test.
-const double MFDBRPWR = 0.4338;
-
-// Left Command
-const double MFDLPOWX = -0.1773;
-const double MFDLSELX = -0.1077;
-const double MFDLMNUX = -0.0873;
-
-// Right Command
-const double MFDRPOWX = 0.0884;
-const double MFDRSELX = 0.1570;
-const double MFDRMNUX = 0.1770;
 
 // Texture button column left/right
 // left

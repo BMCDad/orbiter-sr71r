@@ -55,8 +55,11 @@ namespace bc_orbiter
 		void Redraw();
 		void AssignKey(int areaId, int mfdKey);
 		void AssignPwrKey(int areaId) { idPower_ = areaId; }
+		int GetPwrKey() const { return idPower_; }
 		void AssignSelect(int areaId) { idSelect_ = areaId; }
+		int GetSelectKey() const { return idSelect_; }
 		void AssignMenu(int areaId) { idMenu_ = areaId; }
+		int GetMenuKey() const { return idMenu_; }
 	private:
 		
 		int						mfdId_;

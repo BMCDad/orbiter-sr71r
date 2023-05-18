@@ -115,7 +115,7 @@ bool HUD::OnPanelMouseEvent(int id, int event)
 	return true;
 }
 
-bool HUD::OnPanelRedrawEvent(int id, int event)
+bool HUD::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	double trans = 0.0;
 	auto m = std::find_if(data_.begin(), data_.end(), [&](const HUDData& o) { return o.Id == id; });

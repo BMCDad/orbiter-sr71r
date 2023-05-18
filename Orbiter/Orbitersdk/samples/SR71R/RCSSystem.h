@@ -41,7 +41,7 @@ public:
 
 	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
 	bool OnPanelMouseEvent(int id, int event) override;
-	bool OnPanelRedrawEvent(int id, int event) override;
+	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
 
 	virtual void ChangePowerLevel(double newLevel) override;
 

@@ -430,13 +430,13 @@ namespace bc_orbiter
 		//	return true;
 		//}
 		auto eh = panelRedrawMap_.find(id);
-		if (eh != panelRedrawMap_.end())		return eh->second->OnPanelRedrawEvent(id, event);
+		if (eh != panelRedrawMap_.end())		return eh->second->OnPanelRedrawEvent(id, event, surf);
 
 		// New mode...
 		auto c = idComponentMap_.find(id);
 		if (c != idComponentMap_.end())
 		{
-			return c->second->OnPanelRedrawEvent(id, event);
+			return c->second->OnPanelRedrawEvent(id, event, surf);
 		}
 
 		return true;

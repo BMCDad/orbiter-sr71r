@@ -437,6 +437,9 @@
       <Filter>Meshes</Filter>
     </None>
     <None Include="Art\SR71R_100_2DPanel.xcf" />
+    <None Include="..\..\..\Meshes\SR71r2D.msh">
+      <Filter>Meshes</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SR71R.rc">
