@@ -52,7 +52,7 @@ private:
 
 	struct MFDData
 	{
-		int Id;
+		int id;
 		int key;
 		int row;
 		int col;

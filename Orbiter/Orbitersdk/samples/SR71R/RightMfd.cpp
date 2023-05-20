@@ -31,7 +31,7 @@ void RightMFD::OnSetClassCaps()
 {
 	for (auto& a : data_)
 	{
-		AssignKey(a.Id, a.key);
+		AssignKey(a.id, a.key);
 	}
 
 	AssignPwrKey(GetBaseVessel()->GetIdForComponent(this));
@@ -78,14 +78,14 @@ bool RightMFD::OnLoadVC(int id)
 		int rc_r = rc_l + btn_width;
 		int rc_b = rc_t + btn_height;
 		oapiVCRegisterArea(
-			a.Id,
+			a.id,
 			_R(rc_l, rc_t, rc_r, rc_b),
 			PANEL_REDRAW_USER,
 			PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
 			PANEL_MAP_BACKGROUND,
 			surfHandle);
 
-		oapiVCSetAreaClickmode_Spherical(a.Id, a.vcLoc, .01);
+		oapiVCSetAreaClickmode_Spherical(a.id, a.vcLoc, .01);
 	}
 
 
@@ -176,7 +176,7 @@ bool RightMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 		//		oapiRegisterPanelArea(a.Id, _R(rc_l, rc_t, rc_r, rc_b), PANEL_REDRAW_USER);
 		vessel->RegisterPanelArea(
 			hPanel,
-			a.Id,
+			a.id,
 			_R(rc_l, rc_t, rc_r, rc_b),
 			PANEL_REDRAW_USER,
 			PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
@@ -219,7 +219,7 @@ bool RightMFD::OnPanelMouseEvent(int id, int event)
 
 bool RightMFD::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
-	auto m = std::find_if(data_.begin(), data_.end(), [&](const MFDData& o) { return o.Id == id; });
+	auto m = std::find_if(data_.begin(), data_.end(), [&](const MFDData& o) { return o.id == id; });
 	if (m == data_.end()) return false;
 
 

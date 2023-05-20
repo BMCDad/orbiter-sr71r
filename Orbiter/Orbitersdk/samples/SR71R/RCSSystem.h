@@ -53,21 +53,33 @@ public:
 private:
     void OnChanged(int mode);
 
-	struct RCSData
+	struct VcData
 	{
-		int Id;
+		int id;
 		int mode;
-		const RECT pnlRect;
-		const UINT pnlGroupId;
-		const NTVERTEX* pnlVerts;
-		const UINT vcGroupId;
-		const VECTOR3& vcLocation;
-		const NTVERTEX* vcVerts;
+		const UINT group;
+		const VECTOR3& loc;
+		const NTVERTEX* verts;
 	};
 
-	std::vector<RCSData> data_
+	struct PnlData
 	{
-		{ GetBaseVessel()->GetIdForComponent(this), RCS_LIN, bm::pnl::pnlRCSLin_RC,	bm::pnl::pnlRCSLin_id,	bm::pnl::pnlRCSLin_verts,	bm::vc::vcRCSLin_id,	bm::vc::vcRCSLin_location,	bm::vc::vcRCSLin_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), RCS_ROT, bm::pnl::pnlRCSRot_RC,	bm::pnl::pnlRCSRot_id,	bm::pnl::pnlRCSRot_verts,	bm::vc::vcRCSRot_id,	bm::vc::vcRCSRot_location,	bm::vc::vcRCSRot_verts }
+		int id;
+		int mode;
+		const UINT group;
+		const RECT rc;
+		const NTVERTEX* verts;
+	};
+
+	std::vector<VcData> vcData_
+	{
+		{ GetBaseVessel()->GetIdForComponent(this), RCS_LIN, bm::vc::vcRCSLin_id,	bm::vc::vcRCSLin_location,	bm::vc::vcRCSLin_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), RCS_ROT, bm::vc::vcRCSRot_id,	bm::vc::vcRCSRot_location,	bm::vc::vcRCSRot_verts }
+	};
+
+	std::vector<PnlData> pnlData_
+	{
+		{ GetBaseVessel()->GetIdForComponent(this), RCS_LIN, bm::pnl::pnlRCSLin_id,	bm::pnl::pnlRCSLin_RC,		bm::pnl::pnlRCSLin_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), RCS_ROT, bm::pnl::pnlRCSRot_id,	bm::pnl::pnlRCSRot_RC,		bm::pnl::pnlRCSRot_verts }
 	};
 };

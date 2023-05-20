@@ -63,25 +63,41 @@ private:
 	int                     navMode1_{ 0 };	// HUD nav left area
 	int                     navMode2_{ 0 };	// HUD nav right area
 
-	struct NavData
+	struct VcData
 	{
-		int Id;
-		int Mode;
-		const RECT pnlRect;
-		const UINT pnlGroupId;
-		const NTVERTEX* pnlVerts;
-		const UINT vcGroupId;
-		const VECTOR3& vcLocation;
-		const NTVERTEX* vcVerts;
+		int id;
+		int mode;
+		const UINT group;
+		const VECTOR3& loc;
+		const NTVERTEX* verts;
 	};
 
-	std::vector<NavData> data_
+	struct PnlData
 	{
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_ANTINORMAL,	bm::pnl::pnlNavAntiNorm_RC,	bm::pnl::pnlNavAntiNorm_id,	bm::pnl::pnlNavAntiNorm_verts,	bm::vc::vcNavAntiNorm_id,	bm::vc::vcNavAntiNorm_location,	bm::vc::vcNavAntiNorm_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_HLEVEL,		bm::pnl::pnlNavHorzLvl_RC,	bm::pnl::pnlNavHorzLvl_id,	bm::pnl::pnlNavHorzLvl_verts,	bm::vc::vcNavHorzLvl_id,	bm::vc::vcNavHorzLvl_location,	bm::vc::vcNavHorzLvl_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_KILLROT,	bm::pnl::pnlNavKillrot_RC,	bm::pnl::pnlNavKillrot_id,	bm::pnl::pnlNavKillrot_verts,	bm::vc::vcNavKillRot_id,	bm::vc::vcNavKillRot_location,	bm::vc::vcNavKillRot_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_NORMAL,		bm::pnl::pnlNavNorm_RC,		bm::pnl::pnlNavNorm_id,		bm::pnl::pnlNavNorm_verts,		bm::vc::vcNavNorm_id,		bm::vc::vcNavNorm_location,		bm::vc::vcNavNorm_verts	},
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_PROGRADE,	bm::pnl::pnlNavPrograde_RC,	bm::pnl::pnlNavPrograde_id,	bm::pnl::pnlNavPrograde_verts,	bm::vc::vcNavProGrade_id,	bm::vc::vcNavProGrade_location,	bm::vc::vcNavProGrade_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_RETROGRADE,	bm::pnl::pnlNavRetro_RC,	bm::pnl::pnlNavRetro_id,	bm::pnl::pnlNavRetro_verts,		bm::vc::vcNavRetro_id,		bm::vc::vcNavRetro_location,	bm::vc::vcNavRetro_verts }
+		int id;
+		int mode;
+		const UINT group;
+		const RECT rc;
+		const NTVERTEX* verts;
+	};
+
+	std::vector<PnlData> pnlData_
+	{
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_ANTINORMAL,	bm::pnl::pnlNavAntiNorm_id,	bm::pnl::pnlNavAntiNorm_RC,		bm::pnl::pnlNavAntiNorm_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_HLEVEL,		bm::pnl::pnlNavHorzLvl_id,	bm::pnl::pnlNavHorzLvl_RC,		bm::pnl::pnlNavHorzLvl_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_KILLROT,	bm::pnl::pnlNavKillrot_id,	bm::pnl::pnlNavKillrot_RC,		bm::pnl::pnlNavKillrot_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_NORMAL,		bm::pnl::pnlNavNorm_id,		bm::pnl::pnlNavNorm_RC,			bm::pnl::pnlNavNorm_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_PROGRADE,	bm::pnl::pnlNavPrograde_id,	bm::pnl::pnlNavPrograde_RC,		bm::pnl::pnlNavPrograde_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_RETROGRADE,	bm::pnl::pnlNavRetro_id,	bm::pnl::pnlNavRetro_RC,		bm::pnl::pnlNavRetro_verts }
+	};
+
+	std::vector<VcData> vcData_
+	{
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_ANTINORMAL,	bm::vc::vcNavAntiNorm_id,	bm::vc::vcNavAntiNorm_location,	bm::vc::vcNavAntiNorm_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_HLEVEL,		bm::vc::vcNavHorzLvl_id,	bm::vc::vcNavHorzLvl_location,	bm::vc::vcNavHorzLvl_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_KILLROT,	bm::vc::vcNavKillRot_id,	bm::vc::vcNavKillRot_location,	bm::vc::vcNavKillRot_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_NORMAL,		bm::vc::vcNavNorm_id,		bm::vc::vcNavNorm_location,		bm::vc::vcNavNorm_verts	},
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_PROGRADE,	bm::vc::vcNavProGrade_id,	bm::vc::vcNavProGrade_location,	bm::vc::vcNavProGrade_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_RETROGRADE,	bm::vc::vcNavRetro_id,		bm::vc::vcNavRetro_location,	bm::vc::vcNavRetro_verts }
 	};
 };

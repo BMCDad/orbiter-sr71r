@@ -17,7 +17,7 @@
 #pragma once
 
 #include <functional>
-
+#include <vector>
 
 /**	bco.h
 	Include file for bco types.  This file is for bco types that do not require a dependency on Orbiter.
@@ -60,4 +60,40 @@ namespace bc_orbiter
 			return (stopa->stop_ < stopb->stop_);
 		}
 	};
+
+	template <typename T>
+	using RunPred = std::function<bool(const T& d)>;
+
+	template <typename T>
+	using RunFunc = std::function<void(const T& d)>;
+
+	/**
+	RunForEach
+	Takes a vector of component data and runs the supplied function for each member.
+	@param func A function that takes type T and performs an action with it.  No return value.
+	*/
+	template <typename T>
+	void RunForEach(const std::vector<T>& data, RunFunc<T> func)
+	{
+		for (auto& a : data)
+		{
+			func(a);
+		}
+	}
+
+	/**
+	RunFor
+	Takes a vector of component data, applies the supplied predicate, and if found runs the
+	supplid function using the component data found.
+	@param pred A predicate function that takes a type T, does a boolean operation and returns a boolean.
+	@param func A function that takes type T and performs an action with it.  No return value.
+	*/
+	template <typename T>
+	bool RunFor(const std::vector<T>& data, RunPred<T> pred, RunFunc<T> func)
+	{
+		auto m = std::find_if(data.begin(), data.end(), [&](const T& o) { return pred(o); });
+		if (m == data.end()) return false;
+		func(*m);
+		return true;
+	}
 }

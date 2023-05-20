@@ -67,22 +67,35 @@ public:
 private:
 	void OnChanged(int mode);
 
-	struct HUDData
+	struct PnlData
 	{
-		int Id;
+		int id;
 		int mode;
-		const RECT pnlRect;
-		const UINT pnlGroupId;
-		const NTVERTEX* pnlVerts;
-		const UINT vcGroupId;
-		const VECTOR3& vcLocation;
-		const NTVERTEX* vcVerts;
+		const UINT group;
+		const RECT rc;
+		const NTVERTEX* verts;
 	};
 
-	std::vector<HUDData> data_
+	struct VcData
 	{
-		{ GetBaseVessel()->GetIdForComponent(this), HUD_DOCKING, bm::pnl::pnlHUDDock_RC,	bm::pnl::pnlHUDDock_id,	 bm::pnl::pnlHUDDock_verts,	 bm::vc::vcHUDDock_id,	bm::vc::vcHUDDock_location,	 bm::vc::vcHUDDock_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), HUD_SURFACE, bm::pnl::pnlHUDSurf_RC,	bm::pnl::pnlHUDSurf_id,	 bm::pnl::pnlHUDSurf_verts,	 bm::vc::vcHUDSURF_id,	bm::vc::vcHUDSURF_location,	 bm::vc::vcHUDSURF_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), HUD_ORBIT,	 bm::pnl::pnlHUDOrbit_RC,	bm::pnl::pnlHUDOrbit_id, bm::pnl::pnlHUDOrbit_verts, bm::vc::vcHUDOrbit_id,	bm::vc::vcHUDOrbit_location, bm::vc::vcHUDOrbit_verts }
+		int id;
+		int mode;
+		const UINT group;
+		const VECTOR3& loc;
+		const NTVERTEX* verts;
+	};
+
+	std::vector<PnlData> pnlData_
+	{
+		{ GetBaseVessel()->GetIdForComponent(this), HUD_DOCKING, bm::pnl::pnlHUDDock_id,	bm::pnl::pnlHUDDock_RC,		bm::pnl::pnlHUDDock_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), HUD_SURFACE, bm::pnl::pnlHUDSurf_id,	bm::pnl::pnlHUDSurf_RC,		bm::pnl::pnlHUDSurf_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), HUD_ORBIT,	 bm::pnl::pnlHUDOrbit_id,	bm::pnl::pnlHUDOrbit_RC,	bm::pnl::pnlHUDOrbit_verts }
+	};
+
+	std::vector<VcData> vcData_
+	{
+		{ GetBaseVessel()->GetIdForComponent(this), HUD_DOCKING, bm::vc::vcHUDDock_id,	bm::vc::vcHUDDock_location,	 bm::vc::vcHUDDock_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), HUD_SURFACE, bm::vc::vcHUDSURF_id,	bm::vc::vcHUDSURF_location,	 bm::vc::vcHUDSURF_verts },
+		{ GetBaseVessel()->GetIdForComponent(this), HUD_ORBIT,	 bm::vc::vcHUDOrbit_id,	bm::vc::vcHUDOrbit_location, bm::vc::vcHUDOrbit_verts }
 	};
 };
