@@ -136,7 +136,7 @@ namespace bc_orbiter
         UINT            GetMainMeshIndex() const        { return mainIndex_; }
 
 		void			SetPanelMeshHandle0(MESHHANDLE mh) { panelMeshHandle0_ = mh; }
-		MESHHANDLE		GetpanelMeshHandle0()			{ return panelMeshHandle0_; }
+		MESHHANDLE		GetpanelMeshHandle0() const			{ return panelMeshHandle0_; }
 
 		void UpdateUIArea(int area) { TriggerRedrawArea(0, 0, area); }
 

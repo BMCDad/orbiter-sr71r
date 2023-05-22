@@ -436,9 +436,11 @@
     <None Include="$(OrbiterDir)\Meshes\SR71rVC.msh">
       <Filter>Meshes</Filter>
     </None>
-    <None Include="Art\SR71R_100_2DPanel.xcf" />
     <None Include="..\..\..\Meshes\SR71r2D.msh">
       <Filter>Meshes</Filter>
+    </None>
+    <None Include="Art\SR71R_100_2DPanel.xcf">
+      <Filter>Art</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

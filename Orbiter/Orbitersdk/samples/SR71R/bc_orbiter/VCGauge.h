@@ -58,6 +58,11 @@ namespace bc_orbiter
         Called from SetClassCaps, this can probably be moved into BaseVessel (call Setup from BaseVessel::SetClassCaps)
         */
         void Setup(BaseVessel* vessel);
+        void Setup2(BaseVessel* vessel, ANIMATIONCOMPONENT_HANDLE parent = nullptr);
+        void SetAnimation2(BaseVessel* vessel, double state)
+        {
+            vessel->SetAnimation(animId_, state);
+        }
 
         void SetState(double state) 
 		{
@@ -70,6 +75,7 @@ namespace bc_orbiter
         double                      state_{ 0.0 };
         AnimationGroup              group_;
         double                      speed_{ 1.0 };
+        UINT                        animId_{ 0 };
     };
 
     template<typename AT>
@@ -79,6 +85,18 @@ namespace bc_orbiter
         vessel->AddVesselAnimationComponent(aid, vessel->GetVCMeshIndex(), &group_);
     }
 
+    template<typename AT>
+    inline void VCGaugeBase<AT>::Setup2(BaseVessel* vessel, ANIMATIONCOMPONENT_HANDLE parent)
+    {
+        animId_ = vessel->CreateAnimation(0.0);
+        group_.transform_->mesh = vessel->GetVCMeshIndex();
+        vessel->AddAnimationComponent(
+            animId_,
+            group_.start_,
+            group_.stop_,
+            group_.transform_.get(),
+            parent);
+    }
 
     using VCGauge       = VCGaugeBase<Animation>;
     using VCGaugeWrap   = VCGaugeBase<AnimationWrap>;

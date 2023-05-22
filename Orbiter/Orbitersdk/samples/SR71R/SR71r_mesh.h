@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Wed May 17 18:12:05 2023
+// Date: Sun May 21 20:05:48 2023
 
 
 #include "orbitersdk.h"
@@ -262,6 +262,26 @@ namespace bm
     {2315.3347f, 557.3519f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 1.0000f, 1.0000f},
     {1907.3347f, 149.3518f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0f, 0.0f},
     {2315.3347f, 149.3518f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 1.0000f, 0.0000f}    };
+    const NTVERTEX pnlClockTimerMinute_verts[4] = {
+    {1540.2689f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.5392f},
+    {1579.9559f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.5392f},
+    {1540.2689f, 280.7532f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.6072f},
+    {1579.9559f, 280.7532f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.6072f}    };
+    const NTVERTEX pnlClockHour_verts[4] = {
+    {1539.9849f, 140.9509f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4056f, 0.5393f},
+    {1580.2166f, 140.9509f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.5393f},
+    {1539.9849f, 281.7621f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4056f, 0.6071f},
+    {1580.2166f, 281.7621f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.6071f}    };
+    const NTVERTEX pnlClockMinute_verts[4] = {
+    {1541.1368f, 144.9376f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3856f, 0.5393f},
+    {1579.0870f, 144.9376f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4045f, 0.5393f},
+    {1541.1368f, 277.7631f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3856f, 0.6072f},
+    {1579.0870f, 277.7631f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4045f, 0.6072f}    };
+    const NTVERTEX pnlClockSecond_verts[4] = {
+    {1540.4655f, 142.6862f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.5393f},
+    {1579.7167f, 142.6862f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3645f, 0.5393f},
+    {1540.4655f, 280.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6071f},
+    {1579.7167f, 280.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3645f, 0.6071f}    };
     const DWORD TXIDX_SR71R_100_2DPanel_dds = 1;
     const DWORD TXIDX_SR71R_100_VC1_dds = 2;
     const DWORD TXIDX_SR71R_100_VC2_dds = 3;
@@ -281,6 +301,12 @@ namespace bm
     const UINT pnlHUDOrbit_id = 11;
     const UINT pnlMFDLeft_id = 12;
     const UINT pnlMFDRight_id = 13;
+    const UINT pnlClockElapsedReset_id = 14;
+    const UINT pnlClockTimerReset_id = 15;
+    const UINT pnlClockTimerMinute_id = 16;
+    const UINT pnlClockHour_id = 17;
+    const UINT pnlClockMinute_id = 18;
+    const UINT pnlClockSecond_id = 19;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {15, 17, 85, 87};
@@ -301,6 +327,8 @@ namespace bm
     constexpr VECTOR3 pnlMFDRowTwoTop_location =     {596.2580, 584.7822, -1.0000};
     const double pnlMFDRight_Width = 408.0;
     const double pnlMFDRight_Height = 408.0000305175781;
+    constexpr RECT pnlClockElapsedReset_RC = {1488, 257, 1514, 284};
+    constexpr RECT pnlClockTimerReset_RC = {1613, 257, 1630, 274};
 
   }
 

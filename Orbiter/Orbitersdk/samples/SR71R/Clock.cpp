@@ -16,6 +16,8 @@
 
 #include "StdAfx.h"
 
+#include "bc_orbiter\Tools.h"
+
 #include "Clock.h"
 #include "Orbitersdk.h"
 #include "SR71r_mesh.h"
@@ -39,10 +41,11 @@ void Clock::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     
-    gaSecondHand_.Setup(vessel);
-    gaTimerMinute_.Setup(vessel);
-    gaHourHand_.Setup(vessel);
-    gaMinuteHand_.Setup(vessel);
+    //gaSecondHand_.Setup(vessel);
+	gaSecondHand_.Setup2(vessel);
+    gaTimerMinute_.Setup2(vessel);
+    gaHourHand_.Setup2(vessel);
+    gaMinuteHand_.Setup2(vessel);
 }
 
 void Clock::ResetElapsed()
@@ -96,10 +99,36 @@ void Clock::Step(double simt, double simdt, double mjd)
 	auto secHandT =		fmod(currentTimerTime_, 60) / 60;
 	auto timerHandT =	fmod(currentTimerTime_, 3600) / 3600;
 
-    gaSecondHand_.SetState(secHandT);
-    gaTimerMinute_.SetState(timerHandT);
-    gaHourHand_.SetState(hourHandT);
-    gaMinuteHand_.SetState(minHandT);
+    //gaSecondHand_.SetState(secHandT);
+    //gaTimerMinute_.SetState(timerHandT);
+    //gaHourHand_.SetState(hourHandT);
+    //gaMinuteHand_.SetState(minHandT);
+
+	// the anim* classes will eventually drive all cockpit mode UI elements, so it stays outside of the cockpit mode switch.
+	// This will also keep the animations from 'jumping' when a cockpit mode is switched.
+	animTimerSecHand_.Step(secHandT, simdt);
+	animTimerMinuteHand_.Step(timerHandT, simdt);
+	animHourHand_.Step(hourHandT, simdt);
+	animMinuteHand_.Step(minHandT, simdt);
+
+
+	switch (oapiCockpitMode())
+	{
+	case COCKPIT_PANELS:
+		// panel anims.
+		bco::RunForEach<AD>(pnl_, [&](const AD& d) 
+			{
+				bco::Draw(GetBaseVessel()->GetpanelMeshHandle0(), d.group, d.verts, d.update());
+			});
+		break;
+
+	case COCKPIT_VIRTUAL:
+		gaSecondHand_.SetAnimation2(GetBaseVessel(), animTimerSecHand_.GetState());
+		gaTimerMinute_.SetAnimation2(GetBaseVessel(), animTimerMinuteHand_.GetState());
+		gaHourHand_.SetAnimation2(GetBaseVessel(), animHourHand_.GetState());
+		gaMinuteHand_.SetAnimation2(GetBaseVessel(), animMinuteHand_.GetState());
+		break;
+	}
 }
 
 bool Clock::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
@@ -158,4 +187,22 @@ void Clock::OnSaveConfiguration(FILEHANDLE scn) const
 
 	sprintf_s(cbuf, "%i %i %i", elMission, running, elTimer);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+}
+
+bool Clock::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+	bco::RunForEach<PE>(pnlEvents_, [&](const PE& d)
+		{
+			oapiRegisterPanelArea(d.id, d.rc, PANEL_REDRAW_NEVER);
+			GetBaseVessel()->RegisterPanelArea(hPanel, d.id, d.rc, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+		});
+
+	return true;
+}
+
+bool Clock::OnPanelMouseEvent(int id, int event)
+{
+	return bco::RunFor<PE>(pnlEvents_,
+		[&](const PE& d) {return d.id == id; },
+		[this](const PE& d) { d.update();});
 }
