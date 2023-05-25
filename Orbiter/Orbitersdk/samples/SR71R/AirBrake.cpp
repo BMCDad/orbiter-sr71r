@@ -62,6 +62,9 @@ void AirBrake::Step(double simt, double simdt, double mjd)
 	// Update drag.
 	dragFactor_ = animAirBrake_.GetState();
 //	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
+
+	// This needs to be put into a switch statement eventually
+	bco::Draw(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_verts, sTrans * airBrakeSwitch_.GetState());
 }
 
 bool AirBrake::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -93,16 +96,15 @@ void AirBrake::OnSaveConfiguration(FILEHANDLE scn) const
 void AirBrake::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
-    auto vcIdx = vessel->GetVCMeshIndex();
-    auto exIdx = vessel->GetMainMeshIndex();
 
-    auto aid = vessel->CreateVesselAnimation(&airBrakeSwitch_, 2.0);
-
+	// Setup VC animation
+	auto vcIdx = vessel->GetVCMeshIndex();
+	auto aid = vessel->CreateVesselAnimation(&airBrakeSwitch_, 2.0);
     vessel->AddVesselAnimationComponent(aid, vcIdx, &gpBrakeHandle_);
 
-   
-    aid = vessel->CreateVesselAnimation(&animAirBrake_, 0.4);
-    
+	// Setup external animation   
+	auto exIdx = vessel->GetMainMeshIndex();
+	aid = vessel->CreateVesselAnimation(&animAirBrake_, 0.4);
     vessel->AddVesselAnimationComponent(aid, exIdx, &gpLeftTop_);
     vessel->AddVesselAnimationComponent(aid, exIdx, &gpLeftBottom_);
     vessel->AddVesselAnimationComponent(aid, exIdx, &gpRightTop_);
@@ -110,4 +112,22 @@ void AirBrake::OnSetClassCaps()
 
 	// Setup drag.
 	GetBaseVessel()->CreateVariableDragElement(animAirBrake_.GetStatePtr(), 10.0, bm::main::BrakeDragPoint_location);
+}
+
+bool AirBrake::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+	for each (auto& v in pnlEvents_)
+	{
+		oapiRegisterPanelArea(v.id, v.rc, PANEL_REDRAW_NEVER);
+		GetBaseVessel()->RegisterPanelArea(hPanel, v.id, v.rc, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+	}
+
+	return true;
+}
+
+bool AirBrake::OnPanelMouseEvent(int id, int event)
+{
+	return bco::RunFor<PE>(pnlEvents_,
+		[&](const PE& d) {return d.id == id; },
+		[this](const PE& d) { d.update(); });
 }

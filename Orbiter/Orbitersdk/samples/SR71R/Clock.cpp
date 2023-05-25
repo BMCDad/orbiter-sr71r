@@ -42,10 +42,10 @@ void Clock::OnSetClassCaps()
     auto vessel = GetBaseVessel();
     
     //gaSecondHand_.Setup(vessel);
-	gaSecondHand_.Setup2(vessel);
-    gaTimerMinute_.Setup2(vessel);
-    gaHourHand_.Setup2(vessel);
-    gaMinuteHand_.Setup2(vessel);
+	gaSecondHand_.Setup2(vessel, vessel->GetVCMeshIndex());
+    gaTimerMinute_.Setup2(vessel, vessel->GetVCMeshIndex());
+    gaHourHand_.Setup2(vessel, vessel->GetVCMeshIndex());
+    gaMinuteHand_.Setup2(vessel, vessel->GetVCMeshIndex());
 }
 
 void Clock::ResetElapsed()
@@ -111,15 +111,16 @@ void Clock::Step(double simt, double simdt, double mjd)
 	animHourHand_.Step(hourHandT, simdt);
 	animMinuteHand_.Step(minHandT, simdt);
 
+	auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
 
 	switch (oapiCockpitMode())
 	{
 	case COCKPIT_PANELS:
 		// panel anims.
-		bco::RunForEach<AD>(pnl_, [&](const AD& d) 
-			{
-				bco::Draw(GetBaseVessel()->GetpanelMeshHandle0(), d.group, d.verts, d.update());
-			});
+		bco::Draw(pMesh, bm::pnl::pnlClockSecond_id,		bm::pnl::pnlClockSecond_verts,		animTimerSecHand_.GetState() * -PI2);
+		bco::Draw(pMesh, bm::pnl::pnlClockTimerMinute_id,	bm::pnl::pnlClockTimerMinute_verts,	animTimerMinuteHand_.GetState() * -PI2);
+		bco::Draw(pMesh, bm::pnl::pnlClockHour_id,			bm::pnl::pnlClockHour_verts,		animHourHand_.GetState() * -PI2);
+		bco::Draw(pMesh, bm::pnl::pnlClockMinute_id,		bm::pnl::pnlClockMinute_verts,		animMinuteHand_.GetState() * -PI2);
 		break;
 
 	case COCKPIT_VIRTUAL:
@@ -191,11 +192,11 @@ void Clock::OnSaveConfiguration(FILEHANDLE scn) const
 
 bool Clock::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 {
-	bco::RunForEach<PE>(pnlEvents_, [&](const PE& d)
-		{
-			oapiRegisterPanelArea(d.id, d.rc, PANEL_REDRAW_NEVER);
-			GetBaseVessel()->RegisterPanelArea(hPanel, d.id, d.rc, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
-		});
+	for each (auto& v in pnlEvents_)
+	{
+		oapiRegisterPanelArea(v.id, v.rc, PANEL_REDRAW_NEVER);
+		GetBaseVessel()->RegisterPanelArea(hPanel, v.id, v.rc, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+	}
 
 	return true;
 }

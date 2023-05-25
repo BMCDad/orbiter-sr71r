@@ -35,11 +35,11 @@ void NavModes::OnSetClassCaps()
 
 bool NavModes::OnLoadVC(int id)
 {
-	bco::RunForEach<VcData>(vcData_, [this](const VcData& d)
-		{
-			oapiVCRegisterArea(d.id, PANEL_REDRAW_USER, PANEL_MOUSE_DOWN);
-			oapiVCSetAreaClickmode_Spherical(d.id, d.loc, .01);
-		});
+	for each (auto & v in mapVc_)
+	{
+		oapiVCRegisterArea(v.first, PANEL_REDRAW_USER, PANEL_MOUSE_DOWN);
+		oapiVCSetAreaClickmode_Spherical(v.first, v.second.loc, .01);
+	}
 
 	return true;
 }
@@ -48,67 +48,47 @@ bool NavModes::OnVCMouseEvent(int id, int event)
 {
 	if (event != PANEL_MOUSE_LBDOWN) return false;
 
-	bco::RunFor<VcData>(vcData_,
-		[&](const VcData& d) {return d.id == id; },
-		[this](const VcData& d)
-		{
-			GetBaseVessel()->ToggleNavmode(d.mode);
-		});
+	auto mode = mapMode_.find(id);
+	if (mode == mapMode_.end()) return false;
 
+	GetBaseVessel()->ToggleNavmode(mode->second);
 	return true;
 }
 
 bool NavModes::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
-	bco::RunFor<VcData>(vcData_,
-		[&](const VcData& d) {return d.id == id; },
-		[this](const VcData& d)
-		{
-			auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-			assert(devMesh != nullptr);
+	auto vc = mapVc_.find(id);
+	if (vc == mapVc_.end()) return false;
 
-			NTVERTEX* delta = new NTVERTEX[4];
+	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
+	assert(devMesh != nullptr);
 
-			bco::TransformUV2d(
-				d.verts,
-				delta, 4,
-				_V(GetBaseVessel()->GetNavmodeState(d.mode) ? 0.0352 : 0.0,
-					0.0,
-					0.0),
-				0.0);
+	NTVERTEX* delta = new NTVERTEX[4];
 
-			GROUPEDITSPEC change{};
-			change.flags = GRPEDIT_VTXTEX;
-			change.nVtx = 4;
-			change.vIdx = NULL; //Just use the mesh order
-			change.Vtx = delta;
-			auto res = oapiEditMeshGroup(devMesh, d.group, &change);
-			delete[] delta;
-		});
+	bco::TransformUV2d(
+		vc->second.verts,
+		delta, 4,
+		_V(GetBaseVessel()->GetNavmodeState(vc->second.mode) ? 0.0352 : 0.0,
+			0.0,
+			0.0),
+		0.0);
+
+	GROUPEDITSPEC change{};
+	change.flags = GRPEDIT_VTXTEX;
+	change.nVtx = 4;
+	change.vIdx = NULL; //Just use the mesh order
+	change.Vtx = delta;
+	auto res = oapiEditMeshGroup(devMesh, vc->second.group, &change);
+	delete[] delta;
 
 	return true;
 }
 
 void NavModes::OnNavMode(int mode, bool active)
 {
-	switch (oapiCockpitMode())
+	for each (auto& v in mapMode_)
 	{
-	case COCKPIT_PANELS:
-		bco::RunFor<PnlData>(
-			pnlData_,
-			[&](const PnlData& d) {return d.mode == mode; },
-			[this](const PnlData& d) {GetBaseVessel()->TriggerRedrawArea(0, 0, d.id); });
-		break;
-
-	case COCKPIT_VIRTUAL:
-		bco::RunFor<VcData>(
-			vcData_,
-			[&](const VcData& d) {return d.mode == mode; },
-			[this](const VcData& d) {GetBaseVessel()->TriggerRedrawArea(0, 0, d.id); });
-		break;
-
-	case COCKPIT_GENERIC:
-		break;
+		GetBaseVessel()->TriggerRedrawArea(0, 0, v.first);
 	}
 }
 
@@ -192,36 +172,31 @@ bool NavModes::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 
 bool NavModes::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 {
-	bco::RunForEach<PnlData>(pnlData_, [&](const PnlData& d)
-		{
-			oapiRegisterPanelArea(d.id, d.rc, PANEL_REDRAW_USER);
-			GetBaseVessel()->RegisterPanelArea(hPanel, d.id, d.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-		});
+	for each (auto & v in mapPnl_)
+	{
+		oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
+		GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+	}
 
 	return true;
 }
 
 bool NavModes::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
-	return bco::RunFor<PnlData>(pnlData_,
-		[&](const PnlData& d) {return d.id == id; },
-		[this](const PnlData& d)
-		{
-			double trans = 0.0;
-			auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), d.group);
-			auto vrt = d.verts;
+	auto p = mapPnl_.find(id);
+	if (p == mapPnl_.end()) return false;
 
-			trans = GetBaseVessel()->GetNavmodeState(d.mode) ? 0.0352 : 0.0;
-			grp->Vtx[0].tu = vrt[0].tu + trans;
-			grp->Vtx[1].tu = vrt[1].tu + trans;
-			grp->Vtx[2].tu = vrt[2].tu + trans;
-			grp->Vtx[3].tu = vrt[3].tu + trans;
-		});
+	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group);
+	auto vrt = p->second.verts;
+
+	double trans = GetBaseVessel()->GetNavmodeState(p->second.mode) ? 0.0352 : 0.0;
+	grp->Vtx[0].tu = vrt[0].tu + trans;
+	grp->Vtx[1].tu = vrt[1].tu + trans;
+	grp->Vtx[2].tu = vrt[2].tu + trans;
+	grp->Vtx[3].tu = vrt[3].tu + trans;
 }
 
 bool NavModes::OnPanelMouseEvent(int id, int event)
 {
-	return bco::RunFor<PnlData>(pnlData_,
-		[&](const PnlData& d) {return d.id == id; }, 
-		[this](const PnlData& d) { GetBaseVessel()->ToggleNavmode(d.mode);});
+	return OnVCMouseEvent(id, event);
 }

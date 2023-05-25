@@ -57,15 +57,14 @@ protected:
 private:
 	void ToggleMode(int mode);
 
-	int						vcUIArea_{ 0 };
-	int						panelUIArea_{ 0 };
+	int		vcUIArea_{ 0 };
+	int		panelUIArea_{ 0 };
 
-	int                     navMode1_{ 0 };	// HUD nav left area
-	int                     navMode2_{ 0 };	// HUD nav right area
+	int		navMode1_{ 0 };	// HUD nav left area
+	int		navMode2_{ 0 };	// HUD nav right area
 
 	struct VcData
 	{
-		int id;
 		int mode;
 		const UINT group;
 		const VECTOR3& loc;
@@ -74,30 +73,46 @@ private:
 
 	struct PnlData
 	{
-		int id;
 		int mode;
 		const UINT group;
 		const RECT rc;
 		const NTVERTEX* verts;
 	};
 
-	std::vector<PnlData> pnlData_
+	const int ID_ANTINORMAL	 = { GetBaseVessel()->GetIdForComponent(this) };
+	const int ID_HLEVEL		 = { GetBaseVessel()->GetIdForComponent(this) };
+	const int ID_KILLROT	 = { GetBaseVessel()->GetIdForComponent(this) };
+	const int ID_NORMAL		 = { GetBaseVessel()->GetIdForComponent(this) };
+	const int ID_PROGRADE	 = { GetBaseVessel()->GetIdForComponent(this) };
+	const int ID_RETROGRADE	 = { GetBaseVessel()->GetIdForComponent(this) };
+
+	std::map<int, int> mapMode_
 	{
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_ANTINORMAL,	bm::pnl::pnlNavAntiNorm_id,	bm::pnl::pnlNavAntiNorm_RC,		bm::pnl::pnlNavAntiNorm_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_HLEVEL,		bm::pnl::pnlNavHorzLvl_id,	bm::pnl::pnlNavHorzLvl_RC,		bm::pnl::pnlNavHorzLvl_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_KILLROT,	bm::pnl::pnlNavKillrot_id,	bm::pnl::pnlNavKillrot_RC,		bm::pnl::pnlNavKillrot_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_NORMAL,		bm::pnl::pnlNavNorm_id,		bm::pnl::pnlNavNorm_RC,			bm::pnl::pnlNavNorm_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_PROGRADE,	bm::pnl::pnlNavPrograde_id,	bm::pnl::pnlNavPrograde_RC,		bm::pnl::pnlNavPrograde_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_RETROGRADE,	bm::pnl::pnlNavRetro_id,	bm::pnl::pnlNavRetro_RC,		bm::pnl::pnlNavRetro_verts }
+		{ID_ANTINORMAL,	NAVMODE_ANTINORMAL },
+		{ID_HLEVEL,		NAVMODE_HLEVEL },
+		{ID_KILLROT,	NAVMODE_KILLROT },
+		{ID_NORMAL,		NAVMODE_NORMAL },
+		{ID_PROGRADE,	NAVMODE_PROGRADE },
+		{ID_RETROGRADE,	NAVMODE_RETROGRADE }
 	};
 
-	std::vector<VcData> vcData_
+	std::map<int, PnlData> mapPnl_
 	{
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_ANTINORMAL,	bm::vc::vcNavAntiNorm_id,	bm::vc::vcNavAntiNorm_location,	bm::vc::vcNavAntiNorm_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_HLEVEL,		bm::vc::vcNavHorzLvl_id,	bm::vc::vcNavHorzLvl_location,	bm::vc::vcNavHorzLvl_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_KILLROT,	bm::vc::vcNavKillRot_id,	bm::vc::vcNavKillRot_location,	bm::vc::vcNavKillRot_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_NORMAL,		bm::vc::vcNavNorm_id,		bm::vc::vcNavNorm_location,		bm::vc::vcNavNorm_verts	},
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_PROGRADE,	bm::vc::vcNavProGrade_id,	bm::vc::vcNavProGrade_location,	bm::vc::vcNavProGrade_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), NAVMODE_RETROGRADE,	bm::vc::vcNavRetro_id,		bm::vc::vcNavRetro_location,	bm::vc::vcNavRetro_verts }
+		{ ID_ANTINORMAL,	{ NAVMODE_ANTINORMAL,	bm::pnl::pnlNavAntiNorm_id,	bm::pnl::pnlNavAntiNorm_RC,		bm::pnl::pnlNavAntiNorm_verts }},
+		{ ID_HLEVEL,		{ NAVMODE_HLEVEL,		bm::pnl::pnlNavHorzLvl_id,	bm::pnl::pnlNavHorzLvl_RC,		bm::pnl::pnlNavHorzLvl_verts }},
+		{ ID_KILLROT,		{ NAVMODE_KILLROT,		bm::pnl::pnlNavKillrot_id,	bm::pnl::pnlNavKillrot_RC,		bm::pnl::pnlNavKillrot_verts }},
+		{ ID_NORMAL,		{ NAVMODE_NORMAL,		bm::pnl::pnlNavNorm_id,		bm::pnl::pnlNavNorm_RC,			bm::pnl::pnlNavNorm_verts }},
+		{ ID_PROGRADE,		{ NAVMODE_PROGRADE,		bm::pnl::pnlNavPrograde_id,	bm::pnl::pnlNavPrograde_RC,		bm::pnl::pnlNavPrograde_verts }},
+		{ ID_RETROGRADE,	{ NAVMODE_RETROGRADE,	bm::pnl::pnlNavRetro_id,	bm::pnl::pnlNavRetro_RC,		bm::pnl::pnlNavRetro_verts }}
+	};
+
+	std::map<int, VcData> mapVc_
+	{
+		{ ID_ANTINORMAL,	{ NAVMODE_ANTINORMAL,	bm::vc::vcNavAntiNorm_id,	bm::vc::vcNavAntiNorm_location,	bm::vc::vcNavAntiNorm_verts }},
+		{ ID_HLEVEL,		{ NAVMODE_HLEVEL,		bm::vc::vcNavHorzLvl_id,	bm::vc::vcNavHorzLvl_location,	bm::vc::vcNavHorzLvl_verts }},
+		{ ID_KILLROT,		{ NAVMODE_KILLROT,		bm::vc::vcNavKillRot_id,	bm::vc::vcNavKillRot_location,	bm::vc::vcNavKillRot_verts }},
+		{ ID_NORMAL,		{ NAVMODE_NORMAL,		bm::vc::vcNavNorm_id,		bm::vc::vcNavNorm_location,		bm::vc::vcNavNorm_verts	}},
+		{ ID_PROGRADE,		{ NAVMODE_PROGRADE,		bm::vc::vcNavProGrade_id,	bm::vc::vcNavProGrade_location,	bm::vc::vcNavProGrade_verts }},
+		{ ID_RETROGRADE,	{ NAVMODE_RETROGRADE,	bm::vc::vcNavRetro_id,		bm::vc::vcNavRetro_location,	bm::vc::vcNavRetro_verts }}
 	};
 };

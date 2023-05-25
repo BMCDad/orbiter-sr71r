@@ -40,11 +40,11 @@ void HUD::ChangePowerLevel(double newLevel)
 
 bool HUD::OnLoadVC(int id)
 {
-	bco::RunForEach<VcData>(vcData_, [this](const VcData& d)
-		{
-			oapiVCRegisterArea(d.id, PANEL_REDRAW_USER, PANEL_MOUSE_DOWN);
-			oapiVCSetAreaClickmode_Spherical(d.id, d.loc, .01);
-		});
+	for each (auto& v in mapVc_)
+	{
+		oapiVCRegisterArea(v.first, PANEL_REDRAW_USER, PANEL_MOUSE_DOWN);
+		oapiVCSetAreaClickmode_Spherical(v.first, v.second.loc, .01);
+	}
 
 	// Register HUD
 	static VCHUDSPEC huds =
@@ -63,81 +63,72 @@ bool HUD::OnVCMouseEvent(int id, int event)
 {
 	if (event != PANEL_MOUSE_LBDOWN) return false;
 
-	bco::RunFor<VcData>(vcData_,
-		[&](const VcData& d) {return d.id == id; },
-		[this](const VcData& d)
-		{
-			OnChanged(d.mode);
-		});
+	auto mode = mapMode_.find(id);
+	if (mode == mapMode_.end()) return false;
 
+	OnChanged(mode->second);
 	return true;
 }
 
 bool HUD::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
-	bco::RunFor<VcData>(vcData_,
-		[&](const VcData& d) {return d.id == id; },
-		[this](const VcData& d)
-		{
-			auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-			assert(devMesh != nullptr);
+	auto vc = mapVc_.find(id);
+	if (vc == mapVc_.end()) return false;
 
-			NTVERTEX* delta = new NTVERTEX[4];
+	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
+	assert(devMesh != nullptr);
 
-			bco::TransformUV2d(
-				d.verts,
-				delta, 4,
-				_V(oapiGetHUDMode() == d.mode ? 0.0352 : 0.0,
-					0.0,
-					0.0),
-				0.0);
+	NTVERTEX* delta = new NTVERTEX[4];
 
-			GROUPEDITSPEC change{};
-			change.flags = GRPEDIT_VTXTEX;
-			change.nVtx = 4;
-			change.vIdx = NULL; //Just use the mesh order
-			change.Vtx = delta;
-			auto res = oapiEditMeshGroup(devMesh, d.group, &change);
-			delete[] delta;
-		});
+	bco::TransformUV2d(
+		vc->second.verts,
+		delta, 4,
+		_V(oapiGetHUDMode() == vc->second.mode ? 0.0352 : 0.0,
+			0.0,
+			0.0),
+		0.0);
+
+	GROUPEDITSPEC change{};
+	change.flags = GRPEDIT_VTXTEX;
+	change.nVtx = 4;
+	change.vIdx = NULL; //Just use the mesh order
+	change.Vtx = delta;
+	auto res = oapiEditMeshGroup(devMesh, vc->second.group, &change);
+	delete[] delta;
 
 	return true;
 }
 
 bool HUD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 {
-	bco::RunForEach<PnlData>(pnlData_, [&](const PnlData& d)
-		{
-			oapiRegisterPanelArea(d.id, d.rc, PANEL_REDRAW_USER);
-			GetBaseVessel()->RegisterPanelArea(hPanel, d.id, d.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-		});
+	for each (auto& v in mapPnl_)
+	{
+		oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
+		GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+	}
 
 	return true;
 }
 
 bool HUD::OnPanelMouseEvent(int id, int event)
 {
-	return bco::RunFor<PnlData>(pnlData_,
-		[&](const PnlData& d) {return d.id == id; },
-		[this](const PnlData& d) { OnChanged(d.mode); });
+	return OnVCMouseEvent(id, event); // Same logic
 }
 
 bool HUD::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
-	return bco::RunFor<PnlData>(pnlData_,
-		[&](const PnlData& d) {return d.id == id; },
-		[this](const PnlData& d)
-		{
-			double trans = 0.0;
-			auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), d.group);
-			auto vrt = d.verts;
+	auto p = mapPnl_.find(id);
+	if (p == mapPnl_.end()) return false;
 
-			trans = (oapiGetHUDMode() == d.mode) ? 0.0352 : 0.0;
-			grp->Vtx[0].tu = vrt[0].tu + trans;
-			grp->Vtx[1].tu = vrt[1].tu + trans;
-			grp->Vtx[2].tu = vrt[2].tu + trans;
-			grp->Vtx[3].tu = vrt[3].tu + trans;
-		});
+	double trans = 0.0;
+	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group);
+	auto vrt = p->second.verts;
+
+	trans = (oapiGetHUDMode() == p->second.mode) ? 0.0352 : 0.0;
+	grp->Vtx[0].tu = vrt[0].tu + trans;
+	grp->Vtx[1].tu = vrt[1].tu + trans;
+	grp->Vtx[2].tu = vrt[2].tu + trans;
+	grp->Vtx[3].tu = vrt[3].tu + trans;
 
 	return true;
 }
@@ -150,21 +141,9 @@ void HUD::OnHudMode(int mode)
 		oapiSetHUDMode(HUD_NONE);
 	}
 
-	switch (oapiCockpitMode())
+	for each (auto& v in mapMode_)
 	{
-	case COCKPIT_PANELS:
-		bco::RunForEach<PnlData>(
-			pnlData_,
-			[&](const PnlData& d) {GetBaseVessel()->TriggerRedrawArea(0, 0, d.id); });
-		break;
-
-	case COCKPIT_VIRTUAL:
-		bco::RunForEach<VcData>(
-			vcData_,
-			[&](const VcData& d) {GetBaseVessel()->TriggerRedrawArea(0, 0, d.id); });
-		break;
-	case COCKPIT_GENERIC:
-		break;
+		GetBaseVessel()->TriggerRedrawArea(0, 0, v.first);
 	}
 }
 

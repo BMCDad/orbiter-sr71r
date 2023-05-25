@@ -69,7 +69,6 @@ private:
 
 	struct PnlData
 	{
-		int id;
 		int mode;
 		const UINT group;
 		const RECT rc;
@@ -78,24 +77,34 @@ private:
 
 	struct VcData
 	{
-		int id;
 		int mode;
 		const UINT group;
 		const VECTOR3& loc;
 		const NTVERTEX* verts;
 	};
 
-	std::vector<PnlData> pnlData_
+	const int ID_DOCKING = { GetBaseVessel()->GetIdForComponent(this) };
+	const int ID_SURFACE = { GetBaseVessel()->GetIdForComponent(this) };
+	const int ID_ORBIT   = { GetBaseVessel()->GetIdForComponent(this) };
+
+	std::map<int, int> mapMode_
 	{
-		{ GetBaseVessel()->GetIdForComponent(this), HUD_DOCKING, bm::pnl::pnlHUDDock_id,	bm::pnl::pnlHUDDock_RC,		bm::pnl::pnlHUDDock_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), HUD_SURFACE, bm::pnl::pnlHUDSurf_id,	bm::pnl::pnlHUDSurf_RC,		bm::pnl::pnlHUDSurf_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), HUD_ORBIT,	 bm::pnl::pnlHUDOrbit_id,	bm::pnl::pnlHUDOrbit_RC,	bm::pnl::pnlHUDOrbit_verts }
+		{ID_DOCKING,	HUD_DOCKING},
+		{ID_SURFACE,	HUD_SURFACE},
+		{ID_ORBIT,		HUD_ORBIT}
 	};
 
-	std::vector<VcData> vcData_
+	std::map<int, PnlData> mapPnl_
 	{
-		{ GetBaseVessel()->GetIdForComponent(this), HUD_DOCKING, bm::vc::vcHUDDock_id,	bm::vc::vcHUDDock_location,	 bm::vc::vcHUDDock_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), HUD_SURFACE, bm::vc::vcHUDSURF_id,	bm::vc::vcHUDSURF_location,	 bm::vc::vcHUDSURF_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), HUD_ORBIT,	 bm::vc::vcHUDOrbit_id,	bm::vc::vcHUDOrbit_location, bm::vc::vcHUDOrbit_verts }
+		{ ID_DOCKING,	{ HUD_DOCKING,	bm::pnl::pnlHUDDock_id,		bm::pnl::pnlHUDDock_RC,		bm::pnl::pnlHUDDock_verts }},
+		{ ID_SURFACE,	{ HUD_SURFACE,	bm::pnl::pnlHUDSurf_id,		bm::pnl::pnlHUDSurf_RC,		bm::pnl::pnlHUDSurf_verts }},
+		{ ID_ORBIT,		{ HUD_ORBIT,	bm::pnl::pnlHUDOrbit_id,	bm::pnl::pnlHUDOrbit_RC,	bm::pnl::pnlHUDOrbit_verts }}
+	};
+
+	std::map<int, VcData> mapVc_
+	{
+		{ ID_DOCKING,	{ HUD_DOCKING,	bm::vc::vcHUDDock_id,	bm::vc::vcHUDDock_location,	 bm::vc::vcHUDDock_verts }},
+		{ ID_SURFACE,	{ HUD_SURFACE,	bm::vc::vcHUDSURF_id,	bm::vc::vcHUDSURF_location,	 bm::vc::vcHUDSURF_verts }},
+		{ ID_ORBIT,		{ HUD_ORBIT,	bm::vc::vcHUDOrbit_id,	bm::vc::vcHUDOrbit_location, bm::vc::vcHUDOrbit_verts }}
 	};
 };

@@ -29,10 +29,10 @@ namespace bc_orbiter
     struct AnimationGroup
     {
         AnimationGroup(
-            std::initializer_list<UINT> const &grp, 
-            const VECTOR3& locA, const VECTOR3& locB, 
+            std::initializer_list<UINT> const& grp,
+            const VECTOR3& locA, const VECTOR3& locB,
             double angle,
-            double start, double stop) : 
+            double start, double stop) :
             group_(grp),
             start_(start),
             stop_(stop)
@@ -43,7 +43,7 @@ namespace bc_orbiter
         }
 
         AnimationGroup(
-            std::initializer_list<UINT> const &grp,
+            std::initializer_list<UINT> const& grp,
             const VECTOR3& translate,
             double start, double stop) :
             group_(grp),
@@ -59,27 +59,27 @@ namespace bc_orbiter
         double stop_;
     };
 
-	/*	The State* classes below provide the state update algorithms for the
-		animation class.  We pass these in as a template argument to avoid
-		a lot of virtual function calls in the 'Step' loop.
-	*/
+    /*	The State* classes below provide the state update algorithms for the
+        animation class.  We pass these in as a template argument to avoid
+        a lot of virtual function calls in the 'Step' loop.
+    */
 
     typedef std::function<void()> TargetAchievedFunc;
 
     struct StateUpdate
-	{
-		double	            speed_			{ 1.0 };
-        double				state_          {};
-        double              targetState_    {};
-	};
+    {
+        double	            speed_{ 1.0 };
+        double				state_{};
+        double              targetState_{};
+    };
 
-	/**
-		Updates the state directly.
-	*/
-	struct StateUpdateDirect
-	{
-		static bool UpdateState(StateUpdate& state, double dt)
-		{
+    /**
+        Updates the state directly.
+    */
+    struct StateUpdateDirect
+    {
+        static bool UpdateState(StateUpdate& state, double dt)
+        {
             if (state.state_ != state.targetState_)
             {
                 state.state_ = state.targetState_;
@@ -87,20 +87,20 @@ namespace bc_orbiter
             }
 
             return false;
-		}
-	};
+        }
+    };
 
-	/**
-		Updates the state towards a target at a given speed.
-	*/
-	struct StateUpdateTarget
-	{
-		static bool UpdateState(StateUpdate& state, double dt)
-		{
+    /**
+        Updates the state towards a target at a given speed.
+    */
+    struct StateUpdateTarget
+    {
+        static bool UpdateState(StateUpdate& state, double dt)
+        {
             if (state.state_ == state.targetState_) return false;
 
-			double da = dt * state.speed_;
-			auto stateDiff = state.state_ - state.targetState_;
+            double da = dt * state.speed_;
+            auto stateDiff = state.state_ - state.targetState_;
 
             if (da > abs(stateDiff))
             {
@@ -123,14 +123,14 @@ namespace bc_orbiter
                 state.state_ = 0.0;
             }
             return true;
-		}
-	};
+        }
+    };
 
-	/**
-		Similar to StateUpdateTarget, but will treat the 0-1 range as
-		a loop (wrap).  Useful for things like clock or altimeter dials.
+    /**
+        Similar to StateUpdateTarget, but will treat the 0-1 range as
+        a loop (wrap).  Useful for things like clock or altimeter dials.
 
-        This works by moving 'state' towards the 'target'.  An animation 
+        This works by moving 'state' towards the 'target'.  An animation
         state is defined as being between 0 and 1.  If the difference between
         state and target is > 0.5 then rather then move towards the target
         we move the state in the opposite direction.  When we hit 1 we wrap
@@ -141,17 +141,17 @@ namespace bc_orbiter
         0.3  0.2   0.1      add min(  Da,   Df) to state
         0.8  0.2   0.6      add max( -Da, 1-Df) from state.  If state < 0: add 1
         0.2  0.8  -0.6      add min(  Da, 1+Df) from state.  If state > 1: sub 1
-	*/
-	struct StateUpdateWrap
-	{
-		static bool UpdateState(StateUpdate& state, double dt)
-		{
-			if (state.targetState_ == state.state_)
-			{
-				return false;
-			}
+    */
+    struct StateUpdateWrap
+    {
+        static bool UpdateState(StateUpdate& state, double dt)
+        {
+            if (state.targetState_ == state.state_)
+            {
+                return false;
+            }
 
-			double da = dt * state.speed_;
+            double da = dt * state.speed_;
 
             // Find the direction to move.  The sign of stateDiff
             // indicates the direction to move.
@@ -179,8 +179,8 @@ namespace bc_orbiter
             }
 
             return true;
-		}
-	};
+        }
+    };
 
     class IAnimation
     {
@@ -190,34 +190,34 @@ namespace bc_orbiter
         virtual void SetState(double) = 0;
     };
 
-	/**
-	Class to manage vessel animations.  Supports adding rotation and translation groups as well as child animations.
-	Animation
-	*/
-	template <typename T = StateUpdateDirect>
-	class AnimationBase : public IAnimation, public IAnimationState
-	{
-	public:
+    /**
+    Class to manage vessel animations.  Supports adding rotation and translation groups as well as child animations.
+    Animation
+    */
+    template <typename T = StateUpdateDirect>
+    class AnimationBase : public IAnimation, public IAnimationState
+    {
+    public:
         AnimationBase()
         {}
 
-        AnimationBase(IAnimationState* state, double speed, TargetAchievedFunc func = nullptr) : 
-            stateProvider_(state), 
+        AnimationBase(IAnimationState* state, double speed, TargetAchievedFunc func = nullptr) :
+            stateProvider_(state),
             funcTarget_(func)
         {
             updateState_.speed_ = speed;
         }
 
 
-		/**
-		Step
-		Updates the state towards the target based on time delta.
-		@param target The target to move towards.
-		@param dt Time delta.
-		*/
-		void Step(double target, double dt)
-		{
-			updateState_.targetState_ = target;
+        /**
+        Step
+        Updates the state towards the target based on time delta.
+        @param target The target to move towards.
+        @param dt Time delta.
+        */
+        void Step(double target, double dt)
+        {
+            updateState_.targetState_ = target;
             if (T::UpdateState(updateState_, dt))
             {
                 if (funcTarget_ && (updateState_.targetState_ == updateState_.state_))
@@ -225,7 +225,7 @@ namespace bc_orbiter
                     funcTarget_();
                 }
             }
-		}
+        }
 
         void Step(double dt) override
         {
@@ -239,18 +239,18 @@ namespace bc_orbiter
             }
         }
 
-		/**
-		Sets the state of the animation.
-		@param state The new state of the animation.  The state is a number 0..1 which indicates
-		where the animation is.  Normally target state should be set to allow the animation to move
-		to a specific state.  This calls is useful during load configuration in order to set the
-		animation state immediatly to a starting point.
-		*/
-		void SetState(double state)
-		{
-			updateState_.state_ = state;
+        /**
+        Sets the state of the animation.
+        @param state The new state of the animation.  The state is a number 0..1 which indicates
+        where the animation is.  Normally target state should be set to allow the animation to move
+        to a specific state.  This calls is useful during load configuration in order to set the
+        animation state immediatly to a starting point.
+        */
+        void SetState(double state)
+        {
+            updateState_.state_ = state;
             updateState_.targetState_ = state;
-		}
+        }
 
         /**
         SetTargetFunction
@@ -258,26 +258,26 @@ namespace bc_orbiter
         */
         void SetTargetFunction(TargetAchievedFunc func) { funcTarget_ = func; }
 
-		/**
-		GetState
-		Returns the current state of the animation.
-		*/
-		double GetState() const override { return updateState_.state_; }
-        
+        /**
+        GetState
+        Returns the current state of the animation.
+        */
+        double GetState() const override { return updateState_.state_; }
+
         const double* GetStatePtr() const { return &updateState_.state_; }
 
-	private:
+    private:
 
-		StateUpdate			updateState_;
+        StateUpdate			updateState_;
         TargetAchievedFunc  funcTarget_;
-        IAnimationState*    stateProvider_;
-	};
+        IAnimationState* stateProvider_;
+    };
 
-	/* Animation
-	Animation with standard target update. 
-	*/
-	using Animation = AnimationBase<StateUpdateTarget>;
-	
-	// Animation with 'wrap' target update.
-	using AnimationWrap = AnimationBase<StateUpdateWrap>;
+    /* Animation
+    Animation with standard target update.
+    */
+    using Animation = AnimationBase<StateUpdateTarget>;
+
+    // Animation with 'wrap' target update.
+    using AnimationWrap = AnimationBase<StateUpdateWrap>;
 }

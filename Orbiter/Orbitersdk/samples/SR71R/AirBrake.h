@@ -49,6 +49,9 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
+    bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+    bool OnPanelMouseEvent(int id, int event) override;
+
     void Step(double simt, double simdt, double mjd);
 
     // *** AirBrake ***
@@ -66,6 +69,13 @@ private:
 	double					dragFactor_;
 
 	const char*				ConfigKey = "AIRBRAKE";
+
+    // Animations:  animSurface is only active when we have hydraulic power, the external surface animations
+    //              key off of that, as well as the drag factor.  animSwitch will show the desired state regardless
+    //              of hydraulic power.  The vc and panel switches key off of that.
+
+    bco::Animation          animBrakeSurface_;
+    bco::Animation          animBrakeSwitch_;
 
     bco::Animation			animAirBrake_       {   &airBrakeSwitch_, 2.0 };
 
@@ -97,4 +107,21 @@ private:
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
+
+    // Panel
+    const VECTOR3 sTrans { bm::pnl::pnlSpeedBrakeFull_location - bm::pnl::pnlSpeedBrakeOff_location };
+
+    struct PE
+    {
+        int id;
+        const UINT group;
+        const RECT rc;
+        std::function<void(void)> update;
+    };
+    std::vector<PE> pnlEvents_
+    {
+        {GetBaseVessel()->GetIdForComponent(this), bm::pnl::pnlAirBrakeDecrease_id, bm::pnl::pnlAirBrakeDecrease_RC,    [this] {airBrakeSwitch_.Decrement(); }},
+        {GetBaseVessel()->GetIdForComponent(this), bm::pnl::pnlAirBrakeIncrease_id, bm::pnl::pnlAirBrakeIncrease_RC,    [this] {airBrakeSwitch_.Increment(); }}
+    };
+
 };

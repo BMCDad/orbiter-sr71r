@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Sun May 21 20:05:48 2023
+// Date: Wed May 24 19:06:47 2023
 
 
 #include "orbitersdk.h"
@@ -262,6 +262,11 @@ namespace bm
     {2315.3347f, 557.3519f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 1.0000f, 1.0000f},
     {1907.3347f, 149.3518f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0f, 0.0f},
     {2315.3347f, 149.3518f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 1.0000f, 0.0000f}    };
+    const NTVERTEX pnlAirBrake_verts[4] = {
+    {11.6717f, 767.4300f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0098f, 0.0356f},
+    {81.6717f, 767.4300f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0407f, 0.0356f},
+    {11.6717f, 729.4846f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0098f, 0.0214f},
+    {81.6717f, 729.4846f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0407f, 0.0214f}    };
     const NTVERTEX pnlClockTimerMinute_verts[4] = {
     {1540.2689f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.5392f},
     {1579.9559f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.5392f},
@@ -303,10 +308,13 @@ namespace bm
     const UINT pnlMFDRight_id = 13;
     const UINT pnlClockElapsedReset_id = 14;
     const UINT pnlClockTimerReset_id = 15;
-    const UINT pnlClockTimerMinute_id = 16;
-    const UINT pnlClockHour_id = 17;
-    const UINT pnlClockMinute_id = 18;
-    const UINT pnlClockSecond_id = 19;
+    const UINT pnlAirBrake_id = 16;
+    const UINT pnlAirBrakeIncrease_id = 17;
+    const UINT pnlAirBrakeDecrease_id = 18;
+    const UINT pnlClockTimerMinute_id = 19;
+    const UINT pnlClockHour_id = 20;
+    const UINT pnlClockMinute_id = 21;
+    const UINT pnlClockSecond_id = 22;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {15, 17, 85, 87};
@@ -327,8 +335,13 @@ namespace bm
     constexpr VECTOR3 pnlMFDRowTwoTop_location =     {596.2580, 584.7822, -1.0000};
     const double pnlMFDRight_Width = 408.0;
     const double pnlMFDRight_Height = 408.0000305175781;
+    constexpr VECTOR3 pnlClockSecond_location =     {1560.0911, 211.3757, -0.0040};
     constexpr RECT pnlClockElapsedReset_RC = {1488, 257, 1514, 284};
     constexpr RECT pnlClockTimerReset_RC = {1613, 257, 1630, 274};
+    constexpr RECT pnlAirBrakeIncrease_RC = {18, 852, 78, 973};
+    constexpr RECT pnlAirBrakeDecrease_RC = {17, 738, 78, 859};
+    constexpr VECTOR3 pnlSpeedBrakeOff_location =     {47.6717, 748.9994, -0.0003};
+    constexpr VECTOR3 pnlSpeedBrakeFull_location =     {47.6717, 959.5127, -0.0003};
 
   }
 

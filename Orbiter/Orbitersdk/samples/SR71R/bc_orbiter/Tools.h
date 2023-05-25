@@ -511,6 +511,25 @@ namespace bc_orbiter
 		return true;
 	}
 
+	inline void Draw(MESHHANDLE mesh, const UINT group, const NTVERTEX* verts, const VECTOR3& trans)
+	{
+		if (NULL == mesh)
+		{
+			return;
+		}
+
+		GROUPEDITSPEC change{};
+		NTVERTEX delta[4];
+
+		TransformXY2d(verts, delta, 4, trans, 0.0);
+
+		change.flags = GRPEDIT_VTXCRD;
+		change.nVtx = 4;
+		change.vIdx = NULL; //Just use the mesh order
+		change.Vtx = delta;
+		oapiEditMeshGroup(mesh, group, &change);
+	}
+
 	inline void Draw(MESHHANDLE mesh, const UINT group, const NTVERTEX* verts, const double angle)
 	{
 		if (NULL == mesh)

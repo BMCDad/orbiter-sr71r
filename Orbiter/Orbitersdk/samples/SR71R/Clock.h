@@ -87,7 +87,6 @@ private:
                                                     0.4
                                                 };
 
-    //
     bco::AnimationWrap      animTimerSecHand_;
     bco::AnimationWrap      animTimerMinuteHand_;
     bco::AnimationWrap      animHourHand_;
@@ -96,16 +95,12 @@ private:
     {
         const UINT group;
         const NTVERTEX* verts;
-        std::function<double(void)> update;
     };
 
-    std::vector<AD> pnl_
-    {
-        {bm::pnl::pnlClockSecond_id,        bm::pnl::pnlClockSecond_verts,      [&](void) {return animTimerSecHand_.GetState() * -PI2; }},
-        {bm::pnl::pnlClockTimerMinute_id,   bm::pnl::pnlClockTimerMinute_verts, [&](void) {return animTimerMinuteHand_.GetState() * -PI2; }},
-        {bm::pnl::pnlClockMinute_id,        bm::pnl::pnlClockMinute_verts,      [&](void) {return animMinuteHand_.GetState() * -PI2; }},
-        {bm::pnl::pnlClockHour_id,          bm::pnl::pnlClockHour_verts,        [&](void) {return animHourHand_.GetState() * -PI2; }}
-    };
+//    bco::AnimationGroup     grpClockSecond  { {bm::pnl::pnlClockSecond_id }, bm::pnl::pnlClockSecond_location };
+
+    const int ID_ResetTimer     = GetBaseVessel()->GetIdForComponent(this);
+    const int ID_ResetElapsed   = GetBaseVessel()->GetIdForComponent(this);
 
     struct PE
     {
@@ -116,7 +111,7 @@ private:
     };
     std::vector<PE> pnlEvents_
     {
-        {GetBaseVessel()->GetIdForComponent(this), bm::pnl::pnlClockElapsedReset_id,  bm::pnl::pnlClockElapsedReset_RC, [&](void) { ResetElapsed(); } },
-        {GetBaseVessel()->GetIdForComponent(this), bm::pnl::pnlClockTimerReset_id,    bm::pnl::pnlClockTimerReset_RC,   [&](void) {ResetTimer(); } }
+        {ID_ResetElapsed,   bm::pnl::pnlClockElapsedReset_id,  bm::pnl::pnlClockElapsedReset_RC, [&](void) { ResetElapsed(); }},
+        {ID_ResetTimer,     bm::pnl::pnlClockTimerReset_id,    bm::pnl::pnlClockTimerReset_RC,   [&](void) { ResetTimer(); }}
     };
 };
