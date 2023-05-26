@@ -199,3 +199,41 @@ void Lights::Update()
 
 	specStrobeLeft_.active = specStrobeRight_.active = HasPower() && swStrobe_.IsOn();
 }
+
+bool Lights::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+	for each (auto & v in pnlData_)
+	{
+		oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
+		GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+	}
+
+	return true;
+}
+
+bool Lights::OnPanelMouseEvent(int id, int event)
+{
+	auto p = pnlData_.find(id);
+	if (p == pnlData_.end()) return false;
+
+	p->second.update();
+	return true;
+}
+
+bool Lights::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
+{
+	auto p = pnlData_.find(id);
+	if (p == pnlData_.end()) return false;
+
+	double trans = 0.0;
+	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group);
+	auto vrt = p->second.verts;
+
+	trans = p->second.isActive() ? 0.0 : 0.0148;
+	grp->Vtx[0].tu = vrt[0].tu + trans;
+	grp->Vtx[1].tu = vrt[1].tu + trans;
+	grp->Vtx[2].tu = vrt[2].tu + trans;
+	grp->Vtx[3].tu = vrt[3].tu + trans;
+
+	return true;
+}

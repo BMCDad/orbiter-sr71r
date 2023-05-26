@@ -47,6 +47,11 @@ public:
 	// Component
 	virtual void OnSetClassCaps() override;
 	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
+
+	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+	bool OnPanelMouseEvent(int id, int event) override;
+	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
+
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
@@ -61,11 +66,6 @@ private:
 	const char*				ConfigKey = "LIGHTS";
 
     double                  ampsPerLight_;
-
-    bco::AnimationGroup     rnavPower           {   {bm::vc::SwitchNavLights_id },
-                                                    bm::vc::LightsRightAxis_location, 
-													bm::vc::LightsRightAxis_location,
-                                                    (90 * RAD), 0.0, 0.1 };
 
     bco::VCToggleSwitch     swNav_              {   bm::vc::SwitchNavLights_id, 
                                                     bm::vc::SwitchNavLights_location, 
@@ -97,4 +97,27 @@ private:
 
 	BEACONLIGHTSPEC			specStrobeLeft_;
 	BEACONLIGHTSPEC			specStrobeRight_;
+
+	struct PnlData
+	{
+		const UINT group;
+		const RECT rc;
+		const NTVERTEX* verts;
+		std::function<void(void)> update;
+		std::function<bool(void)> isActive;
+	};
+
+	const int ID_NAV	= GetBaseVessel()->GetIdForComponent(this);
+	const int ID_BEACON = GetBaseVessel()->GetIdForComponent(this);
+	const int ID_STROBE	= GetBaseVessel()->GetIdForComponent(this);
+	const int ID_DOCK	= GetBaseVessel()->GetIdForComponent(this);
+
+	std::map<int, PnlData> pnlData_
+	{
+		{ID_NAV,	{bm::pnl::pnlLightNav_id,	 bm::pnl::pnlLightNav_RC,	 bm::pnl::pnlLightNav_verts,	[&]() {swNav_.Toggle(); },	  [&]() {return swNav_.IsOn(); }}},
+		{ID_BEACON,	{bm::pnl::pnlLightBeacon_id, bm::pnl::pnlLightBeacon_RC, bm::pnl::pnlLightBeacon_verts, [&]() {swBeacon_.Toggle(); }, [&]() {return swBeacon_.IsOn(); }}},
+		{ID_STROBE, {bm::pnl::pnlLightStrobe_id, bm::pnl::pnlLightStrobe_RC, bm::pnl::pnlLightStrobe_verts,	[&]() {swStrobe_.Toggle(); }, [&]() {return swStrobe_.IsOn(); }}},
+		{ID_DOCK,	{bm::pnl::pnlLightDock_id,	 bm::pnl::pnlLightDock_RC,	 bm::pnl::pnlLightDock_verts,	[&]() {swDock_.Toggle(); },	  [&]() {return swDock_.IsOn(); }}}
+	};
+
 };

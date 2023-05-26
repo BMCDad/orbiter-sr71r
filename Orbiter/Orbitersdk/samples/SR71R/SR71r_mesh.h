@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Thu May 25 15:41:26 2023
+// Date: Thu May 25 19:24:12 2023
 
 
 #include "orbitersdk.h"
@@ -277,6 +277,46 @@ namespace bm
     {280.5476f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
     {248.0182f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
     {280.5476f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlLightNav_verts[4] = {
+    {649.6776f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {682.2070f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {649.6776f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {682.2070f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlLightBeacon_verts[4] = {
+    {729.7604f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {762.2899f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {729.7604f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {762.2899f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlLightStrobe_verts[4] = {
+    {809.7617f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {842.2911f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {809.7617f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {842.2911f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlLightDock_verts[4] = {
+    {889.9207f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {922.4501f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {889.9207f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {922.4501f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlDoorCanopy_verts[4] = {
+    {327.7865f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {360.3160f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {327.7865f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {360.3160f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlDoorCargo_verts[4] = {
+    {407.6300f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {440.1595f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {407.6300f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {440.1595f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlDoorHover_verts[4] = {
+    {487.7802f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {520.3097f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {487.7802f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {520.3097f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlDoorRetro_verts[4] = {
+    {567.9451f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {600.4745f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {567.9451f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {600.4745f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
     const NTVERTEX pnlClockTimerMinute_verts[4] = {
     {1540.2689f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.5392f},
     {1579.9559f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.5392f},
@@ -338,13 +378,21 @@ namespace bm
     const UINT pnlAirBrakeDecrease_id = 18;
     const UINT pnlAPUSwitch_id = 19;
     const UINT pnlScreenSwitch_id = 20;
-    const UINT pnlClockTimerMinute_id = 21;
-    const UINT pnlClockHour_id = 22;
-    const UINT pnlClockMinute_id = 23;
-    const UINT pnlClockSecond_id = 24;
-    const UINT pnlHydPress_id = 25;
-    const UINT pnlLOXPress_id = 26;
-    const UINT pnlLH2Press_id = 27;
+    const UINT pnlLightNav_id = 21;
+    const UINT pnlLightBeacon_id = 22;
+    const UINT pnlLightStrobe_id = 23;
+    const UINT pnlLightDock_id = 24;
+    const UINT pnlDoorCanopy_id = 25;
+    const UINT pnlDoorCargo_id = 26;
+    const UINT pnlDoorHover_id = 27;
+    const UINT pnlDoorRetro_id = 28;
+    const UINT pnlClockTimerMinute_id = 29;
+    const UINT pnlClockHour_id = 30;
+    const UINT pnlClockMinute_id = 31;
+    const UINT pnlClockSecond_id = 32;
+    const UINT pnlHydPress_id = 33;
+    const UINT pnlLOXPress_id = 34;
+    const UINT pnlLH2Press_id = 35;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {15, 17, 85, 87};
@@ -377,6 +425,14 @@ namespace bm
     constexpr VECTOR3 pnlLH2Press_location =     {602.2715, 760.9673, -0.0039};
     constexpr RECT pnlAPUSwitch_RC = {164, 907, 197, 995};
     constexpr RECT pnlScreenSwitch_RC = {248, 907, 281, 995};
+    constexpr RECT pnlLightNav_RC = {650, 907, 682, 995};
+    constexpr RECT pnlLightBeacon_RC = {730, 907, 762, 995};
+    constexpr RECT pnlLightStrobe_RC = {810, 907, 842, 995};
+    constexpr RECT pnlLightDock_RC = {890, 907, 922, 995};
+    constexpr RECT pnlDoorCanopy_RC = {328, 907, 360, 995};
+    constexpr RECT pnlDoorCargo_RC = {408, 907, 440, 995};
+    constexpr RECT pnlDoorHover_RC = {488, 907, 520, 995};
+    constexpr RECT pnlDoorRetro_RC = {568, 907, 600, 995};
 
   }
 
