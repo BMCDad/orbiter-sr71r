@@ -39,6 +39,22 @@ void APU::Step(double simt, double simdt, double mjd)
 
         gaugeHydrPress_.SetState((fuelDraw == actualDraw) ? 1.0 : 0.0);
 	}
+
+	animGauge_.Step(gaugeHydrPress_.GetState(), simdt);
+
+	auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
+
+	switch (oapiCockpitMode())
+	{
+	case COCKPIT_PANELS:
+		// panel anims.
+		bco::Draw(pMesh, bm::pnl::pnlHydPress_id, bm::pnl::pnlHydPress_verts, animGauge_.GetState() * -(PI2*.8333));
+		break;
+
+	case COCKPIT_VIRTUAL:
+		gaugeHydrPress_.SetAnimation2(GetBaseVessel(), animGauge_.GetState());
+		break;
+	}
 }
 
 double APU::CurrentDraw()
@@ -49,7 +65,7 @@ double APU::CurrentDraw()
 void APU::OnSetClassCaps()
 {
     swPower_.Setup(GetBaseVessel());
-    gaugeHydrPress_.Setup(GetBaseVessel());
+    gaugeHydrPress_.Setup2(GetBaseVessel(), GetBaseVessel()->GetVCMeshIndex());
 }
 
 bool APU::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -80,3 +96,32 @@ void APU::OnSaveConfiguration(FILEHANDLE scn) const
 bco::OnOffSwitch&   APU::PowerSwitch()                                  { return swPower_; }
 double              APU::GetHydraulicLevel() const                      { return gaugeHydrPress_.GetState(); }
 void                APU::SetPropulsionControl(PropulsionController* pc) { propulsionControl_ = pc; }
+
+bool APU::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+	oapiRegisterPanelArea(ID_APUSwitch, pnlApuSwitch.rc, PANEL_REDRAW_USER);
+	GetBaseVessel()->RegisterPanelArea(hPanel, ID_APUSwitch, pnlApuSwitch.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+
+	return true;
+}
+
+bool APU::OnPanelMouseEvent(int id, int event)
+{
+	swPower_.Toggle();
+	return true;
+}
+
+bool APU::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
+{
+	double trans = 0.0;
+	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), pnlApuSwitch.group);
+	auto vrt = pnlApuSwitch.verts;
+
+	trans = (swPower_.IsOn()) ? 0.0 : 0.0148;
+	grp->Vtx[0].tu = vrt[0].tu + trans;
+	grp->Vtx[1].tu = vrt[1].tu + trans;
+	grp->Vtx[2].tu = vrt[2].tu + trans;
+	grp->Vtx[3].tu = vrt[3].tu + trans;
+
+	return true;
+}

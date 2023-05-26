@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Wed May 24 19:06:47 2023
+// Date: Thu May 25 15:41:26 2023
 
 
 #include "orbitersdk.h"
@@ -267,6 +267,16 @@ namespace bm
     {81.6717f, 767.4300f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0407f, 0.0356f},
     {11.6717f, 729.4846f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0098f, 0.0214f},
     {81.6717f, 729.4846f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0407f, 0.0214f}    };
+    const NTVERTEX pnlAPUSwitch_verts[4] = {
+    {164.0057f, 994.1796f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {196.5521f, 994.1796f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {164.0057f, 906.2440f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {196.5521f, 906.2440f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlScreenSwitch_verts[4] = {
+    {248.0182f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {280.5476f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {248.0182f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {280.5476f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
     const NTVERTEX pnlClockTimerMinute_verts[4] = {
     {1540.2689f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.5392f},
     {1579.9559f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.5392f},
@@ -287,6 +297,21 @@ namespace bm
     {1579.7167f, 142.6862f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3645f, 0.5393f},
     {1540.4655f, 280.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6071f},
     {1579.7167f, 280.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3645f, 0.6071f}    };
+    const NTVERTEX pnlHydPress_verts[4] = {
+    {206.8129f, 827.5280f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.5380f},
+    {174.0760f, 808.9858f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.5380f},
+    {271.7103f, 712.9489f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.6040f},
+    {238.9734f, 694.4067f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.6040f}    };
+    const NTVERTEX pnlLOXPress_verts[4] = {
+    {394.6089f, 827.5280f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.5380f},
+    {361.8721f, 808.9858f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.5380f},
+    {459.5063f, 712.9489f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.6040f},
+    {426.7695f, 694.4067f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.6040f}    };
+    const NTVERTEX pnlLH2Press_verts[4] = {
+    {586.1912f, 827.5280f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.5380f},
+    {553.4543f, 808.9858f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.5380f},
+    {651.0886f, 712.9489f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.6040f},
+    {618.3517f, 694.4067f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.6040f}    };
     const DWORD TXIDX_SR71R_100_2DPanel_dds = 1;
     const DWORD TXIDX_SR71R_100_VC1_dds = 2;
     const DWORD TXIDX_SR71R_100_VC2_dds = 3;
@@ -311,10 +336,15 @@ namespace bm
     const UINT pnlAirBrake_id = 16;
     const UINT pnlAirBrakeIncrease_id = 17;
     const UINT pnlAirBrakeDecrease_id = 18;
-    const UINT pnlClockTimerMinute_id = 19;
-    const UINT pnlClockHour_id = 20;
-    const UINT pnlClockMinute_id = 21;
-    const UINT pnlClockSecond_id = 22;
+    const UINT pnlAPUSwitch_id = 19;
+    const UINT pnlScreenSwitch_id = 20;
+    const UINT pnlClockTimerMinute_id = 21;
+    const UINT pnlClockHour_id = 22;
+    const UINT pnlClockMinute_id = 23;
+    const UINT pnlClockSecond_id = 24;
+    const UINT pnlHydPress_id = 25;
+    const UINT pnlLOXPress_id = 26;
+    const UINT pnlLH2Press_id = 27;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {15, 17, 85, 87};
@@ -342,6 +372,11 @@ namespace bm
     constexpr RECT pnlAirBrakeDecrease_RC = {17, 738, 78, 859};
     constexpr VECTOR3 pnlSpeedBrakeOff_location =     {47.6717, 748.9994, -0.0003};
     constexpr VECTOR3 pnlSpeedBrakeFull_location =     {47.6717, 959.5127, -0.0003};
+    constexpr VECTOR3 pnlHydPress_location =     {222.8931, 760.9673, -0.0039};
+    constexpr VECTOR3 pnlLOXPress_location =     {410.6892, 760.9673, -0.0039};
+    constexpr VECTOR3 pnlLH2Press_location =     {602.2715, 760.9673, -0.0039};
+    constexpr RECT pnlAPUSwitch_RC = {164, 907, 197, 995};
+    constexpr RECT pnlScreenSwitch_RC = {248, 907, 281, 995};
 
   }
 

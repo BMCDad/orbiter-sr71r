@@ -208,6 +208,10 @@ namespace bc_orbiter
             updateState_.speed_ = speed;
         }
 
+        AnimationBase(double speed)
+        {
+            updateState_.speed_ = speed;
+        }
 
         /**
         Step

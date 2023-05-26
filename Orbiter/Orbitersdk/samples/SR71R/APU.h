@@ -70,6 +70,10 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
     
+	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+	bool OnPanelMouseEvent(int id, int event) override;
+	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
+
     // *** IAnimationState ***
     virtual double GetState() const override { return GetHydraulicLevel(); }
 
@@ -95,4 +99,17 @@ private:
                                                 bm::vc::SwAPUPower_location,
                                                 bm::vc::LeftPanelTopRightAxis_location
                                             };
+
+	bco::Animation		animGauge_			{ 0.2 /* speed */};
+
+	struct PnlData
+	{
+		const UINT group;
+		const RECT rc;
+		const NTVERTEX* verts;
+	};
+
+	const int ID_APUSwitch = { GetBaseVessel()->GetIdForComponent(this) };
+
+	PnlData pnlApuSwitch	{ bm::pnl::pnlAPUSwitch_id, bm::pnl::pnlAPUSwitch_RC, bm::pnl::pnlAPUSwitch_verts };
 };
