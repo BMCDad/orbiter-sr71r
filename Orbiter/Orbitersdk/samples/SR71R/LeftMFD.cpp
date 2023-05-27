@@ -158,8 +158,8 @@ bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 	vcFont_.blankY = 2;
 
 														// Mesh coords
-	int rc_left = 150;									// Left side of left col.
-	int rc_col2_offset = 690 - rc_left;					// Diff between right col and left
+	int rc_left = 210;									// Left side of left col.
+	int rc_col2_offset = 750 - rc_left;					// Diff between right col and left
 	int rc_top = 205;									// Top of row 1 buttons
 	int rc_row_offset = 56;								// Difference in button y axis
 	int btn_height = 40;								// Button height
@@ -188,7 +188,7 @@ bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 	vessel->RegisterPanelArea(
 		hPanel,
 		GetPwrKey(),
-		_R(245, fixedYTop, 245 + btn_width, fixedYTop + btn_height),
+		_R(305, fixedYTop, 305 + btn_width, fixedYTop + btn_height),
 		PANEL_REDRAW_NEVER, 
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 
@@ -196,7 +196,7 @@ bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 	vessel->RegisterPanelArea(
 		hPanel,
 		GetSelectKey(),
-		_R(518, fixedYTop, 518 + btn_width, fixedYTop + btn_height),
+		_R(578, fixedYTop, 578 + btn_width, fixedYTop + btn_height),
 		PANEL_REDRAW_NEVER,
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 
@@ -204,7 +204,7 @@ bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 	vessel->RegisterPanelArea(
 		hPanel,
 		GetSelectKey(),
-		_R(595, fixedYTop, 595 + btn_width, fixedYTop + btn_height),
+		_R(655, fixedYTop, 655 + btn_width, fixedYTop + btn_height),
 		PANEL_REDRAW_NEVER,
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 

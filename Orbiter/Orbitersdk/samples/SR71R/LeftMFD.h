@@ -45,7 +45,7 @@ public:
 private:
 	bco::FontInfo	vcFont_;
 
-	const int PnlColLeftX = 178;
+	const int PnlColLeftX = 238;
 	const int PnlColsDiff = 540;
 	const int PnlRowsTop = 1740;
 	const int PnlRowsDiff = 56;
