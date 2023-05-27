@@ -20,6 +20,8 @@
 #include "Lights.h"
 #include "SR71r_mesh.h"
 
+#include "bc_orbiter/Tools.h"
+
 #include <assert.h>
 
 Lights::Lights(bco::BaseVessel* vessel, double amps) :
@@ -225,15 +227,7 @@ bool Lights::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 	auto p = pnlData_.find(id);
 	if (p == pnlData_.end()) return false;
 
-	double trans = 0.0;
-	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group);
-	auto vrt = p->second.verts;
-
-	trans = p->second.isActive() ? 0.0 : 0.0148;
-	grp->Vtx[0].tu = vrt[0].tu + trans;
-	grp->Vtx[1].tu = vrt[1].tu + trans;
-	grp->Vtx[2].tu = vrt[2].tu + trans;
-	grp->Vtx[3].tu = vrt[3].tu + trans;
+	bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group, p->second.verts, p->second.isActive(), 0.0148);
 
 	return true;
 }

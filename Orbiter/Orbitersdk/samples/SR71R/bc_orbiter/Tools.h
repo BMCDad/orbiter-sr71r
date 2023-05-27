@@ -549,4 +549,14 @@ namespace bc_orbiter
 		oapiEditMeshGroup(mesh, group, &change);
 	}
 
+	inline void DrawPanelOnOff(MESHHANDLE mesh, UINT group, const NTVERTEX* verts, bool isOn, double offset)
+	{
+		auto grp = oapiMeshGroup(mesh, group);
+
+		double trans = isOn ? offset : 0.0;
+		grp->Vtx[0].tu = verts[0].tu + trans;
+		grp->Vtx[1].tu = verts[1].tu + trans;
+		grp->Vtx[2].tu = verts[2].tu + trans;
+		grp->Vtx[3].tu = verts[3].tu + trans;
+	}
 }

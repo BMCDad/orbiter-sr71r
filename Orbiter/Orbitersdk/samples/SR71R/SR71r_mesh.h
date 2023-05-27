@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Thu May 25 19:24:12 2023
+// Date: Sat May 27 13:16:42 2023
 
 
 #include "orbitersdk.h"
@@ -317,6 +317,61 @@ namespace bm
     {600.4745f, 994.1573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
     {567.9451f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
     {600.4745f, 906.2676f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlPwrMain_verts[4] = {
+    {1813.8112f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {1846.3406f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {1813.8112f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {1846.3406f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlPwrAvion_verts[4] = {
+    {1894.5029f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {1927.0323f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {1894.5029f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {1927.0323f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlPwrCanopy_verts[4] = {
+    {1974.5918f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {2007.1212f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {1974.5918f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {2007.1212f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlPwrCargo_verts[4] = {
+    {2054.7156f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {2087.2451f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {2054.7156f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {2087.2451f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlPwrExtBus_verts[4] = {
+    {1894.5029f, 873.3264f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {1927.0323f, 873.3264f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {1894.5029f, 785.4366f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {1927.0323f, 785.4366f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlPwrFCBus_verts[4] = {
+    {2134.5767f, 873.3264f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {2167.1062f, 873.3264f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {2134.5767f, 785.4366f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {2167.1062f, 785.4366f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlPwrFC_verts[4] = {
+    {2214.4551f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {2246.9846f, 774.9550f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {2214.4551f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {2246.9846f, 687.0652f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlLgtExtPwrAvail_verts[4] = {
+    {1804.9969f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
+    {1850.3466f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
+    {1804.9969f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
+    {1850.3466f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
+    const NTVERTEX pnlLgtFCPwrAvail_verts[4] = {
+    {2207.7288f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
+    {2253.0781f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
+    {2207.7288f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
+    {2253.0781f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
+    const NTVERTEX pnlLgtFCPwrOn_verts[4] = {
+    {2048.3445f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0253f},
+    {2093.6938f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0253f},
+    {2048.3445f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0040f},
+    {2093.6938f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0040f}    };
+    const NTVERTEX pnlLgtExtPwrOn_verts[4] = {
+    {1967.2522f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0253f},
+    {2012.6018f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0253f},
+    {1967.2522f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0040f},
+    {2012.6018f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0040f}    };
     const NTVERTEX pnlClockTimerMinute_verts[4] = {
     {1540.2689f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.5392f},
     {1579.9559f, 141.8482f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.5392f},
@@ -352,6 +407,16 @@ namespace bm
     {553.4543f, 808.9858f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.5380f},
     {651.0886f, 712.9489f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.6040f},
     {618.3517f, 694.4067f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.6040f}    };
+    const NTVERTEX pnlAmpMeter_verts[4] = {
+    {2340.1360f, 820.1657f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6628f, 0.0240f},
+    {2311.9333f, 795.3180f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6628f, 0.0050f},
+    {2427.1033f, 721.4565f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.7306f, 0.0240f},
+    {2398.9006f, 696.6088f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.7306f, 0.0050f}    };
+    const NTVERTEX pnlVoltMeter_verts[4] = {
+    {2427.4282f, 794.8062f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.6628f, 0.0240f},
+    {2399.4470f, 819.9029f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.6628f, 0.0050f},
+    {2339.5896f, 696.8716f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.7306f, 0.0240f},
+    {2311.6084f, 721.9684f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.7306f, 0.0050f}    };
     const DWORD TXIDX_SR71R_100_2DPanel_dds = 1;
     const DWORD TXIDX_SR71R_100_VC1_dds = 2;
     const DWORD TXIDX_SR71R_100_VC2_dds = 3;
@@ -386,13 +451,26 @@ namespace bm
     const UINT pnlDoorCargo_id = 26;
     const UINT pnlDoorHover_id = 27;
     const UINT pnlDoorRetro_id = 28;
-    const UINT pnlClockTimerMinute_id = 29;
-    const UINT pnlClockHour_id = 30;
-    const UINT pnlClockMinute_id = 31;
-    const UINT pnlClockSecond_id = 32;
-    const UINT pnlHydPress_id = 33;
-    const UINT pnlLOXPress_id = 34;
-    const UINT pnlLH2Press_id = 35;
+    const UINT pnlPwrMain_id = 29;
+    const UINT pnlPwrAvion_id = 30;
+    const UINT pnlPwrCanopy_id = 31;
+    const UINT pnlPwrCargo_id = 32;
+    const UINT pnlPwrExtBus_id = 33;
+    const UINT pnlPwrFCBus_id = 34;
+    const UINT pnlPwrFC_id = 35;
+    const UINT pnlLgtExtPwrAvail_id = 36;
+    const UINT pnlLgtFCPwrAvail_id = 37;
+    const UINT pnlLgtFCPwrOn_id = 38;
+    const UINT pnlLgtExtPwrOn_id = 39;
+    const UINT pnlClockTimerMinute_id = 40;
+    const UINT pnlClockHour_id = 41;
+    const UINT pnlClockMinute_id = 42;
+    const UINT pnlClockSecond_id = 43;
+    const UINT pnlHydPress_id = 44;
+    const UINT pnlLOXPress_id = 45;
+    const UINT pnlLH2Press_id = 46;
+    const UINT pnlAmpMeter_id = 47;
+    const UINT pnlVoltMeter_id = 48;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {15, 17, 85, 87};
@@ -433,6 +511,19 @@ namespace bm
     constexpr RECT pnlDoorCargo_RC = {408, 907, 440, 995};
     constexpr RECT pnlDoorHover_RC = {488, 907, 520, 995};
     constexpr RECT pnlDoorRetro_RC = {568, 907, 600, 995};
+    constexpr RECT pnlPwrMain_RC = {1814, 688, 1846, 776};
+    constexpr RECT pnlPwrAvion_RC = {1894, 688, 1927, 776};
+    constexpr RECT pnlPwrCanopy_RC = {1975, 688, 2007, 776};
+    constexpr RECT pnlPwrCargo_RC = {2055, 688, 2087, 776};
+    constexpr RECT pnlPwrExtBus_RC = {1894, 786, 1927, 874};
+    constexpr RECT pnlPwrFCBus_RC = {2135, 786, 2167, 874};
+    constexpr RECT pnlPwrFC_RC = {2214, 688, 2247, 776};
+    constexpr RECT pnlLgtExtPwrAvail_RC = {1805, 807, 1850, 853};
+    constexpr RECT pnlLgtFCPwrAvail_RC = {2208, 807, 2253, 853};
+    constexpr RECT pnlLgtFCPwrOn_RC = {2048, 807, 2094, 853};
+    constexpr RECT pnlLgtExtPwrOn_RC = {1967, 807, 2013, 853};
+    constexpr VECTOR3 pnlAmpMeter_location =     {2369.5183, 758.3873, -0.0039};
+    constexpr VECTOR3 pnlVoltMeter_location =     {2369.5183, 758.3873, -0.0039};
 
   }
 

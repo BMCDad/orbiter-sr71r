@@ -73,6 +73,11 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
+	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+	bool OnPanelMouseEvent(int id, int event) override;
+	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
+
+
 	void Step(double simt, double simdt, double mjd);
 
     void PostCreation();
@@ -155,5 +160,43 @@ private:
 															(120 * RAD),
 															0.2
 														};
+
+	bco::Animation		animAmpMeter_	{ 0.2 /* speed */ };
+	bco::Animation		animVoltMeter_	{ 0.2 /* speed */ };
+
+	struct PnlData
+	{
+		const UINT group;
+		const RECT rc;
+		const NTVERTEX* verts;
+		std::function<void(void)> update;
+		std::function<bool(void)> isActive;
+	};
+
+	const int ID_POWER = GetBaseVessel()->GetIdForComponent(this);
+	const int ID_CONEXT = GetBaseVessel()->GetIdForComponent(this);
+	const int ID_CONFC = GetBaseVessel()->GetIdForComponent(this);
+
+	std::map<int, PnlData> pnlData_
+	{
+		{ID_POWER,	{bm::pnl::pnlPwrMain_id,	bm::pnl::pnlPwrMain_RC,		bm::pnl::pnlPwrMain_verts,	 [&]() {swPower_.Toggle(); },			[&]() {return swPower_.IsOn(); }}},
+		{ID_CONEXT,	{bm::pnl::pnlPwrExtBus_id,	bm::pnl::pnlPwrExtBus_RC,	bm::pnl::pnlPwrExtBus_verts, [&]() {swConnectExternal_.Toggle(); }, [&]() {return swConnectExternal_.IsOn(); }}},
+		{ID_CONFC,	{bm::pnl::pnlPwrFCBus_id,	bm::pnl::pnlPwrFCBus_RC,	bm::pnl::pnlPwrFCBus_verts,	 [&]() {swConnectFuelCell_.Toggle(); }, [&]() {return swConnectFuelCell_.IsOn(); }}}
+	};
+
+	struct pnlLights
+	{
+		const UINT group;
+		const NTVERTEX* verts;
+		std::function<bool(void)> isActive;
+	};
+
+	std::vector<pnlLights> pnlLights_
+	{
+		{bm::pnl::pnlLgtExtPwrAvail_id, bm::pnl::pnlLgtExtPwrAvail_verts },
+		{bm::pnl::pnlLgtFCPwrAvail_id,	bm::pnl::pnlLgtFCPwrAvail_verts },
+		{bm::pnl::pnlLgtExtPwrOn_id,	bm::pnl::pnlLgtExtPwrOn_verts },
+		{bm::pnl::pnlLgtFCPwrOn_id,		bm::pnl::pnlLgtFCPwrOn_verts }
+	};
 
 };

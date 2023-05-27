@@ -113,15 +113,10 @@ bool APU::OnPanelMouseEvent(int id, int event)
 
 bool APU::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
-	double trans = 0.0;
-	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), pnlApuSwitch.group);
-	auto vrt = pnlApuSwitch.verts;
-
-	trans = (swPower_.IsOn()) ? 0.0 : 0.0148;
-	grp->Vtx[0].tu = vrt[0].tu + trans;
-	grp->Vtx[1].tu = vrt[1].tu + trans;
-	grp->Vtx[2].tu = vrt[2].tu + trans;
-	grp->Vtx[3].tu = vrt[3].tu + trans;
+	bco::DrawPanelOnOff(
+		GetBaseVessel()->GetpanelMeshHandle0(), 
+		pnlApuSwitch.group, pnlApuSwitch.verts, 
+		swPower_.IsOn(), 0.0148);
 
 	return true;
 }
