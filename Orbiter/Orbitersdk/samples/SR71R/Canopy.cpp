@@ -16,6 +16,7 @@
 
 #include "StdAfx.h"
 
+#include "bc_orbiter/Tools.h"
 #include "Orbitersdk.h"
 #include "Canopy.h"
 #include "SR71r_mesh.h"
@@ -97,3 +98,32 @@ void Canopy::OnSetClassCaps()
     vessel->AddVesselAnimationComponent(idAnim_, mIdx, &gpCanopy_);
 }
 
+bool Canopy::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+    for each (auto & v in pnlData_)
+    {
+        oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
+        GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+    }
+
+    return true;
+}
+
+bool Canopy::OnPanelMouseEvent(int id, int event)
+{
+    auto p = pnlData_.find(id);
+    if (p == pnlData_.end()) return false;
+
+    p->second.update();
+    return true;
+}
+
+bool Canopy::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
+{
+    auto p = pnlData_.find(id);
+    if (p == pnlData_.end()) return false;
+
+    bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group, p->second.verts, p->second.isActive(), 0.0148);
+
+    return true;
+}

@@ -57,6 +57,10 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
+    bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+    bool OnPanelMouseEvent(int id, int event) override;
+    bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
+
 	/**
 		We override from the base class because the calculation for this
 		is determined by which doors are currently in motion.
@@ -119,4 +123,22 @@ private:
                                                     (160 * RAD),
                                                     0.26, 0.49
                                                 };
+
+    const int ID_DOOR = { GetBaseVessel()->GetIdForComponent(this) };
+    const int ID_POWER = { GetBaseVessel()->GetIdForComponent(this) };
+
+    struct PnlData
+    {
+        const UINT group;
+        const RECT rc;
+        const NTVERTEX* verts;
+        std::function<void(void)> update;
+        std::function<bool(void)> isActive;
+    };
+
+    std::map<int, PnlData> pnlData_
+    {
+        {ID_DOOR,	{bm::pnl::pnlDoorCargo_id,	bm::pnl::pnlDoorCargo_RC,	bm::pnl::pnlDoorCargo_verts, [&]() {swCargoOpen_.Toggle(); },  [&]() {return swCargoOpen_.IsOn(); }}},
+        {ID_POWER,	{bm::pnl::pnlPwrCargo_id,   bm::pnl::pnlPwrCargo_RC,    bm::pnl::pnlPwrCargo_verts,  [&]() {swCargoPower_.Toggle(); }, [&]() {return swCargoPower_.IsOn(); }}}
+    };
 };

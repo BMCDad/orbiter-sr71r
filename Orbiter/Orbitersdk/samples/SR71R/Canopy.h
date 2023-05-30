@@ -58,6 +58,10 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
+    bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+    bool OnPanelMouseEvent(int id, int event) override;
+    bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
+
     /**
     The draw is only active when in motion.
     */
@@ -110,4 +114,22 @@ private:
                                                 (55 * RAD),
                                                 0, 1
                                             };
+
+    const int ID_DOOR = { GetBaseVessel()->GetIdForComponent(this) };
+    const int ID_POWER = { GetBaseVessel()->GetIdForComponent(this) };
+
+    struct PnlData
+    {
+        const UINT group;
+        const RECT rc;
+        const NTVERTEX* verts;
+        std::function<void(void)> update;
+        std::function<bool(void)> isActive;
+    };
+
+    std::map<int, PnlData> pnlData_
+    {
+        {ID_DOOR,	{bm::pnl::pnlDoorCanopy_id,	 bm::pnl::pnlDoorCanopy_RC,	 bm::pnl::pnlDoorCanopy_verts,	[&]() {swCanopyOpen_.Toggle(); },  [&]() {return swCanopyOpen_.IsOn(); }}},
+        {ID_POWER,	{bm::pnl::pnlPwrCanopy_id,   bm::pnl::pnlPwrCanopy_RC,   bm::pnl::pnlPwrCanopy_verts,   [&]() {swCanopyPower_.Toggle(); }, [&]() {return swCanopyPower_.IsOn(); }}}
+    };
 };

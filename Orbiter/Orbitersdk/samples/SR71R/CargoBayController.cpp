@@ -16,6 +16,8 @@
 
 #include "StdAfx.h"
 
+#include "bc_orbiter\Tools.h"
+
 #include "Orbitersdk.h"
 #include "CargoBayController.h"
 #include "SR71r_mesh.h"
@@ -101,3 +103,32 @@ void CargoBayController::OnSetClassCaps()
     vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoRightMain_);
 }
 
+bool CargoBayController::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+    for each (auto & v in pnlData_)
+    {
+        oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
+        GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+    }
+
+    return true;
+}
+
+bool CargoBayController::OnPanelMouseEvent(int id, int event)
+{
+    auto p = pnlData_.find(id);
+    if (p == pnlData_.end()) return false;
+
+    p->second.update();
+    return true;
+}
+
+bool CargoBayController::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
+{
+    auto p = pnlData_.find(id);
+    if (p == pnlData_.end()) return false;
+
+    bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group, p->second.verts, p->second.isActive(), 0.0148);
+
+    return true;
+}
