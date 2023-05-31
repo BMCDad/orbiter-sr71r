@@ -111,8 +111,6 @@ private:
 
 	void Update();
 
-	int						areaId_;
-
 	bco::Circuit			mainCircuit_;
 
 	// Power ports:
@@ -176,6 +174,7 @@ private:
 	const int ID_POWER = GetBaseVessel()->GetIdForComponent(this);
 	const int ID_CONEXT = GetBaseVessel()->GetIdForComponent(this);
 	const int ID_CONFC = GetBaseVessel()->GetIdForComponent(this);
+	const int ID_AREA = GetBaseVessel()->GetIdForComponent(this);
 
 	std::map<int, PnlData> pnlData_
 	{

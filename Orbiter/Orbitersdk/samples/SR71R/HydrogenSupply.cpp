@@ -34,7 +34,7 @@ HydrogenSupply::HydrogenSupply(bco::BaseVessel* vessel, double capacity) :
 
 void HydrogenSupply::OnSetClassCaps()
 {
-    gaugeHydro_.Setup(GetBaseVessel());
+    gaugeHydro_.Setup2(GetBaseVessel(), GetBaseVessel()->GetVCMeshIndex());
 	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
@@ -53,6 +53,23 @@ void HydrogenSupply::Step(double simt, double simdt, double mjd)
 	{
 		FillTank(HYDROGEN_FILL_RATE * simdt);
 	}
+
+	animGauge_.Step(gaugeHydro_.GetState(), simdt);
+
+	auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
+
+	switch (oapiCockpitMode())
+	{
+	case COCKPIT_PANELS:
+		// panel anims.
+		bco::Draw(pMesh, bm::pnl::pnlLH2Press_id, bm::pnl::pnlLH2Press_verts, animGauge_.GetState() * -(PI2 * .8333));
+		break;
+
+	case COCKPIT_VIRTUAL:
+		gaugeHydro_.SetAnimation2(GetBaseVessel(), animGauge_.GetState());
+		break;
+	}
+
 }
 
 bool HydrogenSupply::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)

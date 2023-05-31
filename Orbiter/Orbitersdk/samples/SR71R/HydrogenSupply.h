@@ -74,4 +74,6 @@ private:
                                                         (300 * RAD), 
                                                         0.2
                                                     };
+
+	bco::Animation		animGauge_{ 0.2 /* speed */ };
 };

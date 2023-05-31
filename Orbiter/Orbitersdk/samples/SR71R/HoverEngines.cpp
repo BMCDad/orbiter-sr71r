@@ -192,3 +192,23 @@ bool HoverEngines::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* s
 
     return false;
 }
+
+bool HoverEngines::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+    oapiRegisterPanelArea(ID_DOOR, bm::pnl::pnlDoorHover_RC, PANEL_REDRAW_USER);
+    GetBaseVessel()->RegisterPanelArea(hPanel, ID_DOOR, bm::pnl::pnlDoorHover_RC, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+
+    return true;
+}
+
+bool HoverEngines::OnPanelMouseEvent(int id, int event)
+{
+    swOpen_.Toggle();
+    return true;
+}
+
+bool HoverEngines::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
+{
+    bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlDoorHover_id, bm::pnl::pnlDoorHover_verts, swOpen_.IsOn(), 0.0148);
+    return true;
+}

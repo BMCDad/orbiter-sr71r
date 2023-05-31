@@ -37,6 +37,10 @@ public:
     virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
     virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
+    bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+    bool OnPanelMouseEvent(int id, int event) override;
+    bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
+
 	void Step(double simt, double simdt, double mjd);
 
     double GetHoverDoorsState() { return animHoverDoors_.GetState(); }
@@ -84,4 +88,6 @@ private:
                                                 (100 * RAD),
                                                 0, 1
                                             };
+
+    const int ID_DOOR = { GetBaseVessel()->GetIdForComponent(this) };
 };

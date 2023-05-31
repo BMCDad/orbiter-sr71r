@@ -94,3 +94,24 @@ void FuelCell::SetIsFuelCellPowerAvailable(bool newValue)
 		isFuelCellAvailable_ = newValue;
 	}
 }
+
+bool FuelCell::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+{
+	oapiRegisterPanelArea(ID_POWER, bm::pnl::pnlPwrFC_RC, PANEL_REDRAW_USER);
+	GetBaseVessel()->RegisterPanelArea(hPanel, ID_POWER, bm::pnl::pnlPwrFC_RC, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+
+	return true;
+}
+
+bool FuelCell::OnPanelMouseEvent(int id, int event)
+{
+	swPower_.Toggle();
+	return true;
+}
+
+bool FuelCell::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
+{
+	bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlPwrFC_id, bm::pnl::pnlPwrFC_verts, swPower_.IsOn(), 0.0148);
+
+	return true;
+}

@@ -67,6 +67,10 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
+	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+	bool OnPanelMouseEvent(int id, int event) override;
+	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
+
 	/**
 		Draw down the oxygen and hydrogen levels based on the current amp load.
 	*/
@@ -86,7 +90,7 @@ public:
 	}
 
 	double AvailablePower() { return IsFuelCellPowerAvailable() ? 27.0 : 0.0; }
-	bco::OnOffSwitch&	PowerSwitch() { return swPower_; }
+//	bco::OnOffSwitch&	PowerSwitch() { return swPower_; }
 
 
 	void SetPowerSystem(	PowerSystem* ps)	{ powerSystem_ = ps; }
@@ -112,4 +116,6 @@ private:
                                             bm::vc::swFuelCellPower_location,  
                                             bm::vc::PowerTopRightAxis_location
                                         };
+
+	const int ID_POWER = { GetBaseVessel()->GetIdForComponent(this) };
 };
