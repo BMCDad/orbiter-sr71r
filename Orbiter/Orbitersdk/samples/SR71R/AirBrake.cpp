@@ -64,7 +64,7 @@ void AirBrake::Step(double simt, double simdt, double mjd)
 //	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
 
 	// This needs to be put into a switch statement eventually
-	bco::Draw(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_verts, sTrans * airBrakeSwitch_.GetState());
+	bco::RotateMesh(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_verts, sTrans * airBrakeSwitch_.GetState());
 }
 
 bool AirBrake::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)

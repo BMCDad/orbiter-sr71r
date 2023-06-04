@@ -60,7 +60,7 @@ namespace bc_orbiter
 			vessel_->TriggerRedrawArea(0, 0, areaId_);
 		}
 
-		virtual void Draw(MESHHANDLE mesh) {}
+		virtual void RotateMesh(MESHHANDLE mesh) {}
 
 	protected:
 		const MESHGROUP* GroupMesh() { return groupMesh_; }

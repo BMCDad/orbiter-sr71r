@@ -126,9 +126,9 @@ namespace bc_orbiter
 		bool IsOn() const { return state_ != 0.0; }
 
 		// IVCAnimate
-		AnimationGroup* GetAnimationGroup() override { return &vcAnimGroup_; }
-		IAnimationState* GetAnimationStateController() override { return this; }
-		double GetAnimationSpeed() const override { return vcData_.animSpeed; }
+		AnimationGroup* GetVCAnimationGroup() override { return &vcAnimGroup_; }
+		IAnimationState* GetVCAnimationStateController() override { return this; }
+		double GetVCAnimationSpeed() const override { return vcData_.animSpeed; }
 
 		// IAnimationState
 		double GetState() const override { return state_; }

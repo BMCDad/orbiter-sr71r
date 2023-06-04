@@ -70,11 +70,11 @@ bool O2Supply::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 
 	trans = IsAvailable() ? availOffset : 0.0;
 	lightSupplyAvailable_.SetTranslate(_V(trans, 0.0, 0.0));
-	lightSupplyAvailable_.Draw(devMesh);
+	lightSupplyAvailable_.RotateMesh(devMesh);
 
 	trans = IsFilling() ? buttonOffset : 0.0;
 	lightValveOpen_.SetTranslate(_V(trans, 0.0, 0.0));
-	lightValveOpen_.Draw(devMesh);
+	lightValveOpen_.RotateMesh(devMesh);
 
 	return true;
 }

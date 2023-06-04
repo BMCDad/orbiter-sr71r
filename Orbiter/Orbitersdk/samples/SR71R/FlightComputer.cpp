@@ -332,23 +332,23 @@ bool FC::FlightComputer::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 
 	trans = IsProgramRunning(FCProgFlags::AtmoActive) ? offset : 0.0;
 	visAPMainOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPMainOn_.Draw(devMesh);
+	visAPMainOn_.RotateMesh(devMesh);
 
 	trans = IsProgramRunning(FCProgFlags::HoldHeading) ? offset : 0.0;
 	visAPHeadingOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPHeadingOn_.Draw(devMesh);
+	visAPHeadingOn_.RotateMesh(devMesh);
 
 	trans = IsProgramRunning(FCProgFlags::HoldAltitude) ? offset : 0.0;
 	visAPAltitudeOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPAltitudeOn_.Draw(devMesh);
+	visAPAltitudeOn_.RotateMesh(devMesh);
 
 	trans = IsProgramRunning(FCProgFlags::HoldKEAS) ? offset : 0.0;
 	visAPKEASOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPKEASOn_.Draw(devMesh);
+	visAPKEASOn_.RotateMesh(devMesh);
 
 	trans = IsProgramRunning(FCProgFlags::HoldMACH) ? offset : 0.0;
 	visAPMACHOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPMACHOn_.Draw(devMesh);
+	visAPMACHOn_.RotateMesh(devMesh);
 
 	return true;
 }

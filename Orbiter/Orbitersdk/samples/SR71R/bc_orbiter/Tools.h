@@ -511,7 +511,7 @@ namespace bc_orbiter
 		return true;
 	}
 
-	inline void Draw(MESHHANDLE mesh, const UINT group, const NTVERTEX* verts, const VECTOR3& trans)
+	inline void RotateMesh(MESHHANDLE mesh, const UINT group, const NTVERTEX* verts, const VECTOR3& trans)
 	{
 		if (NULL == mesh)
 		{
@@ -530,7 +530,7 @@ namespace bc_orbiter
 		oapiEditMeshGroup(mesh, group, &change);
 	}
 
-	inline void Draw(MESHHANDLE mesh, const UINT group, const NTVERTEX* verts, const double angle)
+	inline void RotateMesh(MESHHANDLE mesh, const UINT group, const NTVERTEX* verts, const double angle)
 	{
 		if (NULL == mesh)
 		{

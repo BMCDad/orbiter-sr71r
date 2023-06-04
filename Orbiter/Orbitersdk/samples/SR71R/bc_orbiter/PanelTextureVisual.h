@@ -36,7 +36,7 @@ namespace bc_orbiter
 		Called to update the visual.  Implementing class needs to define how the visual
 		will be manipulated.
 		*/
-		virtual void Draw(MESHHANDLE devMesh)
+		virtual void RotateMesh(MESHHANDLE devMesh)
 		{
 			VECTOR3 trans;
 

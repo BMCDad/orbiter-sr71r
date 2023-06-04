@@ -297,11 +297,11 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
     auto altFlgOffset = 0.0244;
     auto isOffFlagOn = !IsActive() || (altitudeFeet > 100000);
     txAltimeterOff_.SetTranslate(_V(isOffFlagOn ? 0.0 :altFlgOffset, 0.0, 0.0));
-    txAltimeterOff_.Draw(devMesh);
+    txAltimeterOff_.RotateMesh(devMesh);
     
     auto isAltGndOn = !isOffFlagOn && (avionMode_==AvionMode::AvionExo);
     txAltimeterGnd_.SetTranslate(_V(isAltGndOn ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txAltimeterGnd_.Draw(devMesh);
+    txAltimeterGnd_.RotateMesh(devMesh);
 
     // ** TDI **
     // KEAS:
@@ -419,17 +419,17 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
 
     auto isSpeedOff = !IsActive() || (mach >= MAX_MACH);
     txSpeedOff_.SetTranslate(_V(isSpeedOff ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txSpeedOff_.Draw(devMesh);
+    txSpeedOff_.RotateMesh(devMesh);
 
     auto isVelOn = IsActive() && (avionMode_ == AvionMode::AvionExo);
     txSpeedVel_.SetTranslate(_V(isVelOn ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txSpeedVel_.Draw(devMesh);
+    txSpeedVel_.RotateMesh(devMesh);
 
     /** ATTITUDE **/
 
     auto isAttOff = !IsActive();
     txAttitudeOff_.SetTranslate(_V(isAttOff ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txAttitudeOff_.Draw(devMesh);
+    txAttitudeOff_.RotateMesh(devMesh);
 
 
     VECTOR3 v;
@@ -462,7 +462,7 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
 			gaCoureError_.SetState(bco::AngleToState(vert));
 
             courseErrorTex_.SetTranslate(_V(0.0, 0.0, 0.0));
-            courseErrorTex_.Draw(devMesh);
+            courseErrorTex_.RotateMesh(devMesh);
         }
     }
 
@@ -480,7 +480,7 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
 
         attitudeIndicator_.SetAngle(bank);
         attitudeIndicator_.SetTranslate(_V(0.0, -pTran, 0.0));
-        attitudeIndicator_.Draw(devMesh);
+        attitudeIndicator_.RotateMesh(devMesh);
     }
 }
 
@@ -513,7 +513,7 @@ void Avionics::DrawVerticalSpeed(DEVMESHHANDLE devMesh)
     auto altFlgOffset = 0.0244;
     auto isOffFlagOn = !IsActive();
     txVSIOff_.SetTranslate(_V(isOffFlagOn ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txVSIOff_.Draw(devMesh);
+    txVSIOff_.RotateMesh(devMesh);
 }
 
 void Avionics::DrawHSI(DEVMESHHANDLE devMesh)
@@ -628,7 +628,7 @@ void Avionics::DrawHSI(DEVMESHHANDLE devMesh)
 
     auto comOff = (IsActive() && isComStatus) ? comStatusOffset : 0.0;
     comStatus_.SetTranslate(_V(comOff, 0.0, 0.0));
-    comStatus_.Draw(devMesh);
+    comStatus_.RotateMesh(devMesh);
 
     // Miles barrels
     bco::GetDigits(milesBeacon, parts);
@@ -643,18 +643,18 @@ void Avionics::DrawHSI(DEVMESHHANDLE devMesh)
 		gaCoureError_.SetState(bco::AngleToState(rotCrs));
 
         courseErrorTex_.SetTranslate(_V(-errTrans, 0.0, 0.0));
-        courseErrorTex_.Draw(devMesh);
+        courseErrorTex_.RotateMesh(devMesh);
     }
 
 	gsNeedle_.SetTranslate(_V(0.0, gsTrans, 0.0));
-	gsNeedle_.Draw(devMesh);
+	gsNeedle_.RotateMesh(devMesh);
 
     auto altFlgOffset = 0.0244;
     auto isOffFlagOn = !IsActive();
     txHSIOff_.SetTranslate(_V(isOffFlagOn ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txHSIOff_.Draw(devMesh);
+    txHSIOff_.RotateMesh(devMesh);
 
     auto isExo = IsActive() && (avionMode_ == AvionMode::AvionExo);
     txHSIExo_.SetTranslate(_V(isExo ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txHSIExo_.Draw(devMesh);
+    txHSIExo_.RotateMesh(devMesh);
 }

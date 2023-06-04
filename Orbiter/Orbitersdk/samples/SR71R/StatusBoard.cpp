@@ -105,40 +105,40 @@ void StatusBoard::DrawDoorsMsg(DEVMESHHANDLE devMesh)
 {
 	auto ofs = GetWarnMsgOffset(canopy_->GetCanopyState());
 	msgCanopy_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgCanopy_.Draw(devMesh);
+	msgCanopy_.RotateMesh(devMesh);
 
 	ofs = GetWarnMsgOffset(cargoBay_->GetCargoBayState());
 	msgCargoBay_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgCargoBay_.Draw(devMesh);
+	msgCargoBay_.RotateMesh(devMesh);
 
     ofs = GetWarnMsgOffset(retro_->GetRetroDoorsState());
     msgRetroDoors_.SetTranslate(_V(ofs, 0.0, 0.0));
-    msgRetroDoors_.Draw(devMesh);
+    msgRetroDoors_.RotateMesh(devMesh);
 
     ofs = GetWarnMsgOffset(hover_->GetHoverDoorsState());
     msgHoverDoors_.SetTranslate(_V(ofs, 0.0, 0.0));
-    msgHoverDoors_.Draw(devMesh);
+    msgHoverDoors_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawKEASMsg(DEVMESHHANDLE devMesh)
 {
 	auto ofs = (avionics_->IsOverSpeed() ? ErrOffset : OffOffset);
 	msgKeasWarning_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgKeasWarning_.Draw(devMesh);
+	msgKeasWarning_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawThrustLimit(DEVMESHHANDLE devMesh)
 {
 	auto ofs = GetWarnMsgOffset(propulsion_->ThrustLimitSwitch().IsOn() ? 0.0 : 0.5);
 	msgThrustLimit_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgThrustLimit_.Draw(devMesh);
+	msgThrustLimit_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawBattery(DEVMESHHANDLE devMesh)
 {
 	auto ofs = GetWarnMsgOffset(power_->IsBatteryPower() ? 0.5 : 0.0);
 	msgBattery_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgBattery_.Draw(devMesh);
+	msgBattery_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawAPU(DEVMESHHANDLE devMesh)
@@ -146,7 +146,7 @@ void StatusBoard::DrawAPU(DEVMESHHANDLE devMesh)
 	auto ofs = GetWarnMsgOffset(apu_->GetHydraulicLevel());
 
 	msgApu_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgApu_.Draw(devMesh);
+	msgApu_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawDock(DEVMESHHANDLE devMesh)
@@ -156,7 +156,7 @@ void StatusBoard::DrawDock(DEVMESHHANDLE devMesh)
 	auto ofs = id == 1.0 ? OnOffset : OffOffset;
 
 	msgDock_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgDock_.Draw(devMesh);
+	msgDock_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawFuel(DEVMESHHANDLE devMesh)
@@ -178,7 +178,7 @@ void StatusBoard::DrawFuel(DEVMESHHANDLE devMesh)
     }
 
 	msgFuel_.SetTranslate(_V(ofsf, 0.0, 0.0));
-	msgFuel_.Draw(devMesh);
+	msgFuel_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawAirBrakeMsg(DEVMESHHANDLE devMesh)
@@ -190,5 +190,5 @@ void StatusBoard::DrawAirBrakeMsg(DEVMESHHANDLE devMesh)
 	}
 
 	msgAirBrake_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgAirBrake_.Draw(devMesh);
+	msgAirBrake_.RotateMesh(devMesh);
 }

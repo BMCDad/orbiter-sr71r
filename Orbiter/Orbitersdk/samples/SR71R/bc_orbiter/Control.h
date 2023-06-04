@@ -70,16 +70,26 @@ namespace bc_orbiter
 #include <memory>
 
 namespace bc_orbiter {
-	struct IAnimate {
-		virtual AnimationGroup* GetAnimationGroup() = 0;
-		virtual IAnimationState* GetAnimationStateController() = 0;
-		virtual double GetAnimationSpeed() const = 0;
-
-//		virtual ~IAnimate() = 0;
+	/**
+	* IVCAnimate
+	* Implemented by a control that needs to take part in the VC cockpit animation step.
+	*/
+	struct IVCAnimate {
+		virtual AnimationGroup* GetVCAnimationGroup() = 0;
+		virtual IAnimationState* GetVCAnimationStateController() = 0;
+		virtual double GetVCAnimationSpeed() const = 0;
 	};
 
-	struct IVCAnimate : public IAnimate {};
-	struct IExtAnimate : public IAnimate {};
+	struct IExtAnimate {};
+
+	/**
+	* IPNLAnimate
+	* Implemented by a control that needs to animate as part of the panel animation step.
+	* Remember:  Panel animations are just mesh transforms, and are not part of Orbiter animations.
+	*/
+	struct IPNLAnimate {
+		virtual void PanelStep(MESHHANDLE mesh, double simdt) = 0;
+	};
 
 	struct ITarget {
 		virtual bool OnEvent() { return false; }
@@ -146,6 +156,16 @@ namespace bc_orbiter {
 		int GetID() const override { return ctrlId_; }
 	private:
 		int ctrlId_{ 0 };
+	};
+
+	class StateProvider : public Notify<double> {
+	public:
+		StateProvider() {}
+
+		void SetState(double v) {
+			Emit(v);
+		}
+	private:
 	};
 
 	////////////////////////

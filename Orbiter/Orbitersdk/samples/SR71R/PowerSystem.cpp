@@ -47,10 +47,13 @@ void PowerSystem::Step(double simt, double simdt, double mjd)
 	{
 		Update();
 		prevTime_ = simt;
+
+		stateVoltMeter_.SetState(VoltNeedlePosition());
+		stateAmpMeter_.SetState(AmpNeedlePosition());
 	}
 
-	animAmpMeter_.Step(AmpNeedlePosition(), simdt);
-	animVoltMeter_.Step(VoltNeedlePosition(), simdt);
+//	animAmpMeter_.Step(AmpNeedlePosition(), simdt);
+//	animVoltMeter_.Step(VoltNeedlePosition(), simdt);
 
 	auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
 
@@ -58,13 +61,13 @@ void PowerSystem::Step(double simt, double simdt, double mjd)
 	{
 	case COCKPIT_PANELS:
 		// panel anims.
-		bco::Draw(pMesh, bm::pnl::pnlAmpMeter_id,	bm::pnl::pnlAmpMeter_verts,		animAmpMeter_.GetState() * -2.0943);
-		bco::Draw(pMesh, bm::pnl::pnlVoltMeter_id,	bm::pnl::pnlVoltMeter_verts,	animVoltMeter_.GetState() * 2.0943);
+//		bco::RotateMesh(pMesh, bm::pnl::pnlAmpMeter_id,	bm::pnl::pnlAmpMeter_verts,		animAmpMeter_.GetState() * -2.0943);
+//		bco::RotateMesh(pMesh, bm::pnl::pnlVoltMeter_id,	bm::pnl::pnlVoltMeter_verts,	animVoltMeter_.GetState() * 2.0943);
 		break;
 
 	case COCKPIT_VIRTUAL:
-		gaugePowerAmp_.SetAnimation2(GetBaseVessel(), animAmpMeter_.GetState());
-		gaugePowerVolt_.SetAnimation2(GetBaseVessel(), animVoltMeter_.GetState());
+//		gaugePowerAmp_.SetAnimation2(GetBaseVessel(), animAmpMeter_.GetState());
+//		gaugePowerVolt_.SetAnimation2(GetBaseVessel(), animVoltMeter_.GetState());
 		break;
 	}
 
@@ -74,12 +77,12 @@ void PowerSystem::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
     
-    swPower_.Setup(vessel);
-    swConnectExternal_.Setup(vessel);
-    swConnectFuelCell_.Setup(vessel);
+//    swPower_.Setup(vessel);
+//    swConnectExternal_.Setup(vessel);
+//    swConnectFuelCell_.Setup(vessel);
     
-	gaugePowerVolt_.Setup2(vessel, vessel->GetVCMeshIndex());
-	gaugePowerAmp_.Setup2(vessel, vessel->GetVCMeshIndex());
+//	gaugePowerVolt_.Setup2(vessel, vessel->GetVCMeshIndex());
+//	gaugePowerAmp_.Setup2(vessel, vessel->GetVCMeshIndex());
 	
 //	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
@@ -99,9 +102,10 @@ bool PowerSystem::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* con
 
 	sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
 
-	swPower_.SetState((main == 0) ? 0.0 : 1.0);
-	swConnectExternal_.SetState((external == 0) ? 0.0 : 1.0);
-	swConnectFuelCell_.SetState((fuelcell == 0) ? 0.0 : 1.0);
+	// TODO
+//	swPower_.SetState((main == 0) ? 0.0 : 1.0);
+//	swConnectExternal_.SetState((external == 0) ? 0.0 : 1.0);
+//	swConnectFuelCell_.SetState((fuelcell == 0) ? 0.0 : 1.0);
 
 	volt = max(0.0, min(30.0, volt));		// Bracket to 0-30
 	mainCircuit_.PowerVolts((double)volt);
@@ -114,9 +118,9 @@ bool PowerSystem::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* con
 void PowerSystem::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
-	auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
-	auto ext = (swConnectExternal_.GetState() == 0.0) ? 0 : 1;
-	auto fc = (swConnectFuelCell_.GetState() == 0.0) ? 0 : 1;
+	auto val = 1; // TODO (swPower_.GetState() == 0.0) ? 0 : 1;
+	auto ext = 0; // TODO (swConnectExternal_.GetState() == 0.0) ? 0 : 1;
+	auto fc = 1; // TODO (swConnectFuelCell_.GetState() == 0.0) ? 0 : 1;
 	auto vlt = mainCircuit_.GetVoltLevel();
 	auto blv = 1.0;
 
@@ -147,19 +151,19 @@ bool PowerSystem::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 
 	trans = IsExternalSourceAvailable() ? offset : 0.0;
 	externAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	externAvailLight_.Draw(devMesh);
+	externAvailLight_.RotateMesh(devMesh);
 
 	trans = IsExternalSourceConnected() ? offset : 0.0;
 	externConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	externConnectedLight_.Draw(devMesh);
+	externConnectedLight_.RotateMesh(devMesh);
 
 	trans = IsFuelCellAvailable() ? offset : 0.0;
 	fuelCellAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	fuelCellAvailLight_.Draw(devMesh);
+	fuelCellAvailLight_.RotateMesh(devMesh);
 
 	trans = IsFuelCellConnected() ? offset : 0.0;
 	fuelCellConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	fuelCellConnectedLight_.Draw(devMesh);
+	fuelCellConnectedLight_.RotateMesh(devMesh);
 
 	return true;
 }
@@ -178,24 +182,24 @@ void PowerSystem::Update()
     // Check if our circuit is overloaded, turn off power if it is.
     if (mainCircuit_.GetTotalAmps() > AMP_OVERLOAD)
     {
-        swPower_.SetOff();
+// TODO        swPower_.SetOff();
     }
 
 	// If main switch is off, then powersource is nullptr--no power.
 	// Otherwise see if either external or fuel cell is on.  External
 	// power will take precedence if on.
-	if (swPower_.IsOn())
+	if ( true )// TODO swPower_.IsOn())
 	{
 		auto availExternal = 0.0;
 		auto availFuelCell = 0.0;
 		auto availBattery = batteryLevel_ * FULL_POWER;
 
-		if (swConnectExternal_.IsOn())
+		if (/* TODO swConnectExternal_.IsOn() */ false)
 		{
 			availExternal = powerExternal_;
 		}
 		
-		if (swConnectFuelCell_.IsOn())
+		if (/* TODO swConnectFuelCell_.IsOn()*/ true)
 		{
 			availFuelCell = (nullptr != fuelCell_) ? fuelCell_->AvailablePower() : 0.0;
 		}
@@ -236,37 +240,37 @@ bool PowerSystem::IsFuelCellAvailable()
 
 bool PowerSystem::IsFuelCellConnected()
 {
-	return IsFuelCellAvailable() && swConnectFuelCell_.IsOn(); 
+	return IsFuelCellAvailable() && true; // TODOswConnectFuelCell_.IsOn(); 
 }
 
 bool PowerSystem::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 {
-	for each (auto & v in pnlData_)
-	{
-		oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
-		GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-	}
+	//for each (auto & v in pnlData_)
+	//{
+	//	oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
+	//	GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+	//}
 
-	GetBaseVessel()->RegisterPanelArea(hPanel, ID_AREA, _R(0, 0, 0, 0), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
+	//GetBaseVessel()->RegisterPanelArea(hPanel, ID_AREA, _R(0, 0, 0, 0), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
 	return true;
 }
 
 bool PowerSystem::OnPanelMouseEvent(int id, int event)
 {
-	auto p = pnlData_.find(id);
-	if (p == pnlData_.end()) return false;
+	//auto p = pnlData_.find(id);
+	//if (p == pnlData_.end()) return false;
 
-	p->second.update();
+	//p->second.update();
 	return true;
 }
 
 bool PowerSystem::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
-	auto p = pnlData_.find(id);
-	if (p != pnlData_.end())
-	{
-		bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group, p->second.verts, p->second.isActive(), 0.0148);
-	}
+	//auto p = pnlData_.find(id);
+	//if (p != pnlData_.end())
+	//{
+	//	bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group, p->second.verts, p->second.isActive(), 0.0148);
+	//}
 
 	auto mesh = GetBaseVessel()->GetpanelMeshHandle0();
 	const double offset = 0.0244;

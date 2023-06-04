@@ -85,7 +85,7 @@ public:
 	void AddMainCircuitDevice(bco::PoweredComponent* device);
 
 	bool IsExternalSourceAvailable()				{ return fabs(FULL_POWER - powerExternal_) < 5.0; }
-	bool IsExternalSourceConnected()				{ return IsExternalSourceAvailable() && swConnectExternal_.IsOn(); }
+	bool IsExternalSourceConnected()				{ return IsExternalSourceAvailable() && false/* TODO swConnectExternal_.IsOn(); */; }
 
 	bool IsFuelCellAvailable();
 	bool IsFuelCellConnected();
@@ -103,11 +103,16 @@ public:
 	// Animation state
 	virtual double GetState() const override { return AmpNeedlePosition(); }
 
+	bco::StateProvider& VoltProvider() { return stateVoltMeter_; }
+	bco::StateProvider& AmpProvider() { return stateAmpMeter_; }
 
 private:
 	const double			FULL_POWER		=  28.0;
 	const double			USEABLE_POWER	=  24.0;
 	const double			AMP_OVERLOAD	= 100.0;
+
+	bco::StateProvider		stateVoltMeter_;
+	bco::StateProvider		stateAmpMeter_;
 
 	void Update();
 
@@ -118,7 +123,6 @@ private:
 	FuelCell*				fuelCell_;
 	const char*				ConfigKey = "POWER";
 
-	double					voltMeterPosition_;
 	bool					isBatteryDraw_;
 	double					batteryLevel_;
 	double					prevTime_;
@@ -130,37 +134,37 @@ private:
 	bco::TextureVisual	    fuelCellConnectedLight_;
 
 
-    bco::VCToggleSwitch     swPower_                    {   bm::vc::swMainPower_id, 
-                                                            bm::vc::swMainPower_location, 
-                                                            bm::vc::PowerTopRightAxis_location 
-                                                        };
+    //bco::VCToggleSwitch     swPower_                    {   bm::vc::swMainPower_id, 
+    //                                                        bm::vc::swMainPower_location, 
+    //                                                        bm::vc::PowerTopRightAxis_location 
+    //                                                    };
 
-    bco::VCToggleSwitch     swConnectExternal_          {   bm::vc::swConnectExternalPower_id,     
-                                                            bm::vc::swConnectExternalPower_location, 
-                                                            bm::vc::PowerBottomRightAxis_location 
-                                                        };
+    //bco::VCToggleSwitch     swConnectExternal_          {   bm::vc::swConnectExternalPower_id,     
+    //                                                        bm::vc::swConnectExternalPower_location, 
+    //                                                        bm::vc::PowerBottomRightAxis_location 
+    //                                                    };
 
-    bco::VCToggleSwitch     swConnectFuelCell_          {   bm::vc::swConnectFuelCell_id, 
-                                                            bm::vc::swConnectFuelCell_location, 
-                                                            bm::vc::PowerBottomRightAxis_location 
-                                                        };
+    //bco::VCToggleSwitch     swConnectFuelCell_          {   bm::vc::swConnectFuelCell_id, 
+    //                                                        bm::vc::swConnectFuelCell_location, 
+    //                                                        bm::vc::PowerBottomRightAxis_location 
+    //                                                    };
 
-    bco::VCGauge            gaugePowerVolt_				{  {bm::vc::gaugeVoltMeter_id },
-                                                            bm::vc::VoltMeterFrontAxis_location,   
-															bm::vc::gaugeVoltMeter_location,
-                                                            (120 * RAD), 
-                                                            0.2
-                                                        };
+    //bco::VCGauge            gaugePowerVolt_				{  {bm::vc::gaugeVoltMeter_id },
+    //                                                        bm::vc::VoltMeterFrontAxis_location,   
+				//											bm::vc::gaugeVoltMeter_location,
+    //                                                        (120 * RAD), 
+    //                                                        0.2
+    //                                                    };
 
-	bco::VCGauge            gaugePowerAmp_				{ { bm::vc::gaugeAmpMeter_id },
-															bm::vc::gaugeAmpMeter_location,
-															bm::vc::VoltMeterFrontAxis_location,
-															(120 * RAD),
-															0.2
-														};
+	//bco::VCGauge            gaugePowerAmp_				{ { bm::vc::gaugeAmpMeter_id },
+	//														bm::vc::gaugeAmpMeter_location,
+	//														bm::vc::VoltMeterFrontAxis_location,
+	//														(120 * RAD),
+	//														0.2
+	//													};
 
-	bco::Animation		animAmpMeter_	{ 0.2 /* speed */ };
-	bco::Animation		animVoltMeter_	{ 0.2 /* speed */ };
+//	bco::Animation		animAmpMeter_	{ 0.2 /* speed */ };
+//	bco::Animation		animVoltMeter_	{ 0.2 /* speed */ };
 
 	struct PnlData
 	{
@@ -176,12 +180,12 @@ private:
 	const int ID_CONFC = GetBaseVessel()->GetIdForComponent(this);
 	const int ID_AREA = GetBaseVessel()->GetIdForComponent(this);
 
-	std::map<int, PnlData> pnlData_
-	{
-		{ID_POWER,	{bm::pnl::pnlPwrMain_id,	bm::pnl::pnlPwrMain_RC,		bm::pnl::pnlPwrMain_verts,	 [&]() {swPower_.Toggle(); },			[&]() {return swPower_.IsOn(); }}},
-		{ID_CONEXT,	{bm::pnl::pnlPwrExtBus_id,	bm::pnl::pnlPwrExtBus_RC,	bm::pnl::pnlPwrExtBus_verts, [&]() {swConnectExternal_.Toggle(); }, [&]() {return swConnectExternal_.IsOn(); }}},
-		{ID_CONFC,	{bm::pnl::pnlPwrFCBus_id,	bm::pnl::pnlPwrFCBus_RC,	bm::pnl::pnlPwrFCBus_verts,	 [&]() {swConnectFuelCell_.Toggle(); }, [&]() {return swConnectFuelCell_.IsOn(); }}}
-	};
+//	std::map<int, PnlData> pnlData_
+//	{
+//		{ID_POWER,	{bm::pnl::pnlPwrMain_id,	bm::pnl::pnlPwrMain_RC,		bm::pnl::pnlPwrMain_verts,	 [&]() {swPower_.Toggle(); },			[&]() {return swPower_.IsOn(); }}},
+//		{ID_CONEXT,	{bm::pnl::pnlPwrExtBus_id,	bm::pnl::pnlPwrExtBus_RC,	bm::pnl::pnlPwrExtBus_verts, [&]() {swConnectExternal_.Toggle(); }, [&]() {return swConnectExternal_.IsOn(); }}},
+//		{ID_CONFC,	{bm::pnl::pnlPwrFCBus_id,	bm::pnl::pnlPwrFCBus_RC,	bm::pnl::pnlPwrFCBus_verts,	 [&]() {swConnectFuelCell_.Toggle(); }, [&]() {return swConnectFuelCell_.IsOn(); }}}
+//	};
 
 	struct pnlLights
 	{

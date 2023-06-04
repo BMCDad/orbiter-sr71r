@@ -81,14 +81,14 @@ void Shutters::Update()
 
 	auto trans = swShutters_.IsOn() ? 0.22 : 0.0;
 	visShuttersFrontLeft_.SetTranslate(_V(trans, 0.0, 0.0));
-	visShuttersFrontLeft_.Draw(devMesh);
+	visShuttersFrontLeft_.RotateMesh(devMesh);
 
 	visShuttersFrontRight_.SetTranslate(_V(trans, 0.0, 0.0));
-	visShuttersFrontRight_.Draw(devMesh);
+	visShuttersFrontRight_.RotateMesh(devMesh);
 
 	visShuttersSideLeft_.SetTranslate(_V(trans, 0.0, 0.0));
-	visShuttersSideLeft_.Draw(devMesh);
+	visShuttersSideLeft_.RotateMesh(devMesh);
 
 	visShuttersSideRight_.SetTranslate(_V(0.0, trans, 0.0));
-	visShuttersSideRight_.Draw(devMesh);
+	visShuttersSideRight_.RotateMesh(devMesh);
 }

@@ -283,9 +283,13 @@ namespace bc_orbiter
 			for each (auto& vc in controls_)
 			{
 				if (auto* c = dynamic_cast<IVCAnimate*>(vc)) {
-					auto aid = CreateVCAnimation(c->GetAnimationStateController(), c->GetAnimationSpeed());
-					auto tr = c->GetAnimationGroup();
+					auto aid = CreateVCAnimation(c->GetVCAnimationStateController(), c->GetVCAnimationSpeed());
+					auto tr = c->GetVCAnimationGroup();
 					AddVCAnimationComponent(aid, GetVCMeshIndex(), tr);
+				}
+
+				if (auto* c = dynamic_cast<IPNLAnimate*>(vc)) {
+					vecPNLAnimations_.push_back(c);
 				}
 
 				if (auto* c = dynamic_cast<IVCTarget*>(vc)) {
@@ -325,6 +329,7 @@ namespace bc_orbiter
 		std::map<UINT, std::unique_ptr<IAnimation>>     vcAnimations_;
 		std::map<int, IVCTarget*>						mapVCTargets_;
 		std::map<int, IPNLTarget*>						mapPNLTargets_;
+		std::vector<IPNLAnimate*>						vecPNLAnimations_;
 		
 		//**** END NEW STYLE
 
@@ -527,6 +532,13 @@ namespace bc_orbiter
 				va.second->Step(simdt);
 				auto state = va.second->GetState();
 				VESSEL3::SetAnimation(va.first, state);
+			}
+		}
+
+		if (oapiCockpitMode() == COCKPIT_PANELS) {
+			auto mesh = GetpanelMeshHandle0();
+			for (auto& pa : vecPNLAnimations_) {
+				pa->PanelStep(mesh, simdt);
 			}
 		}
     }

@@ -62,7 +62,7 @@ void HydrogenSupply::Step(double simt, double simdt, double mjd)
 	{
 	case COCKPIT_PANELS:
 		// panel anims.
-		bco::Draw(pMesh, bm::pnl::pnlLH2Press_id, bm::pnl::pnlLH2Press_verts, animGauge_.GetState() * -(PI2 * .8333));
+		bco::RotateMesh(pMesh, bm::pnl::pnlLH2Press_id, bm::pnl::pnlLH2Press_verts, animGauge_.GetState() * -(PI2 * .8333));
 		break;
 
 	case COCKPIT_VIRTUAL:
@@ -83,11 +83,11 @@ bool HydrogenSupply::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 
 	trans = IsAvailable() ? availOffset : 0.0;
 	lightSupplyAvailable_.SetTranslate(_V(trans, 0.0, 0.0));
-	lightSupplyAvailable_.Draw(devMesh);
+	lightSupplyAvailable_.RotateMesh(devMesh);
 
 	trans = IsFilling() ? buttonOffset : 0.0;
 	lightValveOpen_.SetTranslate(_V(trans, 0.0, 0.0));
-	lightValveOpen_.Draw(devMesh);
+	lightValveOpen_.RotateMesh(devMesh);
 
 	return true;
 }

@@ -228,6 +228,12 @@
     <ClInclude Include="bc_orbiter\PanelTextureVisual.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
+    <ClInclude Include="NavLights.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ToggleSwitches.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">

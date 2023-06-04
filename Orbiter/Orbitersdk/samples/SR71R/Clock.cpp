@@ -117,10 +117,10 @@ void Clock::Step(double simt, double simdt, double mjd)
 	{
 	case COCKPIT_PANELS:
 		// panel anims.
-		bco::Draw(pMesh, bm::pnl::pnlClockSecond_id,		bm::pnl::pnlClockSecond_verts,		animTimerSecHand_.GetState() * -PI2);
-		bco::Draw(pMesh, bm::pnl::pnlClockTimerMinute_id,	bm::pnl::pnlClockTimerMinute_verts,	animTimerMinuteHand_.GetState() * -PI2);
-		bco::Draw(pMesh, bm::pnl::pnlClockHour_id,			bm::pnl::pnlClockHour_verts,		animHourHand_.GetState() * -PI2);
-		bco::Draw(pMesh, bm::pnl::pnlClockMinute_id,		bm::pnl::pnlClockMinute_verts,		animMinuteHand_.GetState() * -PI2);
+		bco::RotateMesh(pMesh, bm::pnl::pnlClockSecond_id,		bm::pnl::pnlClockSecond_verts,		animTimerSecHand_.GetState() * -PI2);
+		bco::RotateMesh(pMesh, bm::pnl::pnlClockTimerMinute_id,	bm::pnl::pnlClockTimerMinute_verts,	animTimerMinuteHand_.GetState() * -PI2);
+		bco::RotateMesh(pMesh, bm::pnl::pnlClockHour_id,			bm::pnl::pnlClockHour_verts,		animHourHand_.GetState() * -PI2);
+		bco::RotateMesh(pMesh, bm::pnl::pnlClockMinute_id,		bm::pnl::pnlClockMinute_verts,		animMinuteHand_.GetState() * -PI2);
 		break;
 
 	case COCKPIT_VIRTUAL:

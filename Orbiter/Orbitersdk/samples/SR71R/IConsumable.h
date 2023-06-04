@@ -27,7 +27,7 @@ public:
 	/**
 	Draw down the consumable by 'amount'.
 	*/
-	virtual double Draw(double amount) = 0;
+	virtual double RotateMesh(double amount) = 0;
 
 	virtual ~IConsumable() {}
 };

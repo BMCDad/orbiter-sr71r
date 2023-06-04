@@ -484,15 +484,15 @@ bool PropulsionController::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 
 	trans = isAvailable_ ? availOffset : 0.0;
 	lightFuelSupplyAvailable_.SetTranslate(_V(trans, 0.0, 0.0));
-	lightFuelSupplyAvailable_.Draw(devMesh);
+	lightFuelSupplyAvailable_.RotateMesh(devMesh);
 
 	trans = isFilling_ ? newBtnOffset : 0.0;
 	lightFuelSupplyValveOpen_.SetTranslate(_V(trans, 0.0, 0.0));
-	lightFuelSupplyValveOpen_.Draw(devMesh);
+	lightFuelSupplyValveOpen_.RotateMesh(devMesh);
 
 	trans = isTransfering_ ? newBtnOffset : 0.0;
 	visTranferPumpOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visTranferPumpOn_.Draw(devMesh);
+	visTranferPumpOn_.RotateMesh(devMesh);
 
 	return true;
 }

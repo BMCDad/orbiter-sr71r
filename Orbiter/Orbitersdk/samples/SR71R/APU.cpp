@@ -48,7 +48,7 @@ void APU::Step(double simt, double simdt, double mjd)
 	{
 	case COCKPIT_PANELS:
 		// panel anims.
-		bco::Draw(pMesh, bm::pnl::pnlHydPress_id, bm::pnl::pnlHydPress_verts, animGauge_.GetState() * -(PI2*.8333));
+		bco::RotateMesh(pMesh, bm::pnl::pnlHydPress_id, bm::pnl::pnlHydPress_verts, animGauge_.GetState() * -(PI2*.8333));
 		break;
 
 	case COCKPIT_VIRTUAL:

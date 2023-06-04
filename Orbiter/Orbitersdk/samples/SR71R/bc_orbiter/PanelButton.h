@@ -37,7 +37,7 @@ namespace bc_orbiter
 			funcState_(fnState)
 		{}
 
-		void Draw(MESHHANDLE mesh) override;
+		void RotateMesh(MESHHANDLE mesh) override;
 		void DoClick() { if (nullptr != funcClick_) funcClick_(); }
 
 	private:
@@ -47,7 +47,7 @@ namespace bc_orbiter
 		std::function<bool()>	funcState_{ nullptr };
 	};
 
-	inline void PanelButton::Draw(MESHHANDLE mesh)
+	inline void PanelButton::RotateMesh(MESHHANDLE mesh)
 	{
 		double trans = 0.0;
 

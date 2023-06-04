@@ -147,6 +147,7 @@
     <ClInclude Include="IConsumable.h" />
     <ClInclude Include="LandingGear.h" />
     <ClInclude Include="Lights.h" />
+    <ClInclude Include="NavLights.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RetroEngines.h" />
     <ClInclude Include="Shutters.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="SR71Vessel.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SurfaceController.h" />
+    <ClInclude Include="ToggleSwitches.h" />
     <ClInclude Include="VesselControl.h" />
   </ItemGroup>
   <ItemGroup>

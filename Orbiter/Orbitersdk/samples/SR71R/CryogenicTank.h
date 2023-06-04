@@ -40,7 +40,7 @@ public:
 
 	// IConsumable:
 	virtual double GetLevel() const override;
-	virtual double Draw(double amount) override;
+	virtual double RotateMesh(double amount) override;
 
 	bool	IsFilling() const { return isFilling_; }
 	void	IsFilling(bool b) { isFilling_ = b; }

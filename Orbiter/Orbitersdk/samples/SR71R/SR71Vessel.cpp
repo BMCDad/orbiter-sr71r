@@ -74,8 +74,16 @@ retroEngines_(          this,   RETRO_AMPS)
     RegisterComponent(&hoverEngines_);
     RegisterComponent(&retroEngines_);
 
-	// NEW STUFF
-	AddControl(&tNav);
+	// Add Controls
+	/*  TOGGLE SWITCHES */
+	AddControl(&toggleNavigationLights);
+	AddControl(&toggleMainPower);
+	AddControl(&togglePowerConnectionExternal);
+	AddControl(&togglePowerConnectionFuelCell);
+
+	/*  Gauges  */
+	AddControl(&gaugePowerVolts_);
+	AddControl(&gaugePowerAmps_);
 
 	//
 	AddComponent(&lightNav_);

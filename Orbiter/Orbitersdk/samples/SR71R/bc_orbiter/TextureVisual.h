@@ -35,7 +35,7 @@ namespace bc_orbiter
 		Called to update the visual.  Implementing class needs to define how the visual
 		will be manipulated.
 		*/
-		void Draw(DEVMESHHANDLE devMesh)
+		void RotateMesh(DEVMESHHANDLE devMesh)
 		{
 			if (NULL == devMesh)
 			{

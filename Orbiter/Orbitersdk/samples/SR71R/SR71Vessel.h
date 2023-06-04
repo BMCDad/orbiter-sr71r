@@ -32,6 +32,8 @@
 #include "HoverEngines.h"
 #include "RetroEngines.h"
 
+#include "NavLights.h"
+
 #include <vector>
 #include <map>
 
@@ -107,26 +109,82 @@ private:
 	// Collections:
 
 	// TRY ADDING A NEW CONTROL
-	bco::ControlData cdOnOff {
-								1.5708,					// Rotation angle
-								10.0,					// Anim speed
-								0.0,					// anim start
-								1.0,					// anim end
-								0.01,					// VC hit radius
-								0.0148					// Panel offset
+
+
+	// ** TOGGLE SWITCHES **
+
+	/* Control data for on/off toggle switches */
+	bco::ControlData toggleOnOff {
+								 1.5708,	// Rotation angle
+								10.0,		// Anim speed
+								 0.0,		// anim start
+								 1.0,		// anim end
+								 0.01,		// VC hit radius
+								 0.0148		// Panel offset
 	};
 
+	bco::OnOffToggle		toggleMainPower {		// On off switch for the main power supply
+		GetControlId(),
+		{ bm::vc::swMainPower_id },
+		bm::vc::swMainPower_location, bm::vc::PowerTopRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlPwrMain_id,
+		bm::pnl::pnlPwrMain_verts,
+		bm::pnl::pnlPwrMain_RC
+	};
 
-	bco::OnOffToggle		tNav {
+	bco::OnOffToggle		togglePowerConnectionExternal {	// On off switch for connect to external power
+		GetControlId(),
+		{ bm::vc::swConnectExternalPower_id },
+		bm::vc::swConnectExternalPower_location, bm::vc::PowerBottomRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlPwrExtBus_id,
+		bm::pnl::pnlPwrExtBus_verts,
+		bm::pnl::pnlPwrExtBus_RC
+	};
+
+	bco::OnOffToggle		togglePowerConnectionFuelCell {	// On off switch for connect to fuel cell
+		GetControlId(),
+		{ bm::vc::swConnectFuelCell_id },
+		bm::vc::swConnectFuelCell_location, bm::vc::PowerBottomRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlPwrFCBus_id,
+		bm::pnl::pnlPwrFCBus_verts,
+		bm::pnl::pnlPwrFCBus_RC
+	};
+
+	bco::OnOffToggle		toggleNavigationLights {		// On off switch for external navigation lights.
 		GetControlId(),
 		{ bm::vc::SwitchNavLights_id },
 		bm::vc::SwitchNavLights_location, bm::vc::LightsRightAxis_location,
-		cdOnOff,
+		toggleOnOff,
 		bm::pnl::pnlLightNav_id,
 		bm::pnl::pnlLightNav_verts,
 		bm::pnl::pnlLightNav_RC
 	};
 
-	NavLight		lightNav_{ tNav };
+	// *** GAUGES ***
+	bco::Gauge				gaugePowerVolts_{
+		powerSystem_.VoltProvider(),
+		{ bm::vc::gaugeVoltMeter_id },
+		bm::vc::gaugeVoltMeter_location, bm::vc::VoltMeterFrontAxis_location,
+		bm::pnl::pnlVoltMeter_id,
+		bm::pnl::pnlVoltMeter_verts,
+		-(120 * RAD),
+		0.2
+	};
+
+	bco::Gauge				gaugePowerAmps_{
+		powerSystem_.AmpProvider(),
+		{ bm::vc::gaugeAmpMeter_id },
+		bm::vc::gaugeAmpMeter_location, bm::vc::VoltMeterFrontAxis_location,
+		bm::pnl::pnlAmpMeter_id,
+		bm::pnl::pnlAmpMeter_verts,
+		(120 * RAD),	// Clockwise
+		0.2
+	};
+
+	// ** COMPONENTS **
+	NavLight		lightNav_{ toggleNavigationLights };
 };
 
