@@ -73,6 +73,12 @@ retroEngines_(          this,   RETRO_AMPS)
 	RegisterComponent(&computer_);
     RegisterComponent(&hoverEngines_);
     RegisterComponent(&retroEngines_);
+
+	// NEW STUFF
+	AddControl(&tNav);
+
+	//
+	AddComponent(&lightNav_);
 }
 
 

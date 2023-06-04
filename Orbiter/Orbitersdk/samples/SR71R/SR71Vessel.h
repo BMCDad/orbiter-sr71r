@@ -105,5 +105,28 @@ private:
 	// DRAG
 	double					bDrag;
 	// Collections:
+
+	// TRY ADDING A NEW CONTROL
+	bco::ControlData cdOnOff {
+								1.5708,					// Rotation angle
+								10.0,					// Anim speed
+								0.0,					// anim start
+								1.0,					// anim end
+								0.01,					// VC hit radius
+								0.0148					// Panel offset
+	};
+
+
+	bco::OnOffToggle		tNav {
+		GetControlId(),
+		{ bm::vc::SwitchNavLights_id },
+		bm::vc::SwitchNavLights_location, bm::vc::LightsRightAxis_location,
+		cdOnOff,
+		bm::pnl::pnlLightNav_id,
+		bm::pnl::pnlLightNav_verts,
+		bm::pnl::pnlLightNav_RC
+	};
+
+	NavLight		lightNav_{ tNav };
 };
 

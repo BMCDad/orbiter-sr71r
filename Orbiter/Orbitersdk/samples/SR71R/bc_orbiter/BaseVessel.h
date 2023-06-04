@@ -23,6 +23,10 @@
 #include "IAnimationState.h"
 #include "PanelElement.h"
 
+#include "OnOffSwitch.h"  // TEMP, remove when OnOffToggle has a proper control base class.
+
+#include "Control.h"
+
 #include <vector>
 #include <map>
 #include <memory>
@@ -216,6 +220,117 @@ namespace bc_orbiter
 			idComponentMap_[id] = comp;
 			return id;
 		}
+
+		//****  NEW STYLE  *****
+
+		/**
+		Creates a virtual cockpit animation and registers it with the base vessel.  These
+		animations will only recieve time in Step when in VC cockpit mode.
+		@param target IAnimationState object that will control the animation state.
+		@param speed The speed of the animation.
+		@param func The function to call when the animation hits its target state.
+		*/
+		template<typename AT = Animation>
+		UINT CreateVCAnimation(IAnimationState* target, double speed = 1.0, TargetAchievedFunc func = nullptr)
+		{
+			auto animId = VESSEL3::CreateAnimation(0.0);
+
+			vcAnimations_[animId] = std::make_unique<AT>(target, speed, func);
+			return animId;
+		}
+
+		/**
+		Adds an animation group to an existing animation.  See CreateVesselAnimation.
+		@param animId The animation id returned from CreateVesselAnimation.
+		@param meshIdx The mesh index to animate.
+		@param trans The mesh transformation.
+		@param parent The parent group if any.
+		*/
+		ANIMATIONCOMPONENT_HANDLE AddVCAnimationComponent(
+			UINT animId,
+			UINT meshIdx,
+			AnimationGroup* transform,
+			ANIMATIONCOMPONENT_HANDLE parent = nullptr)
+		{
+			ANIMATIONCOMPONENT_HANDLE result = nullptr;
+
+			auto eh = vcAnimations_.find(animId);
+
+			if (eh != vcAnimations_.end())
+			{
+				transform->transform_->mesh = meshIdx;
+				result = VESSEL3::AddAnimationComponent(
+					animId,
+					transform->start_,
+					transform->stop_,
+					transform->transform_.get(),
+					parent);
+			}
+
+			return result;
+		}
+
+
+		int GetControlId() { return ++nextEventId_; }
+
+		template<typename T>
+		void AddControl(Control<T>* ctrl) { controls_.push_back(ctrl); }
+
+		void AddComponent(IInit* c) { components_.push_back(c); }
+	private:
+		void HandleClassCaps()
+		{
+			for each (auto& vc in controls_)
+			{
+				if (auto* c = dynamic_cast<IVCAnimate*>(vc)) {
+					auto aid = CreateVCAnimation(c->GetAnimationStateController(), c->GetAnimationSpeed());
+					auto tr = c->GetAnimationGroup();
+					AddVCAnimationComponent(aid, GetVCMeshIndex(), tr);
+				}
+
+				if (auto* c = dynamic_cast<IVCTarget*>(vc)) {
+					mapVCTargets_[vc->GetID()] = c;
+				}
+
+				if (auto* c = dynamic_cast<IPNLTarget*>(vc)) {
+					mapPNLTargets_[vc->GetID()] = c;
+				}
+			}
+
+			// IInit will flesh out to a more general 'component' list (non-ui/control intities)
+			for each (auto & cc in components_) {
+				if (auto* ac = dynamic_cast<IInit*>(cc)) ac->Init(*this);
+			}
+		}
+
+		void HandleLoadVC()
+		{
+			for each (auto & vc in mapVCTargets_) {
+				oapiVCRegisterArea(vc.first, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN); // Mouse event may need to be in data.
+				oapiVCSetAreaClickmode_Spherical(vc.first, vc.second->GetVCEventLocation(), vc.second->GetVCEventRadius());
+			}
+			
+			// TODO: vcRedraw
+			// TODO: vc Reset animations to current state.
+		}
+
+		void HandleLoadPanel(PANELHANDLE hPanel)
+		{
+			for each (auto & p in mapPNLTargets_) {	// For panel, mouse and redraw happen in the same call.
+				oapiRegisterPanelArea(p.first, p.second->GetPanelRect(), PANEL_REDRAW_USER);		 // Redraw flag may need to be part of data
+				RegisterPanelArea(hPanel, p.first, p.second->GetPanelRect(), PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+			}
+		}
+
+		std::map<UINT, std::unique_ptr<IAnimation>>     vcAnimations_;
+		std::map<int, IVCTarget*>						mapVCTargets_;
+		std::map<int, IPNLTarget*>						mapPNLTargets_;
+		
+		//**** END NEW STYLE
+
+		std::vector<IControl*>		controls_;
+		std::vector<IInit*>			components_;
+
 	private:
 		bool IsModeSet(VCIdMode test, VCIdMode mode) const
 		{
@@ -318,6 +433,7 @@ namespace bc_orbiter
 
         for (auto& et : vcEventTargetMap_)	et.second->RegisterMouseEvents();
 
+		HandleLoadVC();
 		return true;
 	}
 
@@ -331,6 +447,9 @@ namespace bc_orbiter
 	inline void BaseVessel::clbkSetClassCaps(FILEHANDLE cfg)
 	{
 		for (auto &p : vesselComponents_)	p->OnSetClassCaps();
+
+		// ** New stuff:
+		HandleClassCaps();
 	}
 
 	inline bool BaseVessel::clbkVCMouseEvent(int id, int event, VECTOR3 &p)
@@ -341,11 +460,17 @@ namespace bc_orbiter
         auto el = vcEventTargetMap_.find(id);
         if (el != vcEventTargetMap_.end())	return el->second->HandleMouse(event);
 
-		// New mode...
+		// Old new mode...
 		auto c = idComponentMap_.find(id);
 		if (c != idComponentMap_.end())
 		{
 			return c->second->OnVCMouseEvent(id, event);
+		}
+
+		// NEW mode
+		auto vc = mapVCTargets_.find(id);
+		if (vc != mapVCTargets_.end()) {
+			vc->second->OnEvent();
 		}
 
 		return false;
@@ -395,6 +520,15 @@ namespace bc_orbiter
             auto state = a.second->GetState();
             VESSEL3::SetAnimation(a.first, state);
         }
+
+		// NEW MODE
+		if (oapiCockpitMode() == COCKPIT_VIRTUAL) {
+			for (auto& va : vcAnimations_) {
+				va.second->Step(simdt);
+				auto state = va.second->GetState();
+				VESSEL3::SetAnimation(va.first, state);
+			}
+		}
     }
 
 	inline void BaseVessel::clbkPostCreation()
@@ -418,6 +552,10 @@ namespace bc_orbiter
 		}
 
 		for (auto& p : vesselComponents_)	p->OnLoadPanel2D(id, hPanel);
+
+		//*** NEW
+		HandleLoadPanel(hPanel);
+
 		return true;
 	}
 
@@ -432,11 +570,17 @@ namespace bc_orbiter
 		auto eh = panelRedrawMap_.find(id);
 		if (eh != panelRedrawMap_.end())		return eh->second->OnPanelRedrawEvent(id, event, surf);
 
-		// New mode...
+		// OLD New mode...
 		auto c = idComponentMap_.find(id);
 		if (c != idComponentMap_.end())
 		{
 			return c->second->OnPanelRedrawEvent(id, event, surf);
+		}
+
+		// NEW mode
+		auto pe = mapPNLTargets_.find(id);
+		if (pe != mapPNLTargets_.end()) {
+			pe->second->OnPNLRedraw(GetpanelMeshHandle0());
 		}
 
 		return true;
@@ -447,11 +591,17 @@ namespace bc_orbiter
 		auto el = pnlEventTargetMap_.find(id);
 		if (el != pnlEventTargetMap_.end())	return el->second->HandleMouse(event);
 
-		// New mode...
+		// Old New mode...
 		auto c = idComponentMap_.find(id);
 		if (c != idComponentMap_.end())
 		{
 			return c->second->OnPanelMouseEvent(id, event);
+		}
+
+		// NEW mode
+		auto pe = mapPNLTargets_.find(id);
+		if (pe != mapPNLTargets_.end()) {
+			pe->second->OnEvent();
 		}
 
 		return true;

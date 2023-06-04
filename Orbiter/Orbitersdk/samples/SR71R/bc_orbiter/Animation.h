@@ -35,7 +35,8 @@ namespace bc_orbiter
             double start, double stop) :
             group_(grp),
             start_(start),
-            stop_(stop)
+            stop_(stop),
+            location_(locA)
         {
             VECTOR3 axis = locB - locA;
             normalise(axis);
@@ -54,6 +55,7 @@ namespace bc_orbiter
         }
         
         std::vector<UINT>                   group_;
+        VECTOR3                             location_;
         std::unique_ptr<MGROUP_TRANSFORM>   transform_;
         double start_;
         double stop_;

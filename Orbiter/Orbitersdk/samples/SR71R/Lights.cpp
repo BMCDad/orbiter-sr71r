@@ -22,6 +22,8 @@
 
 #include "bc_orbiter/Tools.h"
 
+#include "bc_orbiter/Control.h"
+
 #include <assert.h>
 
 Lights::Lights(bco::BaseVessel* vessel, double amps) :
@@ -29,8 +31,8 @@ Lights::Lights(bco::BaseVessel* vessel, double amps) :
 {
     ampsPerLight_ = amps;
 
-	swNav_.OnFunction([this] {Update(); });
-    swNav_.OffFunction([this] {Update(); });
+	//swNav_.OnFunction([this] {Update(); });
+ //   swNav_.OffFunction([this] {Update(); });
 
 	swBeacon_.OnFunction([this] {Update(); });
     swBeacon_.OffFunction([this] {Update(); });
@@ -48,7 +50,7 @@ void Lights::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
 
-    swNav_.Setup(vessel);
+//    swNav_.Setup(vessel);
     swBeacon_.Setup(vessel);
     swStrobe_.Setup(vessel);
     swDock_.Setup(vessel);
@@ -78,33 +80,33 @@ void Lights::OnSetClassCaps()
 	specBeaconBottom_.tofs      = 0.2;
 	specBeaconBottom_.period    = 2.0;
 
-	// Nav lights
-	specNavLeft_.col            = &colRed;
-	specNavLeft_.duration       = 0.1;
-	specNavLeft_.falloff        = 0.4;
-	specNavLeft_.pos            = const_cast<VECTOR3*>(&bm::main::NavLightP_location);
-	specNavLeft_.shape          = BEACONSHAPE_DIFFUSE;
-	specNavLeft_.size           = 0.3;
-	specNavLeft_.tofs           = 0.2;
-	specNavLeft_.period         = 0.0;
+	//// Nav lights
+	//specNavLeft_.col            = &colRed;
+	//specNavLeft_.duration       = 0.1;
+	//specNavLeft_.falloff        = 0.4;
+	//specNavLeft_.pos            = const_cast<VECTOR3*>(&bm::main::NavLightP_location);
+	//specNavLeft_.shape          = BEACONSHAPE_DIFFUSE;
+	//specNavLeft_.size           = 0.3;
+	//specNavLeft_.tofs           = 0.2;
+	//specNavLeft_.period         = 0.0;
 
-	specNavRight_.col           = &colGreen;
-	specNavRight_.duration      = 0.1;
-	specNavRight_.falloff       = 0.4;
-	specNavRight_.pos           = const_cast<VECTOR3*>(&bm::main::NavLightS_location);
-	specNavRight_.shape         = BEACONSHAPE_DIFFUSE;
-	specNavRight_.size          = 0.3;
-	specNavRight_.tofs          = 0.2;
-	specNavRight_.period        = 0.0;
+	//specNavRight_.col           = &colGreen;
+	//specNavRight_.duration      = 0.1;
+	//specNavRight_.falloff       = 0.4;
+	//specNavRight_.pos           = const_cast<VECTOR3*>(&bm::main::NavLightS_location);
+	//specNavRight_.shape         = BEACONSHAPE_DIFFUSE;
+	//specNavRight_.size          = 0.3;
+	//specNavRight_.tofs          = 0.2;
+	//specNavRight_.period        = 0.0;
 
-	specNavRear_.col            = &colWhite;
-	specNavRear_.duration       = 0.1;
-	specNavRear_.falloff        = 0.4;
-	specNavRear_.pos            = const_cast<VECTOR3*>(&bm::main::NavLightTail_location);
-	specNavRear_.shape          = BEACONSHAPE_DIFFUSE;
-	specNavRear_.size           = 0.3;
-	specNavRear_.tofs           = 0.2;
-	specNavRear_.period         = 0.0;
+	//specNavRear_.col            = &colWhite;
+	//specNavRear_.duration       = 0.1;
+	//specNavRear_.falloff        = 0.4;
+	//specNavRear_.pos            = const_cast<VECTOR3*>(&bm::main::NavLightTail_location);
+	//specNavRear_.shape          = BEACONSHAPE_DIFFUSE;
+	//specNavRear_.size           = 0.3;
+	//specNavRear_.tofs           = 0.2;
+	//specNavRear_.period         = 0.0;
 
 	// Strobe
 	specStrobeLeft_.col         = &colWhite;
@@ -128,9 +130,9 @@ void Lights::OnSetClassCaps()
 	vessel->AddBeacon(&specBeaconTop_);
 	vessel->AddBeacon(&specBeaconBottom_);
 	
-	vessel->AddBeacon(&specNavLeft_);
-	vessel->AddBeacon(&specNavRight_);
-	vessel->AddBeacon(&specNavRear_);
+	//vessel->AddBeacon(&specNavLeft_);
+	//vessel->AddBeacon(&specNavRight_);
+	//vessel->AddBeacon(&specNavRear_);
 	
 	vessel->AddBeacon(&specStrobeLeft_);
 	vessel->AddBeacon(&specStrobeRight_);
@@ -145,7 +147,7 @@ double Lights::CurrentDraw()
 		return 0.0;
 	}
 
-	result += (swNav_.IsOn())      ? ampsPerLight_ : 0.0;
+//	result += (swNav_.IsOn())      ? ampsPerLight_ : 0.0;
 	result += (swBeacon_.IsOn())   ? ampsPerLight_ : 0.0;
 	result += (swStrobe_.IsOn())   ? ampsPerLight_ : 0.0;
 	result += (swDock_.IsOn())     ? ampsPerLight_ : 0.0;
@@ -172,7 +174,7 @@ bool Lights::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLi
 
 	sscanf_s(configLine + 6, "%i%i%i%i", &nav, &beacon, &strobe, &dock);
 
-	swNav_.SetState((nav == 0) ? 0.0 : 1.0);
+//	swNav_.SetState((nav == 0) ? 0.0 : 1.0);
 	swBeacon_.SetState((beacon == 0) ? 0.0 : 1.0);
 	swStrobe_.SetState((strobe == 0) ? 0.0 : 1.0);
 	swDock_.SetState((dock == 0) ? 0.0 : 1.0);
@@ -183,12 +185,12 @@ bool Lights::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLi
 void Lights::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
-	auto a = (swNav_.GetState() == 0.0) ? 0 : 1;
+//	auto a = (swNav_.GetState() == 0.0) ? 0 : 1;
 	auto b = (swBeacon_.GetState() == 0.0) ? 0 : 1;
 	auto c = (swStrobe_.GetState() == 0.0) ? 0 : 1;
 	auto d = (swDock_.GetState() == 0.0) ? 0 : 1;
 
-	sprintf_s(cbuf, "%i %i %i %i", a, b, c, d);
+	sprintf_s(cbuf, "%i %i %i %i", 0.0, b, c, d);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
 }
 
@@ -197,7 +199,7 @@ void Lights::Update()
 	specBeaconBottom_.active = HasPower() && swBeacon_.IsOn();
 	specBeaconTop_.active = specBeaconBottom_.active;
 
-	specNavLeft_.active = specNavRight_.active = specNavRear_.active = HasPower() && swNav_.IsOn();
+//	specNavLeft_.active = specNavRight_.active = specNavRear_.active = HasPower() && swNav_.IsOn();
 
 	specStrobeLeft_.active = specStrobeRight_.active = HasPower() && swStrobe_.IsOn();
 }
