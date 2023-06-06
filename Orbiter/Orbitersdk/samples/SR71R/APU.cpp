@@ -99,7 +99,7 @@ void                APU::SetPropulsionControl(PropulsionController* pc) { propul
 
 bool APU::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 {
-	oapiRegisterPanelArea(ID_APUSwitch, pnlApuSwitch.rc, PANEL_REDRAW_USER);
+//	oapiRegisterPanelArea(ID_APUSwitch, pnlApuSwitch.rc, PANEL_REDRAW_USER);
 	GetBaseVessel()->RegisterPanelArea(hPanel, ID_APUSwitch, pnlApuSwitch.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
 
 	return true;

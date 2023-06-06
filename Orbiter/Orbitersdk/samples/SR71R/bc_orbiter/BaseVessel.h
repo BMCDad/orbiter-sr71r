@@ -310,8 +310,15 @@ namespace bc_orbiter
 		void HandleLoadVC()
 		{
 			for each (auto & vc in mapVCTargets_) {
-				oapiVCRegisterArea(vc.first, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN); // Mouse event may need to be in data.
-				oapiVCSetAreaClickmode_Spherical(vc.first, vc.second->GetVCEventLocation(), vc.second->GetVCEventRadius());
+				oapiVCRegisterArea(
+					vc.first,							// Area ID
+					vc.second->GetVCRedrawFlags(),		// PANEL_REDRAW_*
+					vc.second->GetVCMouseFlags());		// PANEL_MOUSE_*
+
+				oapiVCSetAreaClickmode_Spherical(
+					vc.first,							// Area ID
+					vc.second->GetVCEventLocation(), 
+					vc.second->GetVCEventRadius());
 			}
 			
 			// TODO: vcRedraw
@@ -321,8 +328,12 @@ namespace bc_orbiter
 		void HandleLoadPanel(PANELHANDLE hPanel)
 		{
 			for each (auto & p in mapPNLTargets_) {	// For panel, mouse and redraw happen in the same call.
-				oapiRegisterPanelArea(p.first, p.second->GetPanelRect(), PANEL_REDRAW_USER);		 // Redraw flag may need to be part of data
-				RegisterPanelArea(hPanel, p.first, p.second->GetPanelRect(), PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+				RegisterPanelArea(
+					hPanel, 
+					p.first,							// Area ID
+					p.second->GetPanelRect(), 
+					p.second->GetPanelRedrawFlags(),	// PANEL_REDRAW_*
+					p.second->GetPanelMouseFlags());	// PANEL_MOUSE_*
 			}
 		}
 
@@ -498,6 +509,12 @@ namespace bc_orbiter
 			{
 				return c->second->OnVCRedrawEvent(id, event, surf);
 			}
+		}
+
+		// NEW mode
+		auto pe = mapVCTargets_.find(id);
+		if (pe != mapVCTargets_.end()) {
+			pe->second->OnVCRedraw(meshVirtualCockpit0_);
 		}
 
 		return false;

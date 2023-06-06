@@ -120,7 +120,7 @@ namespace bc_orbiter
     class Gauge : public Control<double>, public IVCAnimate, public IPNLAnimate, public IAnimationState {
     public:
         Gauge(
-            StateProvider& provider,
+            StateProvider<double>& provider,
             std::initializer_list<UINT> const& vcAnimGroupIds,
             const VECTOR3& vcLocation, const VECTOR3& vcAxisLocation,
             const UINT pnlGroupId,
@@ -156,7 +156,7 @@ namespace bc_orbiter
         }
 
     private:
-        StateProvider&  provider_;
+        StateProvider<double>&  provider_;
         AnimationGroup	vcAnimGroup_;
         double          animSpeed_{ 0.0 };
         UINT			pnlGroup_{ 0 };

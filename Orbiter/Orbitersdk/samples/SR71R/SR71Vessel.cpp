@@ -81,6 +81,9 @@ retroEngines_(          this,   RETRO_AMPS)
 	AddControl(&togglePowerConnectionExternal);
 	AddControl(&togglePowerConnectionFuelCell);
 
+	/*  POWER LIGHTS  */
+	AddControl(&lightFuelCellAvail_);
+
 	/*  Gauges  */
 	AddControl(&gaugePowerVolts_);
 	AddControl(&gaugePowerAmps_);

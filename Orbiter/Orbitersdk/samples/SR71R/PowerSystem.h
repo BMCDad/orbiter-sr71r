@@ -67,7 +67,6 @@ class PowerSystem :	public bco::PoweredComponent,
 public:
 	PowerSystem(bco::BaseVessel* vessel);
 
-	virtual void OnSetClassCaps() override;
 	virtual bool OnLoadVC(int id) override;
 	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
@@ -103,16 +102,18 @@ public:
 	// Animation state
 	virtual double GetState() const override { return AmpNeedlePosition(); }
 
-	bco::StateProvider& VoltProvider() { return stateVoltMeter_; }
-	bco::StateProvider& AmpProvider() { return stateAmpMeter_; }
+	bco::StateProvider<double>& VoltProvider() { return stateVoltMeter_; }
+	bco::StateProvider<double>& AmpProvider() { return stateAmpMeter_; }
+	bco::StateProvider<bool>& FuelCellAvailableProvider() { return stateFuelCellAvailable_; }
 
 private:
 	const double			FULL_POWER		=  28.0;
 	const double			USEABLE_POWER	=  24.0;
 	const double			AMP_OVERLOAD	= 100.0;
 
-	bco::StateProvider		stateVoltMeter_;
-	bco::StateProvider		stateAmpMeter_;
+	bco::StateProvider<double>		stateVoltMeter_;
+	bco::StateProvider<double>		stateAmpMeter_;
+	bco::StateProvider<bool>		stateFuelCellAvailable_;
 
 	void Update();
 
@@ -130,7 +131,7 @@ private:
 
 	bco::TextureVisual	    externAvailLight_;
 	bco::TextureVisual	    externConnectedLight_;
-	bco::TextureVisual	    fuelCellAvailLight_;
+//	bco::TextureVisual	    fuelCellAvailLight_;
 	bco::TextureVisual	    fuelCellConnectedLight_;
 
 

@@ -136,9 +136,13 @@ namespace bc_orbiter
 		// IVCTarget
 		VECTOR3& GetVCEventLocation() override { return vcAnimGroup_.location_; }
 		double GetVCEventRadius() override { return vcData_.hitRadius; }
+		int GetVCMouseFlags() override { return vcData_.vcMouseFlags; }
+		int GetVCRedrawFlags() override { return vcData_.vcRedrawFlags; }
 
 		// IPNLTarget
 		RECT& GetPanelRect() override { return pnlRect_; }
+		int GetPanelMouseFlags() override { return vcData_.pnlMouseFlags; }
+		int GetPanelRedrawFlags() override { return vcData_.pnlRedrawFlags; }
 
 		void OnPNLRedraw(MESHHANDLE meshPanel) override {
 			DrawPanelOnOff(meshPanel, pnlGroup_, pnlVerts_, IsOn(), pnlOffset_);

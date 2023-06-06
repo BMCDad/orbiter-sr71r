@@ -113,14 +113,18 @@ private:
 
 	// ** TOGGLE SWITCHES **
 
-	/* Control data for on/off toggle switches */
+	/* Control data for on/off up/down physical toggle switches */
 	bco::ControlData toggleOnOff {
-								 1.5708,	// Rotation angle
-								10.0,		// Anim speed
-								 0.0,		// anim start
-								 1.0,		// anim end
-								 0.01,		// VC hit radius
-								 0.0148		// Panel offset
+  		 1.5708,			// Rotation angle
+		10.0,				// Anim speed
+		 0.0,				// anim start
+		 1.0,				// anim end
+		 0.01,				// VC hit radius
+		 0.0148,			// Panel offset
+		PANEL_REDRAW_NEVER,	// vcRedrawFlags
+		PANEL_MOUSE_LBDOWN, // vcMouseFlag
+		PANEL_REDRAW_MOUSE, // panel redraw flag
+		PANEL_MOUSE_LBDOWN	// panel mouse flag
 	};
 
 	bco::OnOffToggle		toggleMainPower {		// On off switch for the main power supply
@@ -182,6 +186,18 @@ private:
 		bm::pnl::pnlAmpMeter_verts,
 		(120 * RAD),	// Clockwise
 		0.2
+	};
+
+
+	// *** POWER STATUS LIGHTS:
+	bco::StatusLight		lightFuelCellAvail_{
+		powerSystem_.FuelCellAvailableProvider(),
+		GetControlId(),
+		bm::vc::FuelCellAvailableLight_id,
+		bm::vc::FuelCellAvailableLight_verts,
+		bm::pnl::pnlLgtFCPwrAvail_id,
+		bm::pnl::pnlLgtFCPwrAvail_verts,
+		0.0244 
 	};
 
 	// ** COMPONENTS **

@@ -28,7 +28,7 @@ powerExternal_(0.0),
 fuelCell_(nullptr),
 externAvailLight_(			bm::vc::ExtAvailableLight_verts,		bm::vc::ExtAvailableLight_id),
 externConnectedLight_(		bm::vc::ExtConnectedLight_verts,		bm::vc::ExtConnectedLight_id),
-fuelCellAvailLight_(		bm::vc::FuelCellAvailableLight_verts,	bm::vc::FuelCellAvailableLight_id),
+//fuelCellAvailLight_(		bm::vc::FuelCellAvailableLight_verts,	bm::vc::FuelCellAvailableLight_id),
 fuelCellConnectedLight_(	bm::vc::FuelCellConnectedLight_verts,	bm::vc::FuelCellConnectedLight_id),
 isBatteryDraw_(false),
 prevTime_(0.0),
@@ -40,9 +40,6 @@ void PowerSystem::Step(double simt, double simdt, double mjd)
 {
 	mainCircuit_.Step(simt, simdt, mjd);
 
- //   gaugePowerVolt_.SetState(VoltNeedlePosition());
-	//gaugePowerAmp_.SetState(AmpNeedlePosition());
-
 	if (fabs(simt - prevTime_) > 0.2)
 	{
 		Update();
@@ -50,41 +47,8 @@ void PowerSystem::Step(double simt, double simdt, double mjd)
 
 		stateVoltMeter_.SetState(VoltNeedlePosition());
 		stateAmpMeter_.SetState(AmpNeedlePosition());
+		stateFuelCellAvailable_.SetState(IsFuelCellAvailable());
 	}
-
-//	animAmpMeter_.Step(AmpNeedlePosition(), simdt);
-//	animVoltMeter_.Step(VoltNeedlePosition(), simdt);
-
-	auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
-
-	switch (oapiCockpitMode())
-	{
-	case COCKPIT_PANELS:
-		// panel anims.
-//		bco::RotateMesh(pMesh, bm::pnl::pnlAmpMeter_id,	bm::pnl::pnlAmpMeter_verts,		animAmpMeter_.GetState() * -2.0943);
-//		bco::RotateMesh(pMesh, bm::pnl::pnlVoltMeter_id,	bm::pnl::pnlVoltMeter_verts,	animVoltMeter_.GetState() * 2.0943);
-		break;
-
-	case COCKPIT_VIRTUAL:
-//		gaugePowerAmp_.SetAnimation2(GetBaseVessel(), animAmpMeter_.GetState());
-//		gaugePowerVolt_.SetAnimation2(GetBaseVessel(), animVoltMeter_.GetState());
-		break;
-	}
-
-}
-
-void PowerSystem::OnSetClassCaps()
-{
-    auto vessel = GetBaseVessel();
-    
-//    swPower_.Setup(vessel);
-//    swConnectExternal_.Setup(vessel);
-//    swConnectFuelCell_.Setup(vessel);
-    
-//	gaugePowerVolt_.Setup2(vessel, vessel->GetVCMeshIndex());
-//	gaugePowerAmp_.Setup2(vessel, vessel->GetVCMeshIndex());
-	
-//	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 bool PowerSystem::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -157,9 +121,9 @@ bool PowerSystem::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 	externConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
 	externConnectedLight_.RotateMesh(devMesh);
 
-	trans = IsFuelCellAvailable() ? offset : 0.0;
-	fuelCellAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	fuelCellAvailLight_.RotateMesh(devMesh);
+	//trans = IsFuelCellAvailable() ? offset : 0.0;
+	//fuelCellAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
+	//fuelCellAvailLight_.RotateMesh(devMesh);
 
 	trans = IsFuelCellConnected() ? offset : 0.0;
 	fuelCellConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));

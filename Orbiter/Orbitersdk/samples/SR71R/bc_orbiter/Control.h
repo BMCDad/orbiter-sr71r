@@ -64,6 +64,7 @@ namespace bc_orbiter
 
 #include "OrbiterAPI.h"
 #include "Animation.h"
+#include "Tools.h"
 
 #include <vector>
 #include <functional>
@@ -98,20 +99,21 @@ namespace bc_orbiter {
 	};
 
 	struct IVCTarget : public ITarget {
-		virtual VECTOR3& GetVCEventLocation() = 0;
-		virtual double GetVCEventRadius() = 0;
-
-		virtual void OnVCRedraw() {}
-
+		virtual VECTOR3& GetVCEventLocation()			{ return _V(0.0, 0.0, 0.0); }
+		virtual double	 GetVCEventRadius()				{ return 0.0; }
+		virtual void	 OnVCRedraw(DEVMESHHANDLE meshVC)	{}
+		virtual int		 GetVCMouseFlags()				{ return PANEL_MOUSE_IGNORE; }
+		virtual int		 GetVCRedrawFlags()				{ return PANEL_REDRAW_NEVER; }
 //		virtual ~IVCTarget() = 0;
 	};
 
 	struct IPNLTarget : public ITarget {
-		virtual RECT& GetPanelRect() = 0;
+		virtual RECT&	 GetPanelRect()						{ return _R(0, 0, 0, 0); }
+		virtual void	 OnPNLRedraw(MESHHANDLE meshPanel)	{}
+		virtual int		 GetPanelMouseFlags()				{ return PANEL_MOUSE_IGNORE; }
+		virtual int		 GetPanelRedrawFlags()				{ return PANEL_REDRAW_NEVER; }
 
-		virtual void OnPNLRedraw(MESHHANDLE meshPanel) {}
-
-//		virtual ~IPNLTarget() = 0;
+		//		virtual ~IPNLTarget() = 0;
 	};
 
 	/**
@@ -158,11 +160,12 @@ namespace bc_orbiter {
 		int ctrlId_{ 0 };
 	};
 
-	class StateProvider : public Notify<double> {
+	template<typename T>
+	class StateProvider : public Notify<T> {
 	public:
 		StateProvider() {}
 
-		void SetState(double v) {
+		void SetState(T v) {
 			Emit(v);
 		}
 	private:
@@ -177,6 +180,81 @@ namespace bc_orbiter {
 		double animEnd;
 		double hitRadius;
 		double pnlOffset;
+		int	vcRedrawFlags;
+		int vcMouseFlags;
+		int pnlRedrawFlags;
+		int pnlMouseFlags;
 	};
 
+
+	// Status light - no animation, texture only
+	class StatusLight : public Control<double>, public IVCTarget, public IPNLTarget {
+	public:
+		StatusLight(
+			StateProvider<bool>& provider,
+			int ctrlId,
+			const UINT vcGroupId,
+			const NTVERTEX* vcVerts,
+			const UINT pnlGroupId,
+			const NTVERTEX* pnlVerts,
+			double offset) 
+			:
+			provider_(provider),
+			Control<double>(ctrlId),
+			vcGroupId_(vcGroupId),
+			vcVerts_(vcVerts),
+			pnlGroupId_(pnlGroupId),
+			pnlVerts_(pnlVerts),
+			offset_(offset)
+		{
+			provider_.Subscribe([&](bool isOn) {
+				if (state_ != isOn) {
+					state_ = isOn;
+					oapiTriggerRedrawArea(0, 0, GetID());
+				}
+			});
+		}
+
+		void OnVCRedraw(DEVMESHHANDLE vcMesh) override {
+			NTVERTEX* delta = new NTVERTEX[4];
+
+			TransformUV2d(
+				vcVerts_,
+				delta, 4,
+				_V(state_ ? offset_ : 0.0,
+					0.0,
+					0.0),
+				0.0);
+
+			GROUPEDITSPEC change{};
+			change.flags = GRPEDIT_VTXTEX;
+			change.nVtx = 4;
+			change.vIdx = NULL; //Just use the mesh order
+			change.Vtx = delta;
+			auto res = oapiEditMeshGroup(vcMesh, vcGroupId_, &change);
+			delete[] delta;
+		}
+		
+		void OnPNLRedraw(MESHHANDLE meshPanel) override {
+			UpdateMesh(meshPanel, pnlGroupId_, pnlVerts_);
+		}
+
+		int GetVCMouseFlags()		{ return PANEL_MOUSE_IGNORE; }
+		int GetVCRedrawFlags()		{ return PANEL_REDRAW_USER; }
+		int GetPanelMouseFlags()	{ return PANEL_MOUSE_IGNORE; }
+		int GetPanelRedrawFlags()	{ return PANEL_REDRAW_USER; }
+
+	private:
+		StateProvider<bool>&	provider_;
+		UINT					vcGroupId_;
+		const NTVERTEX*			vcVerts_;
+		UINT					pnlGroupId_;
+		const NTVERTEX*			pnlVerts_;
+		bool					state_{ false };
+		double					offset_{ 0.0 };
+
+		void UpdateMesh(MESHHANDLE mesh, UINT id, const NTVERTEX* verts) {
+			DrawPanelOnOff(mesh, id, verts, state_, offset_);
+		}
+	};
 }
