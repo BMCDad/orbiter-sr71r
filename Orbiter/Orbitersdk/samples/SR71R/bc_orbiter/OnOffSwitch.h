@@ -99,7 +99,12 @@ namespace bc_orbiter
 
 	/*  THIS WILL REPLACE THE CLASSES ABOVE EVENTUALLY */
 
-	class OnOffToggle : public Control<double>, public IVCAnimate, public IAnimationState, public IVCTarget, public IPNLTarget {
+	class OnOffToggle : 
+		public Control, 
+		public IVCAnimate, 
+		public IAnimationState, 
+		public IVCTarget, 
+		public IPNLTarget {
 	public:
 		OnOffToggle(
 			int const ctrlId,
@@ -108,8 +113,9 @@ namespace bc_orbiter
 			const ControlData& vcData,
 			const UINT pnlGroup,
 			const NTVERTEX* pnlVerts,
-			const RECT& pnl) :
-			Control<double>(ctrlId),
+			const RECT& pnl
+		) :
+			Control(ctrlId),
 			vcData_(vcData),
 			vcAnimGroup_(
 				vcAnimGroupIds,
@@ -120,8 +126,7 @@ namespace bc_orbiter
 			pnlVerts_(pnlVerts),
 			pnlRect_(pnl),
 			pnlOffset_(vcData.pnlOffset)
-		{
-		}
+		{ }
 
 		bool IsOn() const { return state_ != 0.0; }
 
@@ -151,10 +156,12 @@ namespace bc_orbiter
 		// ITarget
 		bool OnEvent() override { 
 			state_ = (state_ != 0.0) ? 0.0 : 1.0;
-			Emit(state_);
+			signal_.Fire(state_);
 			return true; 
 		}
 
+		// Signal
+		Signal<bool>& StateSignal() { return signal_; }
 	private:
 		AnimationGroup	vcAnimGroup_;
 		double			state_{ 0.0 };
@@ -163,5 +170,7 @@ namespace bc_orbiter
 		const NTVERTEX*	pnlVerts_;
 		RECT			pnlRect_;
 		double			pnlOffset_;
+
+		Signal<bool>	signal_;
 	};
 }

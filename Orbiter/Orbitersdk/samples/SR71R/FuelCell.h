@@ -59,6 +59,8 @@ namespace bco = bc_orbiter;
 class FuelCell : 
 	public bco::PoweredComponent
 {
+	const int MAX_VOLTS = 28.0;
+
 public:
 	FuelCell(bco::BaseVessel* vessel, double amps);
 
@@ -89,7 +91,9 @@ public:
 		return isFuelCellAvailable_; 
 	}
 
-	double AvailablePower() { return IsFuelCellPowerAvailable() ? 27.0 : 0.0; }
+	//double AvailablePower() { return IsFuelCellPowerAvailable() ? 27.0 : 0.0; }
+	
+	bco::Signal<double>& SignalAvailablePower() { return sigAvailPower_; }
 //	bco::OnOffSwitch&	PowerSwitch() { return swPower_; }
 
 
@@ -100,6 +104,8 @@ public:
 private:
 
 	void SetIsFuelCellPowerAvailable(bool newValue);
+
+	bco::Signal<double>	sigAvailPower_;
 
 	bool				isFuelCellAvailable_;
 	double				availablePower_;

@@ -30,13 +30,10 @@ namespace bco = bc_orbiter;
 
 class NavLight : public bco::IInit {
 public:
-	NavLight(bco::OnOffToggle& ctrl) : control_(ctrl)
+	NavLight(bco::OnOffToggle& ctrl) 
+		:
+		slot_([&](bool v) { SetActive(v); })
 	{
-		control_.Subscribe([&](double d) {
-			SetActive(d);
-			});
-
-		SetActive(control_.GetState());
 	}
 
 	// IInit
@@ -46,7 +43,10 @@ public:
 		vessel.AddBeacon(&specNavRear_);
 	}
 
+	bco::Slot<bool>& Slot() { return slot_; }
 private:
+
+	bco::Slot<bool> slot_;
 
 	void SetActive(double d) {
 		auto active = (d != 0.0);
@@ -55,7 +55,7 @@ private:
 		specNavRight_.active = active;
 	}
 
-	bco::OnOffToggle& control_;
+//	bco::OnOffToggle& control_;
 
 	// Set light specs:
 	VECTOR3 colRed{ 1.0, 0.5, 0.5 };

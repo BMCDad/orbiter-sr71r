@@ -83,6 +83,9 @@ retroEngines_(          this,   RETRO_AMPS)
 
 	/*  POWER LIGHTS  */
 	AddControl(&lightFuelCellAvail_);
+	AddControl(&lightExternalAvail_);
+	AddControl(&lightFuelCellConnected_);
+	AddControl(&lightExternalConnected_);
 
 	/*  Gauges  */
 	AddControl(&gaugePowerVolts_);
@@ -90,6 +93,29 @@ retroEngines_(          this,   RETRO_AMPS)
 
 	//
 	AddComponent(&lightNav_);
+
+	// These are here because the template deduction does not seem to work in the header file.
+	// These objects will die at the end of this method, but they will have done their job.
+
+	bco::Connector  navLightSwitch	{ toggleNavigationLights.StateSignal(),			lightNav_.Slot() };
+
+	// Power connections
+	bco::Connector	pwrMain			{ toggleMainPower.StateSignal(),				powerSystem_.SlotMainPower() };
+	bco::Connector	pwrExtConn		{ togglePowerConnectionExternal.StateSignal(),	powerSystem_.SlotExternalConnect() };
+	bco::Connector	pwrFCConn		{ togglePowerConnectionFuelCell.StateSignal(),	powerSystem_.SlotFuelCellConnect() };
+	
+	// Fuel cell
+	bco::Connector  vcPower			{ fuelCell_.SignalAvailablePower(),				powerSystem_.SlotFuelCellAvailablePower()};
+
+	// Power gauges
+	bco::Connector	gaVolts			{ powerSystem_.SignalVoltLevel(),				gaugePowerVolts_.State() };
+	bco::Connector	gaAmps			{ powerSystem_.SignalAmpLevel(),				gaugePowerAmps_.State() };
+
+	// Power status lights
+	bco::Connector	lgtFCAvail		{ powerSystem_.SignalFuelCellAvailable(),		lightFuelCellAvail_.SlotState() };
+	bco::Connector	lgtFCConnect	{ powerSystem_.SignalFuelCellConnected(),		lightFuelCellConnected_.SlotState() };
+	bco::Connector	lgtExtAvail		{ powerSystem_.SignalExternalAvailable(),		lightExternalAvail_.SlotState() };
+	bco::Connector	lgtExtConnect	{ powerSystem_.SignalExternalConnected(),		lightExternalConnected_.SlotState() };
 }
 
 

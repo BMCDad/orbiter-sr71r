@@ -45,11 +45,13 @@ void FuelCell::Step(double simt, double simdt, double mjd)
 		auto oBurn = (OXYGEN_BURN_RATE * ampsFactor) * simdt;
 		auto hBurn = (HYDROGEN_BURN_RATE * ampsFactor) * simdt;
 
-		auto drawOxy = oxygenSystem_->RotateMesh(oBurn);
-		auto drawHyd = hydrogenSystem_->RotateMesh(hBurn);
+		auto drawOxy = oxygenSystem_->Draw(oBurn);
+		auto drawHyd = hydrogenSystem_->Draw(hBurn);
 
 		SetIsFuelCellPowerAvailable((drawOxy == oBurn) && (drawHyd == hBurn));
 	}
+
+	sigAvailPower_.Fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
 }
 
 double FuelCell::CurrentDraw()

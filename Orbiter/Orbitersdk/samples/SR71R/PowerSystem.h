@@ -67,13 +67,10 @@ class PowerSystem :	public bco::PoweredComponent,
 public:
 	PowerSystem(bco::BaseVessel* vessel);
 
-	virtual bool OnLoadVC(int id) override;
 	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
-	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-	bool OnPanelMouseEvent(int id, int event) override;
 	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
 
 
@@ -95,26 +92,47 @@ public:
 	double GetAmpDraw()								{ return mainCircuit_.GetTotalAmps(); }
 
 	double AmpNeedlePosition()	const   			{ return mainCircuit_.GetTotalAmps() / 90; }
-	double VoltNeedlePosition() const				{ return mainCircuit_.GetVoltLevel() / 30; }
+//	double VoltNeedlePosition() const				{ return mainCircuit_.GetVoltLevel() / 30; }
 
 	void SetFuelCell(FuelCell* fc)                  { fuelCell_ = fc; }
 
 	// Animation state
 	virtual double GetState() const override { return AmpNeedlePosition(); }
 
-	bco::StateProvider<double>& VoltProvider() { return stateVoltMeter_; }
-	bco::StateProvider<double>& AmpProvider() { return stateAmpMeter_; }
-	bco::StateProvider<bool>& FuelCellAvailableProvider() { return stateFuelCellAvailable_; }
+//	bco::StateProvider<double>& VoltProvider() { return stateVoltMeter_; }
+//	bco::StateProvider<double>& AmpProvider() { return stateAmpMeter_; }
+//	bco::StateProvider<bool>& FuelCellAvailableProvider() { return stateFuelCellAvailable_; }
+
+	bco::Signal<double>& SignalVoltLevel()			{ return signalVoltLevel_; }
+	bco::Signal<double>& SignalAmpLevel()			{ return signalAmpMeter_; }
+	bco::Signal<double>& SignalExternalAvailable()	{ return signalExternalAvailable_; }
+	bco::Signal<double>& SignalExternalConnected()	{ return signalExternalConnected_; }
+	bco::Signal<double>& SignalFuelCellConnected()	{ return signalFuelCellConnected_; }
+	bco::Signal<double>& SignalFuelCellAvailable()	{ return signalFuelCellAvailable_; }
+
+	bco::Slot<bool>& SlotMainPower()				{ return slotMainPower_; }
+	bco::Slot<bool>& SlotExternalConnect()			{ return slotConnectExternal_; }
+	bco::Slot<bool>& SlotFuelCellConnect()			{ return slotConnectFuelCell_; }
+
+	bco::Slot<double>& SlotFuelCellAvailablePower() { return slotFuelCellAvailablePower_; }
 
 private:
 	const double			FULL_POWER		=  28.0;
 	const double			USEABLE_POWER	=  24.0;
 	const double			AMP_OVERLOAD	= 100.0;
 
-	bco::StateProvider<double>		stateVoltMeter_;
-	bco::StateProvider<double>		stateAmpMeter_;
-	bco::StateProvider<bool>		stateFuelCellAvailable_;
+	bco::Signal<double>				signalVoltLevel_;
+	bco::Signal<double>				signalAmpMeter_;
+	bco::Signal<double>				signalExternalAvailable_;
+	bco::Signal<double>				signalExternalConnected_;
+	bco::Signal<double>				signalFuelCellConnected_;
+	bco::Signal<double>				signalFuelCellAvailable_;
 
+	// Slots for the on / off switches.
+	bco::Slot<bool>					slotMainPower_;
+	bco::Slot<bool>					slotConnectExternal_;
+	bco::Slot<bool>					slotConnectFuelCell_;
+	bco::Slot<double>				slotFuelCellAvailablePower_;
 	void Update();
 
 	bco::Circuit			mainCircuit_;
@@ -129,10 +147,10 @@ private:
 	double					prevTime_;
 	double					prevAvailPower_;
 
-	bco::TextureVisual	    externAvailLight_;
-	bco::TextureVisual	    externConnectedLight_;
+//	bco::TextureVisual	    externAvailLight_;
+//	bco::TextureVisual	    externConnectedLight_;
 //	bco::TextureVisual	    fuelCellAvailLight_;
-	bco::TextureVisual	    fuelCellConnectedLight_;
+//	bco::TextureVisual	    fuelCellConnectedLight_;
 
 
     //bco::VCToggleSwitch     swPower_                    {   bm::vc::swMainPower_id, 
@@ -188,19 +206,19 @@ private:
 //		{ID_CONFC,	{bm::pnl::pnlPwrFCBus_id,	bm::pnl::pnlPwrFCBus_RC,	bm::pnl::pnlPwrFCBus_verts,	 [&]() {swConnectFuelCell_.Toggle(); }, [&]() {return swConnectFuelCell_.IsOn(); }}}
 //	};
 
-	struct pnlLights
-	{
-		const UINT group;
-		const NTVERTEX* verts;
-		std::function<bool(void)> isActive;
-	};
+	//struct pnlLights
+	//{
+	//	const UINT group;
+	//	const NTVERTEX* verts;
+	//	std::function<bool(void)> isActive;
+	//};
 
-	std::vector<pnlLights> pnlLights_
-	{
-		{bm::pnl::pnlLgtExtPwrAvail_id, bm::pnl::pnlLgtExtPwrAvail_verts },
-		{bm::pnl::pnlLgtFCPwrAvail_id,	bm::pnl::pnlLgtFCPwrAvail_verts },
-		{bm::pnl::pnlLgtExtPwrOn_id,	bm::pnl::pnlLgtExtPwrOn_verts },
-		{bm::pnl::pnlLgtFCPwrOn_id,		bm::pnl::pnlLgtFCPwrOn_verts }
-	};
+	//std::vector<pnlLights> pnlLights_
+	//{
+	//	//{bm::pnl::pnlLgtExtPwrAvail_id, bm::pnl::pnlLgtExtPwrAvail_verts },
+	//	//{bm::pnl::pnlLgtFCPwrAvail_id,	bm::pnl::pnlLgtFCPwrAvail_verts },
+	//	{bm::pnl::pnlLgtExtPwrOn_id,	bm::pnl::pnlLgtExtPwrOn_verts },
+	//	{bm::pnl::pnlLgtFCPwrOn_id,		bm::pnl::pnlLgtFCPwrOn_verts }
+	//};
 
 };

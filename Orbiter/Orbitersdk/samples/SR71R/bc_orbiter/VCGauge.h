@@ -105,41 +105,40 @@ namespace bc_orbiter
     /**
     * Gauge
     * A rotational gauge control.  It takes the following:
-    * StatProvider:  This provides the state for the gauge.  Some other component will provide this.
-    * Control id:   Not really used here, but needed by Control so we provide it.
     * VC animation group id list.
     * Two VECTOR3s that define the postion and angle of rotation for VCs.
     * Panel group ID
     * Panel verts
-    * Panel offset
+    * Gauge angle of movement in radians
+    * Animation speed, both panel and VC.
+    * Signal transform.  Transforms the incoming signal to a 0 - 1 range needed by animation.
     * 
-    * The state of the gauge is provided by a StateProvider that exposes a 0 to 1 value.  The inputs
-    * then define the VC animation which is a standard Orbiter animation, and the verts needed to manually
-    * animate the gauge in panel mode.  The angle and speed for both are the same.
+    * Gauge exposes a slot that will take the driving signal.  The transform function, if needed, should
+    * convert the signal to a 0 to 1 value.  The angle and speed for both are the same.
     */
-    class Gauge : public Control<double>, public IVCAnimate, public IPNLAnimate, public IAnimationState {
+    class Gauge : public Control, public IVCAnimate, public IPNLAnimate, public IAnimationState {
     public:
         Gauge(
-            StateProvider<double>& provider,
             std::initializer_list<UINT> const& vcAnimGroupIds,
             const VECTOR3& vcLocation, const VECTOR3& vcAxisLocation,
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
             double angle,
-            double speed) :
-            provider_(provider),
-            Control<double>(0.0),       // id not used for gauges.
-            vcAnimGroup_(
-                vcAnimGroupIds,
-                vcLocation, vcAxisLocation,
-                angle,
-                0.0, 1.0),
-            pnlGroup_(pnlGroupId),
-            pnlVerts_(pnlVerts),
-            animSpeed_(speed),
-            angle_(angle)
+            double speed,
+            std::function<double(double)> trans)
+            :   Control(0.0),       // id not used for gauges.
+                vcAnimGroup_(
+                    vcAnimGroupIds,
+                    vcLocation, vcAxisLocation,
+                    angle,
+                    0.0, 1.0),
+                pnlGroup_(pnlGroupId),
+                pnlVerts_(pnlVerts),
+                animSpeed_(speed),
+                angle_(angle),
+                transform_(trans)
         {
-            provider_.Subscribe([&](double d) {state_ = d; });
+           
         }
 
         // IVCAnimate
@@ -152,17 +151,23 @@ namespace bc_orbiter
 
         // IPNLAnimate
         void PanelStep(MESHHANDLE mesh, double simdt) override {
-            RotateMesh(mesh, pnlGroup_, pnlVerts_, (state_ * -angle_));
+            animPnl_.Step(state_, simdt);
+            RotateMesh(mesh, pnlGroup_, pnlVerts_, (animPnl_.GetState() * -angle_));
         }
 
+        Slot<double>& State() { return slotState_; }
     private:
-        StateProvider<double>&  provider_;
+        std::function<double(double)> transform_;
+        Slot<double>    slotState_{ [&](double d) { this->state_ = transform_(d); } };
         AnimationGroup	vcAnimGroup_;
         double          animSpeed_{ 0.0 };
         UINT			pnlGroup_{ 0 };
         const NTVERTEX* pnlVerts_;
         double          state_{ 0.0 };
         double          angle_{ 0.0 };
+        Animation       animPnl_{ animSpeed_ };
+
+        void OnUpdate(double d) { state_ = d; }
     };
 
 }

@@ -273,8 +273,7 @@ namespace bc_orbiter
 
 		int GetControlId() { return ++nextEventId_; }
 
-		template<typename T>
-		void AddControl(Control<T>* ctrl) { controls_.push_back(ctrl); }
+		void AddControl(Control* ctrl) { controls_.push_back(ctrl); }
 
 		void AddComponent(IInit* c) { components_.push_back(c); }
 	private:

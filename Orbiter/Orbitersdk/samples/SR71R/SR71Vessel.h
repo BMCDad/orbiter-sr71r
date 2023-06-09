@@ -169,35 +169,61 @@ private:
 
 	// *** GAUGES ***
 	bco::Gauge				gaugePowerVolts_{
-		powerSystem_.VoltProvider(),
 		{ bm::vc::gaugeVoltMeter_id },
 		bm::vc::gaugeVoltMeter_location, bm::vc::VoltMeterFrontAxis_location,
 		bm::pnl::pnlVoltMeter_id,
 		bm::pnl::pnlVoltMeter_verts,
 		-(120 * RAD),
-		0.2
+		0.2,
+		[](double d) {return (d / 30); }	// Transform from volts to anim-range.
 	};
 
 	bco::Gauge				gaugePowerAmps_{
-		powerSystem_.AmpProvider(),
 		{ bm::vc::gaugeAmpMeter_id },
 		bm::vc::gaugeAmpMeter_location, bm::vc::VoltMeterFrontAxis_location,
 		bm::pnl::pnlAmpMeter_id,
 		bm::pnl::pnlAmpMeter_verts,
 		(120 * RAD),	// Clockwise
-		0.2
+		0.2,
+		[](double d) {return (d / 90); }	// Transform to amps.
 	};
 
 
 	// *** POWER STATUS LIGHTS:
 	bco::StatusLight		lightFuelCellAvail_{
-		powerSystem_.FuelCellAvailableProvider(),
 		GetControlId(),
 		bm::vc::FuelCellAvailableLight_id,
 		bm::vc::FuelCellAvailableLight_verts,
 		bm::pnl::pnlLgtFCPwrAvail_id,
 		bm::pnl::pnlLgtFCPwrAvail_verts,
 		0.0244 
+	};
+
+	bco::StatusLight		lightExternalAvail_{
+		GetControlId(),
+		bm::vc::ExtAvailableLight_id,
+		bm::vc::ExtAvailableLight_verts,
+		bm::pnl::pnlLgtExtPwrAvail_id,
+		bm::pnl::pnlLgtExtPwrAvail_verts,
+		0.0244
+	};
+
+	bco::StatusLight		lightFuelCellConnected_{
+		GetControlId(),
+		bm::vc::FuelCellConnectedLight_id,
+		bm::vc::FuelCellConnectedLight_verts,
+		bm::pnl::pnlLgtFCPwrOn_id,
+		bm::pnl::pnlLgtFCPwrOn_verts,
+		0.0244
+	};
+
+	bco::StatusLight		lightExternalConnected_{
+		GetControlId(),
+		bm::vc::ExtConnectedLight_id,
+		bm::vc::ExtConnectedLight_verts,
+		bm::pnl::pnlLgtExtPwrOn_id,
+		bm::pnl::pnlLgtExtPwrOn_verts,
+		0.0244
 	};
 
 	// ** COMPONENTS **

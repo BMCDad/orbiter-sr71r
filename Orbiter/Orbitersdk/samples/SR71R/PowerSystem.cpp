@@ -23,17 +23,22 @@
 #include <assert.h>
 
 PowerSystem::PowerSystem(bco::BaseVessel* vessel) :
-PoweredComponent(vessel, 0.0, 0.0),
-powerExternal_(0.0),
-fuelCell_(nullptr),
-externAvailLight_(			bm::vc::ExtAvailableLight_verts,		bm::vc::ExtAvailableLight_id),
-externConnectedLight_(		bm::vc::ExtConnectedLight_verts,		bm::vc::ExtConnectedLight_id),
-//fuelCellAvailLight_(		bm::vc::FuelCellAvailableLight_verts,	bm::vc::FuelCellAvailableLight_id),
-fuelCellConnectedLight_(	bm::vc::FuelCellConnectedLight_verts,	bm::vc::FuelCellConnectedLight_id),
-isBatteryDraw_(false),
-prevTime_(0.0),
-prevAvailPower_(-1.0)
+	PoweredComponent(vessel, 0.0, 0.0),
+	powerExternal_(0.0),
+	fuelCell_(nullptr),
+//	externAvailLight_(bm::vc::ExtAvailableLight_verts, bm::vc::ExtAvailableLight_id),
+//	externConnectedLight_(bm::vc::ExtConnectedLight_verts, bm::vc::ExtConnectedLight_id),
+	//fuelCellAvailLight_(		bm::vc::FuelCellAvailableLight_verts,	bm::vc::FuelCellAvailableLight_id),
+//	fuelCellConnectedLight_(bm::vc::FuelCellConnectedLight_verts, bm::vc::FuelCellConnectedLight_id),
+	isBatteryDraw_(false),
+	prevTime_(0.0),
+	prevAvailPower_(-1.0),
+	slotMainPower_([&](bool v) { Update(); }),
+	slotConnectExternal_([&](bool v) { Update(); }),
+	slotConnectFuelCell_([&](bool v) { Update(); }),
+	slotFuelCellAvailablePower_([&](double v) {Update(); })
 {
+
 }
 
 void PowerSystem::Step(double simt, double simdt, double mjd)
@@ -45,9 +50,10 @@ void PowerSystem::Step(double simt, double simdt, double mjd)
 		Update();
 		prevTime_ = simt;
 
-		stateVoltMeter_.SetState(VoltNeedlePosition());
-		stateAmpMeter_.SetState(AmpNeedlePosition());
-		stateFuelCellAvailable_.SetState(IsFuelCellAvailable());
+		signalVoltLevel_.Fire(mainCircuit_.GetVoltLevel());
+		signalAmpMeter_.Fire(mainCircuit_.GetTotalAmps());
+
+//		stateFuelCellAvailable_.SetState(IsFuelCellAvailable());
 	}
 }
 
@@ -97,14 +103,6 @@ void PowerSystem::PostCreation()
     Update();
 }
 
-bool PowerSystem::OnLoadVC(int id)
-{
-	// Redraw areas:
-	oapiVCRegisterArea(ID_AREA, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
-
-	return true;
-}
-
 bool PowerSystem::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
@@ -113,21 +111,21 @@ bool PowerSystem::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 	const double offset = 0.0244;
 	double trans = 0.0;
 
-	trans = IsExternalSourceAvailable() ? offset : 0.0;
-	externAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	externAvailLight_.RotateMesh(devMesh);
+	//trans = IsExternalSourceAvailable() ? offset : 0.0;
+	//externAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
+	//externAvailLight_.RotateMesh(devMesh);
 
-	trans = IsExternalSourceConnected() ? offset : 0.0;
-	externConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	externConnectedLight_.RotateMesh(devMesh);
+	//trans = IsExternalSourceConnected() ? offset : 0.0;
+	//externConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
+	//externConnectedLight_.RotateMesh(devMesh);
 
 	//trans = IsFuelCellAvailable() ? offset : 0.0;
 	//fuelCellAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
 	//fuelCellAvailLight_.RotateMesh(devMesh);
 
-	trans = IsFuelCellConnected() ? offset : 0.0;
-	fuelCellConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	fuelCellConnectedLight_.RotateMesh(devMesh);
+	//trans = IsFuelCellConnected() ? offset : 0.0;
+	//fuelCellConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
+	//fuelCellConnectedLight_.RotateMesh(devMesh);
 
 	return true;
 }
@@ -149,23 +147,23 @@ void PowerSystem::Update()
 // TODO        swPower_.SetOff();
     }
 
+	auto availExternal = 0.0;
+	auto availFuelCell = 0.0;
 	// If main switch is off, then powersource is nullptr--no power.
 	// Otherwise see if either external or fuel cell is on.  External
 	// power will take precedence if on.
-	if ( true )// TODO swPower_.IsOn())
+	if ( slotMainPower_.Value() )
 	{
-		auto availExternal = 0.0;
-		auto availFuelCell = 0.0;
 		auto availBattery = batteryLevel_ * FULL_POWER;
 
-		if (/* TODO swConnectExternal_.IsOn() */ false)
+		if ( slotConnectExternal_.Value() )
 		{
 			availExternal = powerExternal_;
 		}
 		
-		if (/* TODO swConnectFuelCell_.IsOn()*/ true)
+		if ( slotConnectFuelCell_.Value() )
 		{
-			availFuelCell = (nullptr != fuelCell_) ? fuelCell_->AvailablePower() : 0.0;
+			availFuelCell = (nullptr != fuelCell_) ? slotFuelCellAvailablePower_.Value() : 0.0;
 		}
 
 
@@ -194,6 +192,13 @@ void PowerSystem::Update()
 		prevAvailPower_ = availPower;
 	}
 
+	signalExternalAvailable_.Fire(powerExternal_);
+	signalFuelCellAvailable_.Fire(slotFuelCellAvailablePower_.Value());
+
+	// Switch is on, and external power is actually there.
+	signalExternalConnected_.Fire((powerExternal_ > 0.0) && slotConnectExternal_.Value());
+	signalFuelCellConnected_.Fire((slotFuelCellAvailablePower_.Value() > 0.0) && slotConnectFuelCell_.Value());
+
 	GetBaseVessel()->UpdateUIArea(ID_AREA);
 }
 
@@ -207,27 +212,6 @@ bool PowerSystem::IsFuelCellConnected()
 	return IsFuelCellAvailable() && true; // TODOswConnectFuelCell_.IsOn(); 
 }
 
-bool PowerSystem::OnLoadPanel2D(int id, PANELHANDLE hPanel)
-{
-	//for each (auto & v in pnlData_)
-	//{
-	//	oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
-	//	GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-	//}
-
-	//GetBaseVessel()->RegisterPanelArea(hPanel, ID_AREA, _R(0, 0, 0, 0), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
-	return true;
-}
-
-bool PowerSystem::OnPanelMouseEvent(int id, int event)
-{
-	//auto p = pnlData_.find(id);
-	//if (p == pnlData_.end()) return false;
-
-	//p->second.update();
-	return true;
-}
-
 bool PowerSystem::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	//auto p = pnlData_.find(id);
@@ -239,10 +223,10 @@ bool PowerSystem::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 	auto mesh = GetBaseVessel()->GetpanelMeshHandle0();
 	const double offset = 0.0244;
 
-	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtExtPwrAvail_id, bm::pnl::pnlLgtExtPwrAvail_verts, IsExternalSourceAvailable(), offset);
-	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtFCPwrAvail_id, bm::pnl::pnlLgtFCPwrAvail_verts, IsFuelCellAvailable(), offset);
-
+//	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtExtPwrAvail_id, bm::pnl::pnlLgtExtPwrAvail_verts, IsExternalSourceAvailable(), offset);
 	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtExtPwrOn_id, bm::pnl::pnlLgtExtPwrOn_verts, IsExternalSourceConnected(), offset);
+
+//	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtFCPwrAvail_id, bm::pnl::pnlLgtFCPwrAvail_verts, IsFuelCellAvailable(), offset);
 	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtFCPwrOn_id, bm::pnl::pnlLgtFCPwrOn_verts, IsFuelCellConnected(), offset);
 
 	return true;

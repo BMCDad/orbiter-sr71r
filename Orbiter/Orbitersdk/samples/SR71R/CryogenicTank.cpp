@@ -34,7 +34,7 @@ CryogenicTank::CryogenicTank(bco::BaseVessel* vessel, double capacity, double lo
 
 void CryogenicTank::Step(double simt, double simdt, double mjd)
 {
-    RotateMesh(level_ * (lossRate_*simdt));
+    Draw(level_ * (lossRate_*simdt));
 }
 
 double CryogenicTank::GetLevel() const
@@ -42,7 +42,7 @@ double CryogenicTank::GetLevel() const
 	return level_ / capacity_;
 }
 
-double CryogenicTank::RotateMesh(double amount)
+double CryogenicTank::Draw(double amount)
 {
 	auto drawnAmount = min(level_, amount);
 	level_ = level_ - drawnAmount;
