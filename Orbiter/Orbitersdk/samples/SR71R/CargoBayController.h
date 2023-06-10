@@ -45,7 +45,7 @@ namespace bco = bc_orbiter;
 	CARGOBAY a b c
 	a - 0/1 Power switch off/on.
 	b - 0/1 Open close switch closed/open.
-	c - 0.0-1.0 Current door position.
+	c - 0.0-1.0 current door position.
 */
 class CargoBayController : public bco::PoweredComponent
 {

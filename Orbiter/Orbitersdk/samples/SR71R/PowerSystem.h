@@ -19,11 +19,9 @@
 #include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\OnOffSwitch.h"
 #include "bc_orbiter\Circuit.h"
-#include "bc_orbiter\TextureVisual.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\IAnimationState.h"
 #include "bc_orbiter\VCGauge.h"
 #include "bc_orbiter\VCToggleSwitch.h"
+#include "bc_orbiter\signals.h"
 
 #include "FuelCell.h"
 #include "SR71r_mesh.h"
@@ -61,18 +59,13 @@ class FuelCell;
 	d - Buss voltage				double 27.0
 	e - Battery level				double (0 - 1)
 */
-class PowerSystem :	public bco::PoweredComponent,
-	public bco::IAnimationState
+class PowerSystem :	public bco::PoweredComponent
 {
 public:
 	PowerSystem(bco::BaseVessel* vessel);
 
-	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
-
-	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
-
 
 	void Step(double simt, double simdt, double mjd);
 
@@ -80,145 +73,50 @@ public:
 
 	void AddMainCircuitDevice(bco::PoweredComponent* device);
 
-	bool IsExternalSourceAvailable()				{ return fabs(FULL_POWER - powerExternal_) < 5.0; }
-	bool IsExternalSourceConnected()				{ return IsExternalSourceAvailable() && false/* TODO swConnectExternal_.IsOn(); */; }
-
-	bool IsFuelCellAvailable();
-	bool IsFuelCellConnected();
-
 	bool IsBatteryPower()							{ return isBatteryDraw_; }
 
-	double GetVoltsLevel()							{ return mainCircuit_.GetVoltLevel(); }
-	double GetAmpDraw()								{ return mainCircuit_.GetTotalAmps(); }
+	double GetAmpDraw()								{ return mainCircuit_.GetTotalAmps(); }	// TODO: Make signal
 
-	double AmpNeedlePosition()	const   			{ return mainCircuit_.GetTotalAmps() / 90; }
-//	double VoltNeedlePosition() const				{ return mainCircuit_.GetVoltLevel() / 30; }
+	bco::signal<double>& VoltLevelSignal()			{ return signalVoltLevel_; }			// Changes in volt level
+	bco::signal<double>& AmpLevelSignal()			{ return signalAmpMeter_; }				// Changes in amp level
+	bco::signal<double>& ExternalAvailableSignal()  { return signalExternalAvailable_; }	// External resources available
+	bco::signal<double>& ExternalConnectedSignal()  { return signalExternalConnected_; }	// External connection status
+	bco::signal<double>& FuelCellConnectedSignal()  { return signalFuelCellConnected_; }	// Fuelcell connection status
 
-	void SetFuelCell(FuelCell* fc)                  { fuelCell_ = fc; }
+	// These slots driven by toggle switches.
+	bco::slot<bool>& MainPowerSlot()				{ return slotMainPower_; }				// Main power switch
+	bco::slot<bool>& ExternalConnectSlot()			{ return slotConnectExternal_; }		// External connect switch
+	bco::slot<bool>& FuelCellConnectSlot()			{ return slotConnectFuelCell_; }		// Fuelcell connect switch
 
-	// Animation state
-	virtual double GetState() const override { return AmpNeedlePosition(); }
-
-//	bco::StateProvider<double>& VoltProvider() { return stateVoltMeter_; }
-//	bco::StateProvider<double>& AmpProvider() { return stateAmpMeter_; }
-//	bco::StateProvider<bool>& FuelCellAvailableProvider() { return stateFuelCellAvailable_; }
-
-	bco::Signal<double>& SignalVoltLevel()			{ return signalVoltLevel_; }
-	bco::Signal<double>& SignalAmpLevel()			{ return signalAmpMeter_; }
-	bco::Signal<double>& SignalExternalAvailable()	{ return signalExternalAvailable_; }
-	bco::Signal<double>& SignalExternalConnected()	{ return signalExternalConnected_; }
-	bco::Signal<double>& SignalFuelCellConnected()	{ return signalFuelCellConnected_; }
-	bco::Signal<double>& SignalFuelCellAvailable()	{ return signalFuelCellAvailable_; }
-
-	bco::Slot<bool>& SlotMainPower()				{ return slotMainPower_; }
-	bco::Slot<bool>& SlotExternalConnect()			{ return slotConnectExternal_; }
-	bco::Slot<bool>& SlotFuelCellConnect()			{ return slotConnectFuelCell_; }
-
-	bco::Slot<double>& SlotFuelCellAvailablePower() { return slotFuelCellAvailablePower_; }
+	bco::slot<double>& FuelCellAvailablePowerSlot() { return slotFuelCellAvailablePower_; }	// Availability of fuelcell power
 
 private:
+	void Update();
+
 	const double			FULL_POWER		=  28.0;
 	const double			USEABLE_POWER	=  24.0;
 	const double			AMP_OVERLOAD	= 100.0;
 
-	bco::Signal<double>				signalVoltLevel_;
-	bco::Signal<double>				signalAmpMeter_;
-	bco::Signal<double>				signalExternalAvailable_;
-	bco::Signal<double>				signalExternalConnected_;
-	bco::Signal<double>				signalFuelCellConnected_;
-	bco::Signal<double>				signalFuelCellAvailable_;
+	bco::signal<double>		signalVoltLevel_;
+	bco::signal<double>		signalAmpMeter_;
+	bco::signal<double>		signalExternalAvailable_;
+	bco::signal<double>		signalExternalConnected_;
+	bco::signal<double>		signalFuelCellConnected_;
 
 	// Slots for the on / off switches.
-	bco::Slot<bool>					slotMainPower_;
-	bco::Slot<bool>					slotConnectExternal_;
-	bco::Slot<bool>					slotConnectFuelCell_;
-	bco::Slot<double>				slotFuelCellAvailablePower_;
-	void Update();
+	bco::slot<bool>			slotMainPower_;
+	bco::slot<bool>			slotConnectExternal_;
+	bco::slot<bool>			slotConnectFuelCell_;
+	bco::slot<double>		slotFuelCellAvailablePower_;
 
 	bco::Circuit			mainCircuit_;
 
 	// Power ports:
 	double					powerExternal_;
-	FuelCell*				fuelCell_;
 	const char*				ConfigKey = "POWER";
 
 	bool					isBatteryDraw_;
 	double					batteryLevel_;
 	double					prevTime_;
 	double					prevAvailPower_;
-
-//	bco::TextureVisual	    externAvailLight_;
-//	bco::TextureVisual	    externConnectedLight_;
-//	bco::TextureVisual	    fuelCellAvailLight_;
-//	bco::TextureVisual	    fuelCellConnectedLight_;
-
-
-    //bco::VCToggleSwitch     swPower_                    {   bm::vc::swMainPower_id, 
-    //                                                        bm::vc::swMainPower_location, 
-    //                                                        bm::vc::PowerTopRightAxis_location 
-    //                                                    };
-
-    //bco::VCToggleSwitch     swConnectExternal_          {   bm::vc::swConnectExternalPower_id,     
-    //                                                        bm::vc::swConnectExternalPower_location, 
-    //                                                        bm::vc::PowerBottomRightAxis_location 
-    //                                                    };
-
-    //bco::VCToggleSwitch     swConnectFuelCell_          {   bm::vc::swConnectFuelCell_id, 
-    //                                                        bm::vc::swConnectFuelCell_location, 
-    //                                                        bm::vc::PowerBottomRightAxis_location 
-    //                                                    };
-
-    //bco::VCGauge            gaugePowerVolt_				{  {bm::vc::gaugeVoltMeter_id },
-    //                                                        bm::vc::VoltMeterFrontAxis_location,   
-				//											bm::vc::gaugeVoltMeter_location,
-    //                                                        (120 * RAD), 
-    //                                                        0.2
-    //                                                    };
-
-	//bco::VCGauge            gaugePowerAmp_				{ { bm::vc::gaugeAmpMeter_id },
-	//														bm::vc::gaugeAmpMeter_location,
-	//														bm::vc::VoltMeterFrontAxis_location,
-	//														(120 * RAD),
-	//														0.2
-	//													};
-
-//	bco::Animation		animAmpMeter_	{ 0.2 /* speed */ };
-//	bco::Animation		animVoltMeter_	{ 0.2 /* speed */ };
-
-	struct PnlData
-	{
-		const UINT group;
-		const RECT rc;
-		const NTVERTEX* verts;
-		std::function<void(void)> update;
-		std::function<bool(void)> isActive;
-	};
-
-	const int ID_POWER = GetBaseVessel()->GetIdForComponent(this);
-	const int ID_CONEXT = GetBaseVessel()->GetIdForComponent(this);
-	const int ID_CONFC = GetBaseVessel()->GetIdForComponent(this);
-	const int ID_AREA = GetBaseVessel()->GetIdForComponent(this);
-
-//	std::map<int, PnlData> pnlData_
-//	{
-//		{ID_POWER,	{bm::pnl::pnlPwrMain_id,	bm::pnl::pnlPwrMain_RC,		bm::pnl::pnlPwrMain_verts,	 [&]() {swPower_.Toggle(); },			[&]() {return swPower_.IsOn(); }}},
-//		{ID_CONEXT,	{bm::pnl::pnlPwrExtBus_id,	bm::pnl::pnlPwrExtBus_RC,	bm::pnl::pnlPwrExtBus_verts, [&]() {swConnectExternal_.Toggle(); }, [&]() {return swConnectExternal_.IsOn(); }}},
-//		{ID_CONFC,	{bm::pnl::pnlPwrFCBus_id,	bm::pnl::pnlPwrFCBus_RC,	bm::pnl::pnlPwrFCBus_verts,	 [&]() {swConnectFuelCell_.Toggle(); }, [&]() {return swConnectFuelCell_.IsOn(); }}}
-//	};
-
-	//struct pnlLights
-	//{
-	//	const UINT group;
-	//	const NTVERTEX* verts;
-	//	std::function<bool(void)> isActive;
-	//};
-
-	//std::vector<pnlLights> pnlLights_
-	//{
-	//	//{bm::pnl::pnlLgtExtPwrAvail_id, bm::pnl::pnlLgtExtPwrAvail_verts },
-	//	//{bm::pnl::pnlLgtFCPwrAvail_id,	bm::pnl::pnlLgtFCPwrAvail_verts },
-	//	{bm::pnl::pnlLgtExtPwrOn_id,	bm::pnl::pnlLgtExtPwrOn_verts },
-	//	{bm::pnl::pnlLgtFCPwrOn_id,		bm::pnl::pnlLgtFCPwrOn_verts }
-	//};
-
 };

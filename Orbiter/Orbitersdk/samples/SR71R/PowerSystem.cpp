@@ -1,5 +1,5 @@
 //	PowerSystem - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -24,12 +24,8 @@
 
 PowerSystem::PowerSystem(bco::BaseVessel* vessel) :
 	PoweredComponent(vessel, 0.0, 0.0),
+	batteryLevel_(0.0),
 	powerExternal_(0.0),
-	fuelCell_(nullptr),
-//	externAvailLight_(bm::vc::ExtAvailableLight_verts, bm::vc::ExtAvailableLight_id),
-//	externConnectedLight_(bm::vc::ExtConnectedLight_verts, bm::vc::ExtConnectedLight_id),
-	//fuelCellAvailLight_(		bm::vc::FuelCellAvailableLight_verts,	bm::vc::FuelCellAvailableLight_id),
-//	fuelCellConnectedLight_(bm::vc::FuelCellConnectedLight_verts, bm::vc::FuelCellConnectedLight_id),
 	isBatteryDraw_(false),
 	prevTime_(0.0),
 	prevAvailPower_(-1.0),
@@ -38,7 +34,6 @@ PowerSystem::PowerSystem(bco::BaseVessel* vessel) :
 	slotConnectFuelCell_([&](bool v) { Update(); }),
 	slotFuelCellAvailablePower_([&](double v) {Update(); })
 {
-
 }
 
 void PowerSystem::Step(double simt, double simdt, double mjd)
@@ -50,10 +45,8 @@ void PowerSystem::Step(double simt, double simdt, double mjd)
 		Update();
 		prevTime_ = simt;
 
-		signalVoltLevel_.Fire(mainCircuit_.GetVoltLevel());
-		signalAmpMeter_.Fire(mainCircuit_.GetTotalAmps());
-
-//		stateFuelCellAvailable_.SetState(IsFuelCellAvailable());
+		signalVoltLevel_.fire(mainCircuit_.GetVoltLevel());
+		signalAmpMeter_.fire(mainCircuit_.GetTotalAmps());
 	}
 }
 
@@ -103,33 +96,6 @@ void PowerSystem::PostCreation()
     Update();
 }
 
-bool PowerSystem::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-	assert(devMesh != nullptr);
-
-	const double offset = 0.0244;
-	double trans = 0.0;
-
-	//trans = IsExternalSourceAvailable() ? offset : 0.0;
-	//externAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	//externAvailLight_.RotateMesh(devMesh);
-
-	//trans = IsExternalSourceConnected() ? offset : 0.0;
-	//externConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	//externConnectedLight_.RotateMesh(devMesh);
-
-	//trans = IsFuelCellAvailable() ? offset : 0.0;
-	//fuelCellAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	//fuelCellAvailLight_.RotateMesh(devMesh);
-
-	//trans = IsFuelCellConnected() ? offset : 0.0;
-	//fuelCellConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	//fuelCellConnectedLight_.RotateMesh(devMesh);
-
-	return true;
-}
-
 void PowerSystem::AddMainCircuitDevice(bco::PoweredComponent* device)
 {
 	mainCircuit_.AddDevice(device);
@@ -152,18 +118,18 @@ void PowerSystem::Update()
 	// If main switch is off, then powersource is nullptr--no power.
 	// Otherwise see if either external or fuel cell is on.  External
 	// power will take precedence if on.
-	if ( slotMainPower_.Value() )
+	if ( slotMainPower_.value() )
 	{
 		auto availBattery = batteryLevel_ * FULL_POWER;
 
-		if ( slotConnectExternal_.Value() )
+		if ( slotConnectExternal_.value() )
 		{
 			availExternal = powerExternal_;
 		}
 		
-		if ( slotConnectFuelCell_.Value() )
+		if ( slotConnectFuelCell_.value() )
 		{
-			availFuelCell = (nullptr != fuelCell_) ? slotFuelCellAvailablePower_.Value() : 0.0;
+			availFuelCell = slotFuelCellAvailablePower_.value();
 		}
 
 
@@ -192,42 +158,9 @@ void PowerSystem::Update()
 		prevAvailPower_ = availPower;
 	}
 
-	signalExternalAvailable_.Fire(powerExternal_);
-	signalFuelCellAvailable_.Fire(slotFuelCellAvailablePower_.Value());
+	signalExternalAvailable_.fire(powerExternal_);
 
 	// Switch is on, and external power is actually there.
-	signalExternalConnected_.Fire((powerExternal_ > 0.0) && slotConnectExternal_.Value());
-	signalFuelCellConnected_.Fire((slotFuelCellAvailablePower_.Value() > 0.0) && slotConnectFuelCell_.Value());
-
-	GetBaseVessel()->UpdateUIArea(ID_AREA);
-}
-
-bool PowerSystem::IsFuelCellAvailable()
-{
-	return (nullptr != fuelCell_) ? fuelCell_->IsFuelCellPowerAvailable() : false; 
-}
-
-bool PowerSystem::IsFuelCellConnected()
-{
-	return IsFuelCellAvailable() && true; // TODOswConnectFuelCell_.IsOn(); 
-}
-
-bool PowerSystem::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	//auto p = pnlData_.find(id);
-	//if (p != pnlData_.end())
-	//{
-	//	bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group, p->second.verts, p->second.isActive(), 0.0148);
-	//}
-
-	auto mesh = GetBaseVessel()->GetpanelMeshHandle0();
-	const double offset = 0.0244;
-
-//	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtExtPwrAvail_id, bm::pnl::pnlLgtExtPwrAvail_verts, IsExternalSourceAvailable(), offset);
-	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtExtPwrOn_id, bm::pnl::pnlLgtExtPwrOn_verts, IsExternalSourceConnected(), offset);
-
-//	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtFCPwrAvail_id, bm::pnl::pnlLgtFCPwrAvail_verts, IsFuelCellAvailable(), offset);
-	bco::DrawPanelOnOff(mesh, bm::pnl::pnlLgtFCPwrOn_id, bm::pnl::pnlLgtFCPwrOn_verts, IsFuelCellConnected(), offset);
-
-	return true;
+	signalExternalConnected_.fire((powerExternal_ > 0.0) && slotConnectExternal_.value());
+	signalFuelCellConnected_.fire((slotFuelCellAvailablePower_.value() > 0.0) && slotConnectFuelCell_.value());
 }

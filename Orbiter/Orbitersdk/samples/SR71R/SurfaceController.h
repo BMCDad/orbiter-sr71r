@@ -30,7 +30,7 @@
 class VESSEL3;
 
 const float AILERON_RANGE = (float)(20.0*RAD);
-/*	Control settings.
+/*	control settings.
 	These settings control the responsiveness of the flight control surfaces.  The area
 	settings are from the SR-71 manual and should probably be kept as is.  The dCl... settings
 	control the effectiveness of each control.  These can be tweaked to adjust the handling of the

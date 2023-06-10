@@ -26,13 +26,17 @@ PoweredComponent(vessel, amps, 26.0),
 powerSystem_(nullptr),
 oxygenSystem_(nullptr),
 hydrogenSystem_(nullptr),
-isFuelCellAvailable_(false)
+isFuelCellAvailable_(false),
+slotMainPower_([&](bool v) { isSlotPowerOn_ = v; })
 {
 }
 
 void FuelCell::Step(double simt, double simdt, double mjd)
 {
-	if ((nullptr == powerSystem_) || (nullptr == oxygenSystem_) || (nullptr == hydrogenSystem_) || !(HasPower() && swPower_.IsOn()))
+	if ((nullptr == powerSystem_) ||
+		(nullptr == oxygenSystem_) || 
+		(nullptr == hydrogenSystem_) || 
+		!(HasPower() && isSlotPowerOn_))
 	{
 		SetIsFuelCellPowerAvailable(false);
 	}
@@ -51,17 +55,17 @@ void FuelCell::Step(double simt, double simdt, double mjd)
 		SetIsFuelCellPowerAvailable((drawOxy == oBurn) && (drawHyd == hBurn));
 	}
 
-	sigAvailPower_.Fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
+	sigAvailPower_.fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
 }
 
 double FuelCell::CurrentDraw()
 {
-	return (HasPower() && swPower_.IsOn()) ? PoweredComponent::CurrentDraw() : 0.0;
+	return (HasPower() && isSlotPowerOn_) ? PoweredComponent::CurrentDraw() : 0.0;
 }
 
 void FuelCell::OnSetClassCaps()
 {
-    swPower_.Setup(GetBaseVessel());
+//    swPower_.Setup(GetBaseVessel());
 }
 
 bool FuelCell::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -75,7 +79,7 @@ bool FuelCell::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* config
 
 	sscanf_s(configLine + 8, "%i", &state);
 
-    swPower_.SetState((state == 0) ? 0.0 : 1.0);
+// TODO    swPower_.SetState((state == 0) ? 0.0 : 1.0);
 
 	return true;
 }
@@ -83,7 +87,7 @@ bool FuelCell::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* config
 void FuelCell::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
-	auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
+	auto val = (isSlotPowerOn_) ? 0 : 1;
 
 	sprintf_s(cbuf, "%i", val);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
@@ -95,25 +99,4 @@ void FuelCell::SetIsFuelCellPowerAvailable(bool newValue)
 	{
 		isFuelCellAvailable_ = newValue;
 	}
-}
-
-bool FuelCell::OnLoadPanel2D(int id, PANELHANDLE hPanel)
-{
-	oapiRegisterPanelArea(ID_POWER, bm::pnl::pnlPwrFC_RC, PANEL_REDRAW_USER);
-	GetBaseVessel()->RegisterPanelArea(hPanel, ID_POWER, bm::pnl::pnlPwrFC_RC, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-
-	return true;
-}
-
-bool FuelCell::OnPanelMouseEvent(int id, int event)
-{
-	swPower_.Toggle();
-	return true;
-}
-
-bool FuelCell::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlPwrFC_id, bm::pnl::pnlPwrFC_verts, swPower_.IsOn(), 0.0148);
-
-	return true;
 }

@@ -76,10 +76,13 @@ retroEngines_(          this,   RETRO_AMPS)
 
 	// Add Controls
 	/*  TOGGLE SWITCHES */
-	AddControl(&toggleNavigationLights);
-	AddControl(&toggleMainPower);
-	AddControl(&togglePowerConnectionExternal);
-	AddControl(&togglePowerConnectionFuelCell);
+	AddControl(&switchNavigationLights);
+	AddControl(&switchMainPower);
+	AddControl(&switchConnectExternalPower);
+	AddControl(&switchConnectFuelCell);
+
+	/*  FUELCELL SWITCHES */
+	AddControl(&switchFuelCellPower);
 
 	/*  POWER LIGHTS  */
 	AddControl(&lightFuelCellAvail_);
@@ -97,25 +100,26 @@ retroEngines_(          this,   RETRO_AMPS)
 	// These are here because the template deduction does not seem to work in the header file.
 	// These objects will die at the end of this method, but they will have done their job.
 
-	bco::Connector  navLightSwitch	{ toggleNavigationLights.StateSignal(),			lightNav_.Slot() };
+	bco::connector  navLightSwitch	{ switchNavigationLights.Signal(),				lightNav_.Slot() };
 
 	// Power connections
-	bco::Connector	pwrMain			{ toggleMainPower.StateSignal(),				powerSystem_.SlotMainPower() };
-	bco::Connector	pwrExtConn		{ togglePowerConnectionExternal.StateSignal(),	powerSystem_.SlotExternalConnect() };
-	bco::Connector	pwrFCConn		{ togglePowerConnectionFuelCell.StateSignal(),	powerSystem_.SlotFuelCellConnect() };
+	bco::connector	pwrMain			{ switchMainPower.Signal(),						powerSystem_.MainPowerSlot() };
+	bco::connector	pwrExtConn		{ switchConnectExternalPower.Signal(),			powerSystem_.ExternalConnectSlot() };
+	bco::connector	pwrFCConn		{ switchConnectFuelCell.Signal(),				powerSystem_.FuelCellConnectSlot() };
 	
-	// Fuel cell
-	bco::Connector  vcPower			{ fuelCell_.SignalAvailablePower(),				powerSystem_.SlotFuelCellAvailablePower()};
+	// Fuel cell					// A signal can drive more then one slot
+	bco::connector  vcPower			{ fuelCell_.AvailablePowerSignal(),				powerSystem_.FuelCellAvailablePowerSlot()};
+	bco::connector	lgtFCAvail		{ fuelCell_.AvailablePowerSignal(),				lightFuelCellAvail_.Slot() };
+	bco::connector  pwrFCMain		{ switchFuelCellPower.Signal(),					fuelCell_.MainPowerSlot() };
 
 	// Power gauges
-	bco::Connector	gaVolts			{ powerSystem_.SignalVoltLevel(),				gaugePowerVolts_.State() };
-	bco::Connector	gaAmps			{ powerSystem_.SignalAmpLevel(),				gaugePowerAmps_.State() };
+	bco::connector	gaVolts			{ powerSystem_.VoltLevelSignal(),				gaugePowerVolts_.Slot() };
+	bco::connector	gaAmps			{ powerSystem_.AmpLevelSignal(),				gaugePowerAmps_.Slot() };
 
 	// Power status lights
-	bco::Connector	lgtFCAvail		{ powerSystem_.SignalFuelCellAvailable(),		lightFuelCellAvail_.SlotState() };
-	bco::Connector	lgtFCConnect	{ powerSystem_.SignalFuelCellConnected(),		lightFuelCellConnected_.SlotState() };
-	bco::Connector	lgtExtAvail		{ powerSystem_.SignalExternalAvailable(),		lightExternalAvail_.SlotState() };
-	bco::Connector	lgtExtConnect	{ powerSystem_.SignalExternalConnected(),		lightExternalConnected_.SlotState() };
+	bco::connector	lgtFCConnect	{ powerSystem_.FuelCellConnectedSignal(),		lightFuelCellConnected_.Slot() };
+	bco::connector	lgtExtAvail		{ powerSystem_.ExternalAvailableSignal(),		lightExternalAvail_.Slot() };
+	bco::connector	lgtExtConnect	{ powerSystem_.ExternalConnectedSignal(),		lightExternalConnected_.Slot() };
 }
 
 
@@ -161,8 +165,6 @@ void SR71Vessel::SetupVesselComponents()
 
 
 	// Setup power and add powered devices:
-	powerSystem_.SetFuelCell(&fuelCell_);
-
 	powerSystem_.AddMainCircuitDevice(&avionics_);
 	powerSystem_.AddMainCircuitDevice(&headsUpDisplay_);
 	powerSystem_.AddMainCircuitDevice(&rcsSystem_);

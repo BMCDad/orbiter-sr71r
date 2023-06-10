@@ -65,6 +65,7 @@ namespace bc_orbiter
 #include "OrbiterAPI.h"
 #include "Animation.h"
 #include "Tools.h"
+#include "signals.h"
 
 #include <vector>
 #include <functional>
@@ -136,11 +137,11 @@ namespace bc_orbiter {
 
 	template <typename T>
 	struct ISink {
-		virtual void Notify(T value) = 0;
+		virtual void notify(T value) = 0;
 	};
 
 	template<typename T>
-	class Notify {
+	class notify {
 	public:
 		void Subscribe(const std::function<void(const T&)>& sub) {
 			subs_.emplace_back(sub);
@@ -157,186 +158,16 @@ namespace bc_orbiter {
 		std::vector<std::function<void(const T&)>> subs_;
 	};
 
-	template<typename T>
-	class Slot {
-	public:
-		Slot(const std::function<void(T)> func) 
-		:
-			func_(func)
-		{}
-
-		virtual ~Slot(){}
-
-		virtual void Notify(T value) {
-			if (value != value_) {
-				value_ = value;
-				if(nullptr != func_) func_(value_);
-			}
-		}
-
-		virtual T Value() const { return value_; }
-	private:
-		T value_{};
-		const std::function<void(T)> func_{ nullptr };
-	};
-
-	template<typename T>
-	class Signal {
-	public:
-		Signal() {}
-		virtual ~Signal(){}
-
-		void Attach(Slot<T>* s) {
-			slot_ = s;
-		}
-
-		void Fire(T val) {
-			if (dirty_ || (val != prevValue_)) {
-				prevValue_ = val;
-				dirty_ = true;
-				if (nullptr != slot_) slot_->Notify(val);
-			}
-		}
-
-		T Current() const { return prevValue_; }
-
-	private:
-		Slot<T>* slot_{ nullptr };
-		T prevValue_{  };
-		bool dirty_{ true };
-	};
-
-	template<typename TSignal, typename TSlot>
-	class Connector {
-	public:
-		Connector(TSignal& sig, TSlot& slot)
-			:
-			signal_(sig),
-			slot_(slot)
-		{
-			signal_.Attach(&slot_);
-		}
-
-	private:
-		TSignal& signal_;
-		TSlot& slot_;
-	};
-
 	/**
-	* IControl
-	* Defined a class that has, and can provide a control id.  All classes
-	* that require a unique id must derive from this interface.
+	* Base class for a control.
 	*/
-	struct IControl {
-		virtual int GetID() const { return 0; }
-	};
-
-	/**
-	* Base class for a control.  Implements IControl and provides a type for the value managed.
-	*/
-	class Control : public IControl {
+	class control {// : public IControl {
 	public:
-		Control(int ctrlId) : ctrlId_(ctrlId) {}
-		int GetID() const override { return ctrlId_; }
+		control(int ctrlId) : ctrlId_(ctrlId) {}
+		virtual int get_id() const { return ctrlId_; }
 
 	private:
 		const int ctrlId_;
 	};
 
-	template<typename T>
-	class StateProvider : public Notify<T> {
-	public:
-		StateProvider() {}
-
-		void SetState(T v) {
-			Emit(v);
-		}
-	private:
-	};
-
-	////////////////////////
-
-	struct ControlData {
-		double animRotation;
-		double animSpeed;
-		double animStart;
-		double animEnd;
-		double hitRadius;
-		double pnlOffset;
-		int	vcRedrawFlags;
-		int vcMouseFlags;
-		int pnlRedrawFlags;
-		int pnlMouseFlags;
-	};
-
-
-	// Status light - no animation, texture only
-	class StatusLight : public Control, public IVCTarget, public IPNLTarget {
-	public:
-		StatusLight(
-			int ctrlId,
-			const UINT vcGroupId,
-			const NTVERTEX* vcVerts,
-			const UINT pnlGroupId,
-			const NTVERTEX* pnlVerts,
-			double offset) 
-			:
-			Control(ctrlId),
-			vcGroupId_(vcGroupId),
-			vcVerts_(vcVerts),
-			pnlGroupId_(pnlGroupId),
-			pnlVerts_(pnlVerts),
-			offset_(offset),
-			slotState_([&](double v) {
-			auto bv = bool(v != 0.0);
-			if (state_ != bv) {
-				state_ = bv;
-				oapiTriggerRedrawArea(0, 0, GetID());
-			}})
-		{
-		}
-
-		void OnVCRedraw(DEVMESHHANDLE vcMesh) override {
-			NTVERTEX* delta = new NTVERTEX[4];
-
-			TransformUV2d(
-				vcVerts_,
-				delta, 4,
-				_V(state_ ? offset_ : 0.0,
-					0.0,
-					0.0),
-				0.0);
-
-			GROUPEDITSPEC change{};
-			change.flags = GRPEDIT_VTXTEX;
-			change.nVtx = 4;
-			change.vIdx = NULL; //Just use the mesh order
-			change.Vtx = delta;
-			auto res = oapiEditMeshGroup(vcMesh, vcGroupId_, &change);
-			delete[] delta;
-		}
-		
-		void OnPNLRedraw(MESHHANDLE meshPanel) override {
-			UpdateMesh(meshPanel, pnlGroupId_, pnlVerts_);
-		}
-
-		int GetVCMouseFlags()		{ return PANEL_MOUSE_IGNORE; }
-		int GetVCRedrawFlags()		{ return PANEL_REDRAW_USER; }
-		int GetPanelMouseFlags()	{ return PANEL_MOUSE_IGNORE; }
-		int GetPanelRedrawFlags()	{ return PANEL_REDRAW_USER; }
-
-		Slot<double>& SlotState()	{ return slotState_; }
-	private:
-		UINT					vcGroupId_;
-		const NTVERTEX*			vcVerts_;
-		UINT					pnlGroupId_;
-		const NTVERTEX*			pnlVerts_;
-		bool					state_{ false };
-		double					offset_{ 0.0 };
-		Slot<double>			slotState_;
-
-		void UpdateMesh(MESHHANDLE mesh, UINT id, const NTVERTEX* verts) {
-			DrawPanelOnOff(mesh, id, verts, state_, offset_);
-		}
-	};
 }

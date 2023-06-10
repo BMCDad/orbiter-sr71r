@@ -234,6 +234,18 @@
     <ClInclude Include="ToggleSwitches.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="bc_orbiter\signals.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\on_off_texture.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\Control.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\on_off_input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">

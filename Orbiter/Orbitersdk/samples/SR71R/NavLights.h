@@ -17,9 +17,7 @@
 #pragma once
 
 #include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\VCToggleSwitch.h"
+#include "bc_orbiter\signals.h"
 
 #include "SR71r_mesh.h"
 
@@ -30,7 +28,7 @@ namespace bco = bc_orbiter;
 
 class NavLight : public bco::IInit {
 public:
-	NavLight(bco::OnOffToggle& ctrl) 
+	NavLight() 
 		:
 		slot_([&](bool v) { SetActive(v); })
 	{
@@ -43,10 +41,10 @@ public:
 		vessel.AddBeacon(&specNavRear_);
 	}
 
-	bco::Slot<bool>& Slot() { return slot_; }
+	bco::slot<bool>& Slot() { return slot_; }
 private:
 
-	bco::Slot<bool> slot_;
+	bco::slot<bool> slot_;
 
 	void SetActive(double d) {
 		auto active = (d != 0.0);
@@ -54,8 +52,6 @@ private:
 		specNavRear_.active = active;
 		specNavRight_.active = active;
 	}
-
-//	bco::OnOffToggle& control_;
 
 	// Set light specs:
 	VECTOR3 colRed{ 1.0, 0.5, 0.5 };

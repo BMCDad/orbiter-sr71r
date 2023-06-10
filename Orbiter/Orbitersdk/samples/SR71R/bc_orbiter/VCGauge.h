@@ -116,7 +116,7 @@ namespace bc_orbiter
     * Gauge exposes a slot that will take the driving signal.  The transform function, if needed, should
     * convert the signal to a 0 to 1 value.  The angle and speed for both are the same.
     */
-    class Gauge : public Control, public IVCAnimate, public IPNLAnimate, public IAnimationState {
+    class Gauge : public control, public IVCAnimate, public IPNLAnimate, public IAnimationState {
     public:
         Gauge(
             std::initializer_list<UINT> const& vcAnimGroupIds,
@@ -126,7 +126,7 @@ namespace bc_orbiter
             double angle,
             double speed,
             std::function<double(double)> trans)
-            :   Control(0.0),       // id not used for gauges.
+            :   control(0.0),       // id not used for gauges.
                 vcAnimGroup_(
                     vcAnimGroupIds,
                     vcLocation, vcAxisLocation,
@@ -155,10 +155,10 @@ namespace bc_orbiter
             RotateMesh(mesh, pnlGroup_, pnlVerts_, (animPnl_.GetState() * -angle_));
         }
 
-        Slot<double>& State() { return slotState_; }
+        slot<double>& Slot() { return slotState_; }
     private:
         std::function<double(double)> transform_;
-        Slot<double>    slotState_{ [&](double d) { this->state_ = transform_(d); } };
+        slot<double>    slotState_{ [&](double d) { this->state_ = transform_(d); } };
         AnimationGroup	vcAnimGroup_;
         double          animSpeed_{ 0.0 };
         UINT			pnlGroup_{ 0 };

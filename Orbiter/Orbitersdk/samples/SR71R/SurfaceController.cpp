@@ -147,7 +147,7 @@ void SurfaceController::OnSetClassCaps()
 		rightRudderAxis,
 		AILERON_RANGE);
 
-	// Control surface animation.
+	// control surface animation.
 	anim_left_rudder_ = vessel->CreateAnimation(0.5);
 	anim_right_rudder_ = vessel->CreateAnimation(0.5);
 

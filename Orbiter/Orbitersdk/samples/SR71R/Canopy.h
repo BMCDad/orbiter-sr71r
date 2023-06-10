@@ -45,7 +45,7 @@ Configuration:
 CANOPY a b c
 a - 0/1 Power switch off/on.
 b - 0/1 Open close switch closed/open.
-c - 0.0-1.0 Current canopy position.
+c - 0.0-1.0 current canopy position.
 
 */
 class Canopy : public bco::PoweredComponent

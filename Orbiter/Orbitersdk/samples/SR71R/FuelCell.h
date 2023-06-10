@@ -69,10 +69,6 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
-	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-	bool OnPanelMouseEvent(int id, int event) override;
-	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
-
 	/**
 		Draw down the oxygen and hydrogen levels based on the current amp load.
 	*/
@@ -82,7 +78,7 @@ public:
 	virtual void ChangePowerLevel(double level) override
 	{
 		bco::PoweredComponent::ChangePowerLevel(level);
-		SetIsFuelCellPowerAvailable(HasPower() && swPower_.IsOn());
+		SetIsFuelCellPowerAvailable(HasPower() && isSlotPowerOn_);
 	}
 
 
@@ -93,20 +89,24 @@ public:
 
 	//double AvailablePower() { return IsFuelCellPowerAvailable() ? 27.0 : 0.0; }
 	
-	bco::Signal<double>& SignalAvailablePower() { return sigAvailPower_; }
+	bco::signal<double>& AvailablePowerSignal() { return sigAvailPower_; }
 //	bco::OnOffSwitch&	PowerSwitch() { return swPower_; }
 
+	bco::slot<bool>& MainPowerSlot() { return slotMainPower_; }
 
 	void SetPowerSystem(	PowerSystem* ps)	{ powerSystem_ = ps; }
 	void SetOxygenSystem(	IConsumable* os)	{ oxygenSystem_ = os; }
 	void SetHydrogenSytem(	IConsumable* hs)	{ hydrogenSystem_ = hs; }
 
 private:
-
+		
 	void SetIsFuelCellPowerAvailable(bool newValue);
 
-	bco::Signal<double>	sigAvailPower_;
+	bco::signal<double>	sigAvailPower_;
 
+	bco::slot<bool> slotMainPower_;
+
+	bool				isSlotPowerOn_{ false };
 	bool				isFuelCellAvailable_;
 	double				availablePower_;
 
@@ -115,13 +115,4 @@ private:
 	IConsumable*		hydrogenSystem_;
 
 	const char*			ConfigKey = "FUELCELL";
-
-	// Config members:
-
-    bco::VCToggleSwitch swPower_        {   bm::vc::swFuelCellPower_id, 
-                                            bm::vc::swFuelCellPower_location,  
-                                            bm::vc::PowerTopRightAxis_location
-                                        };
-
-	const int ID_POWER = { GetBaseVessel()->GetIdForComponent(this) };
 };

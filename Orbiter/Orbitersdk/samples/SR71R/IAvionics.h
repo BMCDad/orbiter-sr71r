@@ -33,10 +33,10 @@ public:
     virtual double GetAngleOfAttack() const = 0;						// Angle of attack(RAD)
     virtual double GetAirSpeedKeas() const = 0;							// Airspeed KEAS
     virtual double GetHeading() const = 0;								// Yaw(rad) in reference to the local horizon.
-    virtual double GetGForces() const = 0;								// Current G forces on vessel.
-    virtual double GetSetHeading()const = 0;							// Current setting of the 'heading' bug.
-    virtual double GetTrimLevel() const = 0;							// Current setting of trim level.
-    virtual void GetMachNumbers(double& mach, double& maxMach) = 0;		// Current MACH number.
+    virtual double GetGForces() const = 0;								// current G forces on vessel.
+    virtual double GetSetHeading()const = 0;							// current setting of the 'heading' bug.
+    virtual double GetTrimLevel() const = 0;							// current setting of trim level.
+    virtual void GetMachNumbers(double& mach, double& maxMach) = 0;		// current MACH number.
     virtual void GetAngularVel(VECTOR3& v) = 0;							// Rotation around axis (rad/s)
 	virtual double SetHeading(double hdg) = 0;							// Sets the 'set' heading. Returns actual.
 };

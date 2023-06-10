@@ -16,7 +16,7 @@
 
 #pragma once
 
-/*  Vessel Control
+/*  Vessel control
     The intent here is to create a control layer between the vessel
     calls which control spacecraft control and the automation components
     such as the and flight computer.  Note:  The AutoPilot has been sub-sumed
@@ -77,7 +77,7 @@ struct IVesselControl
 	program input and output (control) will come through the IVesselControl
 	interface.
 
-	Control programs contain the logic of what the program does. For example,
+	control programs contain the logic of what the program does. For example,
 	the HoldHeading program implements the logic for steering the vessel
 	towards a target heading.
 */

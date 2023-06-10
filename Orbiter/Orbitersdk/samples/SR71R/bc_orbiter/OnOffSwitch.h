@@ -22,6 +22,7 @@
 
 #include "Control.h"
 #include "Tools.h"
+#include "signal.h"
 
 #include <functional>
 
@@ -99,78 +100,4 @@ namespace bc_orbiter
 
 	/*  THIS WILL REPLACE THE CLASSES ABOVE EVENTUALLY */
 
-	class OnOffToggle : 
-		public Control, 
-		public IVCAnimate, 
-		public IAnimationState, 
-		public IVCTarget, 
-		public IPNLTarget {
-	public:
-		OnOffToggle(
-			int const ctrlId,
-			std::initializer_list<UINT> const& vcAnimGroupIds,
-			const VECTOR3& vcLocation, const VECTOR3& vcAxisLocation,
-			const ControlData& vcData,
-			const UINT pnlGroup,
-			const NTVERTEX* pnlVerts,
-			const RECT& pnl
-		) :
-			Control(ctrlId),
-			vcData_(vcData),
-			vcAnimGroup_(
-				vcAnimGroupIds,
-				vcLocation, vcAxisLocation,
-				vcData.animRotation,
-				vcData.animStart, vcData.animEnd),
-			pnlGroup_(pnlGroup),
-			pnlVerts_(pnlVerts),
-			pnlRect_(pnl),
-			pnlOffset_(vcData.pnlOffset)
-		{ }
-
-		bool IsOn() const { return state_ != 0.0; }
-
-		// IVCAnimate
-		AnimationGroup* GetVCAnimationGroup() override { return &vcAnimGroup_; }
-		IAnimationState* GetVCAnimationStateController() override { return this; }
-		double GetVCAnimationSpeed() const override { return vcData_.animSpeed; }
-
-		// IAnimationState
-		double GetState() const override { return state_; }
-
-		// IVCTarget
-		VECTOR3& GetVCEventLocation() override { return vcAnimGroup_.location_; }
-		double GetVCEventRadius() override { return vcData_.hitRadius; }
-		int GetVCMouseFlags() override { return vcData_.vcMouseFlags; }
-		int GetVCRedrawFlags() override { return vcData_.vcRedrawFlags; }
-
-		// IPNLTarget
-		RECT& GetPanelRect() override { return pnlRect_; }
-		int GetPanelMouseFlags() override { return vcData_.pnlMouseFlags; }
-		int GetPanelRedrawFlags() override { return vcData_.pnlRedrawFlags; }
-
-		void OnPNLRedraw(MESHHANDLE meshPanel) override {
-			DrawPanelOnOff(meshPanel, pnlGroup_, pnlVerts_, IsOn(), pnlOffset_);
-		}
-
-		// ITarget
-		bool OnEvent() override { 
-			state_ = (state_ != 0.0) ? 0.0 : 1.0;
-			signal_.Fire(state_);
-			return true; 
-		}
-
-		// Signal
-		Signal<bool>& StateSignal() { return signal_; }
-	private:
-		AnimationGroup	vcAnimGroup_;
-		double			state_{ 0.0 };
-		ControlData		vcData_;
-		UINT			pnlGroup_;
-		const NTVERTEX*	pnlVerts_;
-		RECT			pnlRect_;
-		double			pnlOffset_;
-
-		Signal<bool>	signal_;
-	};
 }

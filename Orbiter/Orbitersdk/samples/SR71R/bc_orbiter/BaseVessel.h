@@ -23,7 +23,7 @@
 #include "IAnimationState.h"
 #include "PanelElement.h"
 
-#include "OnOffSwitch.h"  // TEMP, remove when OnOffToggle has a proper control base class.
+#include "OnOffSwitch.h"  // TEMP, remove when on_off_input has a proper control base class.
 
 #include "Control.h"
 
@@ -273,7 +273,7 @@ namespace bc_orbiter
 
 		int GetControlId() { return ++nextEventId_; }
 
-		void AddControl(Control* ctrl) { controls_.push_back(ctrl); }
+		void AddControl(control* ctrl) { controls_.push_back(ctrl); }
 
 		void AddComponent(IInit* c) { components_.push_back(c); }
 	private:
@@ -292,11 +292,11 @@ namespace bc_orbiter
 				}
 
 				if (auto* c = dynamic_cast<IVCTarget*>(vc)) {
-					mapVCTargets_[vc->GetID()] = c;
+					mapVCTargets_[vc->get_id()] = c;
 				}
 
 				if (auto* c = dynamic_cast<IPNLTarget*>(vc)) {
-					mapPNLTargets_[vc->GetID()] = c;
+					mapPNLTargets_[vc->get_id()] = c;
 				}
 			}
 
@@ -343,7 +343,7 @@ namespace bc_orbiter
 		
 		//**** END NEW STYLE
 
-		std::vector<IControl*>		controls_;
+		std::vector<control*>		controls_;
 		std::vector<IInit*>			components_;
 
 	private:

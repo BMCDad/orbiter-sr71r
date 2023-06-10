@@ -3,6 +3,8 @@
 #include "Orbitersdk.h"
 
 #include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter\on_off_texture.h"
+#include "bc_orbiter\on_off_input.h"
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
@@ -31,7 +33,6 @@
 #include "VesselControl.h"
 #include "HoverEngines.h"
 #include "RetroEngines.h"
-
 #include "NavLights.h"
 
 #include <vector>
@@ -113,8 +114,8 @@ private:
 
 	// ** TOGGLE SWITCHES **
 
-	/* Control data for on/off up/down physical toggle switches */
-	bco::ControlData toggleOnOff {
+	/* control data for on/off up/down physical toggle switches */
+	bco::on_off_input_meta toggleOnOff {
   		 1.5708,			// Rotation angle
 		10.0,				// Anim speed
 		 0.0,				// anim start
@@ -127,7 +128,7 @@ private:
 		PANEL_MOUSE_LBDOWN	// panel mouse flag
 	};
 
-	bco::OnOffToggle		toggleMainPower {		// On off switch for the main power supply
+	bco::on_off_input		switchMainPower {		// On off switch for the main power supply
 		GetControlId(),
 		{ bm::vc::swMainPower_id },
 		bm::vc::swMainPower_location, bm::vc::PowerTopRightAxis_location,
@@ -137,7 +138,7 @@ private:
 		bm::pnl::pnlPwrMain_RC
 	};
 
-	bco::OnOffToggle		togglePowerConnectionExternal {	// On off switch for connect to external power
+	bco::on_off_input		switchConnectExternalPower {	// On off switch for connect to external power
 		GetControlId(),
 		{ bm::vc::swConnectExternalPower_id },
 		bm::vc::swConnectExternalPower_location, bm::vc::PowerBottomRightAxis_location,
@@ -147,7 +148,7 @@ private:
 		bm::pnl::pnlPwrExtBus_RC
 	};
 
-	bco::OnOffToggle		togglePowerConnectionFuelCell {	// On off switch for connect to fuel cell
+	bco::on_off_input		switchConnectFuelCell {	// On off switch for connect to fuel cell
 		GetControlId(),
 		{ bm::vc::swConnectFuelCell_id },
 		bm::vc::swConnectFuelCell_location, bm::vc::PowerBottomRightAxis_location,
@@ -157,7 +158,7 @@ private:
 		bm::pnl::pnlPwrFCBus_RC
 	};
 
-	bco::OnOffToggle		toggleNavigationLights {		// On off switch for external navigation lights.
+	bco::on_off_input		switchNavigationLights {		// On off switch for external navigation lights.
 		GetControlId(),
 		{ bm::vc::SwitchNavLights_id },
 		bm::vc::SwitchNavLights_location, bm::vc::LightsRightAxis_location,
@@ -166,6 +167,17 @@ private:
 		bm::pnl::pnlLightNav_verts,
 		bm::pnl::pnlLightNav_RC
 	};
+
+	bco::on_off_input		switchFuelCellPower {		// Main fuel cell power
+		GetControlId(),
+		{ bm::vc::swFuelCellPower_id },
+		bm::vc::swFuelCellPower_location, bm::vc::PowerTopRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlPwrFC_id,
+		bm::pnl::pnlPwrFC_verts,
+		bm::pnl::pnlPwrFC_RC
+	};
+
 
 	// *** GAUGES ***
 	bco::Gauge				gaugePowerVolts_{
@@ -190,7 +202,7 @@ private:
 
 
 	// *** POWER STATUS LIGHTS:
-	bco::StatusLight		lightFuelCellAvail_{
+	bco::on_off_texture		lightFuelCellAvail_{
 		GetControlId(),
 		bm::vc::FuelCellAvailableLight_id,
 		bm::vc::FuelCellAvailableLight_verts,
@@ -199,7 +211,7 @@ private:
 		0.0244 
 	};
 
-	bco::StatusLight		lightExternalAvail_{
+	bco::on_off_texture		lightExternalAvail_{
 		GetControlId(),
 		bm::vc::ExtAvailableLight_id,
 		bm::vc::ExtAvailableLight_verts,
@@ -208,7 +220,7 @@ private:
 		0.0244
 	};
 
-	bco::StatusLight		lightFuelCellConnected_{
+	bco::on_off_texture		lightFuelCellConnected_{
 		GetControlId(),
 		bm::vc::FuelCellConnectedLight_id,
 		bm::vc::FuelCellConnectedLight_verts,
@@ -217,7 +229,7 @@ private:
 		0.0244
 	};
 
-	bco::StatusLight		lightExternalConnected_{
+	bco::on_off_texture		lightExternalConnected_{
 		GetControlId(),
 		bm::vc::ExtConnectedLight_id,
 		bm::vc::ExtConnectedLight_verts,
@@ -227,6 +239,6 @@ private:
 	};
 
 	// ** COMPONENTS **
-	NavLight		lightNav_{ toggleNavigationLights };
+	NavLight		lightNav_;
 };
 
