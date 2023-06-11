@@ -282,7 +282,7 @@ bool FC::FlightComputer::OnLoadVC(int id)
 
     SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
 
-    // Init our font:
+    // handle_set_class_caps our font:
     vcFont_.surfSource = surfHandle;
     vcFont_.charWidth = 12;
     vcFont_.charHeight = 20;

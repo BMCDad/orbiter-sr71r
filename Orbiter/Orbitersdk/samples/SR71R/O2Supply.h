@@ -50,6 +50,29 @@ namespace bco = bc_orbiter;
 	fuel cell and the pilot oxygen.  The supply is liquid oxygen. According to
 	SR71 manual, 1 person will consume about 1/2 liter per hour.  So that would 
 	be a consumption rate of 0.000138 liters per second.
+
+	--- rewrite:
+	Lox avail light (on-off-display)  <-  power.exteranal available signal
+	Lox load switch (new control, on-off-input-display) input <- is-loading signal  :  output -> load-lox slot
+	Lox gauge (rotary-display)  <- lox-level signal
+
+	related:
+	on-off-display-input:  
+	: signal out to LOX-slot for toggle load LOX.
+	: slot in from LOX-Is loading signal
+
+	rotary-display:
+	: slot in from LOX-Lox current level.
+
+	on-off-display:
+	: slot in from Power->is external connected.
+
+	inputs (slots):
+	: slot from power->Volt level.
+	- power : from power (nothing works without power, no lox)
+	output:
+	- is loading lox -> display-button
+	- is
 */
 class O2Supply : public CryogenicTank,
 	public bco::IAnimationState

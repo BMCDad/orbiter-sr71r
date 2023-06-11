@@ -26,7 +26,8 @@
 namespace bco = bc_orbiter;
 
 
-class NavLight : public bco::IInit {
+class NavLight : 
+	public bco::set_class_caps {
 public:
 	NavLight() 
 		:
@@ -34,8 +35,8 @@ public:
 	{
 	}
 
-	// IInit
-	void Init(bco::BaseVessel& vessel) {
+	// set_class_caps
+	void handle_set_class_caps(bco::BaseVessel& vessel) {
 		vessel.AddBeacon(&specNavLeft_);
 		vessel.AddBeacon(&specNavRight_);
 		vessel.AddBeacon(&specNavRear_);

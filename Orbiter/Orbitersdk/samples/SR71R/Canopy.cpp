@@ -21,27 +21,29 @@
 #include "Canopy.h"
 #include "SR71r_mesh.h"
 
-bco::OnOffSwitch& Canopy::CanopyPowerSwitch() { return swCanopyPower_; }
-bco::OnOffSwitch& Canopy::CanopyOpenSwitch() { return swCanopyOpen_; }
+//bco::OnOffSwitch& Canopy::CanopyPowerSwitch() { return swCanopyPower_; }
+//bco::OnOffSwitch& Canopy::CanopyOpenSwitch() { return swCanopyOpen_; }
 
 double Canopy::GetCanopyState()
 {
-    return animCanopy_.GetState();
+    return 0.0;// TODO animCanopy_.GetState();
 }
 
 bool Canopy::CanopyHasPower()
 {
-    return HasPower() && swCanopyPower_.IsOn();
+    return HasPower() && powerSwitchOn_;
 }
 
 Canopy::Canopy(bco::BaseVessel* vessel, double amps) :
-    PoweredComponent(vessel, amps, 26.0)
+    PoweredComponent(vessel, amps, 26.0),
+    slotCanopyPowered_([&](bool v) { powerSwitchOn_ = v; }),
+    slotCanopyOpenClose_([&](bool v) {})
 {
 }
 
 double Canopy::CurrentDraw()
 {
-    return ((animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0)) 
+    return ( false /* TODO(animCanopy_.GetState() > 0.0)*/ && (0.0 /* TODO animCanopy_.GetState()*/ < 1.0))
         ? PoweredComponent::CurrentDraw() 
         : 0.0;
 }
@@ -50,7 +52,7 @@ void Canopy::Step(double simt, double simdt, double mjd)
 {
     if (CanopyHasPower())
     {
-        animCanopy_.Step(swCanopyOpen_.GetState(), simdt);
+        animCanopy_.Step(slotCanopyOpenClose_.value(), simdt);
     }
 }
 
@@ -64,10 +66,11 @@ bool Canopy::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLi
 
     sscanf_s(configLine + 6, "%d%d%lf", &isOn, &isOpen, &state);
 
-    swCanopyPower_.SetState((isOn == 0) ? 0.0 : 1.0);
-    swCanopyOpen_.SetState((isOpen == 0) ? 0.0 : 1.0);
-    
-    animCanopy_.SetState(state);
+    // TODO
+    //swCanopyPower_.SetState((isOn == 0) ? 0.0 : 1.0);
+    //swCanopyOpen_.SetState((isOpen == 0) ? 0.0 : 1.0);
+    //
+    //animCanopy_.SetState(state);
     GetBaseVessel()->SetAnimationState(idAnim_, state);
 
     return true;
@@ -77,10 +80,11 @@ void Canopy::OnSaveConfiguration(FILEHANDLE scn) const
 {
     char cbuf[256];
 
-    sprintf_s(cbuf, "%d %d %lf",
-        ((swCanopyPower_.GetState() == 0) ? 0 : 1),
-        ((swCanopyOpen_.GetState() == 0) ? 0 : 1),
-        animCanopy_.GetState());
+    // TODO
+    //sprintf_s(cbuf, "%d %d %lf",
+    //    ((swCanopyPower_.GetState() == 0) ? 0 : 1),
+    //    ((swCanopyOpen_.GetState() == 0) ? 0 : 1),
+    //    animCanopy_.GetState());
 
     oapiWriteScenario_string(scn, (char*)ConfigKeyCanopy, cbuf);
 }
@@ -90,40 +94,7 @@ void Canopy::OnSetClassCaps()
     auto vcIdx = vessel->GetVCMeshIndex();
     auto mIdx = vessel->GetMainMeshIndex();
 
-    swCanopyPower_.Setup(vessel);
-    swCanopyOpen_.Setup(vessel);
-
     idAnim_ = vessel->CreateVesselAnimation(&animCanopy_, 0.2);
     vessel->AddVesselAnimationComponent(idAnim_, vcIdx, &gpCanopyVC_);
     vessel->AddVesselAnimationComponent(idAnim_, mIdx, &gpCanopy_);
-}
-
-bool Canopy::OnLoadPanel2D(int id, PANELHANDLE hPanel)
-{
-    for each (auto & v in pnlData_)
-    {
-        oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
-        GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-    }
-
-    return true;
-}
-
-bool Canopy::OnPanelMouseEvent(int id, int event)
-{
-    auto p = pnlData_.find(id);
-    if (p == pnlData_.end()) return false;
-
-    p->second.update();
-    return true;
-}
-
-bool Canopy::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-    auto p = pnlData_.find(id);
-    if (p == pnlData_.end()) return false;
-
-    bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group, p->second.verts, p->second.isActive(), 0.0148);
-
-    return true;
 }

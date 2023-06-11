@@ -1,60 +1,20 @@
+//	controls - bco Orbiter Library
+//	Copyright(C) 2023  Blake Christensen
+//
+//	This program is free software : you can redistribute it and / or modify
+//	it under the terms of the GNU General Public License as published by
+//	the Free Software Foundation, either version 3 of the License, or
+//	(at your option) any later version.
+//
+//	This program is distributed in the hope that it will be useful,
+//	but WITHOUT ANY WARRANTY; without even the implied warranty of
+//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+//	GNU General Public License for more details.
+//
+//	You should have received a copy of the GNU General Public License
+//	along with this program.If not, see <http://www.gnu.org/licenses/>.
+
 #pragma once
-/*
-	OnOffToggle:
-
-	clbkSetClassCaps:
-		- If is IVCAnimate	: call method to create that animation and add to vecVCAnimations
-								AnimationGroup*
-								StateController
-								Speed
-		- If is IExtAnimate	: call method to create that animation and add to vecExtAnimations
-								AnimationGroup*
-								StateController
-								Speed
-		- If is IVCTarget	: add to mapVCTargets
-		- If is IPnlTarget	: add to mapPNLTargets
-		- If is IVCRedraw	: add to mapVCRedraw
-		- If is IPNLRedraw	: add to mapPNLRedraw
-		- If is IStep		: add to vecStep
-		- If is IInit		: call Init(BaseVessel& v)
-
-	clbkLoadVC:
-		- Loop through mapVCTargets and register mouse events.
-								VECTOR3 location
-								double radius
-		- Loop through mapVCRedraw and register redraw events.
-								(** no redraw for OnOffToggle, which is the prototype for this arch **)
-		- Loop through members of vecVCAnimations and update direct state.
-
-	clbkLoadPanel:
-			(** for panel these are likely to be combined into one mouse/redraw call **)
-		- Loop through mapPNLTargets and register mouse events.
-								RECT location
-		- Loop through mapPNLRedraw and register redraw events.
-								RECT location
-
-	clbkVCMouseEvent:
-		- Find event in mapVCTargets and call OnEvent().
-
-	clbkPanelMouseEvent:
-		- Find event in mapPNLTargets and call OnEvent().
-
-	clbkOnVCRedraw:
-		- Find event in mapVCRedraw and call OnRedraw().
-
-	clbkPanelRedrawEvent:
-		- Find event in mapPNLRedraw and call OnRedraw().
-
-	clbkPostStep:
-		- Loop members of vecStep and call OnStep().
-		- if ( VC Mode ) loop members of vecVCAnimations
-		- if ( Ext Mode ) loop members of vecExtAnimations
-
-
-	NonUI components
-	IComponent:
-	ITimeStep:
-*/
 
 namespace bc_orbiter
 {
@@ -73,89 +33,67 @@ namespace bc_orbiter
 
 namespace bc_orbiter {
 	/**
-	* IVCAnimate
+	* vc_animation
 	* Implemented by a control that needs to take part in the VC cockpit animation step.
 	*/
-	struct IVCAnimate {
-		virtual AnimationGroup* GetVCAnimationGroup() = 0;
-		virtual IAnimationState* GetVCAnimationStateController() = 0;
-		virtual double GetVCAnimationSpeed() const = 0;
+	struct vc_animation {
+		virtual AnimationGroup*		vc_animation_group() = 0;
+		virtual IAnimationState*	vc_animation_state() = 0;
+		virtual double				vc_animation_speed() const = 0;
 	};
 
-	struct IExtAnimate {};
-
 	/**
-	* IPNLAnimate
+	* panel_animation
 	* Implemented by a control that needs to animate as part of the panel animation step.
 	* Remember:  Panel animations are just mesh transforms, and are not part of Orbiter animations.
 	*/
-	struct IPNLAnimate {
-		virtual void PanelStep(MESHHANDLE mesh, double simdt) = 0;
-	};
-
-	struct ITarget {
-		virtual bool OnEvent() { return false; }
-
-//		virtual ~ITarget() = 0;
+	struct panel_animation {
+		virtual void panel_step(MESHHANDLE mesh, double simdt) = 0;
 	};
 
 	/**
-	* IVCTarget
-	* Implemented to indicate that a control must repond to user events in the VC.
+	* event_target
+	* Base class for any control that will be an event target.
 	*/
-	struct IVCTarget : public ITarget {
-		virtual VECTOR3& GetVCEventLocation()			{ return _V(0.0, 0.0, 0.0); }
-		virtual double	 GetVCEventRadius()				{ return 0.0; }
-		virtual void	 OnVCRedraw(DEVMESHHANDLE meshVC)	{}
-		virtual int		 GetVCMouseFlags()				{ return PANEL_MOUSE_IGNORE; }
-		virtual int		 GetVCRedrawFlags()				{ return PANEL_REDRAW_NEVER; }
-//		virtual ~IVCTarget() = 0;
+	struct event_target {
+		virtual bool on_event() { return false; }
 	};
 
 	/**
-	* IPNLTarget
-	* Implemented to indicate that a control responds to event from a 2D panel.
+	vc_event_target
+	Implemented to indicate that a VC control is a target for either mouse events, or redraw
+	events, or both.  If you need mouse events, override vc_mouse_flags to enable mouse events.
+	For redraw events, override vc_redraw_flags.
 	*/
-	struct IPNLTarget : public ITarget {
-		virtual RECT&	 GetPanelRect()						{ return _R(0, 0, 0, 0); }
-		virtual void	 OnPNLRedraw(MESHHANDLE meshPanel)	{}
-		virtual int		 GetPanelMouseFlags()				{ return PANEL_MOUSE_IGNORE; }
-		virtual int		 GetPanelRedrawFlags()				{ return PANEL_REDRAW_NEVER; }
-
-		//		virtual ~IPNLTarget() = 0;
+	struct vc_event_target : public event_target {
+		virtual VECTOR3&	vc_event_location()					{ return _V(0.0, 0.0, 0.0); }
+		virtual double		vc_event_radius()					{ return 0.0; }
+		virtual int			vc_mouse_flags()					{ return PANEL_MOUSE_IGNORE; }
+		virtual int			vc_redraw_flags()					{ return PANEL_REDRAW_NEVER; }
+		virtual void		on_vc_redraw(DEVMESHHANDLE meshVC)	{}
 	};
 
 	/**
-	IInit
+	panel_event_target
+	Implemented to indicate that a panel control is a target for either mouse events, or redraw
+	events, or both.  If you need mouse events, override vc_mouse_flags to enable mouse events.
+	For redraw events, override vc_redraw_flags.
+	*/
+	struct panel_event_target : public event_target {
+		virtual RECT&		panel_rect()							{ return _R(0, 0, 0, 0); }
+		virtual int			panel_mouse_flags()						{ return PANEL_MOUSE_IGNORE; }
+		virtual int			panel_redraw_flags()					{ return PANEL_REDRAW_NEVER; }
+		virtual void		on_panel_redraw(MESHHANDLE meshPanel)	{}
+	};
+
+	/**
+	set_class_caps
 	Indicates the class participates in setClassCaps.  The class must implement the
-	call void Init(BaseVessel&).
+	call void handle_set_class_caps(BaseVessel&).
 	*/
-	struct IInit
+	struct set_class_caps
 	{
-		virtual void Init(BaseVessel& vessel) = 0;
-	};
-
-	template <typename T>
-	struct ISink {
-		virtual void notify(T value) = 0;
-	};
-
-	template<typename T>
-	class notify {
-	public:
-		void Subscribe(const std::function<void(const T&)>& sub) {
-			subs_.emplace_back(sub);
-		}
-
-	protected:
-		void Emit(T value) const {
-			for (const auto& v : subs_) {
-				v(value);
-			}
-		}
-
-	private:
-		std::vector<std::function<void(const T&)>> subs_;
+		virtual void handle_set_class_caps(BaseVessel& vessel) = 0;
 	};
 
 	/**

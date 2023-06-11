@@ -1,4 +1,4 @@
-//	on_off_texture - bco Orbiter Library
+//	on_off_display_event - bco Orbiter Library
 //	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
@@ -23,16 +23,16 @@
 namespace bc_orbiter {
 
 	/*
-	* on_off_texture
-	* Creates a visual only binary state control that can be used in VC and panel UIs.  
-	* For both VC and Panel, the class takes an NTVERTEX array that is assumed to have 4 entries
-	* and represents a rectangle.  The UV texture for that rectangle is shifted to the right in the 
-	* 'x' axis 'offset' amount to move from OFF to ON.
-	* The state of the UI is control via a slot input.
+	on_off_display_event
+	Creates a hibrid visual and mouse event binary state control that can be used in VC and panel UIs.
+	For both VC and Panel, the class takes an NTVERTEX array that is assumed to have 4 entries
+	and represents a rectangle.  The UV texture for that rectangle is shifted to the right in the
+	'x' axis 'offset' amount to move from OFF to ON.
+	The state of the UI is control via a slot input.
 	**/
-	class on_off_texture : public control, public IVCTarget, public IPNLTarget {
+	class on_off_display_event : public control, public vc_event_target, public panel_event_target {
 	public:
-		on_off_texture(
+		on_off_display_event(
 			int ctrlId,
 			const UINT vcGroupId,
 			const NTVERTEX* vcVerts,
@@ -55,7 +55,7 @@ namespace bc_orbiter {
 		{
 		}
 
-			void OnVCRedraw(DEVMESHHANDLE vcMesh) override {
+			void on_vc_redraw(DEVMESHHANDLE vcMesh) override {
 				NTVERTEX* delta = new NTVERTEX[4];
 
 				TransformUV2d(
@@ -75,23 +75,35 @@ namespace bc_orbiter {
 				delete[] delta;
 			}
 
-			void OnPNLRedraw(MESHHANDLE meshPanel) override {
+			void on_panel_redraw(MESHHANDLE meshPanel) override {
 				DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, state_, offset_);
 			}
 
-			int GetVCMouseFlags() { return PANEL_MOUSE_IGNORE; }
-			int GetVCRedrawFlags() { return PANEL_REDRAW_USER; }
-			int GetPanelMouseFlags() { return PANEL_MOUSE_IGNORE; }
-			int GetPanelRedrawFlags() { return PANEL_REDRAW_USER; }
+			int vc_mouse_flags() { return PANEL_MOUSE_LBDOWN; }
+			int vc_redraw_flags() { return PANEL_REDRAW_USER; }
+			int panel_mouse_flags() { return PANEL_MOUSE_LBDOWN; }
+			int panel_redraw_flags() { return PANEL_REDRAW_USER; }
 
+			// event_target
+			bool on_event() override {
+				// Note: Event here does not alter state, that comes from the slot.
+				// State is only altered through the slot.
+
+				signal_.fire(!state_);
+				return true;
+			}
+
+			// signal
+			signal<bool>& Signal() { return signal_; }
 			slot<double>& Slot() { return slotState_; }
 	private:
-		UINT					vcGroupId_;
+		UINT			vcGroupId_;
 		const NTVERTEX* vcVerts_;
-		UINT					pnlGroupId_;
+		UINT			pnlGroupId_;
 		const NTVERTEX* pnlVerts_;
-		bool					state_{ false };
-		double					offset_{ 0.0 };
-		slot<double>			slotState_;
+		bool			state_{ false };
+		double			offset_{ 0.0 };
+		slot<double>	slotState_;
+		signal<bool>	signal_;
 	};
 }

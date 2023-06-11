@@ -46,7 +46,7 @@ void PowerSystem::Step(double simt, double simdt, double mjd)
 		prevTime_ = simt;
 
 		signalVoltLevel_.fire(mainCircuit_.GetVoltLevel());
-		signalAmpMeter_.fire(mainCircuit_.GetTotalAmps());
+		signalAmpLoad_.fire(mainCircuit_.GetTotalAmps());
 	}
 }
 

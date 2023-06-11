@@ -23,18 +23,17 @@
 
 FuelCell::FuelCell(bco::BaseVessel* vessel, double amps) :
 PoweredComponent(vessel, amps, 26.0),
-powerSystem_(nullptr),
 oxygenSystem_(nullptr),
 hydrogenSystem_(nullptr),
 isFuelCellAvailable_(false),
-slotMainPower_([&](bool v) { isSlotPowerOn_ = v; })
+slotMainPower_([&](bool v) { isSlotPowerOn_ = v; }),
+slotAmpLoad_([&](double v) { ampDrawFactor_ = v / 100; })
 {
 }
 
 void FuelCell::Step(double simt, double simdt, double mjd)
 {
-	if ((nullptr == powerSystem_) ||
-		(nullptr == oxygenSystem_) || 
+	if ((nullptr == oxygenSystem_) || 
 		(nullptr == hydrogenSystem_) || 
 		!(HasPower() && isSlotPowerOn_))
 	{
@@ -45,9 +44,8 @@ void FuelCell::Step(double simt, double simdt, double mjd)
 		/*	The burn rate is figured at 100 amps per second. We need to adjust the
 			burnrate for the current amp draw and multiply by the time delta.
 			*/
-		auto ampsFactor = powerSystem_->GetAmpDraw() / 100;
-		auto oBurn = (OXYGEN_BURN_RATE * ampsFactor) * simdt;
-		auto hBurn = (HYDROGEN_BURN_RATE * ampsFactor) * simdt;
+		auto oBurn = (OXYGEN_BURN_RATE * ampDrawFactor_) * simdt;
+		auto hBurn = (HYDROGEN_BURN_RATE * ampDrawFactor_) * simdt;
 
 		auto drawOxy = oxygenSystem_->Draw(oBurn);
 		auto drawHyd = hydrogenSystem_->Draw(hBurn);
@@ -61,11 +59,6 @@ void FuelCell::Step(double simt, double simdt, double mjd)
 double FuelCell::CurrentDraw()
 {
 	return (HasPower() && isSlotPowerOn_) ? PoweredComponent::CurrentDraw() : 0.0;
-}
-
-void FuelCell::OnSetClassCaps()
-{
-//    swPower_.Setup(GetBaseVessel());
 }
 
 bool FuelCell::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)

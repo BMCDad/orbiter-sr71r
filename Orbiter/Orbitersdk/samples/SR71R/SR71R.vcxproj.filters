@@ -237,13 +237,19 @@
     <ClInclude Include="bc_orbiter\signals.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\on_off_texture.h">
+    <ClInclude Include="bc_orbiter\on_off_display.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\Control.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\on_off_input.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\control.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\rotary_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\on_off_display_event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

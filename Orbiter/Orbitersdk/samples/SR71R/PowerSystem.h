@@ -78,7 +78,7 @@ public:
 	double GetAmpDraw()								{ return mainCircuit_.GetTotalAmps(); }	// TODO: Make signal
 
 	bco::signal<double>& VoltLevelSignal()			{ return signalVoltLevel_; }			// Changes in volt level
-	bco::signal<double>& AmpLevelSignal()			{ return signalAmpMeter_; }				// Changes in amp level
+	bco::signal<double>& AmpLoadSignal()			{ return signalAmpLoad_; }				// Changes in amp load 
 	bco::signal<double>& ExternalAvailableSignal()  { return signalExternalAvailable_; }	// External resources available
 	bco::signal<double>& ExternalConnectedSignal()  { return signalExternalConnected_; }	// External connection status
 	bco::signal<double>& FuelCellConnectedSignal()  { return signalFuelCellConnected_; }	// Fuelcell connection status
@@ -98,7 +98,7 @@ private:
 	const double			AMP_OVERLOAD	= 100.0;
 
 	bco::signal<double>		signalVoltLevel_;
-	bco::signal<double>		signalAmpMeter_;
+	bco::signal<double>		signalAmpLoad_;
 	bco::signal<double>		signalExternalAvailable_;
 	bco::signal<double>		signalExternalConnected_;
 	bco::signal<double>		signalFuelCellConnected_;

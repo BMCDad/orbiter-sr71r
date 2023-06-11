@@ -3,8 +3,9 @@
 #include "Orbitersdk.h"
 
 #include "bc_orbiter\BaseVessel.h"
-#include "bc_orbiter\on_off_texture.h"
+#include "bc_orbiter\on_off_display.h"
 #include "bc_orbiter\on_off_input.h"
+#include "bc_orbiter\rotary_display.h"
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
@@ -178,9 +179,29 @@ private:
 		bm::pnl::pnlPwrFC_RC
 	};
 
+	bco::on_off_input		switchCanopyPower{		// Canopy Power
+		GetControlId(),
+		{ bm::vc::SwCanopyPower_id },
+		bm::vc::SwCanopyPower_location, bm::vc::PowerTopRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlPwrCanopy_id,
+		bm::pnl::pnlPwrCanopy_verts,
+		bm::pnl::pnlPwrCanopy_RC
+	};
+
+	bco::on_off_input		switchCanopyOpen{		// Canopy Open
+		GetControlId(),
+		{ bm::vc::SwCanopyOpen_id },
+		bm::vc::SwCanopyOpen_location, bm::vc::DoorsRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlDoorCanopy_id,
+		bm::pnl::pnlDoorCanopy_verts,
+		bm::pnl::pnlDoorCanopy_RC
+	};
+
 
 	// *** GAUGES ***
-	bco::Gauge				gaugePowerVolts_{
+	bco::rotary_display				gaugePowerVolts_{
 		{ bm::vc::gaugeVoltMeter_id },
 		bm::vc::gaugeVoltMeter_location, bm::vc::VoltMeterFrontAxis_location,
 		bm::pnl::pnlVoltMeter_id,
@@ -190,7 +211,7 @@ private:
 		[](double d) {return (d / 30); }	// Transform from volts to anim-range.
 	};
 
-	bco::Gauge				gaugePowerAmps_{
+	bco::rotary_display				gaugePowerAmps_{
 		{ bm::vc::gaugeAmpMeter_id },
 		bm::vc::gaugeAmpMeter_location, bm::vc::VoltMeterFrontAxis_location,
 		bm::pnl::pnlAmpMeter_id,
@@ -202,7 +223,7 @@ private:
 
 
 	// *** POWER STATUS LIGHTS:
-	bco::on_off_texture		lightFuelCellAvail_{
+	bco::on_off_display		lightFuelCellAvail_{
 		GetControlId(),
 		bm::vc::FuelCellAvailableLight_id,
 		bm::vc::FuelCellAvailableLight_verts,
@@ -211,7 +232,7 @@ private:
 		0.0244 
 	};
 
-	bco::on_off_texture		lightExternalAvail_{
+	bco::on_off_display		lightExternalAvail_{
 		GetControlId(),
 		bm::vc::ExtAvailableLight_id,
 		bm::vc::ExtAvailableLight_verts,
@@ -220,7 +241,7 @@ private:
 		0.0244
 	};
 
-	bco::on_off_texture		lightFuelCellConnected_{
+	bco::on_off_display		lightFuelCellConnected_{
 		GetControlId(),
 		bm::vc::FuelCellConnectedLight_id,
 		bm::vc::FuelCellConnectedLight_verts,
@@ -229,7 +250,7 @@ private:
 		0.0244
 	};
 
-	bco::on_off_texture		lightExternalConnected_{
+	bco::on_off_display		lightExternalConnected_{
 		GetControlId(),
 		bm::vc::ExtConnectedLight_id,
 		bm::vc::ExtConnectedLight_verts,

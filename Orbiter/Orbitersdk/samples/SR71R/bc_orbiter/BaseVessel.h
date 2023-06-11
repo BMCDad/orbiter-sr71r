@@ -275,34 +275,34 @@ namespace bc_orbiter
 
 		void AddControl(control* ctrl) { controls_.push_back(ctrl); }
 
-		void AddComponent(IInit* c) { components_.push_back(c); }
+		void AddComponent(set_class_caps* c) { components_.push_back(c); }
 	private:
 		void HandleClassCaps()
 		{
 			for each (auto& vc in controls_)
 			{
-				if (auto* c = dynamic_cast<IVCAnimate*>(vc)) {
-					auto aid = CreateVCAnimation(c->GetVCAnimationStateController(), c->GetVCAnimationSpeed());
-					auto tr = c->GetVCAnimationGroup();
+				if (auto* c = dynamic_cast<vc_animation*>(vc)) {
+					auto aid = CreateVCAnimation(c->vc_animation_state(), c->vc_animation_speed());
+					auto tr = c->vc_animation_group();
 					AddVCAnimationComponent(aid, GetVCMeshIndex(), tr);
 				}
 
-				if (auto* c = dynamic_cast<IPNLAnimate*>(vc)) {
+				if (auto* c = dynamic_cast<panel_animation*>(vc)) {
 					vecPNLAnimations_.push_back(c);
 				}
 
-				if (auto* c = dynamic_cast<IVCTarget*>(vc)) {
+				if (auto* c = dynamic_cast<vc_event_target*>(vc)) {
 					mapVCTargets_[vc->get_id()] = c;
 				}
 
-				if (auto* c = dynamic_cast<IPNLTarget*>(vc)) {
+				if (auto* c = dynamic_cast<panel_event_target*>(vc)) {
 					mapPNLTargets_[vc->get_id()] = c;
 				}
 			}
 
-			// IInit will flesh out to a more general 'component' list (non-ui/control intities)
+			// set_class_caps will flesh out to a more general 'component' list (non-ui/control intities)
 			for each (auto & cc in components_) {
-				if (auto* ac = dynamic_cast<IInit*>(cc)) ac->Init(*this);
+				if (auto* ac = dynamic_cast<set_class_caps*>(cc)) ac->handle_set_class_caps(*this);
 			}
 		}
 
@@ -311,13 +311,13 @@ namespace bc_orbiter
 			for each (auto & vc in mapVCTargets_) {
 				oapiVCRegisterArea(
 					vc.first,							// Area ID
-					vc.second->GetVCRedrawFlags(),		// PANEL_REDRAW_*
-					vc.second->GetVCMouseFlags());		// PANEL_MOUSE_*
+					vc.second->vc_redraw_flags(),		// PANEL_REDRAW_*
+					vc.second->vc_mouse_flags());		// PANEL_MOUSE_*
 
 				oapiVCSetAreaClickmode_Spherical(
 					vc.first,							// Area ID
-					vc.second->GetVCEventLocation(), 
-					vc.second->GetVCEventRadius());
+					vc.second->vc_event_location(), 
+					vc.second->vc_event_radius());
 			}
 			
 			// TODO: vcRedraw
@@ -330,21 +330,21 @@ namespace bc_orbiter
 				RegisterPanelArea(
 					hPanel, 
 					p.first,							// Area ID
-					p.second->GetPanelRect(), 
-					p.second->GetPanelRedrawFlags(),	// PANEL_REDRAW_*
-					p.second->GetPanelMouseFlags());	// PANEL_MOUSE_*
+					p.second->panel_rect(), 
+					p.second->panel_redraw_flags(),	// PANEL_REDRAW_*
+					p.second->panel_mouse_flags());	// PANEL_MOUSE_*
 			}
 		}
 
 		std::map<UINT, std::unique_ptr<IAnimation>>     vcAnimations_;
-		std::map<int, IVCTarget*>						mapVCTargets_;
-		std::map<int, IPNLTarget*>						mapPNLTargets_;
-		std::vector<IPNLAnimate*>						vecPNLAnimations_;
+		std::map<int, vc_event_target*>						mapVCTargets_;
+		std::map<int, panel_event_target*>						mapPNLTargets_;
+		std::vector<panel_animation*>						vecPNLAnimations_;
 		
 		//**** END NEW STYLE
 
 		std::vector<control*>		controls_;
-		std::vector<IInit*>			components_;
+		std::vector<set_class_caps*>			components_;
 
 	private:
 		bool IsModeSet(VCIdMode test, VCIdMode mode) const
@@ -394,7 +394,7 @@ namespace bc_orbiter
 		meshVirtualCockpit0_(nullptr),
 		vcMeshHandle0_(nullptr)
 	{
-		// Init vessel status.
+		// handle_set_class_caps vessel status.
 		memset(&vesselStatus_, 0, sizeof(vesselStatus_));
 		vesselStatus_.version = 2;
 	}
@@ -485,7 +485,7 @@ namespace bc_orbiter
 		// NEW mode
 		auto vc = mapVCTargets_.find(id);
 		if (vc != mapVCTargets_.end()) {
-			vc->second->OnEvent();
+			vc->second->on_event();
 		}
 
 		return false;
@@ -513,7 +513,7 @@ namespace bc_orbiter
 		// NEW mode
 		auto pe = mapVCTargets_.find(id);
 		if (pe != mapVCTargets_.end()) {
-			pe->second->OnVCRedraw(meshVirtualCockpit0_);
+			pe->second->on_vc_redraw(meshVirtualCockpit0_);
 		}
 
 		return false;
@@ -554,7 +554,7 @@ namespace bc_orbiter
 		if (oapiCockpitMode() == COCKPIT_PANELS) {
 			auto mesh = GetpanelMeshHandle0();
 			for (auto& pa : vecPNLAnimations_) {
-				pa->PanelStep(mesh, simdt);
+				pa->panel_step(mesh, simdt);
 			}
 		}
     }
@@ -608,7 +608,7 @@ namespace bc_orbiter
 		// NEW mode
 		auto pe = mapPNLTargets_.find(id);
 		if (pe != mapPNLTargets_.end()) {
-			pe->second->OnPNLRedraw(GetpanelMeshHandle0());
+			pe->second->on_panel_redraw(GetpanelMeshHandle0());
 		}
 
 		return true;
@@ -629,7 +629,7 @@ namespace bc_orbiter
 		// NEW mode
 		auto pe = mapPNLTargets_.find(id);
 		if (pe != mapPNLTargets_.end()) {
-			pe->second->OnEvent();
+			pe->second->on_event();
 		}
 
 		return true;

@@ -215,7 +215,7 @@ private:
     };
 
 
-	//			340.0	Gauge layout based on 340deg circle.
+	//			340.0	rotary_display layout based on 340deg circle.
 	//	6000	170.0
 	//	5500	168.8
 	//	5000	165.3

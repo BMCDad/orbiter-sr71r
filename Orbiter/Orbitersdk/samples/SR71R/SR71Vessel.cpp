@@ -84,6 +84,10 @@ retroEngines_(          this,   RETRO_AMPS)
 	/*  FUELCELL SWITCHES */
 	AddControl(&switchFuelCellPower);
 
+	/*  Canopy SWITCHES */
+	AddControl(&switchCanopyPower);
+	AddControl(&switchCanopyOpen);
+
 	/*  POWER LIGHTS  */
 	AddControl(&lightFuelCellAvail_);
 	AddControl(&lightExternalAvail_);
@@ -111,15 +115,20 @@ retroEngines_(          this,   RETRO_AMPS)
 	bco::connector  vcPower			{ fuelCell_.AvailablePowerSignal(),				powerSystem_.FuelCellAvailablePowerSlot()};
 	bco::connector	lgtFCAvail		{ fuelCell_.AvailablePowerSignal(),				lightFuelCellAvail_.Slot() };
 	bco::connector  pwrFCMain		{ switchFuelCellPower.Signal(),					fuelCell_.MainPowerSlot() };
+	bco::connector	fcAmpLoad		{ powerSystem_.AmpLoadSignal(),					fuelCell_.AmpLoadSlot() };
 
 	// Power gauges
 	bco::connector	gaVolts			{ powerSystem_.VoltLevelSignal(),				gaugePowerVolts_.Slot() };
-	bco::connector	gaAmps			{ powerSystem_.AmpLevelSignal(),				gaugePowerAmps_.Slot() };
+	bco::connector	gaAmps			{ powerSystem_.AmpLoadSignal(),					gaugePowerAmps_.Slot() };
 
 	// Power status lights
 	bco::connector	lgtFCConnect	{ powerSystem_.FuelCellConnectedSignal(),		lightFuelCellConnected_.Slot() };
 	bco::connector	lgtExtAvail		{ powerSystem_.ExternalAvailableSignal(),		lightExternalAvail_.Slot() };
 	bco::connector	lgtExtConnect	{ powerSystem_.ExternalConnectedSignal(),		lightExternalConnected_.Slot() };
+
+	// Canopy
+	bco::connector	cpPwr			{ switchCanopyPower.Signal(),					canopy_.PowerEnabledSlot() };
+	bco::connector  cpOpen			{ switchCanopyOpen.Signal(),					canopy_.CanopyOpenSlot() };
 }
 
 
@@ -141,7 +150,6 @@ void SR71Vessel::SetupVesselComponents()
 	// Fuelcell
 	fuelCell_.SetHydrogenSytem(&hydrogenTank_);
 	fuelCell_.SetOxygenSystem(&oxygenTank_);
-	fuelCell_.SetPowerSystem(&powerSystem_);
 
 	// Status board
 	statusBoard_.SetCargoBay(&cargoBayController_);

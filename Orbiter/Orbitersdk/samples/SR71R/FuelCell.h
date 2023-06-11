@@ -64,8 +64,6 @@ class FuelCell :
 public:
 	FuelCell(bco::BaseVessel* vessel, double amps);
 
-	virtual void OnSetClassCaps() override;
-	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
@@ -87,14 +85,11 @@ public:
 		return isFuelCellAvailable_; 
 	}
 
-	//double AvailablePower() { return IsFuelCellPowerAvailable() ? 27.0 : 0.0; }
-	
 	bco::signal<double>& AvailablePowerSignal() { return sigAvailPower_; }
-//	bco::OnOffSwitch&	PowerSwitch() { return swPower_; }
 
 	bco::slot<bool>& MainPowerSlot() { return slotMainPower_; }
+	bco::slot<double>& AmpLoadSlot() { return slotAmpLoad_; }
 
-	void SetPowerSystem(	PowerSystem* ps)	{ powerSystem_ = ps; }
 	void SetOxygenSystem(	IConsumable* os)	{ oxygenSystem_ = os; }
 	void SetHydrogenSytem(	IConsumable* hs)	{ hydrogenSystem_ = hs; }
 
@@ -105,10 +100,12 @@ private:
 	bco::signal<double>	sigAvailPower_;
 
 	bco::slot<bool> slotMainPower_;
+	bco::slot<double> slotAmpLoad_;		// Comes from the power system.
 
 	bool				isSlotPowerOn_{ false };
 	bool				isFuelCellAvailable_;
 	double				availablePower_;
+	double				ampDrawFactor_{ 0.0 };
 
 	PowerSystem*		powerSystem_;
 	IConsumable*		oxygenSystem_;

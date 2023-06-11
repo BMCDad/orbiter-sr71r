@@ -89,7 +89,7 @@ bool O2Supply::OnLoadVC(int id)
 
 void O2Supply::Update()
 {
-    IsAvailable(GetBaseVessel()->IsStoppedOrDocked() && HasPower());
+    IsAvailable(GetBaseVessel()->IsStoppedOrDocked() && HasPower());  // Get from power.externavail signal
 
 	if (!IsAvailable())
 	{

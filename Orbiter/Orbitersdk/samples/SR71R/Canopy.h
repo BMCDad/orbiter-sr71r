@@ -47,6 +47,15 @@ a - 0/1 Power switch off/on.
 b - 0/1 Open close switch closed/open.
 c - 0.0-1.0 current canopy position.
 
+: rewrite :
+related
+on_off_input (canopy power):
+: signal canopy slot: has_power
+on_off_input (canopy open):
+: signal to canopy slot: open/close
+
+- inputs:
+:slot - has power
 */
 class Canopy : public bco::PoweredComponent
 {
@@ -54,13 +63,8 @@ public:
     Canopy(bco::BaseVessel* vessel, double amps);
 
     virtual void OnSetClassCaps() override;
-	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
-
-    bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-    bool OnPanelMouseEvent(int id, int event) override;
-    bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
 
     /**
     The draw is only active when in motion.
@@ -72,29 +76,23 @@ public:
     */
     void Step(double simt, double simdt, double mjd);
 
-
-    bco::OnOffSwitch&	CanopyPowerSwitch();
-    bco::OnOffSwitch&	CanopyOpenSwitch();
-
     double				GetCanopyState();
+
+    bco::slot<bool>& PowerEnabledSlot() { return slotCanopyPowered_; }
+    bco::slot<bool>& CanopyOpenSlot() { return slotCanopyOpenClose_; }
 
 private:
     bool CanopyHasPower();
 
     const char*			    ConfigKeyCanopy = "CANOPY";
 
-    bco::Animation		    animCanopy_     {   &swCanopyOpen_, 0.2};
+    bco::Animation		    animCanopy_{ 0.2 };
     UINT                    idAnim_         { 0 };
 
-    bco::VCToggleSwitch     swCanopyPower_  {   bm::vc::SwCanopyPower_id,
-                                                bm::vc::SwCanopyPower_location,
-                                                bm::vc::PowerTopRightAxis_location
-                                            };
+    bco::slot<bool>         slotCanopyPowered_;
+    bco::slot<bool>         slotCanopyOpenClose_;
 
-    bco::VCToggleSwitch     swCanopyOpen_   {   bm::vc::SwCanopyOpen_id,
-                                                bm::vc::SwCanopyOpen_location,
-                                                bm::vc::DoorsRightAxis_location
-                                            };
+    bool                    powerSwitchOn_{ false };
 
     bco::AnimationGroup     gpCanopy_       { { bm::main::CanopyFO_id,
                                                 bm::main::ForwardCanopyWindow_id,
@@ -114,22 +112,4 @@ private:
                                                 (55 * RAD),
                                                 0, 1
                                             };
-
-    const int ID_DOOR = { GetBaseVessel()->GetIdForComponent(this) };
-    const int ID_POWER = { GetBaseVessel()->GetIdForComponent(this) };
-
-    struct PnlData
-    {
-        const UINT group;
-        const RECT rc;
-        const NTVERTEX* verts;
-        std::function<void(void)> update;
-        std::function<bool(void)> isActive;
-    };
-
-    std::map<int, PnlData> pnlData_
-    {
-        {ID_DOOR,	{bm::pnl::pnlDoorCanopy_id,	 bm::pnl::pnlDoorCanopy_RC,	 bm::pnl::pnlDoorCanopy_verts,	[&]() {swCanopyOpen_.Toggle(); },  [&]() {return swCanopyOpen_.IsOn(); }}},
-        {ID_POWER,	{bm::pnl::pnlPwrCanopy_id,   bm::pnl::pnlPwrCanopy_RC,   bm::pnl::pnlPwrCanopy_verts,   [&]() {swCanopyPower_.Toggle(); }, [&]() {return swCanopyPower_.IsOn(); }}}
-    };
 };
