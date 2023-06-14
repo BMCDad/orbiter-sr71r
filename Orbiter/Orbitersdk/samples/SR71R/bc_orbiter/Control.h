@@ -40,6 +40,7 @@ namespace bc_orbiter {
 		virtual AnimationGroup*		vc_animation_group() = 0;
 		virtual IAnimationState*	vc_animation_state() = 0;
 		virtual double				vc_animation_speed() const = 0;
+		virtual double				vc_step(double simdt) { return 0.0; }
 	};
 
 	/**

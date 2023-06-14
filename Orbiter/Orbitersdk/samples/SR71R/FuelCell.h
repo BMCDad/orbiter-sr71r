@@ -59,7 +59,7 @@ namespace bco = bc_orbiter;
 class FuelCell : 
 	public bco::PoweredComponent
 {
-	const int MAX_VOLTS = 28.0;
+	const double MAX_VOLTS = 28.0;
 
 public:
 	FuelCell(bco::BaseVessel* vessel, double amps);

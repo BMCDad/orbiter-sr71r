@@ -221,8 +221,8 @@ public:
 
 class HoldKeasProgram : public ControlProgram
 {
-    double prevAtmoKeas_{ 0 };
-	double target_;
+    double prevAtmoKeas_{ 0.0 };
+    double target_{ 0.0 };
 
 public:
     HoldKeasProgram(IVesselControl& v) : ControlProgram(v)
@@ -257,7 +257,7 @@ public:
 
 class HoldMachProgram : public ControlProgram
 {
-    double prevAtmoMach_{ 0 };
+    double prevAtmoMach_{ 0.0 };
 	double target_{ 0.0 };
 
 public:

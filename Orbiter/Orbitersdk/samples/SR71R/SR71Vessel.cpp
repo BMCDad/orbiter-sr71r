@@ -88,6 +88,13 @@ retroEngines_(          this,   RETRO_AMPS)
 	AddControl(&switchCanopyPower);
 	AddControl(&switchCanopyOpen);
 
+	/*	APU Switch */
+	AddControl(&switchApuPower);
+
+	/*  Cargo SWITCHES */
+	AddControl(&switchCargoPower);
+	AddControl(&switchCargoOpen);
+
 	/*  POWER LIGHTS  */
 	AddControl(&lightFuelCellAvail_);
 	AddControl(&lightExternalAvail_);
@@ -97,6 +104,13 @@ retroEngines_(          this,   RETRO_AMPS)
 	/*  Gauges  */
 	AddControl(&gaugePowerVolts_);
 	AddControl(&gaugePowerAmps_);
+	AddControl(&gaugeAPULevel_);
+
+	/*  Clock  */
+	AddControl(&clockTimerSecondsHand_);
+	AddControl(&clockTimerMinutesHand_);
+	AddControl(&clockElapsedMinutesHand_);
+	AddControl(&clockElapsedHoursHand_);
 
 	//
 	AddComponent(&lightNav_);
@@ -129,6 +143,20 @@ retroEngines_(          this,   RETRO_AMPS)
 	// Canopy
 	bco::connector	cpPwr			{ switchCanopyPower.Signal(),					canopy_.PowerEnabledSlot() };
 	bco::connector  cpOpen			{ switchCanopyOpen.Signal(),					canopy_.CanopyOpenSlot() };
+
+	// Cargo
+	bco::connector	cgPwr			{ switchCargoPower.Signal(),					cargoBayController_.PowerEnabledSlot() };
+	bco::connector  cgOpen			{ switchCargoOpen.Signal(),						cargoBayController_.CargoOpenSlot() };
+
+	// APU
+	bco::connector	apuPwr			{ switchApuPower.Signal(),						apu_.APUPowerSlot() };
+	bco::connector  apuGa			{ apu_.HydroPressSignal(),						gaugeAPULevel_.Slot() };
+
+	// Clock
+	bco::connector clkTS			{ clock_.TimerSecondsSignal(),					clockTimerSecondsHand_.Slot() };
+	bco::connector clkTM			{ clock_.TimerMinutesSignal(),					clockTimerMinutesHand_.Slot() };
+	bco::connector clkEM			{ clock_.ElapsedMinutesSignal(),				clockElapsedMinutesHand_.Slot() };
+	bco::connector clkEH			{ clock_.ElapsedHoursSignal(),					clockElapsedHoursHand_.Slot() };
 }
 
 

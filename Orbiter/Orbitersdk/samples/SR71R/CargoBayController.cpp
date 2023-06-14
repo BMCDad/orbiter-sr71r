@@ -1,5 +1,5 @@
 //	CarboBayController - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -22,22 +22,15 @@
 #include "CargoBayController.h"
 #include "SR71r_mesh.h"
 
-
-bco::OnOffSwitch& CargoBayController::CargoBayDoorsPowerSwitch() { return swCargoPower_; }
-bco::OnOffSwitch& CargoBayController::CargoBayDoorsOpenSwitch() { return swCargoOpen_; }
-
-double CargoBayController::GetCargoBayState()
-{
-	return animCargoBayDoors_.GetState();
-}
-
 bool CargoBayController::CargoBayHasPower() 
 { 
-	return HasPower() && swCargoPower_.IsOn(); 
+    return HasPower() && slotCargoPowered_.value();
 }
 
 CargoBayController::CargoBayController(bco::BaseVessel* vessel, double amps) :
-PoweredComponent(vessel, amps, 26.0)
+    PoweredComponent(vessel, amps, 26.0),
+    slotCargoPowered_([&](bool v) { powerSwitchOn_ = v; }),
+    slotCargoOpenClose_([&](bool v) {})
 {
 }
 
@@ -52,7 +45,7 @@ void CargoBayController::Step(double simt, double simdt, double mjd)
 {
 	if (CargoBayHasPower())
 	{
-		animCargoBayDoors_.Step(swCargoOpen_.GetState(), simdt);
+        animCargoBayDoors_.Step(slotCargoOpenClose_.value() ? 1.0 : 0.0, simdt);
 	}
 }
 
@@ -60,32 +53,34 @@ bool CargoBayController::OnLoadConfiguration(char* key, FILEHANDLE scn, const ch
 {
     if (_strnicmp(key, ConfigKeyCargo, 8) != 0) return false;
 
-    int isOn;
-	int isOpen;
-	double state;
+    // TODO
+ //   int isOn;
+	//int isOpen;
+	//double state;
 
-	sscanf_s(configLine + 8, "%d%d%lf", &isOn, &isOpen, &state);
+	//sscanf_s(configLine + 8, "%d%d%lf", &isOn, &isOpen, &state);
 
-	swCargoPower_.SetState((isOn == 0) ? 0.0 : 1.0);
-	swCargoOpen_.SetState((isOpen == 0) ? 0.0 : 1.0);
-	animCargoBayDoors_.SetState(state);
-    
-    // Set the actual animation to the starting state.
-    GetBaseVessel()->SetAnimationState(idCargoAnim_, state);
+	//swCargoPower_.SetState((isOn == 0) ? 0.0 : 1.0);
+	//swCargoOpen_.SetState((isOpen == 0) ? 0.0 : 1.0);
+	//animCargoBayDoors_.SetState(state);
+ //   
+ //   // Set the actual animation to the starting state.
+ //   GetBaseVessel()->SetAnimationState(idCargoAnim_, state);
 
 	return true;
 }
 
 void CargoBayController::OnSaveConfiguration(FILEHANDLE scn) const
 {
-	char cbuf[256];
+    // TODO
+	//char cbuf[256];
 
-	sprintf_s(cbuf, "%d %d %lf",
-		((swCargoPower_.GetState() == 0) ? 0 : 1),
-		((swCargoOpen_.GetState() == 0) ? 0 : 1),
-		animCargoBayDoors_.GetState());
+	//sprintf_s(cbuf, "%d %d %lf",
+	//	((swCargoPower_.GetState() == 0) ? 0 : 1),
+	//	((swCargoOpen_.GetState() == 0) ? 0 : 1),
+	//	animCargoBayDoors_.GetState());
 
-	oapiWriteScenario_string(scn, (char*)ConfigKeyCargo, cbuf);
+	//oapiWriteScenario_string(scn, (char*)ConfigKeyCargo, cbuf);
 }
 
 void CargoBayController::OnSetClassCaps()
@@ -93,42 +88,9 @@ void CargoBayController::OnSetClassCaps()
     auto vessel = GetBaseVessel();
     auto mIdx = vessel->GetMainMeshIndex();
 
-    swCargoOpen_.Setup(vessel);
-    swCargoPower_.Setup(vessel);
-
     idCargoAnim_ = vessel->CreateVesselAnimation(&animCargoBayDoors_, 0.01);
     vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoLeftFront_);
     vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoRightFront_);
     vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoLeftMain_);
     vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoRightMain_);
-}
-
-bool CargoBayController::OnLoadPanel2D(int id, PANELHANDLE hPanel)
-{
-    for each (auto & v in pnlData_)
-    {
-        oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
-        GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-    }
-
-    return true;
-}
-
-bool CargoBayController::OnPanelMouseEvent(int id, int event)
-{
-    auto p = pnlData_.find(id);
-    if (p == pnlData_.end()) return false;
-
-    p->second.update();
-    return true;
-}
-
-bool CargoBayController::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-    auto p = pnlData_.find(id);
-    if (p == pnlData_.end()) return false;
-
-    bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group, p->second.verts, p->second.isActive(), 0.0148);
-
-    return true;
 }

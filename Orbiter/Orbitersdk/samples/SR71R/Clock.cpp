@@ -42,10 +42,10 @@ void Clock::OnSetClassCaps()
     auto vessel = GetBaseVessel();
     
     //gaSecondHand_.Setup(vessel);
-	gaSecondHand_.Setup2(vessel, vessel->GetVCMeshIndex());
-    gaTimerMinute_.Setup2(vessel, vessel->GetVCMeshIndex());
-    gaHourHand_.Setup2(vessel, vessel->GetVCMeshIndex());
-    gaMinuteHand_.Setup2(vessel, vessel->GetVCMeshIndex());
+	//gaSecondHand_.Setup2(vessel, vessel->GetVCMeshIndex());
+ //   gaTimerMinute_.Setup2(vessel, vessel->GetVCMeshIndex());
+    //gaHourHand_.Setup2(vessel, vessel->GetVCMeshIndex());
+    //gaMinuteHand_.Setup2(vessel, vessel->GetVCMeshIndex());
 }
 
 void Clock::ResetElapsed()
@@ -88,16 +88,22 @@ void Clock::Step(double simt, double simdt, double mjd)
 
 	auto elapsedRun = simt - startElapsedTime_;
 
-	auto hourHandT =	fmod(elapsedRun, 43200) / 43200;
-	auto minHandT =		fmod(elapsedRun, 3600) / 3600;
+	//auto hourHandT =	fmod(elapsedRun, 43200) / 43200;
+	//auto minHandT =		fmod(elapsedRun, 3600) / 3600;
+
+	signalMinute_.fire(fmod((elapsedRun / 60), 60));
+	signalHour_.fire(fmod((elapsedRun / 3600), 12));
 
 	if (isTimerRunning_)
 	{
 		currentTimerTime_ = simt - startTimerTime_;
 	}
 	
-	auto secHandT =		fmod(currentTimerTime_, 60) / 60;
-	auto timerHandT =	fmod(currentTimerTime_, 3600) / 3600;
+	//auto secHandT =		fmod(currentTimerTime_, 60) / 60;
+	//auto timerHandT =	fmod(currentTimerTime_, 3600) / 3600;
+
+	signalTimerSecond_.fire(fmod(currentTimerTime_, 60));
+	signalTimerMinute_.fire(fmod((currentTimerTime_ / 60), 60));
 
     //gaSecondHand_.SetState(secHandT);
     //gaTimerMinute_.SetState(timerHandT);
@@ -106,35 +112,30 @@ void Clock::Step(double simt, double simdt, double mjd)
 
 	// the anim* classes will eventually drive all cockpit mode UI elements, so it stays outside of the cockpit mode switch.
 	// This will also keep the animations from 'jumping' when a cockpit mode is switched.
-	animTimerSecHand_.Step(secHandT, simdt);
-	animTimerMinuteHand_.Step(timerHandT, simdt);
-	animHourHand_.Step(hourHandT, simdt);
-	animMinuteHand_.Step(minHandT, simdt);
+	//animTimerSecHand_.Step(secHandT, simdt);
+	//animTimerMinuteHand_.Step(timerHandT, simdt);
+	//animHourHand_.Step(hourHandT, simdt);
+	//animMinuteHand_.Step(minHandT, simdt);
 
-	auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
+	//auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
 
-	switch (oapiCockpitMode())
-	{
-	case COCKPIT_PANELS:
-		// panel anims.
-		bco::RotateMesh(pMesh, bm::pnl::pnlClockSecond_id,		bm::pnl::pnlClockSecond_verts,		animTimerSecHand_.GetState() * -PI2);
-		bco::RotateMesh(pMesh, bm::pnl::pnlClockTimerMinute_id,	bm::pnl::pnlClockTimerMinute_verts,	animTimerMinuteHand_.GetState() * -PI2);
-		bco::RotateMesh(pMesh, bm::pnl::pnlClockHour_id,			bm::pnl::pnlClockHour_verts,		animHourHand_.GetState() * -PI2);
-		bco::RotateMesh(pMesh, bm::pnl::pnlClockMinute_id,		bm::pnl::pnlClockMinute_verts,		animMinuteHand_.GetState() * -PI2);
-		break;
+	//switch (oapiCockpitMode())
+	//{
+	//case COCKPIT_PANELS:
+	//	// panel anims.
+	//	//bco::RotateMesh(pMesh, bm::pnl::pnlClockSecond_id,		bm::pnl::pnlClockSecond_verts,		animTimerSecHand_.GetState() * -PI2);
+	//	//bco::RotateMesh(pMesh, bm::pnl::pnlClockTimerMinute_id,	bm::pnl::pnlClockTimerMinute_verts,	animTimerMinuteHand_.GetState() * -PI2);
+	//	bco::RotateMesh(pMesh, bm::pnl::pnlClockHour_id,			bm::pnl::pnlClockHour_verts,		animHourHand_.GetState() * -PI2);
+	//	bco::RotateMesh(pMesh, bm::pnl::pnlClockMinute_id,		bm::pnl::pnlClockMinute_verts,		animMinuteHand_.GetState() * -PI2);
+	//	break;
 
-	case COCKPIT_VIRTUAL:
-		gaSecondHand_.SetAnimation2(GetBaseVessel(), animTimerSecHand_.GetState());
-		gaTimerMinute_.SetAnimation2(GetBaseVessel(), animTimerMinuteHand_.GetState());
-		gaHourHand_.SetAnimation2(GetBaseVessel(), animHourHand_.GetState());
-		gaMinuteHand_.SetAnimation2(GetBaseVessel(), animMinuteHand_.GetState());
-		break;
-	}
-}
-
-bool Clock::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	return false;
+	//case COCKPIT_VIRTUAL:
+	//	//gaSecondHand_.SetAnimation2(GetBaseVessel(), animTimerSecHand_.GetState());
+	//	//gaTimerMinute_.SetAnimation2(GetBaseVessel(), animTimerMinuteHand_.GetState());
+	//	gaHourHand_.SetAnimation2(GetBaseVessel(), animHourHand_.GetState());
+	//	gaMinuteHand_.SetAnimation2(GetBaseVessel(), animMinuteHand_.GetState());
+	//	break;
+	//}
 }
 
 bool Clock::OnLoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)

@@ -282,9 +282,20 @@ namespace bc_orbiter
 			for each (auto& vc in controls_)
 			{
 				if (auto* c = dynamic_cast<vc_animation*>(vc)) {
-					auto aid = CreateVCAnimation(c->vc_animation_state(), c->vc_animation_speed());
-					auto tr = c->vc_animation_group();
-					AddVCAnimationComponent(aid, GetVCMeshIndex(), tr);
+					//auto aid = CreateVCAnimation(c->vc_animation_state(), c->vc_animation_speed());
+					//auto tr = c->vc_animation_group();
+					//AddVCAnimationComponent(aid, GetVCMeshIndex(), tr);
+					auto aid = VESSEL3::CreateAnimation(0);
+//					AddVCAnimationComponent(aid, GetVCMeshIndex(), c->vc_animation_group());
+					auto trans = c->vc_animation_group();
+					trans->transform_->mesh = GetVCMeshIndex();
+					VESSEL3::AddAnimationComponent(
+						aid,
+						trans->start_,
+						trans->stop_,
+						trans->transform_.get());
+
+					mapVCAnimations_[aid] = c;
 				}
 
 				if (auto* c = dynamic_cast<panel_animation*>(vc)) {
@@ -337,9 +348,10 @@ namespace bc_orbiter
 		}
 
 		std::map<UINT, std::unique_ptr<IAnimation>>     vcAnimations_;
-		std::map<int, vc_event_target*>						mapVCTargets_;
-		std::map<int, panel_event_target*>						mapPNLTargets_;
-		std::vector<panel_animation*>						vecPNLAnimations_;
+		std::map<int, vc_event_target*>					mapVCTargets_;
+		std::map<int, panel_event_target*>				mapPNLTargets_;
+		std::vector<panel_animation*>					vecPNLAnimations_;
+		std::map<int, vc_animation*>					mapVCAnimations_;
 		
 		//**** END NEW STYLE
 
@@ -544,10 +556,12 @@ namespace bc_orbiter
 
 		// NEW MODE
 		if (oapiCockpitMode() == COCKPIT_VIRTUAL) {
-			for (auto& va : vcAnimations_) {
-				va.second->Step(simdt);
-				auto state = va.second->GetState();
-				VESSEL3::SetAnimation(va.first, state);
+			for (auto& va : mapVCAnimations_) {
+				//va.second->Step(simdt);
+				//auto state = va.second->GetState();
+				//VESSEL3::SetAnimation(va.first, state);
+				auto newState = va.second->vc_step(simdt);
+				VESSEL3::SetAnimation(va.first, newState);
 			}
 		}
 

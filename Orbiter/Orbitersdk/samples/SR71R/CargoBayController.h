@@ -53,13 +53,8 @@ public:
 	CargoBayController(bco::BaseVessel* vessel, double amps);
 
 	virtual void OnSetClassCaps() override;
-	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
-
-    bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-    bool OnPanelMouseEvent(int id, int event) override;
-    bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
 
 	/**
 		We override from the base class because the calculation for this
@@ -72,33 +67,24 @@ public:
 	*/
 	void Step(double simt, double simdt, double mjd);
 
+//    double				GetCargoBayState();
 
-	// ICargoBay:
-	bco::OnOffSwitch&	CargoBayDoorsPowerSwitch();
-	bco::OnOffSwitch&	CargoBayDoorsOpenSwitch();
-
-    double				GetCargoBayState();
-
-	// Callbacks
+    bco::slot<bool>& PowerEnabledSlot() { return slotCargoPowered_; }
+    bco::slot<bool>& CargoOpenSlot() { return slotCargoOpenClose_; }
 
 private:
 	bool CargoBayHasPower();
 
     const char*			    ConfigKeyCargo = "CARGOBAY";
 
-    bco::Animation		    animCargoBayDoors_{ &swCargoOpen_, 0.01 };
+    bco::slot<bool>         slotCargoPowered_;
+    bco::slot<bool>         slotCargoOpenClose_;
+
+    bool                    powerSwitchOn_{ false };
+
+    bco::Animation		    animCargoBayDoors_{ 0.01 };
 
     UINT idCargoAnim_{ 0 };
-
-    bco::VCToggleSwitch     swCargoPower_       {   bm::vc::SwCargoPower_id,
-                                                    bm::vc::SwCargoPower_location, 
-                                                    bm::vc::PowerTopRightAxis_location
-                                                };
-
-    bco::VCToggleSwitch     swCargoOpen_        {   bm::vc::SwCargoOpen_id,
-                                                    bm::vc::SwCargoOpen_location,
-                                                    bm::vc::DoorsRightAxis_location
-                                                };
 
     bco::AnimationGroup     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
                                                     bm::main::Bay1AxisPA_location, bm::main::Bay1AxisPF_location,
@@ -123,22 +109,4 @@ private:
                                                     (160 * RAD),
                                                     0.26, 0.49
                                                 };
-
-    const int ID_DOOR = { GetBaseVessel()->GetIdForComponent(this) };
-    const int ID_POWER = { GetBaseVessel()->GetIdForComponent(this) };
-
-    struct PnlData
-    {
-        const UINT group;
-        const RECT rc;
-        const NTVERTEX* verts;
-        std::function<void(void)> update;
-        std::function<bool(void)> isActive;
-    };
-
-    std::map<int, PnlData> pnlData_
-    {
-        {ID_DOOR,	{bm::pnl::pnlDoorCargo_id,	bm::pnl::pnlDoorCargo_RC,	bm::pnl::pnlDoorCargo_verts, [&]() {swCargoOpen_.Toggle(); },  [&]() {return swCargoOpen_.IsOn(); }}},
-        {ID_POWER,	{bm::pnl::pnlPwrCargo_id,   bm::pnl::pnlPwrCargo_RC,    bm::pnl::pnlPwrCargo_verts,  [&]() {swCargoPower_.Toggle(); }, [&]() {return swCargoPower_.IsOn(); }}}
-    };
 };

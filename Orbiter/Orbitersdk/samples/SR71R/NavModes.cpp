@@ -189,11 +189,13 @@ bool NavModes::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group);
 	auto vrt = p->second.verts;
 
-	double trans = GetBaseVessel()->GetNavmodeState(p->second.mode) ? 0.0352 : 0.0;
+	float trans = (float)(GetBaseVessel()->GetNavmodeState(p->second.mode) ? 0.0352 : 0.0);
 	grp->Vtx[0].tu = vrt[0].tu + trans;
 	grp->Vtx[1].tu = vrt[1].tu + trans;
 	grp->Vtx[2].tu = vrt[2].tu + trans;
 	grp->Vtx[3].tu = vrt[3].tu + trans;
+
+	return true;
 }
 
 bool NavModes::OnPanelMouseEvent(int id, int event)

@@ -123,11 +123,10 @@ bool RCSSystem::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 		[&](const PnlData& d) {return d.id == id; },
 		[this](const PnlData& d)
 		{
-			double trans = 0.0;
 			auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), d.group);
 			auto vrt = d.verts;
 
-			trans = (GetBaseVessel()->GetAttitudeMode() == d.mode) ? 0.0352 : 0.0;
+			float trans = (float)((GetBaseVessel()->GetAttitudeMode() == d.mode) ? 0.0352 : 0.0);
 			grp->Vtx[0].tu = vrt[0].tu + trans;
 			grp->Vtx[1].tu = vrt[1].tu + trans;
 			grp->Vtx[2].tu = vrt[2].tu + trans;

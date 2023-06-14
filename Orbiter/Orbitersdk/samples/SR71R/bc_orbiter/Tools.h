@@ -144,7 +144,7 @@ namespace bc_orbiter
 		double z = rotationaxis.z;
 
 		// Build rotation matrix
-		MATRIX3 rMatrix;
+		MATRIX3 rMatrix{};
 		rMatrix.m11 = (t * x * x + c);
 		rMatrix.m12 = (t * x * y - s * z);
 		rMatrix.m13 = (t * x * z + s * y);
@@ -553,7 +553,7 @@ namespace bc_orbiter
 	{
 		auto grp = oapiMeshGroup(mesh, group);
 
-		double trans = isOn ? offset : 0.0;
+		float trans = (float)(isOn ? (float)offset : 0.0);
 		grp->Vtx[0].tu = verts[0].tu + trans;
 		grp->Vtx[1].tu = verts[1].tu + trans;
 		grp->Vtx[2].tu = verts[2].tu + trans;

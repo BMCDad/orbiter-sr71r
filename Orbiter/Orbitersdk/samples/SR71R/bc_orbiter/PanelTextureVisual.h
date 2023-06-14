@@ -38,16 +38,14 @@ namespace bc_orbiter
 		*/
 		virtual void RotateMesh(MESHHANDLE devMesh)
 		{
-			VECTOR3 trans;
-
 			auto grp = oapiMeshGroup(devMesh, GetGroup());
 			auto vrt = GetVerts();
 
-			trans = GetTranslate();
-			grp->Vtx[0].tu = vrt[0].tu + trans.x;
-			grp->Vtx[1].tu = vrt[1].tu + trans.x;
-			grp->Vtx[2].tu = vrt[2].tu + trans.x;
-			grp->Vtx[3].tu = vrt[3].tu + trans.x;
+			float tx = (float)(GetTranslate().x);
+			grp->Vtx[0].tu = vrt[0].tu + tx;
+			grp->Vtx[1].tu = vrt[1].tu + tx;
+			grp->Vtx[2].tu = vrt[2].tu + tx;
+			grp->Vtx[3].tu = vrt[3].tu + tx;
 		}
 	};
 }

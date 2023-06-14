@@ -49,12 +49,10 @@ namespace bc_orbiter
 
 	inline void PanelButton::RotateMesh(MESHHANDLE mesh)
 	{
-		double trans = 0.0;
-
 		auto grp = GroupMesh();
 		auto vrt = Verts();
 
-		trans = funcState_() ? translate_ : 0.0;
+		float trans = (float)(funcState_() ? translate_ : 0.0);
 		grp->Vtx[0].tu = vrt[0].tu + trans;
 		grp->Vtx[1].tu = vrt[1].tu + trans;
 		grp->Vtx[2].tu = vrt[2].tu + trans;

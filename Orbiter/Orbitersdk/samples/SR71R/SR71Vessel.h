@@ -73,10 +73,10 @@ public:
 	PropulsionController*	GetPropulsionControl() { return &propulsionController_; }
 
 private:
-	UINT					mainMeshIndex_;
+	UINT					mainMeshIndex_{ 0 };
 
-	MESHHANDLE				vcMeshHandle_;
-	DEVMESHHANDLE			meshVirtualCockpit_;
+	MESHHANDLE				vcMeshHandle_{ nullptr };
+	DEVMESHHANDLE			meshVirtualCockpit_{ nullptr };
 
 
 	// Components:
@@ -107,7 +107,7 @@ private:
     RetroEngines            retroEngines_;
 
 	// DRAG
-	double					bDrag;
+	double					bDrag{ 0.0 };
 	// Collections:
 
 	// TRY ADDING A NEW CONTROL
@@ -199,9 +199,38 @@ private:
 		bm::pnl::pnlDoorCanopy_RC
 	};
 
+	bco::on_off_input		switchApuPower{			// APU Power
+		GetControlId(),
+		{ bm::vc::SwAPUPower_id },
+		bm::vc::SwAPUPower_location, bm::vc::LeftPanelTopRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlAPUSwitch_id,
+		bm::pnl::pnlAPUSwitch_verts,
+		bm::pnl::pnlAPUSwitch_RC
+	};
 
-	// *** GAUGES ***
-	bco::rotary_display				gaugePowerVolts_{
+	bco::on_off_input		switchCargoPower{		// Cargo Power
+		GetControlId(),
+		{ bm::vc::SwCargoPower_id },
+		bm::vc::SwCargoPower_location, bm::vc::PowerTopRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlPwrCargo_id,
+		bm::pnl::pnlPwrCargo_verts,
+		bm::pnl::pnlPwrCargo_RC
+	};
+
+	bco::on_off_input		switchCargoOpen{		// Cargo Open
+		GetControlId(),
+		{ bm::vc::SwCargoOpen_id },
+		bm::vc::SwCargoOpen_location, bm::vc::DoorsRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlDoorCargo_id,
+		bm::pnl::pnlDoorCargo_verts,
+		bm::pnl::pnlDoorCargo_RC
+	};
+
+	// *** POWER GAUGES ***
+	bco::rotary_display<bco::Animation>		gaugePowerVolts_{
 		{ bm::vc::gaugeVoltMeter_id },
 		bm::vc::gaugeVoltMeter_location, bm::vc::VoltMeterFrontAxis_location,
 		bm::pnl::pnlVoltMeter_id,
@@ -211,7 +240,7 @@ private:
 		[](double d) {return (d / 30); }	// Transform from volts to anim-range.
 	};
 
-	bco::rotary_display				gaugePowerAmps_{
+	bco::rotary_display<bco::Animation>		gaugePowerAmps_{
 		{ bm::vc::gaugeAmpMeter_id },
 		bm::vc::gaugeAmpMeter_location, bm::vc::VoltMeterFrontAxis_location,
 		bm::pnl::pnlAmpMeter_id,
@@ -221,6 +250,57 @@ private:
 		[](double d) {return (d / 90); }	// Transform to amps.
 	};
 
+	// *** APU GAUGE ***
+	bco::rotary_display<bco::Animation>		gaugeAPULevel_{
+		{ bm::vc::gaHydPress_id },
+		bm::vc::gaHydPress_location, bm::vc::axisHydPress_location,
+		bm::pnl::pnlHydPress_id,
+		bm::pnl::pnlHydPress_verts,
+		(300 * RAD),	// Clockwise
+		0.2,
+		[](double d) {return (d); }	// Transform to amps.
+	};
+
+	// *** CLOCK HANDS ***
+	bco::rotary_display<bco::AnimationWrap>	clockTimerSecondsHand_{
+		{ bm::vc::ClockSecond_id },
+		bm::vc::ClockSecond_location, bm::vc::ClockAxisFront_location,
+		bm::pnl::pnlClockSecond_id,
+		bm::pnl::pnlClockSecond_verts,
+		(360 * RAD),	// Clockwise
+		0.4,
+		[](double d) {return (d / 60); }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap>	clockTimerMinutesHand_{
+		{ bm::vc::ClockTimerMinute_id },
+		bm::vc::ClockTimerMinute_location, bm::vc::ClockAxisFront_location,
+		bm::pnl::pnlClockTimerMinute_id,
+		bm::pnl::pnlClockTimerMinute_verts,
+		(360 * RAD),	// Clockwise
+		0.4,
+		[](double d) {return (d / 60); }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap>	clockElapsedMinutesHand_{
+		{ bm::vc::ClockMinute_id },
+		bm::vc::ClockMinute_location, bm::vc::ClockAxisFront_location,
+		bm::pnl::pnlClockMinute_id,
+		bm::pnl::pnlClockMinute_verts,
+		(360 * RAD),	// Clockwise
+		0.4,
+		[](double d) {return (d / 60); }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap>	clockElapsedHoursHand_{
+		{ bm::vc::ClockHour_id },
+		bm::vc::ClockHour_location, bm::vc::ClockAxisFront_location,
+		bm::pnl::pnlClockHour_id,
+		bm::pnl::pnlClockHour_verts,
+		(360 * RAD),	// Clockwise
+		0.4,
+		[](double d) {return (d / 12); }	// Transform to anim range.
+	};
 
 	// *** POWER STATUS LIGHTS:
 	bco::on_off_display		lightFuelCellAvail_{

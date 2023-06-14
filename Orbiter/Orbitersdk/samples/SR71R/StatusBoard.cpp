@@ -107,7 +107,7 @@ void StatusBoard::DrawDoorsMsg(DEVMESHHANDLE devMesh)
 	msgCanopy_.SetTranslate(_V(ofs, 0.0, 0.0));
 	msgCanopy_.RotateMesh(devMesh);
 
-	ofs = GetWarnMsgOffset(cargoBay_->GetCargoBayState());
+	//ofs = GetWarnMsgOffset(cargoBay_->GetCargoBayState());	TODO <- signal
 	msgCargoBay_.SetTranslate(_V(ofs, 0.0, 0.0));
 	msgCargoBay_.RotateMesh(devMesh);
 

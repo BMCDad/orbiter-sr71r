@@ -34,6 +34,7 @@ namespace bc_orbiter {
     * rotary_display exposes a slot that will take the driving signal.  The transform function, if needed, should
     * convert the signal to a 0 to 1 value.  The angle and speed for both are the same.
     */
+    template<typename Tanim>
     class rotary_display : 
         public control, 
         public vc_animation, 
@@ -48,7 +49,8 @@ namespace bc_orbiter {
             double angle,
             double speed,
             std::function<double(double)> trans)
-            : control(0.0),       // id not used for gauges.
+            : 
+            control(0),       // id not used for gauges.
             vcAnimGroup_(
                 vcAnimGroupIds,
                 vcLocation, vcAxisLocation,
@@ -67,6 +69,10 @@ namespace bc_orbiter {
         AnimationGroup*     vc_animation_group() override { return &vcAnimGroup_; }
         IAnimationState*    vc_animation_state() override { return this; }
         double              vc_animation_speed() const override { return animSpeed_; }
+        double vc_step(double simdt) override {
+            animVC_.Step(state_, simdt);
+            return animVC_.GetState();
+        }
 
         // IAnimationState
         double GetState() const { return state_; }
@@ -87,8 +93,8 @@ namespace bc_orbiter {
         const NTVERTEX* pnlVerts_;
         double          state_{ 0.0 };
         double          angle_{ 0.0 };
-        Animation       animPnl_{ animSpeed_ };
-
+        Tanim           animPnl_{ animSpeed_ };
+        Tanim           animVC_{ animSpeed_ };
         void OnUpdate(double d) { state_ = d; }
     };
 }

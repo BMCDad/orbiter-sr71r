@@ -22,50 +22,53 @@
 
 APU::APU(bco::BaseVessel* vessel, double amps) :
 bco::PoweredComponent(vessel, amps, APU_MIN_VOLT),
-propulsionControl_(nullptr)
+propulsionControl_(nullptr),
+slotAPUPower_([&](bool v) {})
 {
 }
 
 void APU::Step(double simt, double simdt, double mjd)
 {
-	if ((nullptr == propulsionControl_) || !HasPower() || !swPower_.IsOn())
+	if ((nullptr == propulsionControl_) || !HasPower() || !slotAPUPower_.value())
 	{
-        gaugeHydrPress_.SetState(0.0);
+//        gaugeHydrPress_.SetState(0.0);
+		signalHydPressure_.fire(0.0);
 	}
 	else
 	{
 		auto fuelDraw = APU_BURN_RATE * simdt;
 		auto actualDraw = propulsionControl_->DrawRCSFuel(fuelDraw);
 
-        gaugeHydrPress_.SetState((fuelDraw == actualDraw) ? 1.0 : 0.0);
+  //      gaugeHydrPress_.SetState((fuelDraw == actualDraw) ? 1.0 : 0.0);
+		signalHydPressure_.fire((fuelDraw == actualDraw) ? 1.0 : 0.0);
 	}
 
-	animGauge_.Step(gaugeHydrPress_.GetState(), simdt);
+//	animGauge_.Step(gaugeHydrPress_.GetState(), simdt);
 
-	auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
+	//auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
 
-	switch (oapiCockpitMode())
-	{
-	case COCKPIT_PANELS:
-		// panel anims.
-		bco::RotateMesh(pMesh, bm::pnl::pnlHydPress_id, bm::pnl::pnlHydPress_verts, animGauge_.GetState() * -(PI2*.8333));
-		break;
+	//switch (oapiCockpitMode())
+	//{
+	//case COCKPIT_PANELS:
+	//	// panel anims.
+	//	bco::RotateMesh(pMesh, bm::pnl::pnlHydPress_id, bm::pnl::pnlHydPress_verts, animGauge_.GetState() * -(PI2*.8333));
+	//	break;
 
-	case COCKPIT_VIRTUAL:
-		gaugeHydrPress_.SetAnimation2(GetBaseVessel(), animGauge_.GetState());
-		break;
-	}
+	//case COCKPIT_VIRTUAL:
+	//	gaugeHydrPress_.SetAnimation2(GetBaseVessel(), animGauge_.GetState());
+	//	break;
+	//}
 }
 
 double APU::CurrentDraw()
 {
-	return (HasPower() && swPower_.IsOn()) ? PoweredComponent::CurrentDraw() : 0.0;
+	return (HasPower() && slotAPUPower_.value()) ? PoweredComponent::CurrentDraw() : 0.0;
 }
 
 void APU::OnSetClassCaps()
 {
-    swPower_.Setup(GetBaseVessel());
-    gaugeHydrPress_.Setup2(GetBaseVessel(), GetBaseVessel()->GetVCMeshIndex());
+//    swPower_.Setup(GetBaseVessel());
+//    gaugeHydrPress_.Setup2(GetBaseVessel(), GetBaseVessel()->GetVCMeshIndex());
 }
 
 bool APU::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -79,44 +82,20 @@ bool APU::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 
 	sscanf_s(configLine + 3, "%i", &state);
 
-	swPower_.SetState((state == 0) ? 0.0 : 1.0);
+// TODO	swPower_.SetState((state == 0) ? 0.0 : 1.0);
 
 	return true;
 }
 
 void APU::OnSaveConfiguration(FILEHANDLE scn) const
 {
-	char cbuf[256];
-	auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
+	// TODO
+	//char cbuf[256];
+	//auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
 
-	sprintf_s(cbuf, "%i", val);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	//sprintf_s(cbuf, "%i", val);
+	//oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
 }
 
-bco::OnOffSwitch&   APU::PowerSwitch()                                  { return swPower_; }
-double              APU::GetHydraulicLevel() const                      { return gaugeHydrPress_.GetState(); }
+double              APU::GetHydraulicLevel() const { return 0.0; } // TODO Make this a signal
 void                APU::SetPropulsionControl(PropulsionController* pc) { propulsionControl_ = pc; }
-
-bool APU::OnLoadPanel2D(int id, PANELHANDLE hPanel)
-{
-//	oapiRegisterPanelArea(ID_APUSwitch, pnlApuSwitch.rc, PANEL_REDRAW_USER);
-	GetBaseVessel()->RegisterPanelArea(hPanel, ID_APUSwitch, pnlApuSwitch.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-
-	return true;
-}
-
-bool APU::OnPanelMouseEvent(int id, int event)
-{
-	swPower_.Toggle();
-	return true;
-}
-
-bool APU::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	bco::DrawPanelOnOff(
-		GetBaseVessel()->GetpanelMeshHandle0(), 
-		pnlApuSwitch.group, pnlApuSwitch.verts, 
-		swPower_.IsOn(), 0.0148);
-
-	return true;
-}

@@ -41,13 +41,13 @@ namespace bc_orbiter
 				return;
 			}
 
-			auto translate = GetTranslate();
+			//VECTOR3& translate = GetTranslate();
 			auto angle = GetAngle();
 
-			GROUPEDITSPEC change;
+			GROUPEDITSPEC change{};
 			NTVERTEX delta[4];
 
-			TransformXY2d(GetVerts(), delta, 4, translate, angle);
+			TransformXY2d(GetVerts(), delta, 4, GetTranslate(), angle);
 
 			change.flags = GRPEDIT_VTXCRD;
 			change.nVtx = 4;

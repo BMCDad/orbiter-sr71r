@@ -253,9 +253,9 @@ bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD 
 		0,
 		0,
 		GetpanelMeshHandle0(),					// Handle to the panel mesh.
-		bm::pnl::MainPanel_Width,		// Panel mesh width (mesh units)
-		bm::pnl::MainPanel_Height,		// Panel mesh height (mesh units)
-		bm::pnl::MainPanel_Height / 5,	// Baseline (adjust to move panel)
+		(DWORD)bm::pnl::MainPanel_Width,		// Panel mesh width (mesh units)
+		(DWORD)bm::pnl::MainPanel_Height,		// Panel mesh height (mesh units)
+		(DWORD)bm::pnl::MainPanel_Height / 5,	// Baseline (adjust to move panel)
 		PANEL_ATTACH_BOTTOM | PANEL_MOVEOUT_BOTTOM);
 
 	// Example: viewW = 3000 and panel width = 2000 (panel too small), defscale becomes (3000/2000) = 1.5 to fit the window.

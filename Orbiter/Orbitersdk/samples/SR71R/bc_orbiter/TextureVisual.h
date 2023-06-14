@@ -42,13 +42,10 @@ namespace bc_orbiter
 				return;
 			}
 
-			auto translate = GetTranslate();
-			auto angle = GetAngle();
-
-			GROUPEDITSPEC change;
+			GROUPEDITSPEC change{};
 			NTVERTEX* delta = new NTVERTEX[numVerts_];
 
-			TransformUV2d(GetVerts(), delta, numVerts_, translate, angle);
+			TransformUV2d(GetVerts(), delta, numVerts_, GetTranslate(), GetAngle());
 
 			change.flags = GRPEDIT_VTXTEX;
 			change.nVtx = numVerts_;

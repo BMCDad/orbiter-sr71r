@@ -62,12 +62,12 @@ namespace bc_orbiter
 		int GetMenuKey() const { return idMenu_; }
 	private:
 		
-		int						mfdId_;
+		int						mfdId_{ 0 };
 		std::map<int, int>		mfdButtonIds_;
 
-		int						idPower_;
-		int						idSelect_;
-		int						idMenu_;
+		int						idPower_{ 0 };
+		int						idSelect_{ 0 };
+		int						idMenu_{ 0 };
 	};
 
 	inline void MFDBase::ChangePowerLevel(double newLevel)

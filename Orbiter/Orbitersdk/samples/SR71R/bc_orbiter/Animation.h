@@ -276,7 +276,7 @@ namespace bc_orbiter
 
         StateUpdate			updateState_;
         TargetAchievedFunc  funcTarget_;
-        IAnimationState* stateProvider_;
+        IAnimationState*    stateProvider_{ nullptr };
     };
 
     /* Animation

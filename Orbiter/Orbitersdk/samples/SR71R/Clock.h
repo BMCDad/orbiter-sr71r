@@ -1,5 +1,5 @@
 //	Clock - SR-71r Orbiter Addon
-//	Copyright(C) 2016  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "bc_orbiter\OnOffSwitch.h"
 #include "bc_orbiter\PushButtonSwitch.h"
 #include "bc_orbiter\VCGauge.h"
+#include "bc_orbiter\signals.h"
 
 #include "SR71r_mesh.h"
 
@@ -33,7 +34,6 @@ public:
 
 	// Component
 	void OnSetClassCaps() override;
-	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
 	bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	void OnSaveConfiguration(FILEHANDLE scn) const override;
 
@@ -42,11 +42,21 @@ public:
 
 	void Step(double simt, double simdt, double mjd);
 	
+    bco::signal<double>&    TimerSecondsSignal()    { return signalTimerSecond_; }
+    bco::signal<double>&    TimerMinutesSignal()    { return signalTimerMinute_; }
+    bco::signal<double>&    ElapsedMinutesSignal()  { return signalMinute_; }
+    bco::signal<double>&    ElapsedHoursSignal()    { return signalHour_; }
+
 private:
     void ResetElapsed();
     void ResetTimer();
 
 	const char*				ConfigKey = "CLOCK";
+
+    bco::signal<double>     signalTimerSecond_;         // Current timer seconds (0 - 59)
+    bco::signal<double>     signalTimerMinute_;         // Current timer minutes (0 - 59)
+    bco::signal<double>     signalMinute_;              // Current mission time minutes (0 - 59)
+    bco::signal<double>     signalHour_;                // Current mission time hours (0 - 11)
 
     bco::PushButtonSwitch	switchResetElapsed_ { bm::vc::ClockElapsedReset_location,  0.01 };
     bco::PushButtonSwitch	switchStopWatch_    { bm::vc::ClockTimerReset_location,    0.01 };
@@ -59,45 +69,11 @@ private:
 	int						eidResetElapsed_;
 	int						eidResetTimer_;
 
-    bco::VCGaugeWrap        gaSecondHand_{ {bm::vc::ClockSecond_id },
-                                                    bm::vc::ClockSecond_location,
-                                                    bm::vc::ClockAxisFront_location,
-                                                    (360*RAD),
-                                                    0.4
-                                                };
-
-    bco::VCGaugeWrap        gaTimerMinute_{ {bm::vc::ClockTimerMinute_id },
-                                                    bm::vc::ClockTimerMinute_location,
-                                                    bm::vc::ClockAxisFront_location, 
-                                                    (360 * RAD), 
-                                                    0.4 
-                                                };
-
-    bco::VCGaugeWrap        gaHourHand_{ {bm::vc::ClockHour_id },
-                                                    bm::vc::ClockHour_location,
-                                                    bm::vc::ClockAxisFront_location,
-                                                    (360 * RAD),
-                                                    0.4
-                                                };
-
-    bco::VCGaugeWrap        gaMinuteHand_{ {bm::vc::ClockMinute_id },
-                                                    bm::vc::ClockMinute_location,
-                                                    bm::vc::ClockAxisFront_location,
-                                                    (360 * RAD),
-                                                    0.4
-                                                };
-
-    bco::AnimationWrap      animTimerSecHand_;
-    bco::AnimationWrap      animTimerMinuteHand_;
-    bco::AnimationWrap      animHourHand_;
-    bco::AnimationWrap      animMinuteHand_;
     struct AD
     {
         const UINT group;
         const NTVERTEX* verts;
     };
-
-//    bco::AnimationGroup     grpClockSecond  { {bm::pnl::pnlClockSecond_id }, bm::pnl::pnlClockSecond_location };
 
     const int ID_ResetTimer     = GetBaseVessel()->GetIdForComponent(this);
     const int ID_ResetElapsed   = GetBaseVessel()->GetIdForComponent(this);

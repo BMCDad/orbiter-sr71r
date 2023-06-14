@@ -190,7 +190,7 @@ void Lights::OnSaveConfiguration(FILEHANDLE scn) const
 	auto c = (swStrobe_.GetState() == 0.0) ? 0 : 1;
 	auto d = (swDock_.GetState() == 0.0) ? 0 : 1;
 
-	sprintf_s(cbuf, "%i %i %i %i", 0.0, b, c, d);
+	sprintf_s(cbuf, "%i %i %i %i", 0, b, c, d);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
 }
 

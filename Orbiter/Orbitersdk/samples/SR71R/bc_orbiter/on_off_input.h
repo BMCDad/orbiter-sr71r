@@ -71,7 +71,8 @@ namespace bc_orbiter {
 			pnlGroup_(pnlGroup),
 			pnlVerts_(pnlVerts),
 			pnlRect_(pnl),
-			pnlOffset_(vcData.pnlOffset)
+			pnlOffset_(vcData.pnlOffset),
+			animVC_(vcData_.animSpeed)
 		{ }
 
 		bool IsOn() const { return state_; }
@@ -80,6 +81,10 @@ namespace bc_orbiter {
 		AnimationGroup*		vc_animation_group()		override { return &vcAnimGroup_; }
 		IAnimationState*	vc_animation_state()		override { return this; }
 		double				vc_animation_speed() const	override { return vcData_.animSpeed; }
+		double vc_step(double simdt) override {
+			animVC_.Step(state_ ? 1.0 : 0.0, simdt);
+			return animVC_.GetState();
+		}
 
 		// IAnimationState
 		double				GetState() const			override { return state_ ? 1.0 : 0.0; }
@@ -116,7 +121,7 @@ namespace bc_orbiter {
 		const NTVERTEX* pnlVerts_;
 		RECT			pnlRect_;
 		double			pnlOffset_;
-
+		Animation		animVC_;
 		signal<bool>	signal_;
 	};
 }
