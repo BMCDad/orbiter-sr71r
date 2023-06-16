@@ -20,7 +20,19 @@
 #include "SR71r_mesh.h"
 
 HUD::HUD(bco::BaseVessel* vessel, double amps)
-	: PoweredComponent(vessel, amps, 20.0)
+	: PoweredComponent(vessel, amps, 20.0),
+	slotDockMode_([&](bool b) {
+		OnChanged(HUD_DOCKING); 
+		slotDockMode_.set();	// Reset slot.
+	}),
+	slotOrbitMode_([&](bool b) {
+		OnChanged(HUD_ORBIT);
+		slotOrbitMode_.set();	// Reset slot.
+	}),
+	slotSurfaceMode_([&](bool b) {
+		OnChanged(HUD_SURFACE);
+		slotSurfaceMode_.set();	// Reset slot.
+	})
 {
 }
 
@@ -40,12 +52,6 @@ void HUD::ChangePowerLevel(double newLevel)
 
 bool HUD::OnLoadVC(int id)
 {
-	for each (auto& v in mapVc_)
-	{
-		oapiVCRegisterArea(v.first, PANEL_REDRAW_USER, PANEL_MOUSE_DOWN);
-		oapiVCSetAreaClickmode_Spherical(v.first, v.second.loc, .01);
-	}
-
 	// Register HUD
 	static VCHUDSPEC huds =
 	{
@@ -59,79 +65,6 @@ bool HUD::OnLoadVC(int id)
 	return true;
 }
 
-bool HUD::OnVCMouseEvent(int id, int event)
-{
-	if (event != PANEL_MOUSE_LBDOWN) return false;
-
-	auto mode = mapMode_.find(id);
-	if (mode == mapMode_.end()) return false;
-
-	OnChanged(mode->second);
-	return true;
-}
-
-bool HUD::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	auto vc = mapVc_.find(id);
-	if (vc == mapVc_.end()) return false;
-
-	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-	assert(devMesh != nullptr);
-
-	NTVERTEX* delta = new NTVERTEX[4];
-
-	bco::TransformUV2d(
-		vc->second.verts,
-		delta, 4,
-		_V(oapiGetHUDMode() == vc->second.mode ? 0.0352 : 0.0,
-			0.0,
-			0.0),
-		0.0);
-
-	GROUPEDITSPEC change{};
-	change.flags = GRPEDIT_VTXTEX;
-	change.nVtx = 4;
-	change.vIdx = NULL; //Just use the mesh order
-	change.Vtx = delta;
-	auto res = oapiEditMeshGroup(devMesh, vc->second.group, &change);
-	delete[] delta;
-
-	return true;
-}
-
-bool HUD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
-{
-	for each (auto& v in mapPnl_)
-	{
-		oapiRegisterPanelArea(v.first, v.second.rc, PANEL_REDRAW_USER);
-		GetBaseVessel()->RegisterPanelArea(hPanel, v.first, v.second.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-	}
-
-	return true;
-}
-
-bool HUD::OnPanelMouseEvent(int id, int event)
-{
-	return OnVCMouseEvent(id, event); // Same logic
-}
-
-bool HUD::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	auto p = mapPnl_.find(id);
-	if (p == mapPnl_.end()) return false;
-
-	auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), p->second.group);
-	auto vrt = p->second.verts;
-
-	float trans = (float)((oapiGetHUDMode() == p->second.mode) ? 0.0352 : 0.0);
-	grp->Vtx[0].tu = vrt[0].tu + trans;
-	grp->Vtx[1].tu = vrt[1].tu + trans;
-	grp->Vtx[2].tu = vrt[2].tu + trans;
-	grp->Vtx[3].tu = vrt[3].tu + trans;
-
-	return true;
-}
-
 void HUD::OnHudMode(int mode)
 {
 	// HUD mode is changing, if it is NOT changing to NONE, and we don't have power, turn it off.
@@ -140,10 +73,9 @@ void HUD::OnHudMode(int mode)
 		oapiSetHUDMode(HUD_NONE);
 	}
 
-	for each (auto& v in mapMode_)
-	{
-		GetBaseVessel()->TriggerRedrawArea(0, 0, v.first);
-	}
+	sigDockMode_.fire(mode == HUD_DOCKING);
+	sigOrbitMode_.fire(mode == HUD_ORBIT);
+	sigSurfaceMode_.fire(mode == HUD_SURFACE);
 }
 
 void HUD::OnChanged(int mode)

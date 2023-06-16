@@ -43,7 +43,7 @@ Canopy::Canopy(bco::BaseVessel* vessel, double amps) :
 
 double Canopy::CurrentDraw()
 {
-    return ( false /* TODO(animCanopy_.GetState() > 0.0)*/ && (0.0 /* TODO animCanopy_.GetState()*/ < 1.0))
+    return ( CanopyHasPower() && CanopyIsMoving())
         ? PoweredComponent::CurrentDraw() 
         : 0.0;
 }
@@ -52,7 +52,7 @@ void Canopy::Step(double simt, double simdt, double mjd)
 {
     if (CanopyHasPower())
     {
-        animCanopy_.Step(slotCanopyOpenClose_.value(), simdt);
+        animCanopy_.Step(slotCanopyOpenClose_.value() ? 1.0 : 0.0, simdt);
     }
 }
 

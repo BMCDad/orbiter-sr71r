@@ -30,12 +30,12 @@ cargoBayController_(    this,   CARGO_AMPS),
 canopy_(                this,   CANOPY_AMPS),
 fuelCell_(              this,   FUELCELL_AMPS),
 headsUpDisplay_(        this,   HUD_AMPS),
-hydrogenTank_(          this,   HYDRO_SUPPLY),
+hydrogenTank_(          this,   HYDRO_SUPPLY, HYDROGEN_FILL_RATE, HYDRO_NER, "HYDROGEN"),
 landingGear_(           this),
 mfdLeft_(               this,   MFD_AMPS),
 mfdRight_(              this,   MFD_AMPS),
 navModes_(              this,   NAV_AMPS),
-oxygenTank_(            this,   O2_SUPPLY),
+oxygenTank_(            this,   O2_SUPPLY, OXYGEN_FILL_RATE, O2_NER, "OXYGEN"),
 powerSystem_(           this),
 propulsionController_(  this,   PROPULS_AMPS),
 rcsSystem_(             this,   RCS_AMPS),
@@ -112,6 +112,29 @@ retroEngines_(          this,   RETRO_AMPS)
 	AddControl(&clockElapsedMinutesHand_);
 	AddControl(&clockElapsedHoursHand_);
 
+	/*  Hover switch  */
+	AddControl(&switchHoverOpen);
+
+	/*  HUD  */
+	AddControl(&btnHudDocking_);
+	AddControl(&dspHudDocking_);
+	AddControl(&btnHudSurface_);
+	AddControl(&dspHudSurface_);
+	AddControl(&btnHudOrbit_);
+	AddControl(&dspHudOrbit_);
+
+	/*  Hydrogen tank  */
+	AddControl(&gaugeHydroLevel_);
+	AddControl(&lightHydrogenAvail_);
+	AddControl(&btnHydroFill_);
+	AddControl(&dspHydroFill_);
+
+	/*  LOX tank  */
+	AddControl(&gaugeO2Level_);
+	AddControl(&lightO2Avail_);
+	AddControl(&btnO2Fill_);
+	AddControl(&dspO2Fill_);
+
 	//
 	AddComponent(&lightNav_);
 
@@ -127,7 +150,7 @@ retroEngines_(          this,   RETRO_AMPS)
 	
 	// Fuel cell					// A signal can drive more then one slot
 	bco::connector  vcPower			{ fuelCell_.AvailablePowerSignal(),				powerSystem_.FuelCellAvailablePowerSlot()};
-	bco::connector	lgtFCAvail		{ fuelCell_.AvailablePowerSignal(),				lightFuelCellAvail_.Slot() };
+	bco::connector	lgtFCAvail		{ fuelCell_.IsAvailableSignal(),				lightFuelCellAvail_.Slot() };
 	bco::connector  pwrFCMain		{ switchFuelCellPower.Signal(),					fuelCell_.MainPowerSlot() };
 	bco::connector	fcAmpLoad		{ powerSystem_.AmpLoadSignal(),					fuelCell_.AmpLoadSlot() };
 
@@ -157,6 +180,31 @@ retroEngines_(          this,   RETRO_AMPS)
 	bco::connector clkTM			{ clock_.TimerMinutesSignal(),					clockTimerMinutesHand_.Slot() };
 	bco::connector clkEM			{ clock_.ElapsedMinutesSignal(),				clockElapsedMinutesHand_.Slot() };
 	bco::connector clkEH			{ clock_.ElapsedHoursSignal(),					clockElapsedHoursHand_.Slot() };
+
+	// Hover doors
+	bco::connector hvD				{ switchHoverOpen.Signal(),						hoverEngines_.HoverOpenSlot() };
+
+	// HUD
+	bco::connector hdD				{ btnHudDocking_.Signal(),						headsUpDisplay_.DockModeSlot() };
+	bco::connector hdDs				{ headsUpDisplay_.DockModeSignal(),				dspHudDocking_.Slot() };
+	bco::connector hdO				{ btnHudSurface_.Signal(),						headsUpDisplay_.SurfaceModeSlot() };
+	bco::connector hdOs				{ headsUpDisplay_.SurfaceModeSignal(),			dspHudSurface_.Slot() };
+	bco::connector hdS				{ btnHudOrbit_.Signal(),						headsUpDisplay_.OrbitModeSlot() };
+	bco::connector hdSs				{ headsUpDisplay_.OrbitModeSignal(),			dspHudOrbit_.Slot() };
+
+	// Hydrogen
+	bco::connector hy				{ hydrogenTank_.LevelSignal(),					gaugeHydroLevel_.Slot() };
+	bco::connector hya				{ powerSystem_.ExternalAvailableSignal(),		hydrogenTank_.ExternAvailableSlot() };
+	bco::connector hyb				{ hydrogenTank_.IsAvailableSignal(),			lightHydrogenAvail_.Slot() };
+	bco::connector hdH				{ btnHydroFill_.Signal(),						hydrogenTank_.ToggleFillSlot()};
+	bco::connector hdHs				{ hydrogenTank_.IsFillingSignal(),				dspHydroFill_.Slot()};
+
+	// Oxygen
+	bco::connector oy				{ oxygenTank_.LevelSignal(),					gaugeO2Level_.Slot() };
+	bco::connector oya				{ powerSystem_.ExternalAvailableSignal(),		oxygenTank_.ExternAvailableSlot() };
+	bco::connector oyb				{ oxygenTank_.IsAvailableSignal(),				lightO2Avail_.Slot() };
+	bco::connector odH				{ btnO2Fill_.Signal(),							oxygenTank_.ToggleFillSlot() };
+	bco::connector odHs				{ oxygenTank_.IsFillingSignal(),				dspO2Fill_.Slot() };
 }
 
 

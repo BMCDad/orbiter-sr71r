@@ -37,19 +37,22 @@ public:
     virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
     virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
-    bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-    bool OnPanelMouseEvent(int id, int event) override;
-    bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
+    //bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+    //bool OnPanelMouseEvent(int id, int event) override;
+    //bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
 
 	void Step(double simt, double simdt, double mjd);
 
     double GetHoverDoorsState() { return animHoverDoors_.GetState(); }
     bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
+    bco::slot<bool>&    HoverOpenSlot() { return slotHoverOpen_; }
+
 private:
 
     void EnableHover(bool isEnabled);
 
+    bco::slot<bool>     slotHoverOpen_;
 
     THRUSTER_HANDLE     hoverThrustHandles_[3];
 
@@ -58,12 +61,12 @@ private:
     int                 hoverMouseId_;
 
 
-    bco::VCToggleSwitch     swOpen_ {   bm::vc::swHoverDoor_id, 
-                                        bm::vc::swHoverDoor_location,  
-                                        bm::vc::DoorsRightAxis_location
-                                    };
+    //bco::VCToggleSwitch     swOpen_ {   bm::vc::swHoverDoor_id, 
+    //                                    bm::vc::swHoverDoor_location,  
+    //                                    bm::vc::DoorsRightAxis_location
+    //                                };
 
-    bco::Animation          animHoverDoors_ {   &swOpen_, 0.2};
+    bco::Animation          animHoverDoors_ {   0.2};
 
     bco::AnimationGroup     gpFrontLeft_    {   { bm::main::HoverDoorPF_id },
                                                 bm::main::HoverDoorAxisPFF_location, bm::main::HoverDoorAxisPFA_location,

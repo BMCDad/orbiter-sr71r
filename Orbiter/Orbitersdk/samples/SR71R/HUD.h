@@ -44,13 +44,6 @@ public:
 	HUD(bco::BaseVessel* vessel, double amps);
 
 	bool OnLoadVC(int id) override;
-	bool OnVCMouseEvent(int id, int event) override;
-	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-
-	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-	bool OnPanelMouseEvent(int id, int event) override;
-	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
-
 
 	/**
 	Override to manage power based on vessel HUD state.
@@ -59,52 +52,26 @@ public:
 
 	void ChangePowerLevel(double newLevel) override;
 
-
 	bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
 	void OnHudMode(int mode);
 
+	bco::slot<bool>&	DockModeSlot()		{ return slotDockMode_; }
+	bco::slot<bool>&	OrbitModeSlot()		{ return slotOrbitMode_; }
+	bco::slot<bool>&	SurfaceModeSlot()	{ return slotSurfaceMode_; }
+
+	bco::signal<bool>&	DockModeSignal()	{ return sigDockMode_; }
+	bco::signal<bool>&	OrbitModeSignal()	{ return sigOrbitMode_; }
+	bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
+
 private:
 	void OnChanged(int mode);
 
-	struct PnlData
-	{
-		int mode;
-		const UINT group;
-		const RECT rc;
-		const NTVERTEX* verts;
-	};
+	bco::slot<bool> slotDockMode_;
+	bco::slot<bool> slotOrbitMode_;
+	bco::slot<bool> slotSurfaceMode_;
 
-	struct VcData
-	{
-		int mode;
-		const UINT group;
-		const VECTOR3& loc;
-		const NTVERTEX* verts;
-	};
-
-	const int ID_DOCKING = { GetBaseVessel()->GetIdForComponent(this) };
-	const int ID_SURFACE = { GetBaseVessel()->GetIdForComponent(this) };
-	const int ID_ORBIT   = { GetBaseVessel()->GetIdForComponent(this) };
-
-	std::map<int, int> mapMode_
-	{
-		{ID_DOCKING,	HUD_DOCKING},
-		{ID_SURFACE,	HUD_SURFACE},
-		{ID_ORBIT,		HUD_ORBIT}
-	};
-
-	std::map<int, PnlData> mapPnl_
-	{
-		{ ID_DOCKING,	{ HUD_DOCKING,	bm::pnl::pnlHUDDock_id,		bm::pnl::pnlHUDDock_RC,		bm::pnl::pnlHUDDock_verts }},
-		{ ID_SURFACE,	{ HUD_SURFACE,	bm::pnl::pnlHUDSurf_id,		bm::pnl::pnlHUDSurf_RC,		bm::pnl::pnlHUDSurf_verts }},
-		{ ID_ORBIT,		{ HUD_ORBIT,	bm::pnl::pnlHUDOrbit_id,	bm::pnl::pnlHUDOrbit_RC,	bm::pnl::pnlHUDOrbit_verts }}
-	};
-
-	std::map<int, VcData> mapVc_
-	{
-		{ ID_DOCKING,	{ HUD_DOCKING,	bm::vc::vcHUDDock_id,	bm::vc::vcHUDDock_location,	 bm::vc::vcHUDDock_verts }},
-		{ ID_SURFACE,	{ HUD_SURFACE,	bm::vc::vcHUDSURF_id,	bm::vc::vcHUDSURF_location,	 bm::vc::vcHUDSURF_verts }},
-		{ ID_ORBIT,		{ HUD_ORBIT,	bm::vc::vcHUDOrbit_id,	bm::vc::vcHUDOrbit_location, bm::vc::vcHUDOrbit_verts }}
-	};
+	bco::signal<bool> sigDockMode_;
+	bco::signal<bool> sigOrbitMode_;
+	bco::signal<bool> sigSurfaceMode_;
 };

@@ -86,6 +86,7 @@ public:
 	}
 
 	bco::signal<double>& AvailablePowerSignal() { return sigAvailPower_; }
+	bco::signal<bool>& IsAvailableSignal() { return sigIsAvail_; }
 
 	bco::slot<bool>& MainPowerSlot() { return slotMainPower_; }
 	bco::slot<double>& AmpLoadSlot() { return slotAmpLoad_; }
@@ -98,9 +99,10 @@ private:
 	void SetIsFuelCellPowerAvailable(bool newValue);
 
 	bco::signal<double>	sigAvailPower_;
+	bco::signal<bool>	sigIsAvail_;
 
-	bco::slot<bool> slotMainPower_;
-	bco::slot<double> slotAmpLoad_;		// Comes from the power system.
+	bco::slot<bool>		slotMainPower_;
+	bco::slot<double>	slotAmpLoad_;		// Comes from the power system.
 
 	bool				isSlotPowerOn_{ false };
 	bool				isFuelCellAvailable_;

@@ -66,9 +66,6 @@
     <ClInclude Include="SR71r_mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="O2Supply.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="FuelCell.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -110,9 +107,6 @@
     </ClInclude>
     <ClInclude Include="IConsumable.h">
       <Filter>Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="HydrogenSupply.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="StatusBoard.h">
       <Filter>Components</Filter>
@@ -250,7 +244,10 @@
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\on_off_display_event.h">
-      <Filter>Header Files</Filter>
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\simple_event.h">
+      <Filter>bc_orbiter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -290,16 +287,10 @@
     <ClCompile Include="NavModes.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="O2Supply.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
     <ClCompile Include="RCSSystem.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="LandingGear.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="HydrogenSupply.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="FuelCell.cpp">

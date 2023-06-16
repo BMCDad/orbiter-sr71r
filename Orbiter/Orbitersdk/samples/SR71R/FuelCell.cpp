@@ -91,5 +91,6 @@ void FuelCell::SetIsFuelCellPowerAvailable(bool newValue)
 	if (newValue != isFuelCellAvailable_)
 	{
 		isFuelCellAvailable_ = newValue;
+		sigIsAvail_.fire(isFuelCellAvailable_);
 	}
 }

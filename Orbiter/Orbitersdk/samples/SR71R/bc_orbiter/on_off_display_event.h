@@ -35,27 +35,38 @@ namespace bc_orbiter {
 		on_off_display_event(
 			int ctrlId,
 			const UINT vcGroupId,
+			const VECTOR3& vcLocation,
 			const NTVERTEX* vcVerts,
+			const double vcRadius,
 			const UINT pnlGroupId,
 			const NTVERTEX* pnlVerts,
+			const RECT& pnlRect,
 			double offset)
 			:
 			control(ctrlId),
 			vcGroupId_(vcGroupId),
+			vcLocation_(vcLocation),
 			vcVerts_(vcVerts),
+			vcRadius_(vcRadius),
 			pnlGroupId_(pnlGroupId),
 			pnlVerts_(pnlVerts),
+			pnlRect_(pnlRect),
 			offset_(offset),
 			slotState_([&](double v) {
-			auto bv = bool(v != 0.0);
-			if (state_ != bv) {
-				state_ = bv;
+			if (state_ != v) {
+				state_ = v;
 				oapiTriggerRedrawArea(0, 0, get_id());
 			}})
 		{
 		}
 
-			void on_vc_redraw(DEVMESHHANDLE vcMesh) override {
+			// vc_event_target
+			VECTOR3&	vc_event_location()	override { return vcLocation_; }
+			int			vc_mouse_flags()	override { return PANEL_MOUSE_LBDOWN; }
+			int			vc_redraw_flags()	override { return PANEL_REDRAW_USER; }
+			double		vc_event_radius()	override { return vcRadius_; }
+
+			void		on_vc_redraw(DEVMESHHANDLE vcMesh) override {
 				NTVERTEX* delta = new NTVERTEX[4];
 
 				TransformUV2d(
@@ -75,14 +86,13 @@ namespace bc_orbiter {
 				delete[] delta;
 			}
 
+			// panel_event_target
 			void on_panel_redraw(MESHHANDLE meshPanel) override {
 				DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, state_, offset_);
 			}
-
-			int vc_mouse_flags() { return PANEL_MOUSE_LBDOWN; }
-			int vc_redraw_flags() { return PANEL_REDRAW_USER; }
-			int panel_mouse_flags() { return PANEL_MOUSE_LBDOWN; }
-			int panel_redraw_flags() { return PANEL_REDRAW_USER; }
+			RECT& panel_rect()			override { return pnlRect_; }
+			int panel_mouse_flags()		override { return PANEL_MOUSE_LBDOWN; }
+			int panel_redraw_flags()	override { return PANEL_REDRAW_USER; }
 
 			// event_target
 			bool on_event() override {
@@ -95,15 +105,18 @@ namespace bc_orbiter {
 
 			// signal
 			signal<bool>& Signal() { return signal_; }
-			slot<double>& Slot() { return slotState_; }
+			slot<bool>& Slot() { return slotState_; }
 	private:
 		UINT			vcGroupId_;
+		VECTOR3			vcLocation_;
 		const NTVERTEX* vcVerts_;
+		double			vcRadius_;
 		UINT			pnlGroupId_;
 		const NTVERTEX* pnlVerts_;
+		RECT			pnlRect_;
 		bool			state_{ false };
 		double			offset_{ 0.0 };
-		slot<double>	slotState_;
+		slot<bool>		slotState_;
 		signal<bool>	signal_;
 	};
 }

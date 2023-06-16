@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <functional>
 #include <vector>
 
 namespace bc_orbiter {
@@ -35,16 +36,20 @@ namespace bc_orbiter {
 
 		virtual ~slot() {}
 
-		virtual void notify(T value) {
-			if (value != value_) {
+		void notify(T value) {
+			if (dirty_ || (value != value_)) {
+				dirty_ = false;
 				value_ = value;
 				if (nullptr != func_) func_(value_);
 			}
 		}
 
-		virtual T value() const { return value_; }
+		T value() const { return value_; }
+		void set() { dirty_ = true; }
 	private:
-		T value_{};
+		bool	dirty_{ true };
+		T		value_	{ };
+		
 		const std::function<void(T)> func_{ nullptr };
 	};
 
@@ -63,22 +68,19 @@ namespace bc_orbiter {
 		}
 
 		void fire(const T& val) {
-			if (dirty_ || (val != prevValue_)) {
-				prevValue_ = val;
-				dirty_ = true;
-				for (const auto& s : slots_) {
-					s->notify(val);
-				}
+			value_ = val;
+			for (const auto& s : slots_) {
+				s->notify(val);
 			}
 		}
 
 		T current() const {
-			return prevValue_;
+			return value_;
 		}
 
 	private:
 		std::vector<slot<T>*> slots_;
-		T prevValue_{};
+		T value_{};
 		bool dirty_{ true };
 	};
 

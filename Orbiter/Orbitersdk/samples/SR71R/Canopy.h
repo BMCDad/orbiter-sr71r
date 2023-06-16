@@ -83,6 +83,7 @@ public:
 
 private:
     bool CanopyHasPower();
+    bool CanopyIsMoving() { return CanopyHasPower() && (animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0); }
 
     const char*			    ConfigKeyCanopy = "CANOPY";
 

@@ -22,11 +22,12 @@
 #include "SR71r_mesh.h"
 
 HoverEngines::HoverEngines(bco::BaseVessel* vessel, double amps) :
-    PoweredComponent(vessel, amps, 10.0)
+    PoweredComponent(vessel, amps, 10.0),
+    slotHoverOpen_([&](bool v) {if (!v) EnableHover(false); })
 {
     // Hover
-    swOpen_.OnFunction([this] {});
-    swOpen_.OffFunction([this] { EnableHover(false); });
+    //swOpen_.OnFunction([this] {});
+    //swOpen_.OffFunction([this] { EnableHover(false); });
     animHoverDoors_.SetTargetFunction([this] { EnableHover(true); });
 }
 
@@ -34,7 +35,7 @@ void HoverEngines::Step(double simt, double simdt, double mjd)
 {
     if (HasPower())
     {
-        animHoverDoors_.Step(swOpen_.GetState(), simdt);
+        animHoverDoors_.Step(slotHoverOpen_.value() ? 1.0 : 0.0, simdt);
     }
 }
 
@@ -94,7 +95,7 @@ void HoverEngines::OnSetClassCaps()
     vessel->AddExhaustStream(hoverThrustHandles_[2], bm::main::ThrustHoverS_location, &exhaust_hover);
 
 
-    swOpen_.Setup(vessel);
+//    swOpen_.Setup(vessel);
 
     auto aid = vessel->CreateVesselAnimation(&animHoverDoors_, 0.12);
     vessel->AddVesselAnimationComponent(aid, mIdx, &gpFrontLeft_);
@@ -116,10 +117,10 @@ bool HoverEngines::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* co
     sscanf_s(configLine + 5, "%i%lf", &hover, &hoveranim);
 
     // Hover
-    swOpen_.SetState((hover == 0) ? 0.0 : 1.0);
+// TODO    swOpen_.SetState((hover == 0) ? 0.0 : 1.0);
     animHoverDoors_.SetState(hoveranim);
 
-    EnableHover(swOpen_.IsOn());
+    // TODO EnableHover(swOpen_.IsOn());
 
     return true;
 }
@@ -127,7 +128,8 @@ bool HoverEngines::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* co
 void HoverEngines::OnSaveConfiguration(FILEHANDLE scn) const
 {
     char cbuf[256];
-    auto val = (swOpen_.GetState() == 0.0) ? 0 : 1;
+    // TODO auto val = (swOpen_.GetState() == 0.0) ? 0 : 1;
+    auto val = 0;
 
     auto hover = animHoverDoors_.GetState();
 
@@ -193,22 +195,22 @@ bool HoverEngines::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* s
     return false;
 }
 
-bool HoverEngines::OnLoadPanel2D(int id, PANELHANDLE hPanel)
-{
-    oapiRegisterPanelArea(ID_DOOR, bm::pnl::pnlDoorHover_RC, PANEL_REDRAW_USER);
-    GetBaseVessel()->RegisterPanelArea(hPanel, ID_DOOR, bm::pnl::pnlDoorHover_RC, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-
-    return true;
-}
-
-bool HoverEngines::OnPanelMouseEvent(int id, int event)
-{
-    swOpen_.Toggle();
-    return true;
-}
-
-bool HoverEngines::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-    bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlDoorHover_id, bm::pnl::pnlDoorHover_verts, swOpen_.IsOn(), 0.0148);
-    return true;
-}
+//bool HoverEngines::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+//{
+//    oapiRegisterPanelArea(ID_DOOR, bm::pnl::pnlDoorHover_RC, PANEL_REDRAW_USER);
+//    GetBaseVessel()->RegisterPanelArea(hPanel, ID_DOOR, bm::pnl::pnlDoorHover_RC, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
+//
+//    return true;
+//}
+//
+//bool HoverEngines::OnPanelMouseEvent(int id, int event)
+//{
+//    swOpen_.Toggle();
+//    return true;
+//}
+//
+//bool HoverEngines::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
+//{
+//    bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlDoorHover_id, bm::pnl::pnlDoorHover_verts, swOpen_.IsOn(), 0.0148);
+//    return true;
+//}

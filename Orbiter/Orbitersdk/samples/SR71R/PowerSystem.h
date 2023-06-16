@@ -79,9 +79,9 @@ public:
 
 	bco::signal<double>& VoltLevelSignal()			{ return signalVoltLevel_; }			// Changes in volt level
 	bco::signal<double>& AmpLoadSignal()			{ return signalAmpLoad_; }				// Changes in amp load 
-	bco::signal<double>& ExternalAvailableSignal()  { return signalExternalAvailable_; }	// External resources available
-	bco::signal<double>& ExternalConnectedSignal()  { return signalExternalConnected_; }	// External connection status
-	bco::signal<double>& FuelCellConnectedSignal()  { return signalFuelCellConnected_; }	// Fuelcell connection status
+	bco::signal<bool>& ExternalAvailableSignal()	{ return signalExternalAvailable_; }	// External resources available
+	bco::signal<bool>& ExternalConnectedSignal()	{ return signalExternalConnected_; }	// External connection status
+	bco::signal<bool>& FuelCellConnectedSignal()	{ return signalFuelCellConnected_; }	// Fuelcell connection status
 
 	// These slots driven by toggle switches.
 	bco::slot<bool>& MainPowerSlot()				{ return slotMainPower_; }				// Main power switch
@@ -99,9 +99,9 @@ private:
 
 	bco::signal<double>		signalVoltLevel_;
 	bco::signal<double>		signalAmpLoad_;
-	bco::signal<double>		signalExternalAvailable_;
-	bco::signal<double>		signalExternalConnected_;
-	bco::signal<double>		signalFuelCellConnected_;
+	bco::signal<bool>		signalExternalAvailable_;
+	bco::signal<bool>		signalExternalConnected_;
+	bco::signal<bool>		signalFuelCellConnected_;
 
 	// Slots for the on / off switches.
 	bco::slot<bool>			slotMainPower_;

@@ -22,11 +22,14 @@
 #include <cmath>
 #include <assert.h>
 
-CryogenicTank::CryogenicTank(bco::BaseVessel* vessel, double capacity, double lossPerHour, char* configKey) :
+CryogenicTank::CryogenicTank(bco::BaseVessel* vessel, double capacity, double fillRate, double lossPerHour, char* configKey) :
 	PoweredComponent(vessel, 1.0, 20.0),
 	capacity_(capacity),
+	fillRate_(fillRate),
 	level_(0.0),
-	isFilling_(false)
+	isFilling_(false),
+	slotToggleFill_([&](bool v) { ToggleFilling(); }),
+	slotExternalAvail_([&](bool v) {})
 {
 	configKey_ = configKey;
     lossRate_ = lossPerHour / (60 * 60);
@@ -34,7 +37,32 @@ CryogenicTank::CryogenicTank(bco::BaseVessel* vessel, double capacity, double lo
 
 void CryogenicTank::Step(double simt, double simdt, double mjd)
 {
-    Draw(level_ * (lossRate_*simdt));
+	if (fabs(simt - prevTime_) > 0.2)
+	{
+		// Do evaporative loss
+		Draw(level_ * (lossRate_*simdt));
+
+
+		if (slotExternalAvail_.value() && HasPower())
+		{
+			sigIsAvailable_.fire(true);
+
+			if (IsFilling()) {
+				FillTank(fillRate_ * simdt);
+			}
+		}
+		else {
+			sigIsAvailable_.fire(false);
+			IsFilling(false);
+		}
+
+		prevTime_ = simt;
+	}
+}
+
+void CryogenicTank::IsFilling(bool b) {
+	isFilling_ = b;
+	sigIsFilling_.fire(isFilling_);
 }
 
 double CryogenicTank::GetLevel() const
@@ -46,6 +74,7 @@ double CryogenicTank::Draw(double amount)
 {
 	auto drawnAmount = min(level_, amount);
 	level_ = level_ - drawnAmount;
+	sigLevel_.fire(level_ / capacity_);		// Adjust to 0-1 range
 	return drawnAmount;
 }
 
@@ -56,7 +85,10 @@ void CryogenicTank::FillTank(double amount)
 	if (level_ == capacity_)
 	{
 		isFilling_ = false;
+		sigIsFilling_.fire(isFilling_);
 	}
+
+	sigLevel_.fire(level_);
 }
 
 void CryogenicTank::ToggleFilling()
@@ -72,6 +104,7 @@ void CryogenicTank::ToggleFilling()
 			isFilling_ = true;
 		}
 	}
+	sigIsFilling_.fire(isFilling_);
 }
 
 // Configuration

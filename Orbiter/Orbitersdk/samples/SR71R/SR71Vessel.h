@@ -6,12 +6,13 @@
 #include "bc_orbiter\on_off_display.h"
 #include "bc_orbiter\on_off_input.h"
 #include "bc_orbiter\rotary_display.h"
+#include "bc_orbiter\simple_event.h"
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
-#include "O2Supply.h"
 #include "Avionics.h"
 #include "SurfaceController.h"
+#include "CryogenicTank.h"
 #include "PropulsionController.h"
 #include "HUD.h"
 #include "RCSSystem.h"
@@ -23,7 +24,6 @@
 #include "Canopy.h"
 #include "APU.h"
 #include "LandingGear.h"
-#include "HydrogenSupply.h"
 #include "FuelCell.h"
 #include "StatusBoard.h"
 #include "AirBrake.h"
@@ -87,12 +87,12 @@ private:
     Canopy                  canopy_;
 	FuelCell				fuelCell_;
 	HUD						headsUpDisplay_;
-	HydrogenSupply			hydrogenTank_;
+	CryogenicTank			hydrogenTank_;
 	LandingGear				landingGear_;
 	LeftMFD					mfdLeft_;
 	RightMFD				mfdRight_;
 	NavModes				navModes_;
-	O2Supply				oxygenTank_;
+	CryogenicTank			oxygenTank_;
 	PowerSystem				powerSystem_;
 	PropulsionController	propulsionController_;
 	RCSSystem				rcsSystem_;
@@ -229,6 +229,16 @@ private:
 		bm::pnl::pnlDoorCargo_RC
 	};
 
+	bco::on_off_input		switchHoverOpen{		// Hover open
+		GetControlId(),
+		{ bm::vc::swHoverDoor_id },
+		bm::vc::swHoverDoor_location, bm::vc::DoorsRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlDoorHover_id,
+		bm::pnl::pnlDoorHover_verts,
+		bm::pnl::pnlDoorHover_RC
+	};
+
 	// *** POWER GAUGES ***
 	bco::rotary_display<bco::Animation>		gaugePowerVolts_{
 		{ bm::vc::gaugeVoltMeter_id },
@@ -337,6 +347,127 @@ private:
 		bm::pnl::pnlLgtExtPwrOn_id,
 		bm::pnl::pnlLgtExtPwrOn_verts,
 		0.0244
+	};
+
+	// *** HUD *** 
+	bco::simple_event	btnHudDocking_{
+		GetControlId(),
+		bm::vc::vcHUDDock_location,
+		0.01,
+		bm::pnl::pnlHUDDock_RC
+	};
+
+	bco::on_off_display dspHudDocking_{
+		GetControlId(),
+		bm::vc::vcHUDDock_id,
+		bm::vc::vcHUDDock_verts,
+		bm::pnl::pnlHUDDock_id,
+		bm::pnl::pnlHUDDock_verts,
+		0.0352
+	};
+
+	bco::simple_event	btnHudOrbit_{
+		GetControlId(),
+		bm::vc::vcHUDOrbit_location,
+		0.01,
+		bm::pnl::pnlHUDOrbit_RC
+	};
+
+	bco::on_off_display dspHudOrbit_{
+		GetControlId(),
+		bm::vc::vcHUDOrbit_id,
+		bm::vc::vcHUDOrbit_verts,
+		bm::pnl::pnlHUDOrbit_id,
+		bm::pnl::pnlHUDOrbit_verts,
+		0.0352
+	};
+
+	bco::simple_event	btnHudSurface_{
+		GetControlId(),
+		bm::vc::vcHUDSURF_location,
+		0.01,
+		bm::pnl::pnlHUDSurf_RC
+	};
+
+	bco::on_off_display dspHudSurface_{
+		GetControlId(),
+		bm::vc::vcHUDSURF_id,
+		bm::vc::vcHUDSURF_verts,
+		bm::pnl::pnlHUDSurf_id,
+		bm::pnl::pnlHUDSurf_verts,
+		0.0352
+	};
+
+	// ***  HYDROGEN SUPPLY  *** //
+	bco::rotary_display<bco::Animation>		gaugeHydroLevel_{
+		{ bm::vc::gaHydrogenLevel_id },
+		bm::vc::gaHydrogenLevel_location, bm::vc::axisHydrogenLevel_location,
+		bm::pnl::pnlLH2Press_id,
+		bm::pnl::pnlLH2Press_verts,
+		(300 * RAD),	// Clockwise
+		0.2,
+		[](double d) {return (d); }	// Transform to amps.
+	};
+
+	bco::on_off_display		lightHydrogenAvail_{
+		GetControlId(),
+		bm::vc::LH2SupplyOnLight_id,
+		bm::vc::LH2SupplyOnLight_verts,
+		bm::pnl::pnlLH2Avail_id,
+		bm::pnl::pnlLH2Avail_verts,
+		0.0244
+	};
+
+	bco::simple_event	btnHydroFill_{
+		GetControlId(),
+		bm::vc::LH2ValveOpenSwitch_location,
+		0.01,
+		bm::pnl::pnlLH2Switch_RC
+	};
+
+	bco::on_off_display dspHydroFill_{
+		GetControlId(),
+		bm::vc::LH2ValveOpenSwitch_id,
+		bm::vc::LH2ValveOpenSwitch_verts,
+		bm::pnl::pnlLH2Switch_id,
+		bm::pnl::pnlLH2Switch_verts,
+		0.0352
+	};
+
+	// ***  LOX SUPPLY  *** //
+	bco::rotary_display<bco::Animation>		gaugeO2Level_{
+		{ bm::vc::gaugeOxygenLevel_id },
+		bm::vc::gaugeOxygenLevel_location, bm::vc::axisOxygenLevel_location,
+		bm::pnl::pnlLOXPress_id,
+		bm::pnl::pnlLOXPress_verts,
+		(300 * RAD),	// Clockwise
+		0.2,
+		[](double d) {return (d); }	// Transform to amps.
+	};
+
+	bco::on_off_display		lightO2Avail_{
+		GetControlId(),
+		bm::vc::LOXSupplyOnLight_id,
+		bm::vc::LOXSupplyOnLight_verts,
+		bm::pnl::pnlO2Avail_id,
+		bm::pnl::pnlO2Avail_verts,
+		0.0244
+	};
+
+	bco::simple_event	btnO2Fill_{
+		GetControlId(),
+		bm::vc::LOXValveOpenSwitch_location,
+		0.01,
+		bm::pnl::pnlO2Switch_RC
+	};
+
+	bco::on_off_display dspO2Fill_{
+		GetControlId(),
+		bm::vc::LOXValveOpenSwitch_id,
+		bm::vc::LOXValveOpenSwitch_verts,
+		bm::pnl::pnlO2Switch_id,
+		bm::pnl::pnlO2Switch_verts,
+		0.0352
 	};
 
 	// ** COMPONENTS **

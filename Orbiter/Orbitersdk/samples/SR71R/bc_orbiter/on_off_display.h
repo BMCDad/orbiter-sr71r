@@ -47,9 +47,8 @@ namespace bc_orbiter {
 			pnlVerts_(pnlVerts),
 			offset_(offset),
 			slotState_([&](double v) {
-			auto bv = bool(v != 0.0);
-			if (state_ != bv) {
-				state_ = bv;
+			if (state_ != v) {
+				state_ = v;
 				oapiTriggerRedrawArea(0, 0, get_id());
 			}})
 		{
@@ -84,7 +83,7 @@ namespace bc_orbiter {
 			int panel_mouse_flags() { return PANEL_MOUSE_IGNORE; }
 			int panel_redraw_flags() { return PANEL_REDRAW_USER; }
 
-			slot<double>& Slot() { return slotState_; }
+			slot<bool>& Slot() { return slotState_; }
 	private:
 		UINT					vcGroupId_;
 		const NTVERTEX* vcVerts_;
@@ -92,6 +91,6 @@ namespace bc_orbiter {
 		const NTVERTEX* pnlVerts_;
 		bool					state_{ false };
 		double					offset_{ 0.0 };
-		slot<double>			slotState_;
+		slot<bool>				slotState_;
 	};
 }

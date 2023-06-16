@@ -135,6 +135,7 @@
     <ClInclude Include="bc_orbiter\RotarySwitch.h" />
     <ClInclude Include="bc_orbiter\rotary_display.h" />
     <ClInclude Include="bc_orbiter\signals.h" />
+    <ClInclude Include="bc_orbiter\simple_event.h" />
     <ClInclude Include="bc_orbiter\TextureVisual.h" />
     <ClInclude Include="bc_orbiter\Tools.h" />
     <ClInclude Include="bc_orbiter\VCGauge.h" />
@@ -149,7 +150,6 @@
     <ClInclude Include="HoverEngines.h" />
     <ClInclude Include="IAvionics.h" />
     <ClInclude Include="FuelCell.h" />
-    <ClInclude Include="HydrogenSupply.h" />
     <ClInclude Include="IConsumable.h" />
     <ClInclude Include="LandingGear.h" />
     <ClInclude Include="Lights.h" />
@@ -165,7 +165,6 @@
     <ClInclude Include="PowerSystem.h" />
     <ClInclude Include="PropulsionController.h" />
     <ClInclude Include="LiftCoeff.h" />
-    <ClInclude Include="O2Supply.h" />
     <ClInclude Include="RCSSystem.h" />
     <ClInclude Include="RightMfd.h" />
     <ClInclude Include="ShipMets.h" />
@@ -188,12 +187,10 @@
     <ClCompile Include="FuelCell.cpp" />
     <ClCompile Include="HoverEngines.cpp" />
     <ClCompile Include="HUD.cpp" />
-    <ClCompile Include="HydrogenSupply.cpp" />
     <ClCompile Include="LandingGear.cpp" />
     <ClCompile Include="LeftMFD.cpp" />
     <ClCompile Include="Lights.cpp" />
     <ClCompile Include="NavModes.cpp" />
-    <ClCompile Include="O2Supply.cpp" />
     <ClCompile Include="PowerSystem.cpp" />
     <ClCompile Include="PropulsionController.cpp" />
     <ClCompile Include="LiftCoeff.cpp" />
