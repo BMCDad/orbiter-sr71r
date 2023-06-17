@@ -81,28 +81,11 @@ namespace bc_orbiter {
 	private:
 		std::vector<slot<T>*> slots_;
 		T value_{};
-		bool dirty_{ true };
 	};
 
-	/**
-	* connector
-	* A helper class used to connect a signal to a slot.
-	* TODO:  This class can probably be made a static function.
-	*/
 	template<typename TSignal, typename TSlot>
-	class connector {
-	public:
-		connector(TSignal& sig, TSlot& slot)
-			:
-			signal_(sig),
-			slot_(slot)
-		{
-			signal_.attach(slot_);
-		}
-
-	private:
-		TSignal& signal_;
-		TSlot& slot_;
-	};
-
+	void connect(TSignal& sig, TSlot& slot)
+	{
+		sig.attach(slot);
+	}
 }

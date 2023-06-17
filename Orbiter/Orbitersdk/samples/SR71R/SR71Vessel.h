@@ -470,6 +470,21 @@ private:
 		0.0352
 	};
 
+	// ***  AIR BRAKE  *** //
+	bco::simple_event btnDecreaseAirbrake_{
+		GetControlId(),
+		bm::vc::ABTargetDecrease_location,
+		0.01,
+		bm::pnl::pnlAirBrakeDecrease_RC
+	};
+
+	bco::simple_event btnIncreaseAirbrake_{
+		GetControlId(),
+		bm::vc::ABTargetIncrease_location,
+		0.01,
+		bm::pnl::pnlAirBrakeIncrease_RC
+	};
+
 	// ** COMPONENTS **
 	NavLight		lightNav_;
 };

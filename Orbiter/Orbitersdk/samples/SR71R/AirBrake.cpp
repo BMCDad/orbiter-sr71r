@@ -22,24 +22,11 @@
 AirBrake::AirBrake(bco::BaseVessel* vessel) :
 	Component(vessel),
 	apu_(nullptr),
-	dragFactor_(0.0)
+	dragFactor_(0.0),
+	increaseSlot_([&](bool v) {position_ = min(1.0, position_ + 0.33); increaseSlot_.set(); }),
+	decreaseSlot_([&](bool v) {position_ = max(0.0, position_ - 0.33); decreaseSlot_.set(); }),
+	hydraulicPressSlot_([&](double v) {})
 {
-	airBrakeSwitch_.AddStopFunc(0.0,    [] { });
-	airBrakeSwitch_.AddStopFunc(0.33,   [] { });
-	airBrakeSwitch_.AddStopFunc(0.66,   [] { });
-	airBrakeSwitch_.AddStopFunc(1.0,    [] { });
-
-    eventIncreaseBrake_.SetLeftMouseDownFunc([this] {airBrakeSwitch_.Increment(); });
-    vessel->RegisterVCEventTarget(&eventIncreaseBrake_);
-
-    eventDecreaseBrake_.SetLeftMouseDownFunc([this] {airBrakeSwitch_.Decrement(); });
-    vessel->RegisterVCEventTarget(&eventDecreaseBrake_);
-}
-
-
-bco::RotarySwitch& AirBrake::AirBrakeSwitch()
-{
-	return airBrakeSwitch_;
 }
 
 double AirBrake::GetAirBrakeState()
@@ -54,17 +41,19 @@ void AirBrake::Step(double simt, double simdt, double mjd)
 	// handle in the cockpit and can move regardless of power, therefore it must
 	// always get a piece of the time step.
 
-	if ((nullptr != apu_) && (apu_->GetHydraulicLevel() > 0.8))
+	if (hydraulicPressSlot_.value() > 0.8)
 	{
-		animAirBrake_.Step(airBrakeSwitch_.GetState(), simdt);
+		animAirBrake_.Step(position_, simdt);
 	}
+
+	animBrakeSwitch_.Step(position_, simdt);
 
 	// Update drag.
 	dragFactor_ = animAirBrake_.GetState();
 //	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
 
 	// This needs to be put into a switch statement eventually
-	bco::RotateMesh(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_verts, sTrans * airBrakeSwitch_.GetState());
+	bco::RotateMesh(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_verts, sTrans * animBrakeSwitch_.GetState());
 }
 
 bool AirBrake::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -78,8 +67,9 @@ bool AirBrake::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* config
 
 	sscanf_s(configLine + 8, "%i", &step);
 
-	airBrakeSwitch_.SetStep(step);
-	animAirBrake_.SetState(airBrakeSwitch_.GetPosition());
+	// TODO
+	//airBrakeSwitch_.SetStep(step);
+	//animAirBrake_.SetState(airBrakeSwitch_.GetPosition());
 
 	return true;
 }
@@ -87,7 +77,7 @@ bool AirBrake::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* config
 void AirBrake::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
-	auto val = airBrakeSwitch_.GetStep();
+	auto val = 0.0; // TODO airBrakeSwitch_.GetStep();
 
 	sprintf_s(cbuf, "%i", val);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
@@ -99,7 +89,7 @@ void AirBrake::OnSetClassCaps()
 
 	// Setup VC animation
 	auto vcIdx = vessel->GetVCMeshIndex();
-	auto aid = vessel->CreateVesselAnimation(&airBrakeSwitch_, 2.0);
+	auto aid = vessel->CreateVesselAnimation(&animBrakeSwitch_, 2.0);
     vessel->AddVesselAnimationComponent(aid, vcIdx, &gpBrakeHandle_);
 
 	// Setup external animation   
@@ -112,22 +102,4 @@ void AirBrake::OnSetClassCaps()
 
 	// Setup drag.
 	GetBaseVessel()->CreateVariableDragElement(animAirBrake_.GetStatePtr(), 10.0, bm::main::BrakeDragPoint_location);
-}
-
-bool AirBrake::OnLoadPanel2D(int id, PANELHANDLE hPanel)
-{
-	for each (auto& v in pnlEvents_)
-	{
-		oapiRegisterPanelArea(v.id, v.rc, PANEL_REDRAW_NEVER);
-		GetBaseVessel()->RegisterPanelArea(hPanel, v.id, v.rc, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
-	}
-
-	return true;
-}
-
-bool AirBrake::OnPanelMouseEvent(int id, int event)
-{
-	return bco::RunFor<PE>(pnlEvents_,
-		[&](const PE& d) {return d.id == id; },
-		[this](const PE& d) { d.update(); });
 }

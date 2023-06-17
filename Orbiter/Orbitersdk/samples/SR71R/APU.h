@@ -51,8 +51,7 @@ class VESSEL3;
 	None.
 */
 class APU : 
-	public bco::PoweredComponent,
-	public bco::IAnimationState
+	public bco::PoweredComponent
 {
 public:
 	APU(bco::BaseVessel* vessel, double amps);
@@ -70,49 +69,22 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
     
-    // *** IAnimationState ***
-    virtual double GetState() const override { return GetHydraulicLevel(); }
-
     void Step(double simt, double simdt, double mjd);
 
     // *** APU ***
-//	bco::OnOffSwitch& PowerSwitch();
 	double GetHydraulicLevel() const;
 	void SetPropulsionControl(PropulsionController* pc);
 
-	bco::slot<bool>&		APUPowerSlot()		{ return slotAPUPower_; }
-	bco::signal<double>&	HydroPressSignal()	{ return signalHydPressure_; }
+	bco::slot<bool>&		IsEnabledSlot()		{ return slotIsEnabled_; }			// Driven by main APU on/off switch
+	
+	bco::signal<double>&	HydroPressSignal()	{ return signalHydPressure_; }		// Drives the hydraulic pressure gauge
 
 private:
 	PropulsionController*	propulsionControl_;
 
 	const char*				ConfigKey = "APU";
 
-	bco::slot<bool>			slotAPUPower_;
+	bco::slot<bool>			slotIsEnabled_;
 
 	bco::signal<double>		signalHydPressure_;
-
-    //bco::VCGauge            gaugeHydrPress_{ {bm::vc::gaHydPress_id },
-    //                                            bm::vc::gaHydPress_location, bm::vc::axisHydPress_location,
-    //                                            (300 * RAD),
-    //                                            0.2
-    //                                        };
-
-    //bco::VCToggleSwitch     swPower_        {   bm::vc::SwAPUPower_id, 
-    //                                            bm::vc::SwAPUPower_location,
-    //                                            bm::vc::LeftPanelTopRightAxis_location
-    //                                        };
-
-	bco::Animation		animGauge_			{ 0.2 /* speed */};
-
-	//struct PnlData
-	//{
-	//	const UINT group;
-	//	const RECT rc;
-	//	const NTVERTEX* verts;
-	//};
-
-	//const int ID_APUSwitch = { GetBaseVessel()->GetIdForComponent(this) };
-
-	//PnlData pnlApuSwitch	{ bm::pnl::pnlAPUSwitch_id, bm::pnl::pnlAPUSwitch_RC, bm::pnl::pnlAPUSwitch_verts };
 };

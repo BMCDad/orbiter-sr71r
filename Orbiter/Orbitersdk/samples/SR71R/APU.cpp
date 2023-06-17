@@ -23,15 +23,14 @@
 APU::APU(bco::BaseVessel* vessel, double amps) :
 bco::PoweredComponent(vessel, amps, APU_MIN_VOLT),
 propulsionControl_(nullptr),
-slotAPUPower_([&](bool v) {})
+slotIsEnabled_([&](bool v) {})
 {
 }
 
 void APU::Step(double simt, double simdt, double mjd)
 {
-	if ((nullptr == propulsionControl_) || !HasPower() || !slotAPUPower_.value())
+	if ((nullptr == propulsionControl_) || !HasPower() || !slotIsEnabled_.value())
 	{
-//        gaugeHydrPress_.SetState(0.0);
 		signalHydPressure_.fire(0.0);
 	}
 	else
@@ -39,36 +38,17 @@ void APU::Step(double simt, double simdt, double mjd)
 		auto fuelDraw = APU_BURN_RATE * simdt;
 		auto actualDraw = propulsionControl_->DrawRCSFuel(fuelDraw);
 
-  //      gaugeHydrPress_.SetState((fuelDraw == actualDraw) ? 1.0 : 0.0);
 		signalHydPressure_.fire((fuelDraw == actualDraw) ? 1.0 : 0.0);
 	}
-
-//	animGauge_.Step(gaugeHydrPress_.GetState(), simdt);
-
-	//auto pMesh = GetBaseVessel()->GetpanelMeshHandle0();
-
-	//switch (oapiCockpitMode())
-	//{
-	//case COCKPIT_PANELS:
-	//	// panel anims.
-	//	bco::RotateMesh(pMesh, bm::pnl::pnlHydPress_id, bm::pnl::pnlHydPress_verts, animGauge_.GetState() * -(PI2*.8333));
-	//	break;
-
-	//case COCKPIT_VIRTUAL:
-	//	gaugeHydrPress_.SetAnimation2(GetBaseVessel(), animGauge_.GetState());
-	//	break;
-	//}
 }
 
 double APU::CurrentDraw()
 {
-	return (HasPower() && slotAPUPower_.value()) ? PoweredComponent::CurrentDraw() : 0.0;
+	return (HasPower() && slotIsEnabled_.value()) ? PoweredComponent::CurrentDraw() : 0.0;
 }
 
 void APU::OnSetClassCaps()
 {
-//    swPower_.Setup(GetBaseVessel());
-//    gaugeHydrPress_.Setup2(GetBaseVessel(), GetBaseVessel()->GetVCMeshIndex());
 }
 
 bool APU::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)

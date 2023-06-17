@@ -46,13 +46,13 @@ lights_(                this,   LIGHTS_AMPS),
 clock_(                 this),
 shutters_(              this),
 computer_(              this,   COMPUTER_AMPS),
-hoverEngines_(          this,   HOVER_AMPS),
-retroEngines_(          this,   RETRO_AMPS)
+hoverEngines_(this, HOVER_AMPS),
+retroEngines_(this, RETRO_AMPS)
 {
 	RegisterComponent(&apu_);
 	RegisterComponent(&avionics_);
 	RegisterComponent(&cargoBayController_);
-    RegisterComponent(&canopy_);
+	RegisterComponent(&canopy_);
 	RegisterComponent(&fuelCell_);
 	RegisterComponent(&headsUpDisplay_);
 	RegisterComponent(&hydrogenTank_);
@@ -71,8 +71,8 @@ retroEngines_(          this,   RETRO_AMPS)
 	RegisterComponent(&clock_);
 	RegisterComponent(&shutters_);
 	RegisterComponent(&computer_);
-    RegisterComponent(&hoverEngines_);
-    RegisterComponent(&retroEngines_);
+	RegisterComponent(&hoverEngines_);
+	RegisterComponent(&retroEngines_);
 
 	// Add Controls
 	/*  TOGGLE SWITCHES */
@@ -135,76 +135,87 @@ retroEngines_(          this,   RETRO_AMPS)
 	AddControl(&btnO2Fill_);
 	AddControl(&dspO2Fill_);
 
+	/*  Airbrake  */
+	AddControl(&btnDecreaseAirbrake_);
+	AddControl(&btnIncreaseAirbrake_);
+
 	//
 	AddComponent(&lightNav_);
 
 	// These are here because the template deduction does not seem to work in the header file.
 	// These objects will die at the end of this method, but they will have done their job.
 
-	bco::connector  navLightSwitch	{ switchNavigationLights.Signal(),				lightNav_.Slot() };
+	//bco::connector  navLightSwitch	{ switchNavigationLights.Signal(),				lightNav_.Slot() };
+
+	bco::connect( switchNavigationLights.Signal(),		lightNav_.Slot());
 
 	// Power connections
-	bco::connector	pwrMain			{ switchMainPower.Signal(),						powerSystem_.MainPowerSlot() };
-	bco::connector	pwrExtConn		{ switchConnectExternalPower.Signal(),			powerSystem_.ExternalConnectSlot() };
-	bco::connector	pwrFCConn		{ switchConnectFuelCell.Signal(),				powerSystem_.FuelCellConnectSlot() };
+	bco::connect( switchMainPower.Signal(),				powerSystem_.MainPowerSlot());
+	bco::connect( switchConnectExternalPower.Signal(),	powerSystem_.ExternalConnectSlot());
+	bco::connect( switchConnectFuelCell.Signal(),		powerSystem_.FuelCellConnectSlot());
 	
 	// Fuel cell					// A signal can drive more then one slot
-	bco::connector  vcPower			{ fuelCell_.AvailablePowerSignal(),				powerSystem_.FuelCellAvailablePowerSlot()};
-	bco::connector	lgtFCAvail		{ fuelCell_.IsAvailableSignal(),				lightFuelCellAvail_.Slot() };
-	bco::connector  pwrFCMain		{ switchFuelCellPower.Signal(),					fuelCell_.MainPowerSlot() };
-	bco::connector	fcAmpLoad		{ powerSystem_.AmpLoadSignal(),					fuelCell_.AmpLoadSlot() };
+	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
+	bco::connect( fuelCell_.IsAvailableSignal(),			lightFuelCellAvail_.Slot());
+	bco::connect( switchFuelCellPower.Signal(),				fuelCell_.MainPowerSlot());
+	bco::connect( powerSystem_.AmpLoadSignal(),				fuelCell_.AmpLoadSlot());
 
 	// Power gauges
-	bco::connector	gaVolts			{ powerSystem_.VoltLevelSignal(),				gaugePowerVolts_.Slot() };
-	bco::connector	gaAmps			{ powerSystem_.AmpLoadSignal(),					gaugePowerAmps_.Slot() };
+	bco::connect( powerSystem_.VoltLevelSignal(),			gaugePowerVolts_.Slot());
+	bco::connect( powerSystem_.AmpLoadSignal(),				gaugePowerAmps_.Slot());
 
 	// Power status lights
-	bco::connector	lgtFCConnect	{ powerSystem_.FuelCellConnectedSignal(),		lightFuelCellConnected_.Slot() };
-	bco::connector	lgtExtAvail		{ powerSystem_.ExternalAvailableSignal(),		lightExternalAvail_.Slot() };
-	bco::connector	lgtExtConnect	{ powerSystem_.ExternalConnectedSignal(),		lightExternalConnected_.Slot() };
+	bco::connect( powerSystem_.FuelCellConnectedSignal(),	lightFuelCellConnected_.Slot());
+	bco::connect( powerSystem_.ExternalAvailableSignal(),	lightExternalAvail_.Slot());
+	bco::connect( powerSystem_.ExternalConnectedSignal(),	lightExternalConnected_.Slot());
 
 	// Canopy
-	bco::connector	cpPwr			{ switchCanopyPower.Signal(),					canopy_.PowerEnabledSlot() };
-	bco::connector  cpOpen			{ switchCanopyOpen.Signal(),					canopy_.CanopyOpenSlot() };
+	bco::connect( switchCanopyPower.Signal(),				canopy_.PowerEnabledSlot());
+	bco::connect( switchCanopyOpen.Signal(),				canopy_.CanopyOpenSlot());
 
 	// Cargo
-	bco::connector	cgPwr			{ switchCargoPower.Signal(),					cargoBayController_.PowerEnabledSlot() };
-	bco::connector  cgOpen			{ switchCargoOpen.Signal(),						cargoBayController_.CargoOpenSlot() };
+	bco::connect( switchCargoPower.Signal(),				cargoBayController_.PowerEnabledSlot());
+	bco::connect( switchCargoOpen.Signal(),					cargoBayController_.CargoOpenSlot());
 
 	// APU
-	bco::connector	apuPwr			{ switchApuPower.Signal(),						apu_.APUPowerSlot() };
-	bco::connector  apuGa			{ apu_.HydroPressSignal(),						gaugeAPULevel_.Slot() };
+	bco::connect( switchApuPower.Signal(),					apu_.IsEnabledSlot());
+	bco::connect( apu_.HydroPressSignal(),					gaugeAPULevel_.Slot());
 
 	// Clock
-	bco::connector clkTS			{ clock_.TimerSecondsSignal(),					clockTimerSecondsHand_.Slot() };
-	bco::connector clkTM			{ clock_.TimerMinutesSignal(),					clockTimerMinutesHand_.Slot() };
-	bco::connector clkEM			{ clock_.ElapsedMinutesSignal(),				clockElapsedMinutesHand_.Slot() };
-	bco::connector clkEH			{ clock_.ElapsedHoursSignal(),					clockElapsedHoursHand_.Slot() };
+	bco::connect( clock_.TimerSecondsSignal(),				clockTimerSecondsHand_.Slot());
+	bco::connect( clock_.TimerMinutesSignal(),				clockTimerMinutesHand_.Slot());
+	bco::connect( clock_.ElapsedMinutesSignal(),			clockElapsedMinutesHand_.Slot());
+	bco::connect( clock_.ElapsedHoursSignal(),				clockElapsedHoursHand_.Slot());
 
 	// Hover doors
-	bco::connector hvD				{ switchHoverOpen.Signal(),						hoverEngines_.HoverOpenSlot() };
+	bco::connect( switchHoverOpen.Signal(),					hoverEngines_.HoverOpenSlot());
 
 	// HUD
-	bco::connector hdD				{ btnHudDocking_.Signal(),						headsUpDisplay_.DockModeSlot() };
-	bco::connector hdDs				{ headsUpDisplay_.DockModeSignal(),				dspHudDocking_.Slot() };
-	bco::connector hdO				{ btnHudSurface_.Signal(),						headsUpDisplay_.SurfaceModeSlot() };
-	bco::connector hdOs				{ headsUpDisplay_.SurfaceModeSignal(),			dspHudSurface_.Slot() };
-	bco::connector hdS				{ btnHudOrbit_.Signal(),						headsUpDisplay_.OrbitModeSlot() };
-	bco::connector hdSs				{ headsUpDisplay_.OrbitModeSignal(),			dspHudOrbit_.Slot() };
+	bco::connect( btnHudDocking_.Signal(),					headsUpDisplay_.DockModeSlot());
+	bco::connect( headsUpDisplay_.DockModeSignal(),			dspHudDocking_.Slot());
+	bco::connect( btnHudSurface_.Signal(),					headsUpDisplay_.SurfaceModeSlot());
+	bco::connect( headsUpDisplay_.SurfaceModeSignal(),		dspHudSurface_.Slot());
+	bco::connect( btnHudOrbit_.Signal(),					headsUpDisplay_.OrbitModeSlot());
+	bco::connect( headsUpDisplay_.OrbitModeSignal(),		dspHudOrbit_.Slot());
 
 	// Hydrogen
-	bco::connector hy				{ hydrogenTank_.LevelSignal(),					gaugeHydroLevel_.Slot() };
-	bco::connector hya				{ powerSystem_.ExternalAvailableSignal(),		hydrogenTank_.ExternAvailableSlot() };
-	bco::connector hyb				{ hydrogenTank_.IsAvailableSignal(),			lightHydrogenAvail_.Slot() };
-	bco::connector hdH				{ btnHydroFill_.Signal(),						hydrogenTank_.ToggleFillSlot()};
-	bco::connector hdHs				{ hydrogenTank_.IsFillingSignal(),				dspHydroFill_.Slot()};
+	bco::connect( hydrogenTank_.LevelSignal(),				gaugeHydroLevel_.Slot());
+	bco::connect( powerSystem_.ExternalAvailableSignal(),	hydrogenTank_.ExternAvailableSlot());
+	bco::connect( hydrogenTank_.IsAvailableSignal(),		lightHydrogenAvail_.Slot());
+	bco::connect( btnHydroFill_.Signal(),					hydrogenTank_.ToggleFillSlot());
+	bco::connect( hydrogenTank_.IsFillingSignal(),			dspHydroFill_.Slot());
 
 	// Oxygen
-	bco::connector oy				{ oxygenTank_.LevelSignal(),					gaugeO2Level_.Slot() };
-	bco::connector oya				{ powerSystem_.ExternalAvailableSignal(),		oxygenTank_.ExternAvailableSlot() };
-	bco::connector oyb				{ oxygenTank_.IsAvailableSignal(),				lightO2Avail_.Slot() };
-	bco::connector odH				{ btnO2Fill_.Signal(),							oxygenTank_.ToggleFillSlot() };
-	bco::connector odHs				{ oxygenTank_.IsFillingSignal(),				dspO2Fill_.Slot() };
+	bco::connect( oxygenTank_.LevelSignal(),				gaugeO2Level_.Slot());
+	bco::connect( powerSystem_.ExternalAvailableSignal(),	oxygenTank_.ExternAvailableSlot());
+	bco::connect( oxygenTank_.IsAvailableSignal(),			lightO2Avail_.Slot());
+	bco::connect( btnO2Fill_.Signal(),						oxygenTank_.ToggleFillSlot());
+	bco::connect( oxygenTank_.IsFillingSignal(),			dspO2Fill_.Slot());
+
+	// Airbrake
+	bco::connect( btnDecreaseAirbrake_.Signal(),			airBrake_.DecreaseSlot());
+	bco::connect( btnIncreaseAirbrake_.Signal(),			airBrake_.IncreaseSlot());
+	bco::connect( apu_.HydroPressSignal(),					airBrake_.HydraulicPressSlot());
 }
 
 

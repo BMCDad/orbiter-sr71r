@@ -100,7 +100,7 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 		switch (key)
 		{
 		case OAPI_KEY_B:
-			airBrake_.AirBrakeSwitch().Decrement();
+			btnDecreaseAirbrake_.Signal().fire(true);
 			return 1;
 		}
 	}
@@ -110,7 +110,7 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 			return 1;
 		
 		case OAPI_KEY_B:
-			airBrake_.AirBrakeSwitch().Increment();
+			btnIncreaseAirbrake_.Signal().fire(true);
 			return 1;
 
 		case OAPI_KEY_1:

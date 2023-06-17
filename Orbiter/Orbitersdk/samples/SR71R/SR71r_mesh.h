@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Thu Jun 15 19:48:21 2023
+// Date: Fri Jun 16 06:24:04 2023
 
 
 #include "orbitersdk.h"
@@ -417,6 +417,11 @@ namespace bm
     {1791.5072f, 787.3530f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
     {1746.1576f, 742.0035f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
     {1791.5072f, 742.0035f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
+    const NTVERTEX pnlLandingGear_verts[4] = {
+    {153.2238f, 855.0703f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0075f, 0.1129f},
+    {223.2238f, 855.0703f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0416f, 0.1129f},
+    {153.2238f, 709.9055f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0075f, 0.0562f},
+    {223.2238f, 709.9055f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0416f, 0.0562f}    };
     const NTVERTEX pnlClockTimerMinute_verts[4] = {
     {726.3527f, 664.4812f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.5392f},
     {766.0398f, 664.4812f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.5392f},
@@ -516,15 +521,16 @@ namespace bm
     const UINT pnlLH2Avail_id = 46;
     const UINT pnlO2Switch_id = 47;
     const UINT pnlO2Avail_id = 48;
-    const UINT pnlClockTimerMinute_id = 49;
-    const UINT pnlClockHour_id = 50;
-    const UINT pnlClockMinute_id = 51;
-    const UINT pnlClockSecond_id = 52;
-    const UINT pnlHydPress_id = 53;
-    const UINT pnlLOXPress_id = 54;
-    const UINT pnlLH2Press_id = 55;
-    const UINT pnlAmpMeter_id = 56;
-    const UINT pnlVoltMeter_id = 57;
+    const UINT pnlLandingGear_id = 49;
+    const UINT pnlClockTimerMinute_id = 50;
+    const UINT pnlClockHour_id = 51;
+    const UINT pnlClockMinute_id = 52;
+    const UINT pnlClockSecond_id = 53;
+    const UINT pnlHydPress_id = 54;
+    const UINT pnlLOXPress_id = 55;
+    const UINT pnlLH2Press_id = 56;
+    const UINT pnlAmpMeter_id = 57;
+    const UINT pnlVoltMeter_id = 58;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {847, 617, 917, 673};

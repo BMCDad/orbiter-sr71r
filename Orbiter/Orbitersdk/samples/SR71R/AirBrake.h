@@ -49,24 +49,26 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
-    bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-    bool OnPanelMouseEvent(int id, int event) override;
-
     void Step(double simt, double simdt, double mjd);
 
     // *** AirBrake ***
 	void SetAPU(APU* apu) { apu_ = apu; }
-	bco::RotarySwitch& AirBrakeSwitch();
 	double AirBrake::GetAirBrakeState();
 
+    bco::slot<bool>& IncreaseSlot() { return increaseSlot_; }
+    bco::slot<bool>& DecreaseSlot() { return decreaseSlot_; }
+    bco::slot<double>& HydraulicPressSlot() { return hydraulicPressSlot_; }
+
 private:
-	bco::RotarySwitch		airBrakeSwitch_;
-    bco::VCEventTarget      eventIncreaseBrake_ { bm::vc::ABTargetIncrease_location, 0.01 };
-    bco::VCEventTarget      eventDecreaseBrake_ { bm::vc::ABTargetDecrease_location, 0.01 };
+
+    bco::slot<bool>     increaseSlot_;
+    bco::slot<bool>     decreaseSlot_;
+    bco::slot<double>   hydraulicPressSlot_;
 
 	APU*					apu_;
 
 	double					dragFactor_;
+    double                  position_{ 0.0 };
 
 	const char*				ConfigKey = "AIRBRAKE";
 
@@ -75,9 +77,9 @@ private:
     //              of hydraulic power.  The vc and panel switches key off of that.
 
     bco::Animation          animBrakeSurface_;
-    bco::Animation          animBrakeSwitch_;
+    bco::Animation          animBrakeSwitch_    {   2.0 };
 
-    bco::Animation			animAirBrake_       {   &airBrakeSwitch_, 2.0 };
+    bco::Animation			animAirBrake_       {   2.0 };
 
     bco::AnimationGroup     gpBrakeHandle_      {   { bm::vc::AirBrakeLever_id },
                                                     bm::vc::SpBrakeAxisRight_location, bm::vc::SpBrakeAxisLeft_location,
@@ -110,18 +112,4 @@ private:
 
     // Panel
     const VECTOR3 sTrans { bm::pnl::pnlSpeedBrakeFull_location - bm::pnl::pnlSpeedBrakeOff_location };
-
-    struct PE
-    {
-        int id;
-        const UINT group;
-        const RECT rc;
-        std::function<void(void)> update;
-    };
-    std::vector<PE> pnlEvents_
-    {
-        {GetBaseVessel()->GetIdForComponent(this), bm::pnl::pnlAirBrakeDecrease_id, bm::pnl::pnlAirBrakeDecrease_RC,    [this] {airBrakeSwitch_.Decrement(); }},
-        {GetBaseVessel()->GetIdForComponent(this), bm::pnl::pnlAirBrakeIncrease_id, bm::pnl::pnlAirBrakeIncrease_RC,    [this] {airBrakeSwitch_.Increment(); }}
-    };
-
 };
