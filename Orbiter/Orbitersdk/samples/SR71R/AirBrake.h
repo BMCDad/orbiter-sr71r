@@ -52,20 +52,17 @@ public:
     void Step(double simt, double simdt, double mjd);
 
     // *** AirBrake ***
-	void SetAPU(APU* apu) { apu_ = apu; }
 	double AirBrake::GetAirBrakeState();
 
-    bco::slot<bool>& IncreaseSlot() { return increaseSlot_; }
-    bco::slot<bool>& DecreaseSlot() { return decreaseSlot_; }
-    bco::slot<double>& HydraulicPressSlot() { return hydraulicPressSlot_; }
+    bco::slot<bool>&    IncreaseSlot()          { return increaseSlot_; }
+    bco::slot<bool>&    DecreaseSlot()          { return decreaseSlot_; }
+    bco::slot<double>&  HydraulicPressSlot()    { return hydraulicPressSlot_; }
 
 private:
 
     bco::slot<bool>     increaseSlot_;
     bco::slot<bool>     decreaseSlot_;
     bco::slot<double>   hydraulicPressSlot_;
-
-	APU*					apu_;
 
 	double					dragFactor_;
     double                  position_{ 0.0 };
@@ -78,7 +75,6 @@ private:
 
     bco::Animation          animBrakeSurface_;
     bco::Animation          animBrakeSwitch_    {   2.0 };
-
     bco::Animation			animAirBrake_       {   2.0 };
 
     bco::AnimationGroup     gpBrakeHandle_      {   { bm::vc::AirBrakeLever_id },

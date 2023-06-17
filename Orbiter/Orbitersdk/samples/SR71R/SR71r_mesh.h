@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Fri Jun 16 06:24:04 2023
+// Date: Fri Jun 16 20:15:54 2023
 
 
 #include "orbitersdk.h"
@@ -522,15 +522,17 @@ namespace bm
     const UINT pnlO2Switch_id = 47;
     const UINT pnlO2Avail_id = 48;
     const UINT pnlLandingGear_id = 49;
-    const UINT pnlClockTimerMinute_id = 50;
-    const UINT pnlClockHour_id = 51;
-    const UINT pnlClockMinute_id = 52;
-    const UINT pnlClockSecond_id = 53;
-    const UINT pnlHydPress_id = 54;
-    const UINT pnlLOXPress_id = 55;
-    const UINT pnlLH2Press_id = 56;
-    const UINT pnlAmpMeter_id = 57;
-    const UINT pnlVoltMeter_id = 58;
+    const UINT pnlLandingGearDown_id = 50;
+    const UINT pnlLandingGearUp_id = 51;
+    const UINT pnlClockTimerMinute_id = 52;
+    const UINT pnlClockHour_id = 53;
+    const UINT pnlClockMinute_id = 54;
+    const UINT pnlClockSecond_id = 55;
+    const UINT pnlHydPress_id = 56;
+    const UINT pnlLOXPress_id = 57;
+    const UINT pnlLH2Press_id = 58;
+    const UINT pnlAmpMeter_id = 59;
+    const UINT pnlVoltMeter_id = 60;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {847, 617, 917, 673};
@@ -591,6 +593,10 @@ namespace bm
     constexpr RECT pnlLH2Avail_RC = {1838, 742, 1883, 788};
     constexpr RECT pnlO2Switch_RC = {1732, 798, 1802, 854};
     constexpr RECT pnlO2Avail_RC = {1746, 742, 1792, 788};
+    constexpr RECT pnlLandingGearDown_RC = {159, 852, 219, 973};
+    constexpr RECT pnlLandingGearUp_RC = {158, 718, 218, 839};
+    constexpr VECTOR3 pnlLandingGearKnobUp_location =     {188.0139, 779.2891, -0.0003};
+    constexpr VECTOR3 pnlLandingGearKnobDown_location =     {188.0139, 912.5637, -0.0003};
 
   }
 

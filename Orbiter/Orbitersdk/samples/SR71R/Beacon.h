@@ -1,4 +1,4 @@
-//	Lights - SR-71r Orbiter Addon
+//	Beacon - SR-71r Orbiter Addon
 //	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
@@ -19,18 +19,17 @@
 #include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\signals.h"
 #include "bc_orbiter\control.h"
-
 #include "SR71r_mesh.h"
 
 #include <map>
 
 namespace bco = bc_orbiter;
 
-
-class NavLight : 
+class Beacon : 
 	public bco::set_class_caps {
+
 public:
-	NavLight() 
+	Beacon()
 		:
 		slot_([&](bool v) { SetActive(); })
 	{
@@ -38,10 +37,10 @@ public:
 
 	// set_class_caps
 	void handle_set_class_caps(bco::BaseVessel& vessel) {
-		vessel.AddBeacon(&specNavLeft_);
-		vessel.AddBeacon(&specNavRight_);
-		vessel.AddBeacon(&specNavRear_);
+		vessel.AddBeacon(&specBeaconTop_);
+		vessel.AddBeacon(&specBeaconBottom_);
 	}
+
 
 	bco::slot<bool>& Slot() { return slot_; }
 private:
@@ -50,10 +49,9 @@ private:
 
 	void SetActive() {
 		auto hasPower = true;
-		auto state = (slot_.value() && hasPower);
-		specNavLeft_.active = state;
-		specNavRear_.active = state;
-		specNavRight_.active = state;
+		auto state = (hasPower && slot_.value());
+		specBeaconTop_.active = state;
+		specBeaconBottom_.active = state;
 	}
 
 	// Set light specs:
@@ -61,39 +59,28 @@ private:
 	VECTOR3 colGreen{ 0.5, 1.0, 0.5 };
 	VECTOR3 colWhite{ 1.0, 1.0, 1.0 };
 
-	BEACONLIGHTSPEC			specNavLeft_{
-		BEACONSHAPE_DIFFUSE,
-		const_cast<VECTOR3*>(&bm::main::NavLightP_location),
+	BEACONLIGHTSPEC			specBeaconTop_{
+		BEACONSHAPE_STAR,
+		const_cast<VECTOR3*>(&bm::main::BeaconTop_location),
 		&colRed,		// color
-		0.3,			// size
-		0.4,			// falloff
-		0.0,			// period
+		0.55,			// size
+		0.6,			// falloff
+		2.0,			// period
 		0.1,			// duration
-		0.2,			// tofs
+		0.0,			// tofs
 		false,			// active
 	};
-
-	BEACONLIGHTSPEC			specNavRight_{
-		BEACONSHAPE_DIFFUSE,
-		const_cast<VECTOR3*>(&bm::main::NavLightS_location),
-		&colGreen,		// color
-		0.3,			// size
-		0.4,			// falloff
-		0.0,			// period
+	
+	BEACONLIGHTSPEC			specBeaconBottom_{
+		BEACONSHAPE_STAR,
+		const_cast<VECTOR3*>(&bm::main::BeaconBottom_location),
+		&colRed,		// color
+		0.55,			// size
+		0.6,			// falloff
+		2.0,			// period
 		0.1,			// duration
-		0.2,			// tofs
-		false,			// active
-	};
-
-	BEACONLIGHTSPEC			specNavRear_{
-		BEACONSHAPE_DIFFUSE,
-		const_cast<VECTOR3*>(&bm::main::NavLightTail_location),
-		&colWhite,		// color
-		0.3,			// size
-		0.4,			// falloff
-		0.0,			// period
-		0.1,			// duration
-		0.2,			// tofs
+		0.0,			// tofs
 		false,			// active
 	};
 };
+

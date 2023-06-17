@@ -126,9 +126,6 @@
     <ClInclude Include="CryogenicTank.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Lights.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Clock.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -225,9 +222,6 @@
     <ClInclude Include="NavLights.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="ToggleSwitches.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\signals.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
@@ -248,6 +242,12 @@
     </ClInclude>
     <ClInclude Include="bc_orbiter\simple_event.h">
       <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="Beacon.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Strobe.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -312,9 +312,6 @@
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="CryogenicTank.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="Lights.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="Clock.cpp">

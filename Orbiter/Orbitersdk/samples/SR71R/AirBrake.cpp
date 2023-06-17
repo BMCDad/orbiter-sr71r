@@ -21,7 +21,6 @@
 
 AirBrake::AirBrake(bco::BaseVessel* vessel) :
 	Component(vessel),
-	apu_(nullptr),
 	dragFactor_(0.0),
 	increaseSlot_([&](bool v) {position_ = min(1.0, position_ + 0.33); increaseSlot_.set(); }),
 	decreaseSlot_([&](bool v) {position_ = max(0.0, position_ - 0.33); decreaseSlot_.set(); }),

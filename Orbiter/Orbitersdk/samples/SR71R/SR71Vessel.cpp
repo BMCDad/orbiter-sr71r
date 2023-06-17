@@ -42,7 +42,7 @@ rcsSystem_(             this,   RCS_AMPS),
 surfaceControl_(        this),
 statusBoard_(           this,   STATUS_AMPS),
 airBrake_(              this),
-lights_(                this,   LIGHTS_AMPS),
+//lights_(                this,   LIGHTS_AMPS),  TODO
 clock_(                 this),
 shutters_(              this),
 computer_(              this,   COMPUTER_AMPS),
@@ -67,7 +67,6 @@ retroEngines_(this, RETRO_AMPS)
 	RegisterComponent(&surfaceControl_);
 	RegisterComponent(&statusBoard_);
 	RegisterComponent(&airBrake_);
-	RegisterComponent(&lights_);
 	RegisterComponent(&clock_);
 	RegisterComponent(&shutters_);
 	RegisterComponent(&computer_);
@@ -76,10 +75,14 @@ retroEngines_(this, RETRO_AMPS)
 
 	// Add Controls
 	/*  TOGGLE SWITCHES */
-	AddControl(&switchNavigationLights);
 	AddControl(&switchMainPower);
 	AddControl(&switchConnectExternalPower);
 	AddControl(&switchConnectFuelCell);
+
+	/*  LIGHT SWITCHES  */
+	AddControl(&switchNavigationLights);
+	AddControl(&switchBeaconLights);
+	AddControl(&switchStrobeLights);
 
 	/*  FUELCELL SWITCHES */
 	AddControl(&switchFuelCellPower);
@@ -139,20 +142,29 @@ retroEngines_(this, RETRO_AMPS)
 	AddControl(&btnDecreaseAirbrake_);
 	AddControl(&btnIncreaseAirbrake_);
 
+	/*  Landing Gear  */
+	AddControl(&btnLowerLandingGear_);
+	AddControl(&btnRaiseLandingGear_);
+
 	//
 	AddComponent(&lightNav_);
+	AddComponent(&beacon_);
+	AddComponent(&strobe_);
 
 	// These are here because the template deduction does not seem to work in the header file.
 	// These objects will die at the end of this method, but they will have done their job.
 
 	//bco::connector  navLightSwitch	{ switchNavigationLights.Signal(),				lightNav_.Slot() };
 
-	bco::connect( switchNavigationLights.Signal(),		lightNav_.Slot());
+	// Lights
+	bco::connect( switchNavigationLights.Signal(),			lightNav_.Slot());
+	bco::connect( switchBeaconLights.Signal(),				beacon_.Slot());
+	bco::connect( switchStrobeLights.Signal(),				strobe_.Slot());
 
 	// Power connections
-	bco::connect( switchMainPower.Signal(),				powerSystem_.MainPowerSlot());
-	bco::connect( switchConnectExternalPower.Signal(),	powerSystem_.ExternalConnectSlot());
-	bco::connect( switchConnectFuelCell.Signal(),		powerSystem_.FuelCellConnectSlot());
+	bco::connect( switchMainPower.Signal(),					powerSystem_.MainPowerSlot());
+	bco::connect( switchConnectExternalPower.Signal(),		powerSystem_.ExternalConnectSlot());
+	bco::connect( switchConnectFuelCell.Signal(),			powerSystem_.FuelCellConnectSlot());
 	
 	// Fuel cell					// A signal can drive more then one slot
 	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
@@ -216,6 +228,11 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( btnDecreaseAirbrake_.Signal(),			airBrake_.DecreaseSlot());
 	bco::connect( btnIncreaseAirbrake_.Signal(),			airBrake_.IncreaseSlot());
 	bco::connect( apu_.HydroPressSignal(),					airBrake_.HydraulicPressSlot());
+
+	// Landing Gear
+	bco::connect( btnRaiseLandingGear_.Signal(),			landingGear_.GearUpSlot());
+	bco::connect( btnLowerLandingGear_.Signal(),			landingGear_.GearDownSlot());
+	bco::connect( apu_.HydroPressSignal(),					landingGear_.HydraulicPressSlot());
 }
 
 
@@ -231,9 +248,6 @@ void SR71Vessel::SetupVesselComponents()
 	// APU
 	apu_.SetPropulsionControl(&propulsionController_);
 
-	// Landing gear
-	landingGear_.SetAPU(&apu_);
-
 	// Fuelcell
 	fuelCell_.SetHydrogenSytem(&hydrogenTank_);
 	fuelCell_.SetOxygenSystem(&oxygenTank_);
@@ -248,9 +262,6 @@ void SR71Vessel::SetupVesselComponents()
     statusBoard_.SetHover(&hoverEngines_);
     statusBoard_.SetRetro(&retroEngines_);
     statusBoard_.SetCanopy(&canopy_);
-
-	// Airbrake
-	airBrake_.SetAPU(&apu_);
 
     // Flight Computer
     computer_.SetAvionics(&avionics_);
@@ -272,7 +283,7 @@ void SR71Vessel::SetupVesselComponents()
 	powerSystem_.AddMainCircuitDevice(&fuelCell_);
 	powerSystem_.AddMainCircuitDevice(&statusBoard_);
 	powerSystem_.AddMainCircuitDevice(&propulsionController_);
-	powerSystem_.AddMainCircuitDevice(&lights_);
+//	powerSystem_.AddMainCircuitDevice(&lights_);		 // TODO
 	powerSystem_.AddMainCircuitDevice(&computer_);
     powerSystem_.AddMainCircuitDevice(&hoverEngines_);
     powerSystem_.AddMainCircuitDevice(&retroEngines_);

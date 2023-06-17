@@ -27,7 +27,6 @@
 #include "FuelCell.h"
 #include "StatusBoard.h"
 #include "AirBrake.h"
-#include "Lights.h"
 #include "Clock.h"
 #include "Shutters.h"
 #include "FlightComputer.h"
@@ -35,6 +34,8 @@
 #include "HoverEngines.h"
 #include "RetroEngines.h"
 #include "NavLights.h"
+#include "Beacon.h"
+#include "Strobe.h"
 
 #include <vector>
 #include <map>
@@ -99,7 +100,6 @@ private:
 	SurfaceController		surfaceControl_;
 	StatusBoard				statusBoard_;
 	AirBrake				airBrake_;
-	Lights					lights_;
 	Clock					clock_;
 	Shutters				shutters_;
 	FC::FlightComputer		computer_;
@@ -157,16 +157,6 @@ private:
 		bm::pnl::pnlPwrFCBus_id,
 		bm::pnl::pnlPwrFCBus_verts,
 		bm::pnl::pnlPwrFCBus_RC
-	};
-
-	bco::on_off_input		switchNavigationLights {		// On off switch for external navigation lights.
-		GetControlId(),
-		{ bm::vc::SwitchNavLights_id },
-		bm::vc::SwitchNavLights_location, bm::vc::LightsRightAxis_location,
-		toggleOnOff,
-		bm::pnl::pnlLightNav_id,
-		bm::pnl::pnlLightNav_verts,
-		bm::pnl::pnlLightNav_RC
 	};
 
 	bco::on_off_input		switchFuelCellPower {		// Main fuel cell power
@@ -485,7 +475,56 @@ private:
 		bm::pnl::pnlAirBrakeIncrease_RC
 	};
 
+	// *** LANDING GEAR *** //
+	bco::simple_event btnRaiseLandingGear_{
+		GetControlId(),
+		bm::vc::GearLeverUpTarget_location,
+		0.01,
+		bm::pnl::pnlLandingGearUp_RC
+	};
+
+	bco::simple_event btnLowerLandingGear_{
+		GetControlId(),
+		bm::vc::GearLeverDownTarget_location,
+		0.01,
+		bm::pnl::pnlLandingGearDown_RC
+	};
+
+	// ***  LIGHTS  *** //
+	bco::on_off_input		switchNavigationLights{		// On off switch for external navigation lights.
+		GetControlId(),
+		{ bm::vc::SwitchNavLights_id },
+		bm::vc::SwitchNavLights_location, bm::vc::LightsRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlLightNav_id,
+		bm::pnl::pnlLightNav_verts,
+		bm::pnl::pnlLightNav_RC
+	};
+
+	bco::on_off_input		switchBeaconLights{		// On off switch for external beacon lights.
+		GetControlId(),
+		{ bm::vc::SwitchBeaconLights_id },
+		bm::vc::SwitchBeaconLights_location, bm::vc::LightsRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlLightBeacon_id,
+		bm::pnl::pnlLightBeacon_verts,
+		bm::pnl::pnlLightBeacon_RC
+	};
+
+	bco::on_off_input		switchStrobeLights{		// On off switch for external strobe lights.
+		GetControlId(),
+		{ bm::vc::SwitchStrobeLights_id },
+		bm::vc::SwitchStrobeLights_location, bm::vc::LightsRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlLightStrobe_id,
+		bm::pnl::pnlLightStrobe_verts,
+		bm::pnl::pnlLightStrobe_RC
+	};
+
+
 	// ** COMPONENTS **
 	NavLight		lightNav_;
+	Beacon			beacon_;
+	Strobe			strobe_;
 };
 

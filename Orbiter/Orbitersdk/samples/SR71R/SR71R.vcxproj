@@ -142,6 +142,7 @@
     <ClInclude Include="bc_orbiter\VCRotorSwitch.h" />
     <ClInclude Include="bc_orbiter\VCToggleSwitch.h" />
     <ClInclude Include="bc_orbiter\Visual.h" />
+    <ClInclude Include="Beacon.h" />
     <ClInclude Include="Canopy.h" />
     <ClInclude Include="CargoBayController.h" />
     <ClInclude Include="Clock.h" />
@@ -152,7 +153,6 @@
     <ClInclude Include="FuelCell.h" />
     <ClInclude Include="IConsumable.h" />
     <ClInclude Include="LandingGear.h" />
-    <ClInclude Include="Lights.h" />
     <ClInclude Include="NavLights.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RetroEngines.h" />
@@ -171,8 +171,8 @@
     <ClInclude Include="SR71r_mesh.h" />
     <ClInclude Include="SR71Vessel.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="Strobe.h" />
     <ClInclude Include="SurfaceController.h" />
-    <ClInclude Include="ToggleSwitches.h" />
     <ClInclude Include="VesselControl.h" />
   </ItemGroup>
   <ItemGroup>
@@ -189,7 +189,6 @@
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="LandingGear.cpp" />
     <ClCompile Include="LeftMFD.cpp" />
-    <ClCompile Include="Lights.cpp" />
     <ClCompile Include="NavModes.cpp" />
     <ClCompile Include="PowerSystem.cpp" />
     <ClCompile Include="PropulsionController.cpp" />

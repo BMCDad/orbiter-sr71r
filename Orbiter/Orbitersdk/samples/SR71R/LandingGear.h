@@ -52,18 +52,21 @@ public:
 	void Step(double simt, double simdt, double mjd);
 
 
-	void SetAPU(APU* apu) { apu_ = apu; }
+//	void SetAPU(APU* apu) { apu_ = apu; }
 
     bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
-	bco::OnOffSwitch& LandingGearSwitch();
+    bco::slot<bool>&    GearDownSlot()          { return gearDownSlot_; }
+    bco::slot<bool>&    GearUpSlot()            { return gearUpSlot_; }
+    bco::slot<double>&  HydraulicPressSlot()    { return hydraulicPressSlot_; }
 
 private:
-	bco::OnOffSwitch		landingGearSwitch_;
-    bco::VCEventTarget      targetGearDown_     { bm::vc::GearLeverDownTarget_location,    0.01 };
-    bco::VCEventTarget      targetGearUp_       { bm::vc::GearLeverUpTarget_location,      0.01 };
 
-	APU*					apu_;
+    bco::slot<bool>         gearDownSlot_;
+    bco::slot<bool>         gearUpSlot_;
+    bco::slot<double>       hydraulicPressSlot_;
+
+    double                  position_{ 0.0 };
 
 	const char*				ConfigKey = "GEAR";
 
@@ -73,7 +76,8 @@ private:
                                                     animation of the gear based on available APU
                                                     power.  See the Step method in the cpp file. 
                                                 */
-    bco::Animation			animLandingGear_    { &landingGearSwitch_, 0.15 };
+    bco::Animation          animLandingSwitch_  { 2.0 };
+    bco::Animation			animLandingGear_    { 0.15 };
     UINT                    idAnim_             { 0 };
 
     // VC Animations
@@ -158,4 +162,5 @@ private:
                                                     0.5, 0.8
                                                 };
 
+    const VECTOR3 sTrans{ bm::pnl::pnlLandingGearKnobDown_location - bm::pnl::pnlLandingGearKnobUp_location };
 };

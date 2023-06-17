@@ -121,7 +121,7 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 	else {
 		switch (key) {
 		case OAPI_KEY_G:  // "operate landing gear"
-			landingGear_.LandingGearSwitch().Toggle();
+			//landingGear_.LandingGearSwitch().Toggle();
 			return 1;
 
 		case OAPI_KEY_1:	// Main auto pilot toggle.
@@ -199,7 +199,7 @@ void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 	surfaceControl_.Step(simt, simdt, mjd);
 	statusBoard_.Step(simt, simdt, mjd);
 	airBrake_.Step(simt, simdt, mjd);
-	lights_.Step(simt, simdt, mjd);
+//	lights_.Step(simt, simdt, mjd);
 	clock_.Step(simt, simdt, mjd);
 	computer_.Step(simt, simdt, mjd);
     hoverEngines_.Step(simt, simdt, mjd);

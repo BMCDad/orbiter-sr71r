@@ -21,19 +21,10 @@
 
 LandingGear::LandingGear(bco::BaseVessel* vessel) :
 Component(vessel),
-apu_(nullptr)
+gearDownSlot_([&](bool v) { position_ = 1.0;  gearDownSlot_.set(); }),
+gearUpSlot_([&](bool v) { position_ = 0.0;  gearUpSlot_.set(); }),
+hydraulicPressSlot_([&](double v) {})
 {
-    targetGearDown_.SetLeftMouseDownFunc([this] {landingGearSwitch_.SetOn(); });
-    vessel->RegisterVCEventTarget(&targetGearDown_);
-
-    targetGearUp_.SetLeftMouseDownFunc([this] {landingGearSwitch_.SetOff(); });
-    vessel->RegisterVCEventTarget(&targetGearUp_);
-}
-
-
-bco::OnOffSwitch& LandingGear::LandingGearSwitch()
-{
-	return landingGearSwitch_;
 }
 
 void LandingGear::Step(double simt, double simdt, double mjd)
@@ -43,10 +34,14 @@ void LandingGear::Step(double simt, double simdt, double mjd)
 	// handle in the cockpit and can move regardless of power, therefore it must
 	// always get a piece of the time step.
 
-	if ((nullptr != apu_) && (apu_->GetHydraulicLevel() > 0.8))
+	if (hydraulicPressSlot_.value() > 0.8)
 	{
-		animLandingGear_.Step(landingGearSwitch_.GetState(), simdt);
+		animLandingGear_.Step(position_, simdt);
 	}
+
+    animLandingSwitch_.Step(position_, simdt);
+
+    bco::RotateMesh(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_verts, sTrans * animLandingSwitch_.GetState());
 }
 
 bool LandingGear::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -56,26 +51,28 @@ bool LandingGear::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* con
 		return false;
 	}
 
-	int isOn;
-	double state;
+    // TODO
+	//int isOn;
+	//double state;
 
-	sscanf_s(configLine + 4, "%i%lf", &isOn, &state);
+	//sscanf_s(configLine + 4, "%i%lf", &isOn, &state);
 
-	landingGearSwitch_.SetState((isOn == 0) ? 0.0 : 1.0);
-	
-    animLandingGear_.SetState(state);
-    GetBaseVessel()->SetAnimationState(idAnim_, state);
+	//landingGearSwitch_.SetState((isOn == 0) ? 0.0 : 1.0);
+	//
+ //   animLandingGear_.SetState(state);
+ //   GetBaseVessel()->SetAnimationState(idAnim_, state);
 
 	return true;
 }
 
 void LandingGear::OnSaveConfiguration(FILEHANDLE scn) const
 {
-	char cbuf[256];
-	auto val = (landingGearSwitch_.GetState() == 0.0) ? 0 : 1;
+    // TODO
+	//char cbuf[256];
+	//auto val = (landingGearSwitch_.GetState() == 0.0) ? 0 : 1;
 
-	sprintf_s(cbuf, "%i %lf", val, landingGearSwitch_.GetState());
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	//sprintf_s(cbuf, "%i %lf", val, landingGearSwitch_.GetState());
+	//oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
 }
 
 void LandingGear::OnSetClassCaps()
@@ -85,7 +82,7 @@ void LandingGear::OnSetClassCaps()
     auto meshIdx = vessel->GetMainMeshIndex();
 
     // VC
-    auto aid = vessel->CreateVesselAnimation(&landingGearSwitch_, 2.0);
+    auto aid = vessel->CreateVesselAnimation(&animLandingSwitch_, 2.0);
     vessel->AddVesselAnimationComponent(aid, vcMeshIdx, &lgHandle_);
 
     // External
