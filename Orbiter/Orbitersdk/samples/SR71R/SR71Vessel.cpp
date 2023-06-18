@@ -146,6 +146,34 @@ retroEngines_(this, RETRO_AMPS)
 	AddControl(&btnLowerLandingGear_);
 	AddControl(&btnRaiseLandingGear_);
 
+	/*  Nav Modes  */
+	AddControl(&btnNavKillRot_);
+	AddControl(&dspNavKillRot_);
+	AddControl(&btnNavHorzLevel_);
+	AddControl(&dspNavHorzLevel_);
+	AddControl(&btnNavPrograde_);
+	AddControl(&dspNavPrograde_);
+	AddControl(&btnNavRetrograde_);
+	AddControl(&dspNavRetrograde_);
+	AddControl(&btnNavNormal_);
+	AddControl(&dspNavNormal_);
+	AddControl(&btnNavAntiNorm_);
+	AddControl(&dspNavAntiNorm_);
+
+	/*  Propulsion  */
+	AddControl(&gaugeFuelFlow_);
+	AddControl(&gaugeFuelMain_);
+	AddControl(&gaugeFuelRCS_);
+	AddControl(&switchThrustLimit_);
+	AddControl(&switchFuelDump_);
+	AddControl(&switchTransferSelect_);
+	AddControl(&lightFuelAvail_);
+	AddControl(&btnFuelTransferPump_);
+	AddControl(&dspFuelTransfer_);
+	AddControl(&btnFuelValveOpen_);
+	AddControl(&dspFuelValveOpen_);
+
+
 	//
 	AddComponent(&lightNav_);
 	AddComponent(&beacon_);
@@ -233,6 +261,33 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( btnRaiseLandingGear_.Signal(),			landingGear_.GearUpSlot());
 	bco::connect( btnLowerLandingGear_.Signal(),			landingGear_.GearDownSlot());
 	bco::connect( apu_.HydroPressSignal(),					landingGear_.HydraulicPressSlot());
+
+	// Nav Modes
+	bco::connect( btnNavKillRot_.Signal(),					navModes_.IsKillRotSlot());
+	bco::connect( navModes_.IsKillRotSignal(),				dspNavKillRot_.Slot());
+	bco::connect( btnNavHorzLevel_.Signal(),				navModes_.IsHorzLevelSlot());
+	bco::connect( navModes_.IsHorzLevelSignal(),			dspNavHorzLevel_.Slot());
+	bco::connect( btnNavPrograde_.Signal(),					navModes_.IsProgradeSlot());
+	bco::connect( navModes_.IsProgradeSignal(),				dspNavPrograde_.Slot());
+	bco::connect( btnNavRetrograde_.Signal(),				navModes_.IsRetroGradeSlot());
+	bco::connect( navModes_.IsRetroGradeSignal(),			dspNavRetrograde_.Slot());
+	bco::connect( btnNavNormal_.Signal(),					navModes_.IsNormalSlot());
+	bco::connect( navModes_.IsNormalSignal(),				dspNavNormal_.Slot());
+	bco::connect( btnNavAntiNorm_.Signal(),					navModes_.IsAntiNormalSlot());
+	bco::connect( navModes_.IsAntiNormalSignal(),			dspNavAntiNorm_.Slot());
+
+	// Propulsion
+	bco::connect( propulsionController_.FuelFlowSignal(),		gaugeFuelFlow_.Slot());
+	bco::connect( propulsionController_.MainFuelLevelSignal(),	gaugeFuelMain_.Slot());
+	bco::connect( propulsionController_.RCSFuelLevelSignal(),	gaugeFuelRCS_.Slot());
+	bco::connect( switchThrustLimit_.Signal(),					propulsionController_.ThrottleLimitSlot());
+	bco::connect( switchFuelDump_.Signal(),						propulsionController_.FuelDumpSlot());
+	bco::connect( switchTransferSelect_.Signal(),				propulsionController_.FuelTransferSelSlot());
+	bco::connect( propulsionController_.IsFuelAvailSignal(),	lightFuelAvail_.Slot());
+	bco::connect( btnFuelTransferPump_.Signal(),				propulsionController_.TransferPumpSlot());
+	bco::connect( propulsionController_.IsTransferPumpOn(),		dspFuelTransfer_.Slot());
+	bco::connect( btnFuelValveOpen_.Signal(),					propulsionController_.FuelValveOpenSlot());
+	bco::connect( propulsionController_.IsFuelValveOpen(),		dspFuelValveOpen_.Slot());
 }
 
 

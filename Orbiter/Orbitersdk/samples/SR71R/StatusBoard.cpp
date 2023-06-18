@@ -129,7 +129,8 @@ void StatusBoard::DrawKEASMsg(DEVMESHHANDLE devMesh)
 
 void StatusBoard::DrawThrustLimit(DEVMESHHANDLE devMesh)
 {
-	auto ofs = GetWarnMsgOffset(propulsion_->ThrustLimitSwitch().IsOn() ? 0.0 : 0.5);
+// TODO	auto ofs = GetWarnMsgOffset(propulsion_->ThrustLimitSwitch().IsOn() ? 0.0 : 0.5);
+	auto ofs = GetWarnMsgOffset(0.0);  // TODO ^
 	msgThrustLimit_.SetTranslate(_V(ofs, 0.0, 0.0));
 	msgThrustLimit_.RotateMesh(devMesh);
 }
@@ -161,7 +162,7 @@ void StatusBoard::DrawDock(DEVMESHHANDLE devMesh)
 
 void StatusBoard::DrawFuel(DEVMESHHANDLE devMesh)
 {
-	auto fuelLevel = propulsion_->GetMainFuelLevel();
+	auto fuelLevel = 1.0; // TODO propulsion_->GetMainFuelLevel();
 	auto ofsf = OffOffset;
 
     if (HasPower())

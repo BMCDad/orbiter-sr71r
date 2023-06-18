@@ -46,11 +46,10 @@ namespace bc_orbiter {
 			pnlGroupId_(pnlGroupId),
 			pnlVerts_(pnlVerts),
 			offset_(offset),
-			slotState_([&](double v) {
-			if (state_ != v) {
-				state_ = v;
-				oapiTriggerRedrawArea(0, 0, get_id());
-			}})
+			slotState_([&](bool v) {
+				oapiTriggerRedrawArea(0, 0, get_id()); 
+				slotState_.set();
+			})
 		{
 		}
 
@@ -60,7 +59,7 @@ namespace bc_orbiter {
 				TransformUV2d(
 					vcVerts_,
 					delta, 4,
-					_V(state_ ? offset_ : 0.0,
+					_V(slotState_.value() ? offset_ : 0.0,
 						0.0,
 						0.0),
 					0.0);
@@ -75,7 +74,7 @@ namespace bc_orbiter {
 			}
 
 			void on_panel_redraw(MESHHANDLE meshPanel) override {
-				DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, state_, offset_);
+				DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, slotState_.value(), offset_);
 			}
 
 			int vc_mouse_flags() { return PANEL_MOUSE_IGNORE; }

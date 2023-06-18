@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Fri Jun 16 20:15:54 2023
+// Date: Sat Jun 17 18:19:34 2023
 
 
 #include "orbitersdk.h"
@@ -223,10 +223,10 @@ namespace bm
     {990.0000f, 616.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.2264f},
     {1060.0000f, 616.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.2264f}    };
     const NTVERTEX pnlNavAntiNorm_verts[4] = {
-    {990.0000f, 729.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3475f, 0.3126f},
-    {1060.0000f, 729.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.3126f},
-    {990.0000f, 673.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3475f, 0.2838f},
-    {1060.0000f, 673.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.2838f}    };
+    {990.0000f, 729.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4255f, 0.2549f},
+    {1060.0000f, 729.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4604f, 0.2549f},
+    {990.0000f, 673.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4255f, 0.2262f},
+    {1060.0000f, 673.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4604f, 0.2262f}    };
     const NTVERTEX pnlRCSRot_verts[4] = {
     {123.4692f, 81.1468f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.3412f},
     {193.4692f, 81.1468f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.3412f},
@@ -422,6 +422,36 @@ namespace bm
     {223.2238f, 855.0703f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0416f, 0.1129f},
     {153.2238f, 709.9055f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0075f, 0.0562f},
     {223.2238f, 709.9055f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0416f, 0.0562f}    };
+    const NTVERTEX pnlThrottleLimit_verts[4] = {
+    {2433.8789f, 100.7638f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {2466.4084f, 100.7638f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {2433.8789f, 12.8741f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {2466.4084f, 12.8741f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlFuelDump_verts[4] = {
+    {2491.6292f, 997.4446f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {2524.1587f, 997.4446f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {2491.6292f, 909.5549f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {2524.1587f, 909.5549f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlFuelTransferSelect_verts[4] = {
+    {2332.2751f, 997.4446f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {2364.8047f, 997.4446f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {2332.2751f, 909.5549f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {2364.8047f, 909.5549f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlFuelAvail_verts[4] = {
+    {1647.7161f, 787.3530f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
+    {1693.0657f, 787.3530f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
+    {1647.7161f, 742.0035f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
+    {1693.0657f, 742.0035f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
+    const NTVERTEX pnlFuelValveSwitch_verts[4] = {
+    {1637.4175f, 853.4367f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4251f, 0.1398f},
+    {1707.4175f, 853.4367f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4599f, 0.1398f},
+    {1637.4175f, 797.4367f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4251f, 0.1111f},
+    {1707.4175f, 797.4367f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4599f, 0.1111f}    };
+    const NTVERTEX pnlFuelTransfer_verts[4] = {
+    {2206.8088f, 982.7538f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1109f},
+    {2276.8088f, 982.7538f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1109f},
+    {2206.8088f, 926.7538f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.0822f},
+    {2276.8088f, 926.7538f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.0822f}    };
     const NTVERTEX pnlClockTimerMinute_verts[4] = {
     {726.3527f, 664.4812f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.5392f},
     {766.0398f, 664.4812f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.5392f},
@@ -467,6 +497,21 @@ namespace bm
     {2496.0710f, 802.0320f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.6628f, 0.0050f},
     {2436.2136f, 679.0007f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.7306f, 0.0240f},
     {2408.2324f, 704.0975f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.7306f, 0.0050f}    };
+    const NTVERTEX pnlGaFuelFlow_verts[4] = {
+    {2487.9036f, 155.7094f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.5380f},
+    {2517.5818f, 182.7004f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.5380f},
+    {2406.7761f, 244.9143f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.6040f},
+    {2436.4543f, 271.9053f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4459f, 0.6040f}    };
+    const NTVERTEX pnlGaFuelMain_verts[4] = {
+    {2425.8240f, 438.5685f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.4245f, 0.5380f},
+    {2401.8518f, 406.4025f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.4459f, 0.5380f},
+    {2522.5061f, 366.5146f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.4245f, 0.6040f},
+    {2498.5339f, 334.3486f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.4459f, 0.6040f}    };
+    const NTVERTEX pnlGaFuelRCS_verts[4] = {
+    {2429.0488f, 615.7503f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.4245f, 0.5380f},
+    {2403.1714f, 585.0962f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.4459f, 0.5380f},
+    {2521.1865f, 537.9697f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.4245f, 0.6040f},
+    {2495.3091f, 507.3156f, 0.0000f, -0.0000f, -0.0000f, -1.0000f, 0.4459f, 0.6040f}    };
     const DWORD TXIDX_SR71R_100_2DPanel_dds = 1;
     const DWORD TXIDX_SR71R_100_VC1_dds = 2;
     const DWORD TXIDX_SR71R_100_VC2_dds = 3;
@@ -524,15 +569,24 @@ namespace bm
     const UINT pnlLandingGear_id = 49;
     const UINT pnlLandingGearDown_id = 50;
     const UINT pnlLandingGearUp_id = 51;
-    const UINT pnlClockTimerMinute_id = 52;
-    const UINT pnlClockHour_id = 53;
-    const UINT pnlClockMinute_id = 54;
-    const UINT pnlClockSecond_id = 55;
-    const UINT pnlHydPress_id = 56;
-    const UINT pnlLOXPress_id = 57;
-    const UINT pnlLH2Press_id = 58;
-    const UINT pnlAmpMeter_id = 59;
-    const UINT pnlVoltMeter_id = 60;
+    const UINT pnlThrottleLimit_id = 52;
+    const UINT pnlFuelDump_id = 53;
+    const UINT pnlFuelTransferSelect_id = 54;
+    const UINT pnlFuelAvail_id = 55;
+    const UINT pnlFuelValveSwitch_id = 56;
+    const UINT pnlFuelTransfer_id = 57;
+    const UINT pnlClockTimerMinute_id = 58;
+    const UINT pnlClockHour_id = 59;
+    const UINT pnlClockMinute_id = 60;
+    const UINT pnlClockSecond_id = 61;
+    const UINT pnlHydPress_id = 62;
+    const UINT pnlLOXPress_id = 63;
+    const UINT pnlLH2Press_id = 64;
+    const UINT pnlAmpMeter_id = 65;
+    const UINT pnlVoltMeter_id = 66;
+    const UINT pnlGaFuelFlow_id = 67;
+    const UINT pnlGaFuelMain_id = 68;
+    const UINT pnlGaFuelRCS_id = 69;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {847, 617, 917, 673};
@@ -597,6 +651,15 @@ namespace bm
     constexpr RECT pnlLandingGearUp_RC = {158, 718, 218, 839};
     constexpr VECTOR3 pnlLandingGearKnobUp_location =     {188.0139, 779.2891, -0.0003};
     constexpr VECTOR3 pnlLandingGearKnobDown_location =     {188.0139, 912.5637, -0.0003};
+    constexpr VECTOR3 pnlGaFuelFlow_location =     {2462.1790, 213.8074, -0.0040};
+    constexpr VECTOR3 pnlGaFuelMain_location =     {2462.1790, 386.4586, -0.0040};
+    constexpr VECTOR3 pnlGaFuelRCS_location =     {2462.1790, 561.5330, -0.0040};
+    constexpr RECT pnlThrottleLimit_RC = {2434, 14, 2466, 102};
+    constexpr RECT pnlFuelDump_RC = {2492, 910, 2524, 998};
+    constexpr RECT pnlFuelTransferSelect_RC = {2332, 910, 2365, 998};
+    constexpr RECT pnlFuelAvail_RC = {1648, 742, 1693, 788};
+    constexpr RECT pnlFuelValveSwitch_RC = {1638, 798, 1708, 854};
+    constexpr RECT pnlFuelTransfer_RC = {2207, 927, 2277, 983};
 
   }
 

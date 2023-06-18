@@ -114,7 +114,8 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 			return 1;
 
 		case OAPI_KEY_1:
-			propulsionController_.ThrustLimitSwitch().Toggle();
+			//propulsionController_.ThrustLimitSwitch().Toggle();
+			switchThrustLimit_.Signal().fire(!switchThrustLimit_.GetState());
 			return 1;
 		}
 	}

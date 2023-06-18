@@ -28,81 +28,43 @@ PropulsionController::PropulsionController(bco::BaseVessel* vessel, double amps)
 PoweredComponent(vessel, amps, 5.0),
 mainFuelLevel_(0.0),
 rcsFuelLevel_(0.0),
-transMode_(TransMode::None),
-lightFuelSupplyAvailable_(	bm::vc::FuelSupplyOnLight_verts,		bm::vc::FuelSupplyOnLight_id),
-lightFuelSupplyValveOpen_(	bm::vc::FuelValveOpenSwitch_verts,	bm::vc::FuelValveOpenSwitch_id),
-visTranferPumpOn_(			bm::vc::FuelTransferSwitch_verts,		bm::vc::FuelTransferSwitch_id)
+slotThrottleLimit_(	[&](bool v) { SetThrustLevel((v) ? ENGINE_THRUST : ENGINE_THRUST_AB); }),
+slotFuelDump_(		[&](bool v) { }), 
+slotTransferSel_(	[&](bool v) { }),
+slotTransferPump_(	[&](bool b) { ToggleTransfer(); slotTransferPump_.set(); }),
+slotFuelValveOpen_(	[&](bool b) { ToggleFill(); slotFuelValveOpen_.set(); })
 {
 	maxMainFlow_ = (ENGINE_THRUST / THRUST_ISP) * 2;
-
-	// Setup switch functions:
-	// Limit switch:
-	swThrustLimit_.OnFunction([this]{SetThrustLevel(ENGINE_THRUST); });
-	swThrustLimit_.OffFunction([this]{SetThrustLevel(ENGINE_THRUST_AB); });
-
-	// Transfer switch:
-	swSelectTransfer_.OnFunction([this] { transMode_ = TransMode::Main; });
-    swSelectTransfer_.OffFunction([this] { transMode_ = TransMode::RCS; });
-
-	// Pump switches:
-	switchFuelSupplyValveOpen_.SetPressedFunc([this] {ToggleFill(); });
-    vessel->RegisterVCEventTarget(&switchFuelSupplyValveOpen_);
-
-	swTransferPump_.SetPressedFunc([this] {ToggleTransfer(); });
-	vessel->RegisterVCEventTarget(&swTransferPump_);
-
-	swDumpFuel_.OnFunction([this] {SetDumpOn(true); });
-    swDumpFuel_.OffFunction([this] {SetDumpOn(false); });
 }
 
 void PropulsionController::ToggleFill()
 {
-	if (isFilling_)
+	if (sigIsFuelValveOpen_.current())
 	{
-		isFilling_ = false;
+		sigIsFuelValveOpen_.fire(false);
 	}
 	else
 	{
-		if (	HasPower() && 
-				isAvailable_ && 
-				(transMode_ != TransMode::None))
+		if (HasPower() && sigIsFuelAvail_.current())
 		{
-			isFilling_ = true;
+			sigIsFuelValveOpen_.fire(true);
 		}
 	}
 }
 void PropulsionController::ToggleTransfer()
 {
-	if (isTransfering_)
+	if (sigIsTransferOn_.current())
 	{
-		isTransfering_ = false;
+		sigIsTransferOn_.fire(false);
 	}
 	else
 	{
-		if (	HasPower() &&
-				(transMode_ != TransMode::None))
-		{
-			isTransfering_ = true;
-		}
-	}
-}
-
-void PropulsionController::SetDumpOn(bool mode)
-{
-	if (!mode)
-	{
-		isDumping_ = false;
-	}
-	else
-	{
-		// You can only dump from Main.
 		if (HasPower())
 		{
-			isDumping_ = true;
+			sigIsTransferOn_.fire(true);
 		}
 	}
 }
-
 
 void PropulsionController::Step(double simt, double simdt, double mjd)
 {
@@ -116,30 +78,30 @@ void PropulsionController::Step(double simt, double simdt, double mjd)
 
 void PropulsionController::Update(double deltaUpdate)
 {
-	isAvailable_ = HasPower() ? GetBaseVessel()->IsStoppedOrDocked() : false;
+	sigIsFuelAvail_.fire(HasPower() && GetBaseVessel()->IsStoppedOrDocked());
 
-	if (!isAvailable_)
+	if (!sigIsFuelAvail_.current())
 	{
-		isFilling_ = false;
+		sigIsFuelValveOpen_.fire(false);
 	}
 
-	HandleTransfer(deltaUpdate);
+	HandleTransfer(deltaUpdate); // <- this sets the current levels.
 
     auto vessel = GetBaseVessel();
 
     // Main flow
     auto flow = vessel->GetPropellantFlowrate(vessel->MainPropellant());
 //    auto trFlow = (flow / maxMainFlow_) * (PI2 * 0.75);	// 90.718 = 200lbs per hour : 270 deg.
-	if (flow < 0.0) flow = 0.0;
-    gaFuelFlow_.SetState(flow / maxMainFlow_);
+	if ((flow < 0.0) || slotFuelDump_.value()) flow = 0.0;	 // Don't report flow if dumping.
+	sigFuelFlowRate_.fire(flow / maxMainFlow_);	 // Converted to 0-1 range.
 
     // Main level
 //    auto trMain = GetMainFuelLevel() * (PI2 * 0.71111);	// 256 deg.
-    gaFuelMain_.SetState(GetMainFuelLevel());
+	sigMainFuelLevel_.fire(mainFuelLevel_);
 
     // RCS
 //    auto trRCS = GetRcsFuelLevel() * (PI2 * 0.733);	// 264 deg.
-    gaFuelRCS_.SetState(GetRcsFuelLevel());
+	sigRCSFuelLevel_.fire(rcsFuelLevel_);
 
 	vessel->UpdateUIArea(areaId_);
 }
@@ -157,75 +119,35 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
 
 
 	// Dumping and filling of the main tank will happen regardless of the transfer switch position.
-	if (isFilling_)
+	if (sigIsFuelValveOpen_.current()) // cannot be enabled if external fuel is unavailable.
 	{
 		// Add to main.
 		auto actualFill = FillMainFuel(FUEL_FILL_RATE * deltaUpdate);
 		if (actualFill <= 0.0)
 		{
-			isFilling_ = false;
+			sigIsFuelValveOpen_.fire(false);
 		}
 	}
 
-	if (isDumping_)
+	if (HasPower() && slotFuelDump_.value())
 	{
-		// Remove from main.
 		auto actualDump = DrawMainFuel(FUEL_DUMP_RATE * deltaUpdate);
-		if (actualDump <= 0.0)
-		{
-			isDumping_ = false;
-		}
 	}
 
-	switch (transMode_)
+	if (sigIsTransferOn_.current())
 	{
-	case TransMode::Main:
+		// Get the requested amount to move.
+		auto transferAmount = FUEL_TRANFER_RATE * deltaUpdate;
+		auto actualDrawn = slotTransferSel_.value() ?  // TRUE = MAIN
+			DrawMainFuel(transferAmount) :
+			DrawRCSFuel(transferAmount);
 
-		if (isTransfering_)
+		auto actual = FillMainFuel(actualDrawn);
+
+		if (actual != actualDrawn)
 		{
-			// Move from Main to RCS.
-			// Get the requested amount to move.
-			auto transferAmount = FUEL_TRANFER_RATE * deltaUpdate;
-			auto actualDrawn = DrawRCSFuel(transferAmount);
-
-			auto actual = FillMainFuel(actualDrawn);
-
-			if (actual != actualDrawn)
-			{
-				isTransfering_ = false;
-			}
+			sigIsTransferOn_.fire(false);
 		}
-		break;
-
-	case TransMode::None:
-		// Turn everything off.
-		isFilling_ = false;
-		isTransfering_ = false;
-		isDumping_ = false;
-		break;
-
-	case TransMode::RCS:
-		
-		// RCS can only be filled by transfering fuel from the main tank.
-
-		if (isTransfering_)
-		{
-			// Move from Main to RCS.
-			// Get the requested amount to move.
-			auto transferAmount = FUEL_TRANFER_RATE * deltaUpdate;
-			auto actualDrawn = DrawMainFuel(transferAmount);
-
-			auto actual = FillRCSFuel(actualDrawn);
-			
-
-			if (actual != actualDrawn)
-			{
-				isTransfering_ = false;
-			}
-		}
-
-		// You cannot dump from RCS
-		break;
 	}
 }
 
@@ -292,15 +214,6 @@ double PropulsionController::FillRCSFuel(double amount)
 void PropulsionController::OnSetClassCaps()
 {
 	auto vessel = GetBaseVessel();
-
-    swThrustLimit_.Setup(vessel);
-    swSelectTransfer_.Setup(vessel);
-    swDumpFuel_.Setup(vessel);
-    
-    gaFuelFlow_.Setup(vessel);
-    gaFuelMain_.Setup(vessel);
-    gaFuelRCS_.Setup(vessel);
-
 
 	//	Start with max thrust (ENGINE_THRUST) this will change base on the max thrust selector.
 	mainThrustHandles_[0] = vessel->CreateThruster(
@@ -403,7 +316,7 @@ void PropulsionController::OnSetClassCaps()
 	vessel->AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_L_FORWARD_location, _V(0, 0,  1));
 	vessel->AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_R_FORWARD_location, _V(0, 0,  1));
 
-	swThrustLimit_.SetOff();
+	// swThrustLimit_.SetOff();
 	
 	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
@@ -416,7 +329,7 @@ bool PropulsionController::OnLoadConfiguration(char* key, FILEHANDLE scn, const 
 	}
 
 	int limit;
-	transMode_ = TransMode::None;
+	int transMode_ = 0; // TODO
 	int fill = 0;
 	int transfer = 0;
 	int dump = 0;
@@ -424,16 +337,16 @@ bool PropulsionController::OnLoadConfiguration(char* key, FILEHANDLE scn, const 
 	sscanf_s(configLine + 10, "%i%i%i%i%i", &limit, &transMode_, &fill, &transfer, &dump);
 
 	// Thrust limit.
-	swThrustLimit_.SetState((limit == 0) ? 0.0 : 1.0);
+	// TODO swThrustLimit_.SetState((limit == 0) ? 0.0 : 1.0);
 
 	// Transfer switch.
-	transMode_ = (transMode_ == 0) ? TransMode::RCS : TransMode::Main;
-	swSelectTransfer_.SetState((transMode_ == TransMode::RCS) ? 0 : 1);
+	// TODO transMode_ = (transMode_ == 0) ? TransMode::RCS : TransMode::Main;
+	// TODO swSelectTransfer_.SetState((transMode_ == TransMode::RCS) ? 0 : 1);
 
 	// Pumps
-	isFilling_ = (fill != 0);
-	isTransfering_ = (transfer != 0);
-	isDumping_ = (dump != 0);
+	// TODO isFilling_ = (fill != 0);   <--fuel valve open
+	// TODO isTransfering_ = (transfer != 0);
+	// TODO isDumping_ = (dump != 0);
 
     return true;
 }
@@ -441,12 +354,12 @@ bool PropulsionController::OnLoadConfiguration(char* key, FILEHANDLE scn, const 
 void PropulsionController::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
-	auto val = (swThrustLimit_.GetState() == 0.0) ? 0 : 1;
+	auto val = 0; // TODO (swThrustLimit_.GetState() == 0.0) ? 0 : 1;
 
-	auto step = (swSelectTransfer_.GetState() == 0.0) ? 0 : 1;
-	auto iFill = (isFilling_) ? 1 : 0;
-	auto iTrans = (isTransfering_) ? 1 : 0;
-	auto iDump = (isDumping_) ? 1 : 0;
+	auto step = 0; // TODO (swSelectTransfer_.GetState() == 0.0) ? 0 : 1;
+	auto iFill = 0; // TODO (isFilling_) ? 1 : 0;
+	auto iTrans = 0; // TODO (isTransfering_) ? 1 : 0;
+	auto iDump = 0; // TODO (isDumping_) ? 1 : 0;
     
 	sprintf_s(cbuf, "%i %i %i %i %i", val, step, iFill, iTrans, iDump);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
@@ -460,41 +373,6 @@ void PropulsionController::SetVesselMainThrustLevel(double level)
 void PropulsionController::SetAttitudeRotLevel(Axis axis, double level)
 {
     GetBaseVessel()->SetAttitudeRotLevel((int)axis, level);
-}
-
-
-bool PropulsionController::OnLoadVC(int id)
-{
-	// Redraw
-	oapiVCRegisterArea(areaId_, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
-    return true;
-}
-
-bool PropulsionController::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-	assert(devMesh != nullptr);
-
-
-
-
-	const double availOffset = 0.0244;
-	const double newBtnOffset = 0.0352;
-	double trans = 0.0;
-
-	trans = isAvailable_ ? availOffset : 0.0;
-	lightFuelSupplyAvailable_.SetTranslate(_V(trans, 0.0, 0.0));
-	lightFuelSupplyAvailable_.RotateMesh(devMesh);
-
-	trans = isFilling_ ? newBtnOffset : 0.0;
-	lightFuelSupplyValveOpen_.SetTranslate(_V(trans, 0.0, 0.0));
-	lightFuelSupplyValveOpen_.RotateMesh(devMesh);
-
-	trans = isTransfering_ ? newBtnOffset : 0.0;
-	visTranferPumpOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visTranferPumpOn_.RotateMesh(devMesh);
-
-	return true;
 }
 
 void PropulsionController::SetThrustLevel(double newLevel)

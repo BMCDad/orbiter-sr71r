@@ -521,6 +521,205 @@ private:
 		bm::pnl::pnlLightStrobe_RC
 	};
 
+	// ***  NAV MODES  *** //
+	bco::simple_event	btnNavKillRot_{
+		GetControlId(),
+		bm::vc::vcNavKillRot_location,
+		0.01,
+		bm::pnl::pnlNavKillrot_RC
+	};
+
+	bco::on_off_display dspNavKillRot_{
+		GetControlId(),
+		bm::vc::vcNavKillRot_id,
+		bm::vc::vcNavKillRot_verts,
+		bm::pnl::pnlNavKillrot_id,
+		bm::pnl::pnlNavKillrot_verts,
+		0.0352
+	};
+
+	bco::simple_event	btnNavHorzLevel_{
+		GetControlId(),
+		bm::vc::vcNavHorzLvl_location,
+		0.01,
+		bm::pnl::pnlNavHorzLvl_RC
+	};
+
+	bco::on_off_display dspNavHorzLevel_{
+		GetControlId(),
+		bm::vc::vcNavHorzLvl_id,
+		bm::vc::vcNavHorzLvl_verts,
+		bm::pnl::pnlNavHorzLvl_id,
+		bm::pnl::pnlNavHorzLvl_verts,
+		0.0352
+	};
+
+	bco::simple_event	btnNavPrograde_{
+		GetControlId(),
+		bm::vc::vcNavProGrade_location,
+		0.01,
+		bm::pnl::pnlNavPrograde_RC
+	};
+
+	bco::on_off_display dspNavPrograde_{
+		GetControlId(),
+		bm::vc::vcNavProGrade_id,
+		bm::vc::vcNavProGrade_verts,
+		bm::pnl::pnlNavPrograde_id,
+		bm::pnl::pnlNavPrograde_verts,
+		0.0352
+	};
+
+	bco::simple_event	btnNavRetrograde_{
+		GetControlId(),
+		bm::vc::vcNavRetro_location,
+		0.01,
+		bm::pnl::pnlNavRetro_RC
+	};
+
+	bco::on_off_display dspNavRetrograde_{
+		GetControlId(),
+		bm::vc::vcNavRetro_id,
+		bm::vc::vcNavRetro_verts,
+		bm::pnl::pnlNavRetro_id,
+		bm::pnl::pnlNavRetro_verts,
+		0.0352
+	};
+
+	bco::simple_event	btnNavNormal_{
+		GetControlId(),
+		bm::vc::vcNavNorm_location,
+		0.01,
+		bm::pnl::pnlNavNorm_RC
+	};
+
+	bco::on_off_display dspNavNormal_{
+		GetControlId(),
+		bm::vc::vcNavNorm_id,
+		bm::vc::vcNavNorm_verts,
+		bm::pnl::pnlNavNorm_id,
+		bm::pnl::pnlNavNorm_verts,
+		0.0352
+	};
+
+	bco::simple_event	btnNavAntiNorm_{
+		GetControlId(),
+		bm::vc::vcNavAntiNorm_location,
+		0.01,
+		bm::pnl::pnlNavAntiNorm_RC
+	};
+
+	bco::on_off_display dspNavAntiNorm_{
+		GetControlId(),
+		bm::vc::vcNavAntiNorm_id,
+		bm::vc::vcNavAntiNorm_verts,
+		bm::pnl::pnlNavAntiNorm_id,
+		bm::pnl::pnlNavAntiNorm_verts,
+		0.0352
+	};
+
+	// ***  PROPULSION  *** //
+	bco::rotary_display<bco::Animation>		gaugeFuelFlow_{
+		{ bm::vc::gaFuelFlow_id },
+		bm::vc::gaFuelFlow_location, bm::vc::FuelFlowAxisFront_location,
+		bm::pnl::pnlGaFuelFlow_id,
+		bm::pnl::pnlGaFuelFlow_verts,
+		(270 * RAD),	// Clockwise
+		1.0,
+		[](double d) {return (d); }	// Transform to amps.
+	};
+
+	bco::rotary_display<bco::Animation>		gaugeFuelMain_{
+		{ bm::vc::gaMainFuel_id },
+		bm::vc::gaMainFuel_location, bm::vc::FuelLevelAxisFront_location,
+		bm::pnl::pnlGaFuelMain_id,
+		bm::pnl::pnlGaFuelMain_verts,
+		(256 * RAD),	// Clockwise
+		1.0,
+		[](double d) {return (d); }	// Transform to amps.
+	};
+
+	bco::rotary_display<bco::Animation>		gaugeFuelRCS_{
+		{ bm::vc::gaRCSFuel_id },
+		bm::vc::gaRCSFuel_location, bm::vc::RCSLevelAxisFront_location,
+		bm::pnl::pnlGaFuelRCS_id,
+		bm::pnl::pnlGaFuelRCS_verts,
+		(264 * RAD),	// Clockwise
+		1.0,
+		[](double d) {return (d); }	// Transform to amps.
+	};
+
+	bco::on_off_input		switchThrustLimit_{		// Thrust Limit
+		GetControlId(),
+		{ bm::vc::swThrottleLimit_id },
+		bm::vc::swThrottleLimit_location, bm::vc::TopRowSwitchRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlThrottleLimit_id,
+		bm::pnl::pnlThrottleLimit_verts,
+		bm::pnl::pnlThrottleLimit_RC
+	};
+
+	bco::on_off_input		switchFuelDump_{		// Fuel dump
+		GetControlId(),
+		{ bm::vc::swDumpFuel_id },
+		bm::vc::swDumpFuel_location, bm::vc::FuelTransferRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlFuelDump_id,
+		bm::pnl::pnlFuelDump_verts,
+		bm::pnl::pnlFuelDump_RC
+	};
+
+	bco::on_off_input		switchTransferSelect_{		// Thrust Limit
+		GetControlId(),
+		{ bm::vc::swTransferSelect_id },
+		bm::vc::swTransferSelect_location, bm::vc::FuelTransferRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlFuelTransferSelect_id,
+		bm::pnl::pnlFuelTransferSelect_verts,
+		bm::pnl::pnlFuelTransferSelect_RC
+	};
+
+	bco::on_off_display		lightFuelAvail_{
+		GetControlId(),
+		bm::vc::FuelSupplyOnLight_id,
+		bm::vc::FuelSupplyOnLight_verts,
+		bm::pnl::pnlFuelAvail_id,
+		bm::pnl::pnlFuelAvail_verts,
+		0.0244
+	};
+
+	bco::simple_event		btnFuelTransferPump_{
+		GetControlId(),
+		bm::vc::FuelTransferSwitch_location,
+		0.01,
+		bm::pnl::pnlFuelTransfer_RC
+	};
+
+	bco::on_off_display		dspFuelTransfer_{
+		GetControlId(),
+		bm::vc::FuelTransferSwitch_id,
+		bm::vc::FuelTransferSwitch_verts,
+		bm::pnl::pnlFuelTransfer_id,
+		bm::pnl::pnlFuelTransfer_verts,
+		0.0352
+	};
+
+	bco::simple_event		btnFuelValveOpen_{
+		GetControlId(),
+		bm::vc::FuelValveOpenSwitch_location,
+		0.01,
+		bm::pnl::pnlFuelValveSwitch_RC
+	};
+
+	bco::on_off_display		dspFuelValveOpen_{
+		GetControlId(),
+		bm::vc::FuelValveOpenSwitch_id,
+		bm::vc::FuelValveOpenSwitch_verts,
+		bm::pnl::pnlFuelValveSwitch_id,
+		bm::pnl::pnlFuelValveSwitch_verts,
+		0.0352
+	};
+
 
 	// ** COMPONENTS **
 	NavLight		lightNav_;
