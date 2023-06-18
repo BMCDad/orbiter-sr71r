@@ -173,6 +173,14 @@ retroEngines_(this, RETRO_AMPS)
 	AddControl(&btnFuelValveOpen_);
 	AddControl(&dspFuelValveOpen_);
 
+	/*  RCS  */
+	AddControl(&btnRCSLinear_);
+	AddControl(&dspRCSLinear_);
+	AddControl(&btnRCSRotate_);
+	AddControl(&dspRCSRotate_);
+
+	/*  Retro Doors  */
+	AddControl(&switchRetroDoors_);
 
 	//
 	AddComponent(&lightNav_);
@@ -288,6 +296,15 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( propulsionController_.IsTransferPumpOn(),		dspFuelTransfer_.Slot());
 	bco::connect( btnFuelValveOpen_.Signal(),					propulsionController_.FuelValveOpenSlot());
 	bco::connect( propulsionController_.IsFuelValveOpen(),		dspFuelValveOpen_.Slot());
+
+	// RCS
+	bco::connect( btnRCSLinear_.Signal(),					rcsSystem_.ToggleLinearSlot());
+	bco::connect( rcsSystem_.IsLinearSignal(),				dspRCSLinear_.Slot());
+	bco::connect( btnRCSRotate_.Signal(),					rcsSystem_.ToggleRotateSlot());
+	bco::connect( rcsSystem_.IsRotateSignal(),				dspRCSRotate_.Slot());
+
+	// Retro Doors
+	bco::connect( switchRetroDoors_.Signal(),				retroEngines_.RetroDoorsSlot());
 }
 
 

@@ -33,53 +33,24 @@ class RCSSystem : public bco::PoweredComponent
 public:
 	RCSSystem(bco::BaseVessel* vessel, double amps);
 
-	void OnSetClassCaps() override;
-
-	bool OnLoadVC(int id) override;
-	bool OnVCMouseEvent(int id, int event) override;
-	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-
-	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-	bool OnPanelMouseEvent(int id, int event) override;
-	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
-
 	virtual void ChangePowerLevel(double newLevel) override;
-
 	virtual double CurrentDraw() override;
 	
 	// Callback:
 	void OnRCSMode(int mode);
 
+	bco::slot<bool>&	ToggleLinearSlot()	{ return slotToggleLinear_; }
+	bco::slot<bool>&	ToggleRotateSlot()	{ return slotToggleRotate_; }
+
+	bco::signal<bool>&	IsLinearSignal()	{ return sigIsLinear_; }
+	bco::signal<bool>&	IsRotateSignal()	{ return sigIsRotate_; }
+
 private:
     void OnChanged(int mode);
 
-	struct VcData
-	{
-		int id;
-		int mode;
-		const UINT group;
-		const VECTOR3& loc;
-		const NTVERTEX* verts;
-	};
+	bco::slot<bool>		slotToggleLinear_;
+	bco::slot<bool>		slotToggleRotate_;
 
-	struct PnlData
-	{
-		int id;
-		int mode;
-		const UINT group;
-		const RECT rc;
-		const NTVERTEX* verts;
-	};
-
-	std::vector<VcData> vcData_
-	{
-		{ GetBaseVessel()->GetIdForComponent(this), RCS_LIN, bm::vc::vcRCSLin_id,	bm::vc::vcRCSLin_location,	bm::vc::vcRCSLin_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), RCS_ROT, bm::vc::vcRCSRot_id,	bm::vc::vcRCSRot_location,	bm::vc::vcRCSRot_verts }
-	};
-
-	std::vector<PnlData> pnlData_
-	{
-		{ GetBaseVessel()->GetIdForComponent(this), RCS_LIN, bm::pnl::pnlRCSLin_id,	bm::pnl::pnlRCSLin_RC,		bm::pnl::pnlRCSLin_verts },
-		{ GetBaseVessel()->GetIdForComponent(this), RCS_ROT, bm::pnl::pnlRCSRot_id,	bm::pnl::pnlRCSRot_RC,		bm::pnl::pnlRCSRot_verts }
-	};
+	bco::signal<bool>	sigIsLinear_;
+	bco::signal<bool>	sigIsRotate_;
 };

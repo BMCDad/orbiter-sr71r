@@ -720,6 +720,50 @@ private:
 		0.0352
 	};
 
+	// ***  RCS  *** //
+	bco::simple_event		btnRCSLinear_{
+		GetControlId(),
+		bm::vc::vcRCSLin_location,
+		0.01,
+		bm::pnl::pnlRCSLin_RC
+	};
+
+	bco::on_off_display		dspRCSLinear_{
+		GetControlId(),
+		bm::vc::vcRCSLin_id,
+		bm::vc::vcRCSLin_verts,
+		bm::pnl::pnlRCSLin_id,
+		bm::pnl::pnlRCSLin_verts,
+		0.0352
+	};
+
+	bco::simple_event		btnRCSRotate_{
+		GetControlId(),
+		bm::vc::vcRCSRot_location,
+		0.01,
+		bm::pnl::pnlRCSRot_RC
+	};
+
+	bco::on_off_display		dspRCSRotate_{
+		GetControlId(),
+		bm::vc::vcRCSRot_id,
+		bm::vc::vcRCSRot_verts,
+		bm::pnl::pnlRCSRot_id,
+		bm::pnl::pnlRCSRot_verts,
+		0.0352
+	};
+
+	// ***  Retro Doors  *** //
+	bco::on_off_input		switchRetroDoors_{		// Open close for retro doors.
+		GetControlId(),
+		{ bm::vc::swRetroDoors_id },
+		bm::vc::swRetroDoors_location, bm::vc::DoorsRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlDoorRetro_id,
+		bm::pnl::pnlDoorRetro_verts,
+		bm::pnl::pnlDoorRetro_RC
+	};
+
 
 	// ** COMPONENTS **
 	NavLight		lightNav_;

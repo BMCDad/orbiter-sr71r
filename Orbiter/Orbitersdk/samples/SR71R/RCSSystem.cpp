@@ -26,12 +26,9 @@
 
 
 RCSSystem::RCSSystem(bco::BaseVessel* vessel, double amps) :
-PoweredComponent(vessel, amps, 20.0)
-{
-}
-
-
-void RCSSystem::OnSetClassCaps()
+PoweredComponent(vessel, amps, 20.0),
+slotToggleLinear_([&](bool v) {OnChanged(RCS_LIN); slotToggleLinear_.set(); }),
+slotToggleRotate_([&](bool v) {OnChanged(RCS_ROT); slotToggleRotate_.set(); })
 {
 }
 
@@ -40,99 +37,6 @@ double RCSSystem::CurrentDraw()
     return (GetBaseVessel()->GetAttitudeMode() == RCS_NONE) ? 0.0 : PoweredComponent::CurrentDraw();
 }
 
-bool RCSSystem::OnLoadVC(int id)
-{
-	bco::RunForEach<VcData>(vcData_, [this](const VcData& d)
-		{
-			for (auto& a : vcData_)
-			{
-				oapiVCRegisterArea(a.id, PANEL_REDRAW_USER, PANEL_MOUSE_DOWN);
-				oapiVCSetAreaClickmode_Spherical(a.id, a.loc, .01);
-			}
-		});
-
-	return true;
-}
-
-bool RCSSystem::OnVCMouseEvent(int id, int event)
-{
-	if (event != PANEL_MOUSE_LBDOWN) return false;
-
-	bco::RunFor<VcData>(vcData_,
-		[&](const VcData& d) {return d.id == id; },
-		[this](const VcData& d)
-		{
-			OnChanged(d.mode);
-		});
-
-	return true;
-}
-
-bool RCSSystem::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	bco::RunFor<VcData>(vcData_,
-		[&](const VcData& d) {return d.id == id; },
-		[this](const VcData& d)
-		{
-			auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-			assert(devMesh != nullptr);
-
-			NTVERTEX* delta = new NTVERTEX[4];
-
-			bco::TransformUV2d(
-				d.verts,
-				delta, 4,
-					_V(GetBaseVessel()->GetAttitudeMode() ==d.mode ? 0.0352 : 0.0,
-					0.0,
-					0.0),
-				0.0);
-
-			GROUPEDITSPEC change{};
-			change.flags = GRPEDIT_VTXTEX;
-			change.nVtx = 4;
-			change.vIdx = NULL; //Just use the mesh order
-			change.Vtx = delta;
-			auto res = oapiEditMeshGroup(devMesh, d.group, &change);
-			delete[] delta;
-		});
-
-	return true;
-}
-
-bool RCSSystem::OnLoadPanel2D(int id, PANELHANDLE hPanel)
-{
-	bco::RunForEach<PnlData>(pnlData_, [&](const PnlData& d)
-		{
-			oapiRegisterPanelArea(d.id, d.rc, PANEL_REDRAW_USER);
-			GetBaseVessel()->RegisterPanelArea(hPanel, d.id, d.rc, PANEL_REDRAW_MOUSE, PANEL_MOUSE_LBDOWN);
-		});
-
-	return true;
-}
-
-bool RCSSystem::OnPanelMouseEvent(int id, int event)
-{
-	return bco::RunFor<PnlData>(pnlData_,
-		[&](const PnlData& d) {return d.id == id; },
-		[this](const PnlData& d) { OnChanged(d.mode); });
-}
-
-bool RCSSystem::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	return bco::RunFor<PnlData>(pnlData_,
-		[&](const PnlData& d) {return d.id == id; },
-		[this](const PnlData& d)
-		{
-			auto grp = oapiMeshGroup(GetBaseVessel()->GetpanelMeshHandle0(), d.group);
-			auto vrt = d.verts;
-
-			float trans = (float)((GetBaseVessel()->GetAttitudeMode() == d.mode) ? 0.0352 : 0.0);
-			grp->Vtx[0].tu = vrt[0].tu + trans;
-			grp->Vtx[1].tu = vrt[1].tu + trans;
-			grp->Vtx[2].tu = vrt[2].tu + trans;
-			grp->Vtx[3].tu = vrt[3].tu + trans;
-		});
-}
 
 void RCSSystem::ChangePowerLevel(double newLevel)
 {
@@ -153,23 +57,12 @@ void RCSSystem::OnRCSMode(int mode)
 	if ((RCS_NONE != mode) && (!HasPower()))
 	{
 		GetBaseVessel()->SetAttitudeMode(RCS_NONE);
+		sigIsLinear_.fire(false);
+		sigIsRotate_.fire(false);
 	}
-
-	switch (oapiCockpitMode())
-	{
-	case COCKPIT_PANELS:
-		bco::RunForEach<PnlData>(
-			pnlData_, 
-			[&](const PnlData& d) {GetBaseVessel()->TriggerRedrawArea(0, 0, d.id); });
-		break;
-
-	case COCKPIT_VIRTUAL:
-		bco::RunForEach<VcData>(
-			vcData_, 
-			[&](const VcData& d) {GetBaseVessel()->TriggerRedrawArea(0, 0, d.id); });
-		break;
-	case COCKPIT_GENERIC:
-		break;
+	else {
+		sigIsLinear_.fire(mode == RCS_LIN);
+		sigIsRotate_.fire(mode == RCS_ROT);
 	}
 }
 

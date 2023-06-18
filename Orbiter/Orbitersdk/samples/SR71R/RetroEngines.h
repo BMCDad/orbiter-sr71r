@@ -42,7 +42,11 @@ public:
     double GetRetroDoorsState() { return animRetroDoors_.GetState(); }
     bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
+    bco::slot<bool>&    RetroDoorsSlot() { return retroDoorsSlot_; }
+
 private:
+
+    bco::slot<bool>     retroDoorsSlot_;
 
     void EnableRetros(bool isEnabled);
 
@@ -51,12 +55,12 @@ private:
 
     const char*	        ConfigKey = "RETRO";
 
-    bco::VCToggleSwitch swRetroDoors_   {   bm::vc::swRetroDoors_id, 
-                                            bm::vc::swRetroDoors_location, 
-                                            bm::vc::DoorsRightAxis_location
-                                        };
+    //bco::VCToggleSwitch swRetroDoors_   {   bm::vc::swRetroDoors_id, 
+    //                                        bm::vc::swRetroDoors_location, 
+    //                                        bm::vc::DoorsRightAxis_location
+    //                                    };
 
-    bco::Animation      animRetroDoors_ {   &swRetroDoors_, 0.2};
+    bco::Animation      animRetroDoors_ {   0.2};
 
     bco::AnimationGroup gpDoors_        {   {bm::main::EngineCone_id },
                                             _V(0, 0, -1.2), 

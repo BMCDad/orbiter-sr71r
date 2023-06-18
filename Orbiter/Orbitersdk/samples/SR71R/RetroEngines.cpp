@@ -23,10 +23,11 @@
 
 
 RetroEngines::RetroEngines(bco::BaseVessel* vessel, double amps) : 
-    PoweredComponent(vessel, amps, 10)
+    PoweredComponent(vessel, amps, 10),
+    retroDoorsSlot_([&](bool v) { if (!v) { EnableRetros(false); } })
 {
-    swRetroDoors_.OnFunction([this] {});
-    swRetroDoors_.OffFunction([this] {EnableRetros(false); });
+    //swRetroDoors_.OnFunction([this] {});
+    //swRetroDoors_.OffFunction([this] {EnableRetros(false); });
     animRetroDoors_.SetTargetFunction([this] {EnableRetros(true); });
 }
 
@@ -35,7 +36,7 @@ void RetroEngines::Step(double simt, double simdt, double mjd)
 {
     if (HasPower())
     {
-        animRetroDoors_.Step(swRetroDoors_.GetState(), simdt);
+        animRetroDoors_.Step(retroDoorsSlot_.value() ? 1.0 : 0.0, simdt);
     }
 }
 
@@ -51,7 +52,7 @@ void RetroEngines::OnSetClassCaps()
     auto vessel = GetBaseVessel();
     auto main = vessel->GetMainMeshIndex();
 
-    swRetroDoors_.Setup(vessel);
+//    swRetroDoors_.Setup(vessel);
 
     auto aid = vessel->CreateVesselAnimation(&animRetroDoors_, 0.2);
     vessel->AddVesselAnimationComponent(aid, main, &gpDoors_);
@@ -102,10 +103,10 @@ bool RetroEngines::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* co
 
     sscanf_s(configLine + 5, "%i%lf", &hover, &hoveranim);
 
-    swRetroDoors_.SetState((hover == 0) ? 0.0 : 1.0);
+    // TODO swRetroDoors_.SetState((hover == 0) ? 0.0 : 1.0);
     animRetroDoors_.SetState(hoveranim);
 
-    EnableRetros(swRetroDoors_.IsOn());
+    // TODO EnableRetros(swRetroDoors_.IsOn());
 
     return true;
 }
@@ -113,7 +114,7 @@ bool RetroEngines::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* co
 void RetroEngines::OnSaveConfiguration(FILEHANDLE scn) const
 {
     char cbuf[256];
-    auto val = (swRetroDoors_.GetState() == 0.0) ? 0 : 1;
+    auto val = 0; // TODO (swRetroDoors_.GetState() == 0.0) ? 0 : 1;
 
     auto hover = animRetroDoors_.GetState();
 
