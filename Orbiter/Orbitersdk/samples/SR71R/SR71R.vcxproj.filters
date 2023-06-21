@@ -249,6 +249,18 @@
     <ClInclude Include="Strobe.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="AeroData.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Altimeter.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AvionBase.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="VSI.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">
@@ -333,6 +345,9 @@
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="Canopy.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="AeroData.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
   </ItemGroup>

@@ -87,14 +87,29 @@ namespace bc_orbiter {
 		virtual void		on_panel_redraw(MESHHANDLE meshPanel)	{}
 	};
 
+	struct vessel_component
+	{
+	public:
+		virtual ~vessel_component() {};
+	};
+
 	/**
 	set_class_caps
 	Indicates the class participates in setClassCaps.  The class must implement the
 	call void handle_set_class_caps(BaseVessel&).
 	*/
-	struct set_class_caps
-	{
+	struct set_class_caps {
 		virtual void handle_set_class_caps(BaseVessel& vessel) = 0;
+		virtual ~set_class_caps() {};
+	};
+
+	/**
+	post_step
+	Indicates the class participates in postStep callbacks.  The class must implement
+	the post step handler.
+	*/
+	struct post_step {
+		virtual void handle_post_step(BaseVessel& vessel, double simt, double simdt, double mjd) = 0;
 	};
 
 	/**

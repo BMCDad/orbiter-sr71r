@@ -36,6 +36,9 @@
 #include "NavLights.h"
 #include "Beacon.h"
 #include "Strobe.h"
+#include "AeroData.h"
+#include "Altimeter.h"
+#include "VSI.h"
 
 #include <vector>
 #include <map>
@@ -764,10 +767,86 @@ private:
 		bm::pnl::pnlDoorRetro_RC
 	};
 
+	// ***  Shutters  *** //
+	bco::on_off_input		switchShutters_{		// Open close shutters
+		GetControlId(),
+		{ bm::vc::swShutter_id },
+		bm::vc::swShutter_location, bm::vc::DoorsRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlScreenSwitch_id,
+		bm::pnl::pnlScreenSwitch_verts,
+		bm::pnl::pnlScreenSwitch_RC
+	};
+
+	// ***  Avionics  *** //
+	bco::on_off_input		switchAvionPower_{		// Main avionics power
+		GetControlId(),
+		{ bm::vc::SwAvionics_id },
+		bm::vc::SwAvionics_location, bm::vc::PowerTopRightAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlPwrAvion_id,
+		bm::pnl::pnlPwrAvion_verts,
+		bm::pnl::pnlPwrAvion_RC
+	};
+
+	bco::on_off_input		switchAvionMode_{		// Atmosphere=On, External=Off
+		GetControlId(),
+		{ bm::vc::vcAvionMode_id },
+		bm::vc::vcAvionMode_location, bm::vc::vcAttitudeSwitchesAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlAvionMode_id,
+		bm::pnl::pnlAvionMode_verts,
+		bm::pnl::pnlAvionMode_RC
+	};
+
+	// ***  Altimeter  *** //
+	bco::rotary_display<bco::AnimationWrap>	altimeter1Hand_{
+		{ bm::vc::gaAlt1Needle_id },
+		bm::vc::gaAlt1Needle_location, bm::vc::AltimeterAxis_location,
+		bm::pnl::pnlAlt1Needle_id,
+		bm::pnl::pnlAlt1Needle_verts,
+		(360 * RAD),	// Clockwise
+		2.0,
+		[](double d) {return (d / 10); }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap>	altimeter10Hand_{
+		{ bm::vc::gaAlt10Needle_id },
+		bm::vc::gaAlt10Needle_location, bm::vc::AltimeterAxis_location,
+		bm::pnl::pnlAlt10Needle_id,
+		bm::pnl::pnlAlt10Needle_verts,
+		(360 * RAD),	// Clockwise
+		2.0,
+		[](double d) {return (d / 10); }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap>	altimeter100Hand_{
+		{ bm::vc::gaAlt100Needle_id },
+		bm::vc::gaAlt100Needle_location, bm::vc::AltimeterAxis_location,
+		bm::pnl::pnlAlt100Needle_id,
+		bm::pnl::pnlAlt100Needle_verts,
+		(360 * RAD),	// Clockwise
+		2.0,
+		[](double d) {return (d / 10); }	// Transform to anim range.
+	};
+
+	// ***   VSI  *** //
+	bco::rotary_display<bco::Animation>		vsiHand_{
+		{ bm::vc::gaVSINeedle_id },
+		bm::vc::gaVSINeedle_location, bm::vc::VSIAxis_location,
+		bm::pnl::pnlVSINeedle_id,
+		bm::pnl::pnlVSINeedle_verts,
+		(340 * RAD),	// Clockwise
+		2.0,
+		[](double d) {return (d); }	// Transform to amps.
+	};
+
 
 	// ** COMPONENTS **
 	NavLight		lightNav_;
 	Beacon			beacon_;
 	Strobe			strobe_;
+	Altimeter		altimeter_;
+	VSI				vsi_;
 };
 

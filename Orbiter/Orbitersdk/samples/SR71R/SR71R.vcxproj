@@ -109,8 +109,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AeroData.h" />
     <ClInclude Include="AirBrake.h" />
+    <ClInclude Include="Altimeter.h" />
     <ClInclude Include="APU.h" />
+    <ClInclude Include="AvionBase.h" />
     <ClInclude Include="Avionics.h" />
     <ClInclude Include="bc_orbiter\Animation.h" />
     <ClInclude Include="bc_orbiter\BaseVessel.h" />
@@ -174,8 +177,10 @@
     <ClInclude Include="Strobe.h" />
     <ClInclude Include="SurfaceController.h" />
     <ClInclude Include="VesselControl.h" />
+    <ClInclude Include="VSI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AeroData.cpp" />
     <ClCompile Include="AirBrake.cpp" />
     <ClCompile Include="APU.cpp" />
     <ClCompile Include="Avionics.cpp" />

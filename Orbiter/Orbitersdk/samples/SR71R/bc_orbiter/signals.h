@@ -29,7 +29,7 @@ namespace bc_orbiter {
 	template<typename T>
 	class slot {
 	public:
-		slot(const std::function<void(T)> func)
+		slot(const std::function<void(T)> func = [](T v) {})
 			:
 			func_(func)
 		{}

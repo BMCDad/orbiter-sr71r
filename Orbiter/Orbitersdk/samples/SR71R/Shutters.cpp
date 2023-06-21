@@ -27,22 +27,13 @@ Shutters::Shutters(bco::BaseVessel * vessel) :
 	visShuttersSideLeft_(	bm::vc::CanopyWindowInsideLeft_verts,		bm::vc::CanopyWindowInsideLeft_id, 6),
 	visShuttersSideRight_(	bm::vc::CanopyWindowSI_verts,		bm::vc::CanopyWindowSI_id, 6),
 	visShuttersFrontLeft_(	bm::vc::ForwardWindowInsideLeft_verts,		bm::vc::ForwardWindowInsideLeft_id, 3),
-	visShuttersFrontRight_(	bm::vc::WindowSFI_verts,	bm::vc::WindowSFI_id, 3)
+	visShuttersFrontRight_(	bm::vc::WindowSFI_verts,	bm::vc::WindowSFI_id, 3),
+	shuttersSlot_([&](bool v) { Update(); })
 {
-	swShutters_.OnFunction([this] {Update(); });
-	swShutters_.OffFunction([this] {Update(); });
+	//swShutters_.OnFunction([this] {Update(); });
+	//swShutters_.OffFunction([this] {Update(); });
 
-	swShutters_.SetOff();
-}
-
-void Shutters::OnSetClassCaps()
-{
-    swShutters_.Setup(GetBaseVessel());
-}
-
-bool Shutters::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	return false;
+	//swShutters_.SetOff();
 }
 
 bool Shutters::OnLoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
@@ -56,7 +47,7 @@ bool Shutters::OnLoadConfiguration(char * key, FILEHANDLE scn, const char * conf
 
 	sscanf_s(configLine + 8, "%i", &isOpen);
 
-	(isOpen == 1) ? swShutters_.SetOn() : swShutters_.SetOff();
+	// TODO (isOpen == 1) ? swShutters_.SetOn() : swShutters_.SetOff();
 
 	return true;
 }
@@ -65,7 +56,7 @@ void Shutters::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
 
-	auto state = swShutters_.IsOn() ? 1 : 0;
+	auto state = 0; // TODO = swShutters_.IsOn() ? 1 : 0;
 
 	sprintf_s(cbuf, "%i", state);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
@@ -79,7 +70,9 @@ void Shutters::Update()
 		return;
 	}
 
-	auto trans = swShutters_.IsOn() ? 0.22 : 0.0;
+	//auto trans = swShutters_.IsOn() ? 0.22 : 0.0;
+	auto trans = shuttersSlot_.value() ? 0.22 : 0.0;
+
 	visShuttersFrontLeft_.SetTranslate(_V(trans, 0.0, 0.0));
 	visShuttersFrontLeft_.RotateMesh(devMesh);
 

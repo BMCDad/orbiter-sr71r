@@ -275,7 +275,7 @@ namespace bc_orbiter
 
 		void AddControl(control* ctrl) { controls_.push_back(ctrl); }
 
-		void AddComponent(set_class_caps* c) { components_.push_back(c); }
+		void AddComponent(vessel_component* c) { components_.push_back(c); }
 	private:
 		void HandleClassCaps()
 		{
@@ -313,7 +313,13 @@ namespace bc_orbiter
 
 			// set_class_caps will flesh out to a more general 'component' list (non-ui/control intities)
 			for each (auto & cc in components_) {
-				if (auto* ac = dynamic_cast<set_class_caps*>(cc)) ac->handle_set_class_caps(*this);
+				if (auto* ac = dynamic_cast<post_step*>(cc)) comp_post_step_.push_back(ac);
+
+				if (auto* ac = dynamic_cast<set_class_caps*>(cc)) comp_set_class_caps_.push_back(ac);
+			}
+
+			for each (auto & sc in comp_set_class_caps_) {
+				sc->handle_set_class_caps(*this);
 			}
 		}
 
@@ -353,10 +359,13 @@ namespace bc_orbiter
 		std::vector<panel_animation*>					vecPNLAnimations_;
 		std::map<int, vc_animation*>					mapVCAnimations_;
 		
+		std::vector<vessel_component*>					components_;
+		std::vector<post_step*>							comp_post_step_;
+		std::vector<set_class_caps*>					comp_set_class_caps_;
+		
 		//**** END NEW STYLE
 
-		std::vector<control*>		controls_;
-		std::vector<set_class_caps*>			components_;
+		std::vector<control*>			controls_;
 
 	private:
 		bool IsModeSet(VCIdMode test, VCIdMode mode) const
@@ -554,7 +563,7 @@ namespace bc_orbiter
             VESSEL3::SetAnimation(a.first, state);
         }
 
-		// NEW MODE
+		// NEW MODE  << This will go away eventually
 		if (oapiCockpitMode() == COCKPIT_VIRTUAL) {
 			for (auto& va : mapVCAnimations_) {
 				//va.second->Step(simdt);
@@ -570,6 +579,10 @@ namespace bc_orbiter
 			for (auto& pa : vecPNLAnimations_) {
 				pa->panel_step(mesh, simdt);
 			}
+		}
+
+		for (auto& ps : comp_post_step_) {
+			ps->handle_post_step(*this, simt, simdt, mjd);
 		}
     }
 

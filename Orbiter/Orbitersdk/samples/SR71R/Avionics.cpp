@@ -40,14 +40,14 @@ Avionics::Avionics(bco::BaseVessel* vessel, double amps) :
 	swSelectRadio_.AddStopFunc(1.0, [this] {navRadio_ = NavRadio::Nav1; });
 	swSelectRadio_.SetStep(0);
 
-	swAvionMode_.AddStopFunc(0.0, [this] { avionMode_ = AvionMode::AvionAtmo; });
-	swAvionMode_.AddStopFunc(1.0, [this] { avionMode_ = AvionMode::AvionExo; });
-	swAvionMode_.SetStep(0);
+	//swAvionMode_.AddStopFunc(0.0, [this] { avionMode_ = AvionMode::AvionAtmo; });
+	//swAvionMode_.AddStopFunc(1.0, [this] { avionMode_ = AvionMode::AvionExo; });
+	//swAvionMode_.SetStep(0);
 }
 
 double Avionics::CurrentDraw()
 {
-	return (HasPower() && swPower_.IsOn()) ? PoweredComponent::CurrentDraw() : 0.0;
+    return PoweredComponent::CurrentDraw(); // TODO (HasPower() && swPower_.IsOn()) ? PoweredComponent::CurrentDraw() : 0.0;
 }
 
 void Avionics::Step(double simt, double simdt, double mjd)
@@ -58,9 +58,9 @@ void Avionics::OnSetClassCaps()
 {
     auto vessel = GetBaseVessel();
 
-    swPower_.Setup(vessel);
+//    swPower_.Setup(vessel);
     swSelectRadio_.Setup(vessel);
-    swAvionMode_.Setup(vessel);
+//    swAvionMode_.Setup(vessel);
     
     gaBearingArrow_.Setup(vessel);
     gaRoseCompass_.Setup(vessel);
@@ -68,11 +68,11 @@ void Avionics::OnSetClassCaps()
     gaCourse_.Setup(vessel);
 	gaCoureError_.Setup(vessel);
 
-    gaAlt1Needle_.Setup(vessel);
-    gaAlt10Needle_.Setup(vessel);
-    gaAlt100Needle_.Setup(vessel);
+    //gaAlt1Needle_.Setup(vessel);
+    //gaAlt10Needle_.Setup(vessel);
+    //gaAlt100Needle_.Setup(vessel);
 
-    gaVSINeedle_.Setup(vessel);
+//    gaVSINeedle_.Setup(vessel);
 
 
     gaCrsOnes_.Setup(vessel);
@@ -123,36 +123,38 @@ bool Avionics::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* config
 		return false;
 	}
 
-	int power;
-	int heading;
-	int course;
-    int navSelect;
-    int navMode;
+    // TODO
+	//int power;
+	//int heading;
+	//int course;
+ //   int navSelect;
+ //   int navMode;
 
-	sscanf_s(configLine + 8, "%i%i%i%i%i", &power, &heading, &course, &navSelect, &navMode);
+	//sscanf_s(configLine + 8, "%i%i%i%i%i", &power, &heading, &course, &navSelect, &navMode);
 
-	swPower_.SetState((power == 0) ? 0.0 : 1.0);
-    
-	
-	swSelectRadio_.SetStep((navSelect == 0) ? 0 : 1);
+	//swPower_.SetState((power == 0) ? 0.0 : 1.0);
+ //   
+	//
+	//swSelectRadio_.SetStep((navSelect == 0) ? 0 : 1);
 
-    swAvionMode_.SetStep((navMode == 0) ? 0 : 1);
+ //   swAvionMode_.SetStep((navMode == 0) ? 0 : 1);
 
-	setHeading_ = RAD * ((double)min(360, max(0, heading)));
-	setCourse_ = RAD * ((double)min(360, max(0, course)));
+	//setHeading_ = RAD * ((double)min(360, max(0, heading)));
+	//setCourse_ = RAD * ((double)min(360, max(0, course)));
 
 	return true;
 }
 
 void Avionics::OnSaveConfiguration(FILEHANDLE scn) const
 {
-	char cbuf[256];
-	auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
-    auto nav = (swSelectRadio_.GetStep() == 0) ? 0 : 1;
-    auto mode = (swAvionMode_.GetStep() == 0) ? 0 : 1;
+    // TODO
+	//char cbuf[256];
+	//auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
+ //   auto nav = (swSelectRadio_.GetStep() == 0) ? 0 : 1;
+ //   auto mode = (swAvionMode_.GetStep() == 0) ? 0 : 1;
 
-	sprintf_s(cbuf, "%i %i %i %i %i", val, (int)(DEG * setHeading_), (int)(DEG * setCourse_), nav, mode);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	//sprintf_s(cbuf, "%i %i %i %i %i", val, (int)(DEG * setHeading_), (int)(DEG * setCourse_), nav, mode);
+	//oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
 }
 
 bool Avionics::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
@@ -243,13 +245,13 @@ bool Avionics::IsOverSpeed() const { return isOverspeed_; }
 
 bco::DialSwitch& Avionics::HeadingSetDial() { return dialHeadingSet_; }
 
-bco::OnOffSwitch& Avionics::PowerSwitch() { return swPower_; }
+//bco::OnOffSwitch& Avionics::PowerSwitch() { return swPower_; }
 
 bool Avionics::IsActive() const
 {
-	return
-		HasPower() &&
-		swPower_.IsOn();
+    return
+        HasPower(); // TODO&&
+		// TODO swPower_.IsOn();
 }
 
 void Avionics::DialHeading(double i)
@@ -290,9 +292,9 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
     // ** ALTIMETER **
     bco::BreakTens((altitudeFeet>100000) ? 0 : altitudeFeet, parts);  // Limit to 100000
 
-    gaAlt1Needle_.SetState(bco::AngleToState(PI2 * (parts.Hundreds / 10)));
-    gaAlt10Needle_.SetState(bco::AngleToState(PI2 * (parts.Thousands / 10)));
-    gaAlt100Needle_.SetState(bco::AngleToState(PI2 * (parts.TenThousands / 10)));
+    //gaAlt1Needle_.SetState(bco::AngleToState(PI2 * (parts.Hundreds / 10)));
+    //gaAlt10Needle_.SetState(bco::AngleToState(PI2 * (parts.Thousands / 10)));
+    //gaAlt100Needle_.SetState(bco::AngleToState(PI2 * (parts.TenThousands / 10)));
 
     auto altFlgOffset = 0.0244;
     auto isOffFlagOn = !IsActive() || (altitudeFeet > 100000);
@@ -508,7 +510,7 @@ void Avionics::DrawVerticalSpeed(DEVMESHHANDLE devMesh)
     // 1000 -> 0.03     5000 -> 0.69
     double spRot = (1 - pow((6000 - absSpd) / 6000, 2)) / 2;
 
-    gaVSINeedle_.SetState(0.5 + (isPos * spRot));
+//    gaVSINeedle_.SetState(0.5 + (isPos * spRot));
 
     auto altFlgOffset = 0.0244;
     auto isOffFlagOn = !IsActive();

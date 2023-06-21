@@ -26,6 +26,7 @@
 namespace bco = bc_orbiter;
 
 class Beacon : 
+	public bco::vessel_component,
 	public bco::set_class_caps {
 
 public:

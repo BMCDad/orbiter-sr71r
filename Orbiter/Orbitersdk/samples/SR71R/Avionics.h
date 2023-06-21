@@ -116,7 +116,7 @@ public:
     bool IsOverSpeed() const;
 
     bco::DialSwitch& HeadingSetDial();
-    bco::OnOffSwitch& PowerSwitch();
+//    bco::OnOffSwitch& PowerSwitch();
 
 private:
     bool IsActive() const;
@@ -200,19 +200,19 @@ private:
 
 
     /* Altimeter */
-    bco::VCGaugeWrap        gaAlt1Needle_{ {bm::vc::gaAlt1Needle_id},
-                                                        bm::vc::gaAlt1Needle_location,
-                                                        bm::vc::AltimeterAxis_location,
-                                                        (360 * RAD),
-                                                        2.0
-    };
+    //bco::VCGaugeWrap        gaAlt1Needle_{ {bm::vc::gaAlt1Needle_id},
+    //                                                    bm::vc::gaAlt1Needle_location,
+    //                                                    bm::vc::AltimeterAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    2.0
+    //};
 
-    bco::VCGaugeWrap        gaAlt10Needle_{ {bm::vc::gaAlt10Needle_id},
-                                                        bm::vc::gaAlt10Needle_location,
-                                                        bm::vc::AltimeterAxis_location,
-                                                        (360 * RAD),
-                                                        2.0
-    };
+    //bco::VCGaugeWrap        gaAlt10Needle_{ {bm::vc::gaAlt10Needle_id},
+    //                                                    bm::vc::gaAlt10Needle_location,
+    //                                                    bm::vc::AltimeterAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    2.0
+    //};
 
 
 	//			340.0	rotary_display layout based on 340deg circle.
@@ -231,23 +231,23 @@ private:
 	//	0		0.0
 
 
-    bco::VCGaugeWrap        gaAlt100Needle_{ {bm::vc::gaAlt100Needle_id},
-                                                        bm::vc::gaAlt100Needle_location,
-                                                        bm::vc::AltimeterAxis_location,
-                                                        (360 * RAD),
-                                                        2.0
-    };
+    //bco::VCGaugeWrap        gaAlt100Needle_{ {bm::vc::gaAlt100Needle_id},
+    //                                                    bm::vc::gaAlt100Needle_location,
+    //                                                    bm::vc::AltimeterAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    2.0
+    //};
 
     bco::TextureVisual		txAltimeterOff_ { bm::vc::AltimeterOffFlag_verts, bm::vc::AltimeterOffFlag_id };
     bco::TextureVisual		txAltimeterGnd_{ bm::vc::AltimeterGround_verts, bm::vc::AltimeterGround_id };
 
     /* VSI */
-    bco::VCGauge            gaVSINeedle_{ {bm::vc::gaVSINeedle_id},
-                                                        bm::vc::gaVSINeedle_location,
-                                                        bm::vc::VSIAxis_location,
-                                                        (340 * RAD),
-                                                        2.0
-    };
+    //bco::VCGauge            gaVSINeedle_{ {bm::vc::gaVSINeedle_id},
+    //                                                    bm::vc::gaVSINeedle_location,
+    //                                                    bm::vc::VSIAxis_location,
+    //                                                    (340 * RAD),
+    //                                                    2.0
+    //};
 
     bco::TextureVisual		txVSIOff_{ bm::vc::VSIOffFlag_verts, bm::vc::VSIOffFlag_id, };
 
@@ -431,10 +431,10 @@ private:
 
     bco::TextureVisual      txSpeedVel_ {   bm::vc::SpeedVelocityFlag_verts, bm::vc::SpeedVelocityFlag_id};
 
-    bco::VCToggleSwitch     swPower_                {   bm::vc::SwAvionics_id,
-                                                        bm::vc::SwAvionics_location,
-                                                        bm::vc::PowerTopRightAxis_location
-                                                    };
+    //bco::VCToggleSwitch     swPower_                {   bm::vc::SwAvionics_id,
+    //                                                    bm::vc::SwAvionics_location,
+    //                                                    bm::vc::PowerTopRightAxis_location
+    //                                                };
 
     bco::VCRotorSwitch		swSelectRadio_          {   bm::vc::SwNavSelect_id, 
                                                         bm::vc::SwNavSelect_location, 
@@ -442,11 +442,11 @@ private:
 														(117*RAD)
                                                     };
 
-    bco::VCRotorSwitch     swAvionMode_            {   bm::vc::SwExoSelect_id,
-                                                        bm::vc::SwExoSelect_location, 
-                                                        bm::vc::SwExoSelectAxis_location,
-														(117*RAD)
-                                                    };
+    //bco::VCRotorSwitch     swAvionMode_            {   bm::vc::SwExoSelect_id,
+    //                                                    bm::vc::SwExoSelect_location, 
+    //                                                    bm::vc::SwExoSelectAxis_location,
+				//										(117*RAD)
+    //                                                };
 
 	double				    setHeading_;
 	double				    setCourse_;

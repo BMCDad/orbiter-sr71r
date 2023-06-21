@@ -182,10 +182,27 @@ retroEngines_(this, RETRO_AMPS)
 	/*  Retro Doors  */
 	AddControl(&switchRetroDoors_);
 
+	/*  Shutters  */
+	AddControl(&switchShutters_);
+
+	/*  Avionics  */
+	AddControl(&switchAvionMode_);
+	AddControl(&switchAvionPower_);
+
+	/*  Altimeter  */
+	AddControl(&altimeter1Hand_);
+	AddControl(&altimeter10Hand_);
+	AddControl(&altimeter100Hand_);
+
+	/*  VSI  */
+	AddControl(&vsiHand_);
+
 	//
 	AddComponent(&lightNav_);
 	AddComponent(&beacon_);
 	AddComponent(&strobe_);
+	AddComponent(&altimeter_);
+	AddComponent(&vsi_);
 
 	// These are here because the template deduction does not seem to work in the header file.
 	// These objects will die at the end of this method, but they will have done their job.
@@ -305,6 +322,17 @@ retroEngines_(this, RETRO_AMPS)
 
 	// Retro Doors
 	bco::connect( switchRetroDoors_.Signal(),				retroEngines_.RetroDoorsSlot());
+
+	// Altimeter
+	bco::connect( switchAvionPower_.Signal(),				altimeter_.EnabledSlot());
+	bco::connect( switchAvionMode_.Signal(),				altimeter_.AvionicsModeSlot());
+	bco::connect( altimeter_.AltimeterHundredsSignal(),		altimeter1Hand_.Slot());
+	bco::connect( altimeter_.AltimeterThousandsSignal(),	altimeter10Hand_.Slot());
+	bco::connect( altimeter_.AltimeterTenThousandsSignal(),	altimeter100Hand_.Slot());
+
+	// VSI
+	bco::connect( switchAvionPower_.Signal(),				vsi_.EnabledSlot());
+	bco::connect( vsi_.VSINeedleSignal(),					vsiHand_.Slot());
 }
 
 

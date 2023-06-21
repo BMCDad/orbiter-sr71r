@@ -26,6 +26,7 @@
 namespace bco = bc_orbiter;
 
 class Strobe :
+	public bco::vessel_component,
 	public bco::set_class_caps {
 
 public:

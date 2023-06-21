@@ -32,20 +32,22 @@ public:
 	Shutters(bco::BaseVessel* vessel);
 
 	// Component
-	void OnSetClassCaps() override;
-	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
 	bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	void OnSaveConfiguration(FILEHANDLE scn) const override;
+
+	bco::slot<bool>& ShuttersSlot() { return shuttersSlot_; }
 
 private:
 	void Update();
 
+	bco::slot<bool>		shuttersSlot_;
+
 	const char*				ConfigKey = "SHUTTERS";
 
-    bco::VCToggleSwitch     swShutters_     {   bm::vc::swShutter_id, 
-                                                bm::vc::swShutter_location, 
-                                                bm::vc::DoorsRightAxis_location
-                                            };
+    //bco::VCToggleSwitch     swShutters_     {   bm::vc::swShutter_id, 
+    //                                            bm::vc::swShutter_location, 
+    //                                            bm::vc::DoorsRightAxis_location
+    //                                        };
 
 	bco::TextureVisual		visShuttersSideLeft_;
 	bco::TextureVisual		visShuttersSideRight_;
