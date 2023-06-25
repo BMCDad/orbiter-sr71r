@@ -113,6 +113,7 @@
     <ClInclude Include="AirBrake.h" />
     <ClInclude Include="Altimeter.h" />
     <ClInclude Include="APU.h" />
+    <ClInclude Include="AttitudeIndicator.h" />
     <ClInclude Include="AvionBase.h" />
     <ClInclude Include="Avionics.h" />
     <ClInclude Include="bc_orbiter\Animation.h" />
@@ -123,6 +124,7 @@
     <ClInclude Include="bc_orbiter\control.h" />
     <ClInclude Include="bc_orbiter\DialSwitch.h" />
     <ClInclude Include="bc_orbiter\EventTarget.h" />
+    <ClInclude Include="bc_orbiter\flat_roll.h" />
     <ClInclude Include="bc_orbiter\IAnimationState.h" />
     <ClInclude Include="bc_orbiter\MeshVisual.h" />
     <ClInclude Include="bc_orbiter\MFDBase.h" />
@@ -176,6 +178,8 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="Strobe.h" />
     <ClInclude Include="SurfaceController.h" />
+    <ClInclude Include="bc_orbiter\transform_display.h" />
+    <ClInclude Include="TestComponent.h" />
     <ClInclude Include="VesselControl.h" />
     <ClInclude Include="VSI.h" />
   </ItemGroup>

@@ -309,6 +309,10 @@ namespace bc_orbiter
 				if (auto* c = dynamic_cast<panel_event_target*>(vc)) {
 					mapPNLTargets_[vc->get_id()] = c;
 				}
+
+				if (auto* c = dynamic_cast<vc_tex_animation*>(vc)) {
+					vecVCTexAnimations_.push_back(c);
+				}
 			}
 
 			// set_class_caps will flesh out to a more general 'component' list (non-ui/control intities)
@@ -357,6 +361,7 @@ namespace bc_orbiter
 		std::map<int, vc_event_target*>					mapVCTargets_;
 		std::map<int, panel_event_target*>				mapPNLTargets_;
 		std::vector<panel_animation*>					vecPNLAnimations_;
+		std::vector<vc_tex_animation*>					vecVCTexAnimations_;
 		std::map<int, vc_animation*>					mapVCAnimations_;
 		
 		std::vector<vessel_component*>					components_;
@@ -571,6 +576,11 @@ namespace bc_orbiter
 				//VESSEL3::SetAnimation(va.first, state);
 				auto newState = va.second->vc_step(simdt);
 				VESSEL3::SetAnimation(va.first, newState);
+			}
+
+			auto mesh = GetVirtualCockpitMesh0();
+			for (auto& vt : vecVCTexAnimations_) {
+				vt->vc_step(mesh, simdt);
 			}
 		}
 

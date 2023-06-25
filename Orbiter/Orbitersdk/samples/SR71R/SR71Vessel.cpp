@@ -194,8 +194,18 @@ retroEngines_(this, RETRO_AMPS)
 	AddControl(&altimeter10Hand_);
 	AddControl(&altimeter100Hand_);
 
+	AddControl(&tdiAltOnes_);
+	AddControl(&tdiAltTens_);
+	AddControl(&tdiAltHunds_);
+	AddControl(&tdiAltThou_);
+	AddControl(&tdiAltTenThou_);
+
 	/*  VSI  */
 	AddControl(&vsiHand_);
+
+	/*  Attitude  */
+	AddControl(&attitudeDisplay_);
+
 
 	//
 	AddComponent(&lightNav_);
@@ -203,6 +213,7 @@ retroEngines_(this, RETRO_AMPS)
 	AddComponent(&strobe_);
 	AddComponent(&altimeter_);
 	AddComponent(&vsi_);
+	AddComponent(&attitude_);
 
 	// These are here because the template deduction does not seem to work in the header file.
 	// These objects will die at the end of this method, but they will have done their job.
@@ -330,9 +341,20 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( altimeter_.AltimeterThousandsSignal(),	altimeter10Hand_.Slot());
 	bco::connect( altimeter_.AltimeterTenThousandsSignal(),	altimeter100Hand_.Slot());
 
+	bco::connect(altimeter_.AltimeterTensSignal(),			tdiAltOnes_.SlotTransform());
+	bco::connect(altimeter_.AltimeterHundredsSignal(),		tdiAltTens_.SlotTransform());
+	bco::connect(altimeter_.AltimeterThousandsSignal(),		tdiAltHunds_.SlotTransform());
+	bco::connect(altimeter_.AltimeterTenThousandsSignal(),	tdiAltThou_.SlotTransform());
+	bco::connect(altimeter_.AltimeterHundThousandsSignal(),	tdiAltTenThou_.SlotTransform());
+
 	// VSI
 	bco::connect( switchAvionPower_.Signal(),				vsi_.EnabledSlot());
 	bco::connect( vsi_.VSINeedleSignal(),					vsiHand_.Slot());
+
+	// Attitude
+	bco::connect(switchAvionPower_.Signal(), attitude_.EnabledSlot());
+	bco::connect(attitude_.BankSignal(), attitudeDisplay_.SlotAngle());
+	bco::connect(attitude_.PitchSignal(), attitudeDisplay_.SlotTransform());
 }
 
 

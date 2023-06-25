@@ -48,20 +48,25 @@ public:
 		// ** ALTIMETER **
 		bco::BreakTens((altFeet > 100000) ? 0 : altFeet, parts);  // Limit to 100000
 
+		altimeterTens_.fire(parts.Tens);
 		altimeterHundreds_.fire(parts.Hundreds);
 		altimeterThousands_.fire(parts.Thousands);
 		altimeterTenThousands_.fire(parts.TenThousands);
+		altimeterHundThousands_.fire(parts.HundredThousands);
 	}
 
-
-	bco::signal<double>& AltimeterHundredsSignal() { return altimeterHundreds_; }
-	bco::signal<double>& AltimeterThousandsSignal() { return altimeterThousands_; }
-	bco::signal<double>& AltimeterTenThousandsSignal() { return altimeterTenThousands_; }
+	bco::signal<double>& AltimeterTensSignal()			{ return altimeterTens_; }
+	bco::signal<double>& AltimeterHundredsSignal()		{ return altimeterHundreds_; }
+	bco::signal<double>& AltimeterThousandsSignal()		{ return altimeterThousands_; }
+	bco::signal<double>& AltimeterTenThousandsSignal()	{ return altimeterTenThousands_; }
+	bco::signal<double>& AltimeterHundThousandsSignal()	{ return altimeterHundThousands_; }
 
 private:
 
-	bco::signal<double >	altimeterHundreds_;
-	bco::signal<double >	altimeterThousands_;
-	bco::signal<double >	altimeterTenThousands_;
+	bco::signal<double>	altimeterTens_;
+	bco::signal<double>	altimeterHundreds_;
+	bco::signal<double>	altimeterThousands_;
+	bco::signal<double>	altimeterTenThousands_;
+	bco::signal<double>	altimeterHundThousands_;
 };
 

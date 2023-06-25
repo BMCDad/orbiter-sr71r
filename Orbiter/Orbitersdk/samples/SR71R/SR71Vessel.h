@@ -7,6 +7,8 @@
 #include "bc_orbiter\on_off_input.h"
 #include "bc_orbiter\rotary_display.h"
 #include "bc_orbiter\simple_event.h"
+#include "bc_orbiter\transform_display.h"
+#include "bc_orbiter\flat_roll.h"
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
@@ -39,6 +41,8 @@
 #include "AeroData.h"
 #include "Altimeter.h"
 #include "VSI.h"
+#include "AttitudeIndicator.h"
+#include "TestComponent.h"
 
 #include <vector>
 #include <map>
@@ -807,7 +811,7 @@ private:
 		bm::pnl::pnlAlt1Needle_verts,
 		(360 * RAD),	// Clockwise
 		2.0,
-		[](double d) {return (d / 10); }	// Transform to anim range.
+		[](double d) {return ((double)d / 10.0); }	// Transform to anim range.
 	};
 
 	bco::rotary_display<bco::AnimationWrap>	altimeter10Hand_{
@@ -830,6 +834,42 @@ private:
 		[](double d) {return (d / 10); }	// Transform to anim range.
 	};
 
+	bco::flat_roll tdiAltOnes_{
+		bm::pnl::pnlTDIAltOnes_id,
+		bm::pnl::pnlTDIAltOnes_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll tdiAltTens_{
+		bm::pnl::pnlTDIAltTens_id,
+		bm::pnl::pnlTDIAltTens_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll tdiAltHunds_{
+		bm::pnl::pnlTDIAltHund_id,
+		bm::pnl::pnlTDIAltHund_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll tdiAltThou_{
+		bm::pnl::pnlTDIAltThous_id,
+		bm::pnl::pnlTDIAltThous_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll tdiAltTenThou_{
+		bm::pnl::pnlTDIAltTenThou_id,
+		bm::pnl::pnlTDIAltTenThou_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+
 	// ***   VSI  *** //
 	bco::rotary_display<bco::Animation>		vsiHand_{
 		{ bm::vc::gaVSINeedle_id },
@@ -841,12 +881,44 @@ private:
 		[](double d) {return (d); }	// Transform to amps.
 	};
 
+	// ***  Attitude  *** //
+	bco::transform_display		attitudeDisplay_{
+		bm::vc::AttitudeIndicator_id,
+		bm::vc::AttitudeIndicator_verts,
+		bm::pnl::pnlAttitudeIndicator_id,
+		bm::pnl::pnlAttitudeIndicator_verts
+	};
+
+
+	//// ** TEST ** //
+	//bco::flat_roll<int>  numtest{
+	//	bm::pnl::pnlMilesOnes_id,
+	//	bm::pnl::pnlMilesOnes_verts,
+	//	0.1084,		// Tex offset
+	//	[](int v) {return (double)v / 10; }
+	//};
+
+	//bco::simple_event		testUp_{
+	//	GetControlId(),
+	//	bm::vc::vcRCSRot_location,
+	//	0.01,
+	//	bm::pnl::pnlMilesHunds_RC
+	//};
+
+	//bco::simple_event		testDown_{
+	//	GetControlId(),
+	//	bm::vc::vcRCSLin_location,
+	//	0.01,
+	//	bm::pnl::pnlMilesTens_RC
+	//};
 
 	// ** COMPONENTS **
-	NavLight		lightNav_;
-	Beacon			beacon_;
-	Strobe			strobe_;
-	Altimeter		altimeter_;
-	VSI				vsi_;
+	NavLight			lightNav_;
+	Beacon				beacon_;
+	Strobe				strobe_;
+	Altimeter			altimeter_;
+	VSI					vsi_;
+	AttitudeIndicator	attitude_;
+	TestComponent		test_;
 };
 

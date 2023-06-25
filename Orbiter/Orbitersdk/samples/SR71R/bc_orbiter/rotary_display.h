@@ -95,6 +95,5 @@ namespace bc_orbiter {
         double          angle_{ 0.0 };
         Tanim           animPnl_{ animSpeed_ };
         Tanim           animVC_{ animSpeed_ };
-        void OnUpdate(double d) { state_ = d; }
     };
 }

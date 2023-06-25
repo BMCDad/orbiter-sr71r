@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Wed Jun 21 15:49:20 2023
+// Date: Sat Jun 24 14:38:29 2023
 
 
 #include "orbitersdk.h"
@@ -457,11 +457,116 @@ namespace bm
     {1139.1143f, 484.7083f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
     {1106.5848f, 396.8186f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
     {1139.1143f, 396.8186f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
-    const NTVERTEX altDigitTest_verts[4] = {
-    {983.9249f, 485.6193f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3015f, 0.4038f},
-    {1004.2650f, 485.6193f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3079f, 0.4038f},
-    {983.9249f, 455.2965f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3015f, 0.3932f},
-    {1004.2650f, 455.2965f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3079f, 0.3932f}    };
+    const NTVERTEX pnlTDIAltOnes_verts[4] = {
+    {981.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {999.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {981.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {999.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIAltTens_verts[4] = {
+    {962.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {980.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {962.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {980.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIAltHund_verts[4] = {
+    {943.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {961.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {943.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {961.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIAltThous_verts[4] = {
+    {924.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {942.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {924.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {942.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIAltTenThou_verts[4] = {
+    {905.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {923.7429f, 485.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {905.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {923.7429f, 456.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIKEASOnes_verts[4] = {
+    {962.5032f, 420.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {980.5032f, 420.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {962.5032f, 391.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {980.5032f, 391.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIKEASTens_verts[4] = {
+    {943.5032f, 420.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {961.5032f, 420.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {943.5032f, 391.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {961.5032f, 391.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIKEASHunds_verts[4] = {
+    {924.5032f, 420.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {942.5032f, 420.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {924.5032f, 391.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {942.5032f, 391.2278f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIMACHOne_verts[4] = {
+    {965.3318f, 560.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {983.3318f, 560.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {965.3318f, 531.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {983.3318f, 531.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIMACHTens_verts[4] = {
+    {943.9319f, 560.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {961.9319f, 560.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {943.9319f, 531.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {961.9319f, 531.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlTDIMACHHunds_verts[4] = {
+    {924.9318f, 560.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {942.9318f, 560.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {924.9318f, 531.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {942.9318f, 531.0857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlHSIMilesOnes_verts[4] = {
+    {1166.2394f, 571.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {1184.2394f, 571.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {1166.2394f, 542.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {1184.2394f, 542.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlHSIMilesTens_verts[4] = {
+    {1147.2394f, 571.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {1165.2394f, 571.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {1147.2394f, 542.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {1165.2394f, 542.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlHSIMilesHunds_verts[4] = {
+    {1128.2394f, 571.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {1146.2394f, 571.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {1128.2394f, 542.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {1146.2394f, 542.5245f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlHSICRSOnes_verts[4] = {
+    {1405.9034f, 571.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {1423.9034f, 571.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {1405.9034f, 542.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {1423.9034f, 542.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlHSICRSTens_verts[4] = {
+    {1386.9034f, 571.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {1404.9034f, 571.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {1386.9034f, 542.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {1404.9034f, 542.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlHSICRSHunds_verts[4] = {
+    {1367.9034f, 571.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4164f},
+    {1385.9034f, 571.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4164f},
+    {1367.9034f, 542.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3005f, 0.4022f},
+    {1385.9034f, 542.4364f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3088f, 0.4022f}    };
+    const NTVERTEX pnlHSIMilesWindow_verts[4] = {
+    {1127.9817f, 571.7466f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2660f, 0.4078f},
+    {1184.4159f, 571.7466f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.4078f},
+    {1127.9817f, 542.3242f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2660f, 0.3930f},
+    {1184.4159f, 542.3242f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.3930f}    };
+    const NTVERTEX pnlHSICRSWindow_verts[4] = {
+    {1367.6069f, 571.7466f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2660f, 0.4078f},
+    {1424.0411f, 571.7466f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.4078f},
+    {1367.6069f, 542.3242f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2660f, 0.3930f},
+    {1424.0411f, 542.3242f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.3930f}    };
+    const NTVERTEX pnlTDIAltWindow_verts[4] = {
+    {905.1986f, 485.2391f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2660f, 0.4078f},
+    {999.2502f, 485.2391f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.4078f},
+    {905.1986f, 455.8167f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2660f, 0.3930f},
+    {999.2502f, 455.8167f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.3930f}    };
+    const NTVERTEX pnlTDIKEASWindow_verts[4] = {
+    {924.4753f, 420.3370f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2660f, 0.4078f},
+    {980.6207f, 420.3370f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.4078f},
+    {924.4753f, 390.9146f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2660f, 0.3930f},
+    {980.6207f, 390.9146f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.3930f}    };
+    const NTVERTEX pnlAttitudeIndicator_verts[4] = {
+    {1126.7605f, 143.4485f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3711f, 0.1478f},
+    {1424.9993f, 143.4370f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5171f, 0.1478f},
+    {1126.7605f, 441.6886f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3711f, 0.2939f},
+    {1425.0122f, 441.6857f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5172f, 0.2939f}    };
     const NTVERTEX pnlVSINeedle_verts[4] = {
     {1693.1295f, 508.2610f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.3722f, 0.3945f},
     {1508.4589f, 476.1819f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.4648f, 0.3945f},
@@ -606,23 +711,45 @@ namespace bm
     const UINT pnlFuelValveSwitch_id = 56;
     const UINT pnlFuelTransfer_id = 57;
     const UINT pnlAvionMode_id = 58;
-    const UINT altDigitTest_id = 59;
-    const UINT pnlVSINeedle_id = 60;
-    const UINT pnlClockTimerMinute_id = 61;
-    const UINT pnlClockHour_id = 62;
-    const UINT pnlClockMinute_id = 63;
-    const UINT pnlClockSecond_id = 64;
-    const UINT pnlHydPress_id = 65;
-    const UINT pnlLOXPress_id = 66;
-    const UINT pnlLH2Press_id = 67;
-    const UINT pnlAmpMeter_id = 68;
-    const UINT pnlVoltMeter_id = 69;
-    const UINT pnlGaFuelFlow_id = 70;
-    const UINT pnlGaFuelMain_id = 71;
-    const UINT pnlGaFuelRCS_id = 72;
-    const UINT pnlAlt100Needle_id = 73;
-    const UINT pnlAlt10Needle_id = 74;
-    const UINT pnlAlt1Needle_id = 75;
+    const UINT pnlTDIAltOnes_id = 59;
+    const UINT pnlTDIAltTens_id = 60;
+    const UINT pnlTDIAltHund_id = 61;
+    const UINT pnlTDIAltThous_id = 62;
+    const UINT pnlTDIAltTenThou_id = 63;
+    const UINT pnlTDIKEASOnes_id = 64;
+    const UINT pnlTDIKEASTens_id = 65;
+    const UINT pnlTDIKEASHunds_id = 66;
+    const UINT pnlTDIMACHOne_id = 67;
+    const UINT pnlTDIMACHTens_id = 68;
+    const UINT pnlTDIMACHHunds_id = 69;
+    const UINT pnlHSIMilesOnes_id = 70;
+    const UINT pnlHSIMilesTens_id = 71;
+    const UINT pnlHSIMilesHunds_id = 72;
+    const UINT pnlHSICRSOnes_id = 73;
+    const UINT pnlHSICRSTens_id = 74;
+    const UINT pnlHSICRSHunds_id = 75;
+    const UINT pnlHSIMilesWindow_id = 76;
+    const UINT pnlHSICRSWindow_id = 77;
+    const UINT pnlTDIAltWindow_id = 78;
+    const UINT pnlTDIKEASWindow_id = 79;
+    const UINT pnlAttitudeIndicator_id = 80;
+    const UINT pnlVSINeedle_id = 81;
+    const UINT pnlClockTimerMinute_id = 82;
+    const UINT pnlClockHour_id = 83;
+    const UINT pnlClockMinute_id = 84;
+    const UINT pnlClockSecond_id = 85;
+    const UINT pnlHydPress_id = 86;
+    const UINT pnlLOXPress_id = 87;
+    const UINT pnlLH2Press_id = 88;
+    const UINT pnlAmpMeter_id = 89;
+    const UINT pnlVoltMeter_id = 90;
+    const UINT pnlGaFuelFlow_id = 91;
+    const UINT pnlGaFuelMain_id = 92;
+    const UINT pnlGaFuelRCS_id = 93;
+    const UINT pnlHorizonFace_id = 94;
+    const UINT pnlAlt100Needle_id = 95;
+    const UINT pnlAlt10Needle_id = 96;
+    const UINT pnlAlt1Needle_id = 97;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {847, 617, 917, 673};
@@ -697,11 +824,31 @@ namespace bm
     constexpr RECT pnlFuelValveSwitch_RC = {1979, 941, 2049, 997};
     constexpr RECT pnlFuelTransfer_RC = {2207, 927, 2277, 983};
     constexpr RECT pnlAvionMode_RC = {1107, 398, 1139, 485};
-    constexpr RECT altDigitTest_RC = {984, 455, 1004, 486};
     constexpr VECTOR3 pnlAlt1Needle_location =     {1603.7352, 230.7396, -12.7778};
     constexpr VECTOR3 pnlAlt10Needle_location =     {1603.4437, 230.7816, -7.3062};
     constexpr VECTOR3 pnlAlt100Needle_location =     {1603.4869, 230.8181, -1.6302};
     constexpr VECTOR3 pnlVSINeedle_location =     {1603.4674, 476.8322, -4.7817};
+    constexpr RECT pnlTDIAltOnes_RC = {982, 456, 1000, 485};
+    constexpr RECT pnlTDIAltTens_RC = {963, 456, 981, 485};
+    constexpr RECT pnlTDIAltHund_RC = {944, 456, 962, 485};
+    constexpr RECT pnlTDIAltThous_RC = {925, 456, 943, 485};
+    constexpr RECT pnlTDIAltTenThou_RC = {906, 456, 924, 485};
+    constexpr RECT pnlTDIKEASOnes_RC = {962, 391, 980, 420};
+    constexpr RECT pnlTDIKEASTens_RC = {943, 391, 961, 420};
+    constexpr RECT pnlTDIKEASHunds_RC = {924, 391, 942, 420};
+    constexpr RECT pnlTDIMACHOne_RC = {965, 531, 983, 560};
+    constexpr RECT pnlTDIMACHTens_RC = {944, 531, 962, 560};
+    constexpr RECT pnlTDIMACHHunds_RC = {925, 531, 943, 560};
+    constexpr RECT pnlHSIMilesOnes_RC = {1166, 542, 1184, 571};
+    constexpr RECT pnlHSIMilesTens_RC = {1147, 542, 1165, 571};
+    constexpr RECT pnlHSIMilesHunds_RC = {1128, 542, 1146, 571};
+    constexpr RECT pnlHSICRSOnes_RC = {1406, 542, 1424, 571};
+    constexpr RECT pnlHSICRSTens_RC = {1387, 542, 1405, 571};
+    constexpr RECT pnlHSICRSHunds_RC = {1368, 542, 1386, 571};
+    constexpr RECT pnlHSIMilesWindow_RC = {1128, 542, 1185, 572};
+    constexpr RECT pnlHSICRSWindow_RC = {1368, 542, 1424, 572};
+    constexpr RECT pnlTDIAltWindow_RC = {906, 456, 1000, 485};
+    constexpr RECT pnlTDIKEASWindow_RC = {925, 391, 981, 420};
 
   }
 

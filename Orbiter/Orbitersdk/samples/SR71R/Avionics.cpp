@@ -468,22 +468,22 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
         }
     }
 
-    if ((abs(pitch - prevPitch_) > 0.002) || (abs(bank - prevBank_) > 0.002))
-    {
-        prevPitch_ = pitch;
-        prevBank_ = bank;
+    //if ((abs(pitch - prevPitch_) > 0.002) || (abs(bank - prevBank_) > 0.002))
+    //{
+    //    prevPitch_ = pitch;
+    //    prevBank_ = bank;
 
-        // 90deg = 1.57079 rad.
-        // So, pixel distance between 0 and 90 is 500 - 178 = 322
-        // Texture size of 2048, the ratio for 322 = .15722.
-        // Divided by 1.57079 = .100093
+    //    // 90deg = 1.57079 rad.
+    //    // So, pixel distance between 0 and 90 is 500 - 178 = 322
+    //    // Texture size of 2048, the ratio for 322 = .15722.
+    //    // Divided by 1.57079 = .100093
 
-        auto pTran = 0.100093 * pitch;
+    //    auto pTran = 0.100093 * pitch;
 
-        attitudeIndicator_.SetAngle(bank);
-        attitudeIndicator_.SetTranslate(_V(0.0, -pTran, 0.0));
-        attitudeIndicator_.RotateMesh(devMesh);
-    }
+    //    //attitudeIndicator_.SetAngle(bank);
+    //    //attitudeIndicator_.SetTranslate(_V(0.0, -pTran, 0.0));
+    //    //attitudeIndicator_.RotateMesh(devMesh);
+    //}
 }
 
 void Avionics::DrawVerticalSpeed(DEVMESHHANDLE devMesh)

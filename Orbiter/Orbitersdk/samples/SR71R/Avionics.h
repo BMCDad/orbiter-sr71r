@@ -145,7 +145,7 @@ private:
 
 
     /* Attitude Indicator */
-    bco::TextureVisual		attitudeIndicator_  { bm::vc::AttitudeIndicator_verts,     bm::vc::AttitudeIndicator_id };
+//    bco::TextureVisual		attitudeIndicator_  { bm::vc::AttitudeIndicator_verts,     bm::vc::AttitudeIndicator_id };
 
     bco::TextureVisual		txAttitudeOff_      { bm::vc::AttitudeFlagOff_verts,       bm::vc::AttitudeFlagOff_id };
 

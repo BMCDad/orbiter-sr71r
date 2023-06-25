@@ -261,6 +261,18 @@
     <ClInclude Include="VSI.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="bc_orbiter\transform_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="AttitudeIndicator.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\flat_roll.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="TestComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">

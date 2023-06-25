@@ -157,28 +157,54 @@ namespace bc_orbiter
 
             // Find the direction to move.  The sign of stateDiff
             // indicates the direction to move.
+            /*
+            * 
+                da      =  .1                   time step
+                state   =  .97                  current
+                target  =  .03                  target.  The new state should be in the range: .97-1.0   and 0.0-0.3
+                Df      = -.94 = .03-.97        Df < da, so Df should always win.
+                da      =  .1                   so state become 1.07, which is wrong
+            */
             auto Df = state.targetState_ - state.state_;
 
-            if (Df > 0.0)
-            {
-                if (Df <= 0.5)
-                    state.state_ += min(da, Df);
-                else
-                {
-                    state.state_ -= max(-da, 1 - Df);
-                    if (state.state_ < 0.0) state.state_ += 1;
-                }
+            if (signbit(Df)) {
+                // Negative move
+                da = (Df < -0.5) ?          // For negative moves, reverse moves are less then -.5
+                    min(da, (Df + 1)) :     // Negative move, pick the smaller of da and -Df + 1.
+                    max(-da, Df);           // Since Df is neg, pick the LARGER of -da, Df.
             }
-            else
-            {
-                if (Df > -0.5)
-                    state.state_ += max(-da, Df);
-                else
-                {
-                    state.state_ += min(da, 1 + Df);
-                    if (state.state_ > 1) state.state_ -= 1;
-                }
+            else {
+                // Positive move
+                da = (Df > 0.5) ? 
+                    max(-da, (Df - 1)) :    // Positive move needs a neg
+                    min(Df, da);
             }
+            state.state_ += da;
+            if (state.state_ > 1.0) state.state_ -= 1.0;
+            if (state.state_ < 0.0) state.state_ += 1.0;
+
+            // tgt = .9,  state = 0  : Df = .9  assume da = .01
+            //if (Df > 0.0)   // Just checking sign here, Df = 0 checked above
+            //{
+            //    if (Df <= 0.5)
+            //        state.state_ += min(da, Df);
+            //    else
+            //    {
+            //        // Get here:
+            //        state.state_ -= max(-da, 1 - Df);       // This would set the state - (max( -.01, 1 - .9)
+            //        if (state.state_ < 0.0) state.state_ += 1;
+            //    }
+            //}
+            //else
+            //{
+            //    if (Df > -0.5)
+            //        state.state_ += max(-da, Df);
+            //    else
+            //    {
+            //        state.state_ += min(da, 1 + Df);
+            //        if (state.state_ > 1) state.state_ -= 1;
+            //    }
+            //}
 
             return true;
         }

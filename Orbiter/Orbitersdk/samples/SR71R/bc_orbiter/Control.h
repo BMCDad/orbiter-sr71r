@@ -53,6 +53,16 @@ namespace bc_orbiter {
 	};
 
 	/**
+	* vc_tex_animation
+	* Similar to panel_animation where the animation is a texture, and not a mesh group.  vc_animation
+	* animates a group.  Better naming is needed to avoid confusion.  Note that panels use MESHHANDLE where
+	* VCs use DEVMESHHANDLEs.
+	*/
+	struct vc_tex_animation {
+		virtual void vc_step(DEVMESHHANDLE mesh, double simdt) = 0;
+	};
+
+	/**
 	* event_target
 	* Base class for any control that will be an event target.
 	*/

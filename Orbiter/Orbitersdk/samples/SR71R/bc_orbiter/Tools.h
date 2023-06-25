@@ -549,6 +549,26 @@ namespace bc_orbiter
 		oapiEditMeshGroup(mesh, group, &change);
 	}
 
+	template<typename T>
+	inline void TransformUV(T mesh, const UINT group, const NTVERTEX* verts, const double angle, const VECTOR3& trans)
+	{
+		if (NULL == mesh)
+		{
+			return;
+		}
+
+		GROUPEDITSPEC change{};
+		NTVERTEX delta[4];
+
+		TransformUV2d(verts, delta, 4, trans, angle);
+
+		change.flags = GRPEDIT_VTXTEX;
+		change.nVtx = 4;
+		change.vIdx = NULL; //Just use the mesh order
+		change.Vtx = delta;
+		oapiEditMeshGroup(mesh, group, &change);
+	}
+
 	inline void DrawPanelOnOff(MESHHANDLE mesh, UINT group, const NTVERTEX* verts, bool isOn, double offset)
 	{
 		auto grp = oapiMeshGroup(mesh, group);
