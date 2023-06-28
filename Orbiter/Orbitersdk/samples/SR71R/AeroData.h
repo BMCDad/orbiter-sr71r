@@ -35,17 +35,38 @@ public:
 	// post_step
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
+	void SetCourse(double s);
+	void SetHeading(double s);
+
 	// Slots:
-	bco::slot<bool>&		EnabledSlot()			{ return enabledSlot_; }
-	bco::slot<bool>&		AvionicsModeSlot()		{ return avionicsModeSlot_;	}
+	//bco::slot<bool>&		EnabledSlot()			{ return enabledSlot_; }
+	//bco::slot<bool>&		AvionicsModeSlot()		{ return avionicsModeSlot_;	}
+	bco::slot<bool>&		SetCourseIncSlot()		{ return setCourseIncSlot_; }
+	bco::slot<bool>&		SetCourseDecSlot()		{ return setCourseDecSlot_; }
+	bco::slot<bool>&		SetHeadingIncSlot()		{ return setHeadingIncSlot_; }
+	bco::slot<bool>&		SetHeadingDecSlot()		{ return setHeadingDecSlot_; }
+
 
 	// Signals:
-	bco::signal<AvionMode>& AvionicsModeSignal()	{ return avionicsModeSignal_; }
+//	bco::signal<AvionMode>& AvionicsModeSignal()	{ return avionicsModeSignal_; }
+	bco::signal<double>&	SetCourseSignal()		{ return setCourseSignal_; }
+	bco::signal<double>&	SetHeadingSignal()		{ return setHeadingSignal_; }
+
 private:
 	// Slots:
-	bco::slot<bool>			enabledSlot_;				// Main avion power switch.
-	bco::slot<bool>			avionicsModeSlot_;
+	//bco::slot<bool>			enabledSlot_;				// Main avion power switch.
+	//bco::slot<bool>			avionicsModeSlot_;
+
+	bco::slot<bool>			setCourseIncSlot_;
+	bco::slot<bool>			setCourseDecSlot_;
+	bco::slot<bool>			setHeadingIncSlot_;
+	bco::slot<bool>			setHeadingDecSlot_;
 
 	// Signals:
-	bco::signal<AvionMode>	avionicsModeSignal_;
+//	bco::signal<AvionMode>	avionicsModeSignal_;
+	bco::signal<double>		setCourseSignal_;
+	bco::signal<double>		setHeadingSignal_;
+
+	void UpdateSetCourse(double i);
+	void UpdateSetHeading(double i);
 };

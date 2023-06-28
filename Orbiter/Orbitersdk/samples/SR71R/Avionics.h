@@ -155,45 +155,45 @@ private:
 
 
     /* HSI */
-    bco::VCGaugeWrap        gaBearingArrow_{	{bm::vc::HSIBearingArrow_id},
-                                                bm::vc::HSIBearingArrow_location,
-                                                bm::vc::HSIAxis_location,
-                                                (360 * RAD),
-                                                1.0
-    };
+    //bco::VCGaugeWrap        gaBearingArrow_{	{bm::vc::HSIBearingArrow_id},
+    //                                            bm::vc::HSIBearingArrow_location,
+    //                                            bm::vc::HSIAxis_location,
+    //                                            (360 * RAD),
+    //                                            1.0
+    //};
 
-    bco::VCGaugeWrap        gaRoseCompass_{ {bm::vc::RoseCompass_id},
-                                                        bm::vc::RoseCompass_location,
-                                                        bm::vc::HSIAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-    };
+    //bco::VCGaugeWrap        gaRoseCompass_{ {bm::vc::RoseCompass_id},
+    //                                                    bm::vc::RoseCompass_location,
+    //                                                    bm::vc::HSIAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //};
 
-    bco::VCGaugeWrap        gaHeadingBug_{ {bm::vc::HSICompassHeading_id},
-                                                        bm::vc::HSICompassHeading_location,
-                                                        bm::vc::HSIAxis_location,
-                                                        (360 * RAD),
-                                                        0.3
-    };
+    //bco::VCGaugeWrap        gaHeadingBug_{ {bm::vc::HSICompassHeading_id},
+    //                                                    bm::vc::HSICompassHeading_location,
+    //                                                    bm::vc::HSIAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    0.3
+    //};
 
-    bco::VCGaugeWrap        gaCourse_{ {   bm::vc::HSICourse_id},
-                                                        bm::vc::HSICourse_location,
-                                                        bm::vc::HSIAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-    };
+    //bco::VCGaugeWrap        gaCourse_{ {   bm::vc::HSICourse_id},
+    //                                                    bm::vc::HSICourse_location,
+    //                                                    bm::vc::HSIAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //};
 
 
     // The same mesh will have both texture and mesh transform.
     //   bco::MeshVisual			courseErrorMesh_        {   bt_mesh::SR71rVC::HSICourseNeedle_verts,		bt_mesh::SR71rVC::HSICourseNeedleId };
-	bco::VCGaugeWrap		gaCoureError_{ {	bm::vc::HSICourseNeedle_id},
-												bm::vc::HSICourseNeedle_location,
-												bm::vc::HSIAxis_location,
-												(360 * RAD),
-												1.0
-	};
+	//bco::VCGaugeWrap		gaCoureError_{ {	bm::vc::HSICourseNeedle_id},
+	//											bm::vc::HSICourseNeedle_location,
+	//											bm::vc::HSIAxis_location,
+	//											(360 * RAD),
+	//											1.0
+	//};
 
-    bco::TextureVisual		courseErrorTex_{ bm::vc::HSICourseNeedle_verts,		bm::vc::HSICourseNeedle_id, };
+ //   bco::TextureVisual		courseErrorTex_{ bm::vc::HSICourseNeedle_verts,		bm::vc::HSICourseNeedle_id, };
 
 
     bco::MeshVisual			gsNeedle_{ bm::vc::GlideSlopeNeedle_verts,	bm::vc::GlideSlopeNeedle_id, };
@@ -253,48 +253,48 @@ private:
 
 
     /* HSI Course odo */
-    bco::VCGaugeWrap        gaCrsOnes_{ {bm::vc::CrsOnes_id},
-                                                        bm::vc::CrsOnes_location,
-                                                        bm::vc::CrsOdoAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-    };
+    //bco::VCGaugeWrap        gaCrsOnes_{ {bm::vc::CrsOnes_id},
+    //                                                    bm::vc::CrsOnes_location,
+    //                                                    bm::vc::CrsOdoAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //};
 
-    bco::VCGaugeWrap        gaCrsTens_{ { bm::vc::CrsTens_id },
-                                                        bm::vc::CrsTens_location,
-                                                        bm::vc::CrsOdoAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-    };
+    //bco::VCGaugeWrap        gaCrsTens_{ { bm::vc::CrsTens_id },
+    //                                                    bm::vc::CrsTens_location,
+    //                                                    bm::vc::CrsOdoAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //};
 
-    bco::VCGaugeWrap        gaCrsHund_{ { bm::vc::CrsHundreds_id },
-                                                        bm::vc::CrsHundreds_location,
-                                                        bm::vc::CrsOdoAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-    };
+    //bco::VCGaugeWrap        gaCrsHund_{ { bm::vc::CrsHundreds_id },
+    //                                                    bm::vc::CrsHundreds_location,
+    //                                                    bm::vc::CrsOdoAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //};
 
     /* HSI Miles */
-    bco::VCGaugeWrap        gaMilesOnes_{ {bm::vc::MilesOnes_id},
-                                                        bm::vc::MilesOnes_location,
-                                                        bm::vc::CrsOdoAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-    };
+    //bco::VCGaugeWrap        gaMilesOnes_{ {bm::vc::MilesOnes_id},
+    //                                                    bm::vc::MilesOnes_location,
+    //                                                    bm::vc::CrsOdoAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //};
 
-    bco::VCGaugeWrap        gaMilesTens_{ { bm::vc::MilesTens_id },
-                                                        bm::vc::MilesTens_location,
-                                                        bm::vc::CrsOdoAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-    };
+    //bco::VCGaugeWrap        gaMilesTens_{ { bm::vc::MilesTens_id },
+    //                                                    bm::vc::MilesTens_location,
+    //                                                    bm::vc::CrsOdoAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //};
 
-    bco::VCGaugeWrap        gaMilesHund_            { { bm::vc::MilesHundred_id },
-                                                        bm::vc::MilesHundred_location,
-                                                        bm::vc::CrsOdoAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaMilesHund_            { { bm::vc::MilesHundred_id },
+    //                                                    bm::vc::MilesHundred_location,
+    //                                                    bm::vc::CrsOdoAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //                                                };
 
     bco::TextureVisual		txHSIOff_{ bm::vc::HSIOffFlag_verts, bm::vc::HSIOffFlag_id };
     bco::TextureVisual		txHSIExo_{ bm::vc::HSIExoFlag_verts, bm::vc::HSIExoFlag_id };
@@ -436,11 +436,11 @@ private:
     //                                                    bm::vc::PowerTopRightAxis_location
     //                                                };
 
-    bco::VCRotorSwitch		swSelectRadio_          {   bm::vc::SwNavSelect_id, 
-                                                        bm::vc::SwNavSelect_location, 
-                                                        bm::vc::SwNavSelectAxis_location,
-														(117*RAD)
-                                                    };
+    //bco::VCRotorSwitch		swSelectRadio_          {   bm::vc::SwNavSelect_id, 
+    //                                                    bm::vc::SwNavSelect_location, 
+    //                                                    bm::vc::SwNavSelectAxis_location,
+				//										(117*RAD)
+    //                                                };
 
     //bco::VCRotorSwitch     swAvionMode_            {   bm::vc::SwExoSelect_id,
     //                                                    bm::vc::SwExoSelect_location, 

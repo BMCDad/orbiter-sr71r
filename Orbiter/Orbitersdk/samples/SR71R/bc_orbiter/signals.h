@@ -78,6 +78,9 @@ namespace bc_orbiter {
 			return value_;
 		}
 
+		void update(T val) {	// Update value without firing event (config)
+			value_ = val;
+		}
 	private:
 		std::vector<slot<T>*> slots_;
 		T value_{};

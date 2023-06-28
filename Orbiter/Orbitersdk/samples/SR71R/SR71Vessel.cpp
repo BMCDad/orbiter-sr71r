@@ -188,6 +188,7 @@ retroEngines_(this, RETRO_AMPS)
 	/*  Avionics  */
 	AddControl(&switchAvionMode_);
 	AddControl(&switchAvionPower_);
+	AddControl(&switchNavMode_);
 
 	/*  Altimeter  */
 	AddControl(&altimeter1Hand_);
@@ -206,6 +207,21 @@ retroEngines_(this, RETRO_AMPS)
 	/*  Attitude  */
 	AddControl(&attitudeDisplay_);
 
+	/*  HSI  */
+	AddControl(&hsiRoseCompass_);
+	AddControl(&hsiHeadingBug_);
+	AddControl(&hsiCourse_);
+	AddControl(&dialSetCourseIncrement_);
+	AddControl(&dialSetCourseDecrement_);
+	AddControl(&hsiCRSOnes_);
+	AddControl(&hsiCRSTens_);
+	AddControl(&hsiCRSHunds_);
+	AddControl(&dialSetHeadingIncrement_);
+	AddControl(&dialSetHeadingDecrement_);
+	AddControl(&hsiBearing_);
+	AddControl(&hsiMilesOnes_);
+	AddControl(&hsiMilesTens_);
+	AddControl(&hsiMilesHunds_);
 
 	//
 	AddComponent(&lightNav_);
@@ -214,6 +230,8 @@ retroEngines_(this, RETRO_AMPS)
 	AddComponent(&altimeter_);
 	AddComponent(&vsi_);
 	AddComponent(&attitude_);
+	AddComponent(&hsi_);
+	AddComponent(&aeroData_);
 
 	// These are here because the template deduction does not seem to work in the header file.
 	// These objects will die at the end of this method, but they will have done their job.
@@ -352,9 +370,36 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( vsi_.VSINeedleSignal(),					vsiHand_.Slot());
 
 	// Attitude
-	bco::connect(switchAvionPower_.Signal(), attitude_.EnabledSlot());
-	bco::connect(attitude_.BankSignal(), attitudeDisplay_.SlotAngle());
-	bco::connect(attitude_.PitchSignal(), attitudeDisplay_.SlotTransform());
+	bco::connect( switchAvionPower_.Signal(),				attitude_.EnabledSlot());
+	bco::connect( attitude_.BankSignal(),					attitudeDisplay_.SlotAngle());
+	bco::connect( attitude_.PitchSignal(),					attitudeDisplay_.SlotTransform());
+
+	// HSI
+	bco::connect( switchAvionPower_.Signal(),				hsi_.EnabledSlot());
+	bco::connect( switchAvionMode_.Signal(),				hsi_.AvionicsModeSlot());
+	bco::connect( hsi_.YawSignal(),							hsiRoseCompass_.Slot());
+	bco::connect( hsi_.SetHeadingSignal(),					hsiHeadingBug_.Slot());
+	bco::connect( hsi_.BearingSignal(),						hsiBearing_.Slot());
+	
+			// Course/heading dials drive the aerodata course slots.  Source of 'truth' is in AeroData.
+	bco::connect( dialSetCourseIncrement_.Signal(),			aeroData_.SetCourseIncSlot());
+	bco::connect( dialSetCourseDecrement_.Signal(),			aeroData_.SetCourseDecSlot());
+	bco::connect( dialSetHeadingIncrement_.Signal(),		aeroData_.SetHeadingIncSlot());
+	bco::connect( dialSetHeadingDecrement_.Signal(),		aeroData_.SetHeadingDecSlot());
+	// ...which in turn drive the HSI course and heading
+	bco::connect( aeroData_.SetCourseSignal(),				hsi_.SetCourseSlot());
+	bco::connect( aeroData_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
+			// ...which drives the course and heading needle and wheels.
+	bco::connect( hsi_.SetCourseSignal(),					hsiCourse_.Slot());
+	bco::connect( hsi_.SetCourseSignal(),					hsiCourseError_.SlotAngle());
+	bco::connect( hsi_.NavErrorSignal(),					hsiCourseError_.SlotTransform());
+	bco::connect( hsi_.CrsOnesSignal(),						hsiCRSOnes_.SlotTransform());
+	bco::connect( hsi_.CrsTensSignal(),						hsiCRSTens_.SlotTransform());
+	bco::connect( hsi_.CrsHundsSignal(),					hsiCRSHunds_.SlotTransform());
+	bco::connect( hsi_.MilesOnesSignal(),					hsiMilesOnes_.SlotTransform());
+	bco::connect( hsi_.MilesTensSignal(),					hsiMilesTens_.SlotTransform());
+	bco::connect( hsi_.MilesHundsSignal(),					hsiMilesHunds_.SlotTransform());
+
 }
 
 

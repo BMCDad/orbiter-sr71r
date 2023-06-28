@@ -42,7 +42,8 @@
 #include "Altimeter.h"
 #include "VSI.h"
 #include "AttitudeIndicator.h"
-#include "TestComponent.h"
+//#include "TestComponent.h"
+#include "HSI.h"
 
 #include <vector>
 #include <map>
@@ -803,6 +804,16 @@ private:
 		bm::pnl::pnlAvionMode_RC
 	};
 
+	bco::on_off_input		switchNavMode_{		// Nav mode 1 2
+		GetControlId(),
+		{ bm::vc::vcNavMode_id },
+		bm::vc::vcNavMode_location, bm::vc::vcAttitudeSwitchesAxis_location,
+		toggleOnOff,
+		bm::pnl::pnlNavMode_id,
+		bm::pnl::pnlNavMode_verts,
+		bm::pnl::pnlNavMode_RC
+	};
+
 	// ***  Altimeter  *** //
 	bco::rotary_display<bco::AnimationWrap>	altimeter1Hand_{
 		{ bm::vc::gaAlt1Needle_id },
@@ -889,6 +900,125 @@ private:
 		bm::pnl::pnlAttitudeIndicator_verts
 	};
 
+	// ***  HSI  *** //
+	bco::rotary_display<bco::AnimationWrap>	hsiRoseCompass_{
+		{ bm::vc::RoseCompass_id },
+		bm::vc::RoseCompass_location, bm::vc::HSIAxis_location,
+		bm::pnl::pnlRoseCompass_id,
+		bm::pnl::pnlRoseCompass_verts,
+		(360 * RAD),	// Clockwise
+		1.0,
+		[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap>	hsiHeadingBug_{
+		{ bm::vc::HSICompassHeading_id },
+		bm::vc::HSICompassHeading_location, bm::vc::HSIAxis_location,
+		bm::pnl::pnlHSICompassHeading_id,
+		bm::pnl::pnlHSICompassHeading_verts,
+		(360 * RAD),	// Clockwise
+		1.0,
+		[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap> hsiCourse_{
+		{ bm::vc::HSICourse_id },
+		bm::vc::HSICourse_location, bm::vc::HSIAxis_location,
+		bm::pnl::pnlHSICourse_id,
+		bm::pnl::pnlHSICourse_verts,
+		(360 * RAD),
+		1.0,
+		[](double d) {return bco::AngleToState(-d); }
+	};
+
+	bco::transform_display		hsiCourseError_{
+		bm::vc::HSICourseNeedle_id,
+		bm::vc::HSICourseNeedle_verts,
+		bm::pnl::pnlHSICourseNeedle_id,
+		bm::pnl::pnlHSICourseNeedle_verts
+	};
+
+	bco::rotary_display<bco::AnimationWrap> hsiBearing_{
+		{ bm::vc::HSIBearingArrow_id },
+		bm::vc::HSIBearingArrow_location, bm::vc::HSIAxis_location,
+		bm::pnl::pnlHSIBearingArrow_id,
+		bm::pnl::pnlHSIBearingArrow_verts,
+		(360 * RAD),
+		1.0,
+		[](double d) {return bco::AngleToState(-d); }
+	};
+
+	bco::flat_roll hsiCRSOnes_{
+		bm::pnl::pnlHSICRSOnes_id,
+		bm::pnl::pnlHSICRSOnes_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll hsiCRSTens_{
+		bm::pnl::pnlHSICRSTens_id,
+		bm::pnl::pnlHSICRSTens_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll hsiCRSHunds_{
+		bm::pnl::pnlHSICRSHunds_id,
+		bm::pnl::pnlHSICRSHunds_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll hsiMilesOnes_{
+		bm::pnl::pnlHSIMilesOnes_id,
+		bm::pnl::pnlHSIMilesOnes_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll hsiMilesTens_{
+		bm::pnl::pnlHSIMilesTens_id,
+		bm::pnl::pnlHSIMilesTens_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll hsiMilesHunds_{
+		bm::pnl::pnlHSIMilesHunds_id,
+		bm::pnl::pnlHSIMilesHunds_verts,
+		0.1084,
+		[](double v) {return floor(v) / 10; }
+	};
+
+	bco::simple_event		dialSetCourseIncrement_{
+		GetControlId(),
+		bm::vc::CourseKnob_location,
+		0.01,
+		bm::pnl::pnlSetCourseInc_RC
+	};
+
+	bco::simple_event		dialSetCourseDecrement_{
+		GetControlId(),
+		bm::vc::CourseKnob_location,
+		0.01,
+		bm::pnl::pnlSetCourseDec_RC
+	};
+
+	bco::simple_event		dialSetHeadingIncrement_{
+		GetControlId(),
+		bm::vc::HeadingKnob_location,
+		0.01,
+		bm::pnl::pnlSetHeadingInc_RC
+	};
+
+	bco::simple_event		dialSetHeadingDecrement_{
+		GetControlId(),
+		bm::vc::HeadingKnob_location,
+		0.01,
+		bm::pnl::pnlSetHeadingDec_RC
+	};
+
+
 
 	//// ** TEST ** //
 	//bco::flat_roll<int>  numtest{
@@ -919,6 +1049,8 @@ private:
 	Altimeter			altimeter_;
 	VSI					vsi_;
 	AttitudeIndicator	attitude_;
-	TestComponent		test_;
+	HSI					hsi_;
+	AeroData			aeroData_;
+//	TestComponent		test_;
 };
 

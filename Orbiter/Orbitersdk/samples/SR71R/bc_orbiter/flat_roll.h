@@ -22,6 +22,11 @@
 
 namespace bc_orbiter {
 
+    /**
+    * flat_roll
+    * Transforms the UV values of a texture in a loop to achieve the effect of a barrel number wheel.
+    * The texture transforms in the 'v' or 'y' axis.  This can be parameterized if needed.
+    */
     class flat_roll :
         public control,
         public panel_animation {

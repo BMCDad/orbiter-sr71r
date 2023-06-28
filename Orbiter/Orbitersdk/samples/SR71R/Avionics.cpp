@@ -36,9 +36,9 @@ Avionics::Avionics(bco::BaseVessel* vessel, double amps) :
 	dialCourseSet_.SetDialRightFunc([this] { DialCourse(0.1); });
 	vessel->RegisterVCEventTarget(&dialCourseSet_);
 
-	swSelectRadio_.AddStopFunc(0.0, [this] {navRadio_ = NavRadio::Nav2; });
-	swSelectRadio_.AddStopFunc(1.0, [this] {navRadio_ = NavRadio::Nav1; });
-	swSelectRadio_.SetStep(0);
+	//swSelectRadio_.AddStopFunc(0.0, [this] {navRadio_ = NavRadio::Nav2; });
+	//swSelectRadio_.AddStopFunc(1.0, [this] {navRadio_ = NavRadio::Nav1; });
+	//swSelectRadio_.SetStep(0);
 
 	//swAvionMode_.AddStopFunc(0.0, [this] { avionMode_ = AvionMode::AvionAtmo; });
 	//swAvionMode_.AddStopFunc(1.0, [this] { avionMode_ = AvionMode::AvionExo; });
@@ -59,14 +59,14 @@ void Avionics::OnSetClassCaps()
     auto vessel = GetBaseVessel();
 
 //    swPower_.Setup(vessel);
-    swSelectRadio_.Setup(vessel);
+//    swSelectRadio_.Setup(vessel);
 //    swAvionMode_.Setup(vessel);
     
-    gaBearingArrow_.Setup(vessel);
-    gaRoseCompass_.Setup(vessel);
-    gaHeadingBug_.Setup(vessel);
-    gaCourse_.Setup(vessel);
-	gaCoureError_.Setup(vessel);
+//    gaBearingArrow_.Setup(vessel);
+//    gaRoseCompass_.Setup(vessel);
+//    gaHeadingBug_.Setup(vessel);
+//    gaCourse_.Setup(vessel);
+//	gaCoureError_.Setup(vessel);
 
     //gaAlt1Needle_.Setup(vessel);
     //gaAlt10Needle_.Setup(vessel);
@@ -75,13 +75,13 @@ void Avionics::OnSetClassCaps()
 //    gaVSINeedle_.Setup(vessel);
 
 
-    gaCrsOnes_.Setup(vessel);
-    gaCrsTens_.Setup(vessel);
-    gaCrsHund_.Setup(vessel);
+    //gaCrsOnes_.Setup(vessel);
+    //gaCrsTens_.Setup(vessel);
+    //gaCrsHund_.Setup(vessel);
 
-    gaMilesOnes_.Setup(vessel);
-    gaMilesTens_.Setup(vessel);
-    gaMilesHund_.Setup(vessel);
+    //gaMilesOnes_.Setup(vessel);
+    //gaMilesTens_.Setup(vessel);
+    //gaMilesHund_.Setup(vessel);
 
     gaKeasOnes_.Setup(vessel);
     gaKeasTens_.Setup(vessel);
@@ -460,11 +460,11 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
             }
 
             if (isnan(vert)) vert = 0.0;
-            gaCourse_.SetState(bco::AngleToState(vert));
-			gaCoureError_.SetState(bco::AngleToState(vert));
+//            gaCourse_.SetState(bco::AngleToState(vert));
+			//gaCoureError_.SetState(bco::AngleToState(vert));
 
-            courseErrorTex_.SetTranslate(_V(0.0, 0.0, 0.0));
-            courseErrorTex_.RotateMesh(devMesh);
+   //         courseErrorTex_.SetTranslate(_V(0.0, 0.0, 0.0));
+   //         courseErrorTex_.RotateMesh(devMesh);
         }
     }
 
@@ -528,16 +528,16 @@ void Avionics::DrawHSI(DEVMESHHANDLE devMesh)
     auto rotHdg = -yaw + GetSetHeading();
 	auto rotCrs = -yaw + setCourse_;
 
-    gaRoseCompass_.SetState(bco::AngleToState(-yaw));
-    gaHeadingBug_.SetState(bco::AngleToState(rotHdg));
+//    gaRoseCompass_.SetState(bco::AngleToState(-yaw));
+//    gaHeadingBug_.SetState(bco::AngleToState(rotHdg));
 
     auto deg = setCourse_ * 57.2958;
     bco::TensParts parts;
     bco::GetDigits(deg, parts);
 
-    gaCrsOnes_.SetState(parts.Tens / 10);
-    gaCrsTens_.SetState(parts.Hundreds / 10);
-    gaCrsHund_.SetState(parts.Thousands / 10);
+    //gaCrsOnes_.SetState(parts.Tens / 10);
+    //gaCrsTens_.SetState(parts.Hundreds / 10);
+    //gaCrsHund_.SetState(parts.Thousands / 10);
 
 
 	double errTrans = 0.0;
@@ -621,7 +621,7 @@ void Avionics::DrawHSI(DEVMESHHANDLE devMesh)
             //targetBearing_ = (-yaw + navBearing) / PI2;
             //if (targetBearing_ < 0.0) targetBearing_ = targetBearing_ + 1.0;
 //            gaBearingArrow_.SetAngle(-yaw + navBearing);
-            gaBearingArrow_.SetState(bco::AngleToState(-yaw + navBearing));
+//            gaBearingArrow_.SetState(bco::AngleToState(-yaw + navBearing));
 //            gaBearingArrow_.SetState(targetBearing_);
 //            sprintf(oapiDebugString(), "Y: %+4.2f NB: %+4.2f TB: %+4.2f", yaw, navBearing, targetBearing_);
 ////
@@ -635,17 +635,17 @@ void Avionics::DrawHSI(DEVMESHHANDLE devMesh)
     // Miles barrels
     bco::GetDigits(milesBeacon, parts);
     
-    gaMilesOnes_.SetState(parts.Tens / 10);
-    gaMilesTens_.SetState(parts.Hundreds / 10);
-    gaMilesHund_.SetState(parts.Thousands / 10);
+    //gaMilesOnes_.SetState(parts.Tens / 10);
+    //gaMilesTens_.SetState(parts.Hundreds / 10);
+    //gaMilesHund_.SetState(parts.Thousands / 10);
 
     if ((avionMode_ == AvionMode::AvionAtmo) && IsActive())
     {
-        gaCourse_.SetState(bco::AngleToState(rotCrs));
-		gaCoureError_.SetState(bco::AngleToState(rotCrs));
+//        gaCourse_.SetState(bco::AngleToState(rotCrs));
+		//gaCoureError_.SetState(bco::AngleToState(rotCrs));
 
-        courseErrorTex_.SetTranslate(_V(-errTrans, 0.0, 0.0));
-        courseErrorTex_.RotateMesh(devMesh);
+  //      courseErrorTex_.SetTranslate(_V(-errTrans, 0.0, 0.0));
+  //      courseErrorTex_.RotateMesh(devMesh);
     }
 
 	gsNeedle_.SetTranslate(_V(0.0, gsTrans, 0.0));

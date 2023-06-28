@@ -273,6 +273,9 @@
     <ClInclude Include="TestComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="HSI.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">

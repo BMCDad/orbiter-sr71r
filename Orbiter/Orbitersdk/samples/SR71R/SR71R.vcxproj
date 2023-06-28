@@ -154,6 +154,7 @@
     <ClInclude Include="CryogenicTank.h" />
     <ClInclude Include="FlightComputer.h" />
     <ClInclude Include="HoverEngines.h" />
+    <ClInclude Include="HSI.h" />
     <ClInclude Include="IAvionics.h" />
     <ClInclude Include="FuelCell.h" />
     <ClInclude Include="IConsumable.h" />
