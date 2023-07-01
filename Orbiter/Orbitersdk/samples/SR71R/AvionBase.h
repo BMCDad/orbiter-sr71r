@@ -26,6 +26,13 @@ class AvionBase :
 	public bco::vessel_component {
 
 public:
+	AvionBase() :
+		enabledSlot_([&](bool v) { OnEnabledChanged(); }),
+		avionicsModeSlot_([&](bool v) {OnAvionModeChanged(); })
+	{}
+
+	virtual void OnEnabledChanged() {}
+	virtual void OnAvionModeChanged() {}
 
 	// Slots:
 	bco::slot<bool>& EnabledSlot() { return enabledSlot_; }

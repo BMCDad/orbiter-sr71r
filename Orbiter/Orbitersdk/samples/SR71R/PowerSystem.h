@@ -84,7 +84,7 @@ public:
 	bco::signal<bool>& FuelCellConnectedSignal()	{ return signalFuelCellConnected_; }	// Fuelcell connection status
 
 	// These slots driven by toggle switches.
-	bco::slot<bool>& MainPowerSlot()				{ return slotMainPower_; }				// Main power switch
+	bco::slot<bool>& MainPowerSlot()				{ return slotIsEnabled_; }				// Main power switch
 	bco::slot<bool>& ExternalConnectSlot()			{ return slotConnectExternal_; }		// External connect switch
 	bco::slot<bool>& FuelCellConnectSlot()			{ return slotConnectFuelCell_; }		// Fuelcell connect switch
 
@@ -104,7 +104,7 @@ private:
 	bco::signal<bool>		signalFuelCellConnected_;
 
 	// Slots for the on / off switches.
-	bco::slot<bool>			slotMainPower_;
+	bco::slot<bool>			slotIsEnabled_;
 	bco::slot<bool>			slotConnectExternal_;
 	bco::slot<bool>			slotConnectFuelCell_;
 	bco::slot<double>		slotFuelCellAvailablePower_;

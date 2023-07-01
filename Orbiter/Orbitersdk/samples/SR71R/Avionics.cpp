@@ -28,13 +28,13 @@ namespace msh = bm::vc;
 Avionics::Avionics(bco::BaseVessel* vessel, double amps) :
 	bco::PoweredComponent(vessel, amps, AV_MIN_VOLT)
 {
-	dialHeadingSet_.SetDialLeftFunc([this] { DialHeading(-0.1); });
-	dialHeadingSet_.SetDialRightFunc([this] { DialHeading(0.1); });
-	vessel->RegisterVCEventTarget(&dialHeadingSet_);
+	//dialHeadingSet_.SetDialLeftFunc([this] { DialHeading(-0.1); });
+	//dialHeadingSet_.SetDialRightFunc([this] { DialHeading(0.1); });
+	//vessel->RegisterVCEventTarget(&dialHeadingSet_);
 
-	dialCourseSet_.SetDialLeftFunc([this] { DialCourse(-0.1); });
-	dialCourseSet_.SetDialRightFunc([this] { DialCourse(0.1); });
-	vessel->RegisterVCEventTarget(&dialCourseSet_);
+	//dialCourseSet_.SetDialLeftFunc([this] { DialCourse(-0.1); });
+	//dialCourseSet_.SetDialRightFunc([this] { DialCourse(0.1); });
+	//vessel->RegisterVCEventTarget(&dialCourseSet_);
 
 	//swSelectRadio_.AddStopFunc(0.0, [this] {navRadio_ = NavRadio::Nav2; });
 	//swSelectRadio_.AddStopFunc(1.0, [this] {navRadio_ = NavRadio::Nav1; });
@@ -83,28 +83,28 @@ void Avionics::OnSetClassCaps()
     //gaMilesTens_.Setup(vessel);
     //gaMilesHund_.Setup(vessel);
 
-    gaKeasOnes_.Setup(vessel);
-    gaKeasTens_.Setup(vessel);
-    gaKeasHund_.Setup(vessel);
+    //gaKeasOnes_.Setup(vessel);
+    //gaKeasTens_.Setup(vessel);
+    //gaKeasHund_.Setup(vessel);
 
-    gaTDIAltOnes_.Setup(vessel);
-    gaTDIAltTens_.Setup(vessel);
-    gaTDIAltHund_.Setup(vessel);
-    gaTDIAltThous_.Setup(vessel);
-    gaTDIAltTenThou_.Setup(vessel);
+    //gaTDIAltOnes_.Setup(vessel);
+    //gaTDIAltTens_.Setup(vessel);
+    //gaTDIAltHund_.Setup(vessel);
+    //gaTDIAltThous_.Setup(vessel);
+    //gaTDIAltTenThou_.Setup(vessel);
 
-    gaTDIMachOnes_.Setup(vessel);
-    gaTDIMachTens_.Setup(vessel);
-    gaTDIMachHund_.Setup(vessel);
+    //gaTDIMachOnes_.Setup(vessel);
+    //gaTDIMachTens_.Setup(vessel);
+    //gaTDIMachHund_.Setup(vessel);
 
     gaAccel_.Setup(vessel);
     gaTrim_.Setup(vessel);
 
     gaAOA_.Setup(vessel);
 
-    gaMachMax_.Setup(vessel);
-    gaSpeed_.Setup(vessel);
-    gaKies_.Setup(vessel);
+    //gaMachMax_.Setup(vessel);
+    //gaSpeed_.Setup(vessel);
+    //gaKies_.Setup(vessel);
 
     redrawId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
@@ -243,7 +243,7 @@ double Avionics::SetHeading(double hdg)
 
 bool Avionics::IsOverSpeed() const { return isOverspeed_; }
 
-bco::DialSwitch& Avionics::HeadingSetDial() { return dialHeadingSet_; }
+//bco::DialSwitch& Avionics::HeadingSetDial() { return dialHeadingSet_; }
 
 //bco::OnOffSwitch& Avionics::PowerSwitch() { return swPower_; }
 
@@ -297,34 +297,34 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
     //gaAlt100Needle_.SetState(bco::AngleToState(PI2 * (parts.TenThousands / 10)));
 
     auto altFlgOffset = 0.0244;
-    auto isOffFlagOn = !IsActive() || (altitudeFeet > 100000);
-    txAltimeterOff_.SetTranslate(_V(isOffFlagOn ? 0.0 :altFlgOffset, 0.0, 0.0));
-    txAltimeterOff_.RotateMesh(devMesh);
-    
-    auto isAltGndOn = !isOffFlagOn && (avionMode_==AvionMode::AvionExo);
-    txAltimeterGnd_.SetTranslate(_V(isAltGndOn ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txAltimeterGnd_.RotateMesh(devMesh);
+    //auto isOffFlagOn = !IsActive() || (altitudeFeet > 100000);
+    //txAltimeterOff_.SetTranslate(_V(isOffFlagOn ? 0.0 :altFlgOffset, 0.0, 0.0));
+    //txAltimeterOff_.RotateMesh(devMesh);
+    //
+    //auto isAltGndOn = !isOffFlagOn && (avionMode_==AvionMode::AvionExo);
+    //txAltimeterGnd_.SetTranslate(_V(isAltGndOn ? 0.0 : altFlgOffset, 0.0, 0.0));
+    //txAltimeterGnd_.RotateMesh(devMesh);
 
     // ** TDI **
     // KEAS:
-    bco::GetDigits(keasSpeed, parts);
-    gaKeasOnes_.SetState(parts.Tens / 10);
-    gaKeasTens_.SetState(parts.Hundreds / 10);
-    gaKeasHund_.SetState(parts.Thousands / 10);
+    //bco::GetDigits(keasSpeed, parts);
+    //gaKeasOnes_.SetState(parts.Tens / 10);
+    //gaKeasTens_.SetState(parts.Hundreds / 10);
+    //gaKeasHund_.SetState(parts.Thousands / 10);
 
     // ALT
-    bco::GetDigits(altitudeFeet / 1000, parts); // Adjust for 1000 feet
-    gaTDIAltOnes_.SetState(parts.Tens / 10);
-    gaTDIAltTens_.SetState(parts.Hundreds / 10);
-    gaTDIAltHund_.SetState(parts.Thousands / 10);
-    gaTDIAltThous_.SetState(parts.TenThousands / 10);
-    gaTDIAltTenThou_.SetState(parts.HundredThousands / 10);
+    //bco::GetDigits(altitudeFeet / 1000, parts); // Adjust for 1000 feet
+    //gaTDIAltOnes_.SetState(parts.Tens / 10);
+    //gaTDIAltTens_.SetState(parts.Hundreds / 10);
+    //gaTDIAltHund_.SetState(parts.Thousands / 10);
+    //gaTDIAltThous_.SetState(parts.TenThousands / 10);
+    //gaTDIAltTenThou_.SetState(parts.HundredThousands / 10);
 
     // MACH
-    bco::GetDigits(mach, parts);
-    gaTDIMachOnes_.SetState(parts.Tenths / 10);
-    gaTDIMachTens_.SetState(parts.Tens / 10);
-    gaTDIMachHund_.SetState(parts.Hundreds / 10);
+    //bco::GetDigits(mach, parts);
+    //gaTDIMachOnes_.SetState(parts.Tenths / 10);
+    //gaTDIMachTens_.SetState(parts.Tens / 10);
+    //gaTDIMachHund_.SetState(parts.Hundreds / 10);
 
     // ** ACCEL **
     gaAccel_.SetState((gforce + 2) / 6);
@@ -403,7 +403,7 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
 
     auto rm = (maxMach==0.0) ? 0.0 : log(maxMach + 1) / l22;	// Determine LOG based on speed.
     auto mmRot = rm * r;					// Get rotation RAD
-	gaMachMax_.SetState(mmRot / r);			// Set based on ratio
+	//gaMachMax_.SetState(mmRot / r);			// Set based on ratio
 
 
     // Kies
@@ -414,24 +414,24 @@ void Avionics::UpdateGauges(DEVMESHHANDLE devMesh)
     auto spRatio = spRot / r;
     auto kRatio = kias / 600;
 
-    gaSpeed_.SetState(spRatio);
+    //gaSpeed_.SetState(spRatio);
 
-    auto rKies = (avionMode_==AvionMode::AvionExo) ? spRatio : (kRatio - spRatio);
-    gaKies_.SetState(rKies);
+    //auto rKies = (avionMode_==AvionMode::AvionExo) ? spRatio : (kRatio - spRatio);
+    //gaKies_.SetState(rKies);
 
-    auto isSpeedOff = !IsActive() || (mach >= MAX_MACH);
-    txSpeedOff_.SetTranslate(_V(isSpeedOff ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txSpeedOff_.RotateMesh(devMesh);
+    //auto isSpeedOff = !IsActive() || (mach >= MAX_MACH);
+    //txSpeedOff_.SetTranslate(_V(isSpeedOff ? 0.0 : altFlgOffset, 0.0, 0.0));
+    //txSpeedOff_.RotateMesh(devMesh);
 
-    auto isVelOn = IsActive() && (avionMode_ == AvionMode::AvionExo);
-    txSpeedVel_.SetTranslate(_V(isVelOn ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txSpeedVel_.RotateMesh(devMesh);
+    //auto isVelOn = IsActive() && (avionMode_ == AvionMode::AvionExo);
+    //txSpeedVel_.SetTranslate(_V(isVelOn ? 0.0 : altFlgOffset, 0.0, 0.0));
+    //txSpeedVel_.RotateMesh(devMesh);
 
     /** ATTITUDE **/
 
-    auto isAttOff = !IsActive();
-    txAttitudeOff_.SetTranslate(_V(isAttOff ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txAttitudeOff_.RotateMesh(devMesh);
+    //auto isAttOff = !IsActive();
+    //txAttitudeOff_.SetTranslate(_V(isAttOff ? 0.0 : altFlgOffset, 0.0, 0.0));
+    //txAttitudeOff_.RotateMesh(devMesh);
 
 
     VECTOR3 v;
@@ -512,10 +512,10 @@ void Avionics::DrawVerticalSpeed(DEVMESHHANDLE devMesh)
 
 //    gaVSINeedle_.SetState(0.5 + (isPos * spRot));
 
-    auto altFlgOffset = 0.0244;
-    auto isOffFlagOn = !IsActive();
-    txVSIOff_.SetTranslate(_V(isOffFlagOn ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txVSIOff_.RotateMesh(devMesh);
+    //auto altFlgOffset = 0.0244;
+    //auto isOffFlagOn = !IsActive();
+    //txVSIOff_.SetTranslate(_V(isOffFlagOn ? 0.0 : altFlgOffset, 0.0, 0.0));
+    //txVSIOff_.RotateMesh(devMesh);
 }
 
 void Avionics::DrawHSI(DEVMESHHANDLE devMesh)
@@ -628,35 +628,35 @@ void Avionics::DrawHSI(DEVMESHHANDLE devMesh)
 		}
 	}
 
-    auto comOff = (IsActive() && isComStatus) ? comStatusOffset : 0.0;
-    comStatus_.SetTranslate(_V(comOff, 0.0, 0.0));
-    comStatus_.RotateMesh(devMesh);
+    //auto comOff = (IsActive() && isComStatus) ? comStatusOffset : 0.0;
+    //comStatus_.SetTranslate(_V(comOff, 0.0, 0.0));
+    //comStatus_.RotateMesh(devMesh);
 
     // Miles barrels
-    bco::GetDigits(milesBeacon, parts);
+//    bco::GetDigits(milesBeacon, parts);
     
     //gaMilesOnes_.SetState(parts.Tens / 10);
     //gaMilesTens_.SetState(parts.Hundreds / 10);
     //gaMilesHund_.SetState(parts.Thousands / 10);
 
-    if ((avionMode_ == AvionMode::AvionAtmo) && IsActive())
-    {
-//        gaCourse_.SetState(bco::AngleToState(rotCrs));
-		//gaCoureError_.SetState(bco::AngleToState(rotCrs));
-
-  //      courseErrorTex_.SetTranslate(_V(-errTrans, 0.0, 0.0));
-  //      courseErrorTex_.RotateMesh(devMesh);
-    }
+//    if ((avionMode_ == AvionMode::AvionAtmo) && IsActive())
+//    {
+////        gaCourse_.SetState(bco::AngleToState(rotCrs));
+//		//gaCoureError_.SetState(bco::AngleToState(rotCrs));
+//
+//  //      courseErrorTex_.SetTranslate(_V(-errTrans, 0.0, 0.0));
+//  //      courseErrorTex_.RotateMesh(devMesh);
+//    }
 
 	gsNeedle_.SetTranslate(_V(0.0, gsTrans, 0.0));
 	gsNeedle_.RotateMesh(devMesh);
 
     auto altFlgOffset = 0.0244;
     auto isOffFlagOn = !IsActive();
-    txHSIOff_.SetTranslate(_V(isOffFlagOn ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txHSIOff_.RotateMesh(devMesh);
+    //txHSIOff_.SetTranslate(_V(isOffFlagOn ? 0.0 : altFlgOffset, 0.0, 0.0));
+    //txHSIOff_.RotateMesh(devMesh);
 
-    auto isExo = IsActive() && (avionMode_ == AvionMode::AvionExo);
-    txHSIExo_.SetTranslate(_V(isExo ? 0.0 : altFlgOffset, 0.0, 0.0));
-    txHSIExo_.RotateMesh(devMesh);
+    //auto isExo = IsActive() && (avionMode_ == AvionMode::AvionExo);
+    //txHSIExo_.SetTranslate(_V(isExo ? 0.0 : altFlgOffset, 0.0, 0.0));
+    //txHSIExo_.RotateMesh(devMesh);
 }

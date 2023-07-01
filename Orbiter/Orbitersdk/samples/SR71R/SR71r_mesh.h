@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Tue Jun 27 20:14:14 2023
+// Date: Fri Jun 30 12:43:57 2023
 
 
 #include "orbitersdk.h"
@@ -577,6 +577,26 @@ namespace bm
     {1508.4589f, 476.1819f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.4648f, 0.3945f},
     {1698.4760f, 477.4825f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.3722f, 0.4090f},
     {1513.8053f, 445.4035f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.4648f, 0.4090f}    };
+    const NTVERTEX pnlVSIOffFlag_verts[4] = {
+    {1494.9253f, 400.1494f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3456f, 0.6081f},
+    {1548.4519f, 400.1494f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6081f},
+    {1494.9253f, 453.6760f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3456f, 0.6320f},
+    {1548.4519f, 453.6760f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6320f}    };
+    const NTVERTEX pnlAltimeterOffFlag_verts[4] = {
+    {1492.2141f, 158.8583f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6081f},
+    {1543.6421f, 158.8583f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6081f},
+    {1492.2141f, 210.2864f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6320f},
+    {1543.6421f, 210.2864f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6320f}    };
+    const NTVERTEX pnlAltimeterGround_verts[4] = {
+    {1664.5291f, 157.4688f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3947f, 0.6081f},
+    {1715.9570f, 157.4688f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4188f, 0.6081f},
+    {1664.5291f, 208.8969f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3947f, 0.6321f},
+    {1715.9570f, 208.8969f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4188f, 0.6321f}    };
+    const NTVERTEX pnlSpeedNeedleMax_verts[4] = {
+    {933.4097f, 118.0333f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6555f, 0.3942f},
+    {969.3336f, 118.0333f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6727f, 0.3942f},
+    {933.4097f, 341.5598f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6555f, 0.5032f},
+    {969.3336f, 341.5598f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6727f, 0.5032f}    };
     const NTVERTEX pnlClockTimerMinute_verts[4] = {
     {726.3527f, 664.4812f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.5392f},
     {766.0398f, 664.4812f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.5392f},
@@ -587,6 +607,11 @@ namespace bm
     {1425.3958f, 793.4332f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6944f, 0.6869f},
     {1127.2200f, 495.2574f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5489f, 0.5414f},
     {1425.3958f, 495.2574f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6944f, 0.5414f}    };
+    const NTVERTEX pnlSpeedIndicatorKies_verts[4] = {
+    {871.5823f, 149.9741f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1983f, 0.8878f},
+    {1031.2440f, 149.9741f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2782f, 0.8878f},
+    {871.5823f, 309.6358f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1983f, 0.9675f},
+    {1031.2440f, 309.6358f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2782f, 0.9675f}    };
     const NTVERTEX pnlClockHour_verts[4] = {
     {726.0686f, 663.5839f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4056f, 0.5393f},
     {766.3004f, 663.5839f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4245f, 0.5393f},
@@ -597,6 +622,11 @@ namespace bm
     {1297.3077f, 804.4582f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5075f, 0.5398f},
     {1254.6017f, 484.1622f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4888f, 0.3945f},
     {1297.3077f, 484.1622f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5075f, 0.3945f}    };
+    const NTVERTEX pnlSpeedNeedle_verts[4] = {
+    {858.0114f, 136.4553f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2797f, 0.8875f},
+    {1045.4537f, 136.4553f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3728f, 0.8875f},
+    {858.0114f, 323.8977f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2797f, 0.9804f},
+    {1045.4537f, 323.8977f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3728f, 0.9804f}    };
     const NTVERTEX pnlClockMinute_verts[4] = {
     {727.2206f, 667.5706f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3856f, 0.5393f},
     {765.1708f, 667.5706f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4045f, 0.5393f},
@@ -677,6 +707,16 @@ namespace bm
     {1143.7590f, 526.2068f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3692f, 0.6333f},
     {1094.6604f, 575.3054f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3448f, 0.6576f},
     {1143.7590f, 575.3054f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3692f, 0.6576f}    };
+    const NTVERTEX pnlCOMStatusPanel_verts[4] = {
+    {1451.7054f, 186.4930f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5261f, 0.0268f},
+    {1400.6417f, 186.4930f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5014f, 0.0268f},
+    {1451.7054f, 135.4292f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5261f, 0.0021f},
+    {1400.6417f, 135.4292f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5014f, 0.0021f}    };
+    const NTVERTEX pnlSpeedVelocityFlag_verts[4] = {
+    {1011.8184f, 157.7524f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3950f, 0.6083f},
+    {1061.7126f, 157.7524f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4187f, 0.6083f},
+    {1011.8184f, 207.6467f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3950f, 0.6320f},
+    {1061.7126f, 207.6467f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4187f, 0.6320f}    };
     const NTVERTEX pnlAlt10Needle_verts[4] = {
     {1618.7388f, 139.0115f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.3559f, 0.4105f},
     {1588.1487f, 139.0115f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.3559f, 0.4253f},
@@ -687,6 +727,11 @@ namespace bm
     {1143.3236f, 526.4166f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4183f, 0.6330f},
     {1094.7695f, 574.9708f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3939f, 0.6574f},
     {1143.3236f, 574.9708f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4183f, 0.6574f}    };
+    const NTVERTEX pnlSpeedFlagOff_verts[4] = {
+    {829.3274f, 186.2649f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3457f, 0.6083f},
+    {877.7209f, 174.1197f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6083f},
+    {841.4725f, 234.6584f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3457f, 0.6319f},
+    {889.8661f, 222.5133f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6319f}    };
     const NTVERTEX pnlAlt1Needle_verts[4] = {
     {1587.6056f, 133.9618f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.3721f, 0.4091f},
     {1619.8649f, 133.9618f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.3721f, 0.3944f},
@@ -784,31 +829,40 @@ namespace bm
     const UINT pnlNavMode_id = 84;
     const UINT pnlAttitudeIndicator_id = 85;
     const UINT pnlVSINeedle_id = 86;
-    const UINT pnlClockTimerMinute_id = 87;
-    const UINT pnlRoseCompass_id = 88;
-    const UINT pnlClockHour_id = 89;
-    const UINT pnlHSIBearingArrow_id = 90;
-    const UINT pnlClockMinute_id = 91;
-    const UINT pnlHSICourse_id = 92;
-    const UINT pnlClockSecond_id = 93;
-    const UINT pnlHydPress_id = 94;
-    const UINT pnlLOXPress_id = 95;
-    const UINT pnlLH2Press_id = 96;
-    const UINT pnlAmpMeter_id = 97;
-    const UINT pnlVoltMeter_id = 98;
-    const UINT pnlGaFuelFlow_id = 99;
-    const UINT pnlGaFuelMain_id = 100;
-    const UINT pnlGaFuelRCS_id = 101;
-    const UINT pnlHorizonFace_id = 102;
-    const UINT pnlHSICourseNeedle_id = 103;
-    const UINT pnlAlt100Needle_id = 104;
-    const UINT pnlHSICompassHeading_id = 105;
-    const UINT pnlAttitudeFlagOff_id = 106;
-    const UINT pnlHSIOffFlag_id = 107;
-    const UINT pnlAlt10Needle_id = 108;
-    const UINT pnlHSIExoFlag_id = 109;
-    const UINT pnlAlt1Needle_id = 110;
-    const UINT pnlCompassFaceTop_id = 111;
+    const UINT pnlVSIOffFlag_id = 87;
+    const UINT pnlAltimeterOffFlag_id = 88;
+    const UINT pnlAltimeterGround_id = 89;
+    const UINT pnlSpeedNeedleMax_id = 90;
+    const UINT pnlClockTimerMinute_id = 91;
+    const UINT pnlRoseCompass_id = 92;
+    const UINT pnlSpeedIndicatorKies_id = 93;
+    const UINT pnlClockHour_id = 94;
+    const UINT pnlHSIBearingArrow_id = 95;
+    const UINT pnlSpeedNeedle_id = 96;
+    const UINT pnlClockMinute_id = 97;
+    const UINT pnlHSICourse_id = 98;
+    const UINT pnlClockSecond_id = 99;
+    const UINT pnlHydPress_id = 100;
+    const UINT pnlLOXPress_id = 101;
+    const UINT pnlLH2Press_id = 102;
+    const UINT pnlAmpMeter_id = 103;
+    const UINT pnlVoltMeter_id = 104;
+    const UINT pnlGaFuelFlow_id = 105;
+    const UINT pnlGaFuelMain_id = 106;
+    const UINT pnlGaFuelRCS_id = 107;
+    const UINT pnlHorizonFace_id = 108;
+    const UINT pnlHSICourseNeedle_id = 109;
+    const UINT pnlAlt100Needle_id = 110;
+    const UINT pnlHSICompassHeading_id = 111;
+    const UINT pnlAttitudeFlagOff_id = 112;
+    const UINT pnlHSIOffFlag_id = 113;
+    const UINT pnlCOMStatusPanel_id = 114;
+    const UINT pnlSpeedVelocityFlag_id = 115;
+    const UINT pnlAlt10Needle_id = 116;
+    const UINT pnlHSIExoFlag_id = 117;
+    const UINT pnlSpeedFlagOff_id = 118;
+    const UINT pnlAlt1Needle_id = 119;
+    const UINT pnlCompassFaceTop_id = 120;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {847, 617, 917, 673};
@@ -918,6 +972,9 @@ namespace bm
     constexpr RECT pnlSetHeadingInc_RC = {1426, 764, 1456, 825};
     constexpr RECT pnlSetHeadingDec_RC = {1396, 764, 1426, 825};
     constexpr RECT pnlNavMode_RC = {1603, 635, 1635, 723};
+    constexpr VECTOR3 pnlSpeedNeedleMax_location =     {951.3716, 229.7966, -5.7053};
+    constexpr VECTOR3 pnlSpeedIndicatorKies_location =     {951.4131, 229.8050, -6.3048};
+    constexpr VECTOR3 pnlSpeedNeedle_location =     {951.7325, 230.1765, -13.7245};
 
   }
 

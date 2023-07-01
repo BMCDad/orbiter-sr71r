@@ -115,7 +115,7 @@ public:
 
     bool IsOverSpeed() const;
 
-    bco::DialSwitch& HeadingSetDial();
+//    bco::DialSwitch& HeadingSetDial();
 //    bco::OnOffSwitch& PowerSwitch();
 
 private:
@@ -140,18 +140,18 @@ private:
 	AvionMode				avionMode_{ AvionMode::AvionAtmo };
 	NavRadio				navRadio_{ NavRadio::Nav1 };
 
-    bco::DialSwitch		    dialHeadingSet_     { bm::vc::HeadingKnob_location,        0.007 };
-    bco::DialSwitch		    dialCourseSet_      { bm::vc::CourseKnob_location,         0.007 };
+    //bco::DialSwitch		    dialHeadingSet_     { bm::vc::HeadingKnob_location,        0.007 };
+    //bco::DialSwitch		    dialCourseSet_      { bm::vc::CourseKnob_location,         0.007 };
 
 
     /* Attitude Indicator */
 //    bco::TextureVisual		attitudeIndicator_  { bm::vc::AttitudeIndicator_verts,     bm::vc::AttitudeIndicator_id };
 
-    bco::TextureVisual		txAttitudeOff_      { bm::vc::AttitudeFlagOff_verts,       bm::vc::AttitudeFlagOff_id };
+//    bco::TextureVisual		txAttitudeOff_      { bm::vc::AttitudeFlagOff_verts,       bm::vc::AttitudeFlagOff_id };
 
 
     /* COM Status */
-    bco::TextureVisual      comStatus_          { bm::vc::COMStatusPanel_verts,        bm::vc::COMStatusPanel_id };
+//    bco::TextureVisual      comStatus_          { bm::vc::COMStatusPanel_verts,        bm::vc::COMStatusPanel_id };
 
 
     /* HSI */
@@ -238,8 +238,8 @@ private:
     //                                                    2.0
     //};
 
-    bco::TextureVisual		txAltimeterOff_ { bm::vc::AltimeterOffFlag_verts, bm::vc::AltimeterOffFlag_id };
-    bco::TextureVisual		txAltimeterGnd_{ bm::vc::AltimeterGround_verts, bm::vc::AltimeterGround_id };
+    //bco::TextureVisual		txAltimeterOff_ { bm::vc::AltimeterOffFlag_verts, bm::vc::AltimeterOffFlag_id };
+    //bco::TextureVisual		txAltimeterGnd_{ bm::vc::AltimeterGround_verts, bm::vc::AltimeterGround_id };
 
     /* VSI */
     //bco::VCGauge            gaVSINeedle_{ {bm::vc::gaVSINeedle_id},
@@ -249,7 +249,7 @@ private:
     //                                                    2.0
     //};
 
-    bco::TextureVisual		txVSIOff_{ bm::vc::VSIOffFlag_verts, bm::vc::VSIOffFlag_id, };
+//    bco::TextureVisual		txVSIOff_{ bm::vc::VSIOffFlag_verts, bm::vc::VSIOffFlag_id, };
 
 
     /* HSI Course odo */
@@ -296,89 +296,89 @@ private:
     //                                                    1.0
     //                                                };
 
-    bco::TextureVisual		txHSIOff_{ bm::vc::HSIOffFlag_verts, bm::vc::HSIOffFlag_id };
-    bco::TextureVisual		txHSIExo_{ bm::vc::HSIExoFlag_verts, bm::vc::HSIExoFlag_id };
+    //bco::TextureVisual		txHSIOff_{ bm::vc::HSIOffFlag_verts, bm::vc::HSIOffFlag_id };
+    //bco::TextureVisual		txHSIExo_{ bm::vc::HSIExoFlag_verts, bm::vc::HSIExoFlag_id };
 
     /* TDI barrels */
     /* KEAS */
-    bco::VCGaugeWrap        gaKeasOnes_             { {bm::vc::TDIKeasOnes_id}, 
-                                                        bm::vc::TDIKeasOnes_location, 
-                                                        bm::vc::KEASAxis_location, 
-                                                        (360 * RAD), 
-                                                        1.0 
-                                                    };
+    //bco::VCGaugeWrap        gaKeasOnes_             { {bm::vc::TDIKeasOnes_id}, 
+    //                                                    bm::vc::TDIKeasOnes_location, 
+    //                                                    bm::vc::KEASAxis_location, 
+    //                                                    (360 * RAD), 
+    //                                                    1.0 
+    //                                                };
 
-    bco::VCGaugeWrap        gaKeasTens_             { { bm::vc::TDIKeasTens_id },
-                                                        bm::vc::TDIKeasTens_location,
-                                                        bm::vc::KEASAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaKeasTens_             { { bm::vc::TDIKeasTens_id },
+    //                                                    bm::vc::TDIKeasTens_location,
+    //                                                    bm::vc::KEASAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //                                                };
 
-    bco::VCGaugeWrap        gaKeasHund_             { { bm::vc::TDIKeasHund_id },
-                                                        bm::vc::TDIKeasHund_location,
-                                                        bm::vc::KEASAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaKeasHund_             { { bm::vc::TDIKeasHund_id },
+    //                                                    bm::vc::TDIKeasHund_location,
+    //                                                    bm::vc::KEASAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //                                                };
 
     /* Altitude */
-    bco::VCGaugeWrap        gaTDIAltOnes_           { {bm::vc::TDIAltOnes_id}, 
-                                                        bm::vc::TDIAltOnes_location, 
-                                                        bm::vc::TDIAltAxis_location, 
-                                                        (360*RAD), 
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaTDIAltOnes_           { {bm::vc::TDIAltOnes_id}, 
+    //                                                    bm::vc::TDIAltOnes_location, 
+    //                                                    bm::vc::TDIAltAxis_location, 
+    //                                                    (360*RAD), 
+    //                                                    1.0
+    //                                                };
 
-    bco::VCGaugeWrap        gaTDIAltTens_           { { bm::vc::TDIAltTens_id },
-                                                        bm::vc::TDIAltTens_location,
-                                                        bm::vc::TDIAltAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaTDIAltTens_           { { bm::vc::TDIAltTens_id },
+    //                                                    bm::vc::TDIAltTens_location,
+    //                                                    bm::vc::TDIAltAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //                                                };
 
-    bco::VCGaugeWrap        gaTDIAltHund_           { { bm::vc::TDIAltHund_id },
-                                                        bm::vc::TDIAltHund_location,
-                                                        bm::vc::TDIAltAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaTDIAltHund_           { { bm::vc::TDIAltHund_id },
+    //                                                    bm::vc::TDIAltHund_location,
+    //                                                    bm::vc::TDIAltAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //                                                };
 
-    bco::VCGaugeWrap        gaTDIAltThous_          { { bm::vc::TDIAltThous_id },
-                                                        bm::vc::TDIAltThous_location,
-                                                        bm::vc::TDIAltAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaTDIAltThous_          { { bm::vc::TDIAltThous_id },
+    //                                                    bm::vc::TDIAltThous_location,
+    //                                                    bm::vc::TDIAltAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //                                                };
 
-    bco::VCGaugeWrap        gaTDIAltTenThou_        { { bm::vc::TDIAltTenThous_id },
-                                                        bm::vc::TDIAltTenThous_location,
-                                                        bm::vc::TDIAltAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaTDIAltTenThou_        { { bm::vc::TDIAltTenThous_id },
+    //                                                    bm::vc::TDIAltTenThous_location,
+    //                                                    bm::vc::TDIAltAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //                                                };
 
     /* Mach */
-    bco::VCGaugeWrap        gaTDIMachOnes_          { {bm::vc::TDIMachOne_id}, 
-                                                        bm::vc::TDIMachOne_location, 
-                                                        bm::vc::TDIMachAxis_location, 
-                                                        (360 * RAD), 
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaTDIMachOnes_          { {bm::vc::TDIMachOne_id}, 
+    //                                                    bm::vc::TDIMachOne_location, 
+    //                                                    bm::vc::TDIMachAxis_location, 
+    //                                                    (360 * RAD), 
+    //                                                    1.0
+    //                                                };
 
-    bco::VCGaugeWrap        gaTDIMachTens_          { { bm::vc::TDIMachTens_id },
-                                                        bm::vc::TDIMachTens_location,
-                                                        bm::vc::TDIMachAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaTDIMachTens_          { { bm::vc::TDIMachTens_id },
+    //                                                    bm::vc::TDIMachTens_location,
+    //                                                    bm::vc::TDIMachAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //                                                };
 
-    bco::VCGaugeWrap        gaTDIMachHund_          { { bm::vc::TDIMachHund_id },
-                                                        bm::vc::TDIMachHund_location,
-                                                        bm::vc::TDIMachAxis_location,
-                                                        (360 * RAD),
-                                                        1.0
-                                                    };
+    //bco::VCGaugeWrap        gaTDIMachHund_          { { bm::vc::TDIMachHund_id },
+    //                                                    bm::vc::TDIMachHund_location,
+    //                                                    bm::vc::TDIMachAxis_location,
+    //                                                    (360 * RAD),
+    //                                                    1.0
+    //                                                };
 
 
     /* Accelerometer */
@@ -406,30 +406,30 @@ private:
                                                     };
 
     /* Speed */
-    bco::VCGauge            gaMachMax_              { {bm::vc::SpeedNeedleMax_id},
-                                                        bm::vc::SpeedNeedleMax_location,
-                                                        bm::vc::SpeedAxis_location,
-                                                        (300*RAD),
-                                                        2.0
-                                                    };
+    //bco::VCGauge            gaMachMax_              { {bm::vc::SpeedNeedleMax_id},
+    //                                                    bm::vc::SpeedNeedleMax_location,
+    //                                                    bm::vc::SpeedAxis_location,
+    //                                                    (300*RAD),
+    //                                                    2.0
+    //                                                };
 
-    bco::VCGauge            gaKies_                 { {bm::vc::SpeedIndicatorKies_id},
-                                                        bm::vc::SpeedIndicatorKies_location,
-                                                        bm::vc::SpeedAxisBack_location,
-                                                        (300*RAD), 
-                                                        2.0
-                                                    };
+    //bco::VCGauge            gaKies_                 { {bm::vc::SpeedIndicatorKies_id},
+    //                                                    bm::vc::SpeedIndicatorKies_location,
+    //                                                    bm::vc::SpeedAxisBack_location,
+    //                                                    (300*RAD), 
+    //                                                    2.0
+    //                                                };
 
-    bco::VCGauge        gaSpeed_                    { {bm::vc::SpeedNeedle_id},
-                                                        bm::vc::SpeedNeedle_location,
-                                                        bm::vc::SpeedAxis_location,
-                                                        (300*RAD),
-                                                        2.0
-                                                    };
+    //bco::VCGauge        gaSpeed_                    { {bm::vc::SpeedNeedle_id},
+    //                                                    bm::vc::SpeedNeedle_location,
+    //                                                    bm::vc::SpeedAxis_location,
+    //                                                    (300*RAD),
+    //                                                    2.0
+    //                                                };
 
-    bco::TextureVisual		txSpeedOff_ {   bm::vc::SpeedFlagOff_verts, bm::vc::SpeedFlagOff_id };
+    //bco::TextureVisual		txSpeedOff_ {   bm::vc::SpeedFlagOff_verts, bm::vc::SpeedFlagOff_id };
 
-    bco::TextureVisual      txSpeedVel_ {   bm::vc::SpeedVelocityFlag_verts, bm::vc::SpeedVelocityFlag_id};
+    //bco::TextureVisual      txSpeedVel_ {   bm::vc::SpeedVelocityFlag_verts, bm::vc::SpeedVelocityFlag_id};
 
     //bco::VCToggleSwitch     swPower_                {   bm::vc::SwAvionics_id,
     //                                                    bm::vc::SwAvionics_location,

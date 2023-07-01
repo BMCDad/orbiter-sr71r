@@ -120,23 +120,23 @@ retroEngines_(this, RETRO_AMPS)
 
 	/*  HUD  */
 	AddControl(&btnHudDocking_);
-	AddControl(&dspHudDocking_);
+	AddControl(&btnLightHudDocking_);
 	AddControl(&btnHudSurface_);
-	AddControl(&dspHudSurface_);
+	AddControl(&btnLightHudSurface_);
 	AddControl(&btnHudOrbit_);
-	AddControl(&dspHudOrbit_);
+	AddControl(&btnLightHudOrbit_);
 
 	/*  Hydrogen tank  */
 	AddControl(&gaugeHydroLevel_);
 	AddControl(&lightHydrogenAvail_);
 	AddControl(&btnHydroFill_);
-	AddControl(&dspHydroFill_);
+	AddControl(&btnLightHydroFill_);
 
 	/*  LOX tank  */
 	AddControl(&gaugeO2Level_);
 	AddControl(&lightO2Avail_);
 	AddControl(&btnO2Fill_);
-	AddControl(&dspO2Fill_);
+	AddControl(&btnLightO2Fill);
 
 	/*  Airbrake  */
 	AddControl(&btnDecreaseAirbrake_);
@@ -148,17 +148,17 @@ retroEngines_(this, RETRO_AMPS)
 
 	/*  Nav Modes  */
 	AddControl(&btnNavKillRot_);
-	AddControl(&dspNavKillRot_);
+	AddControl(&btnLightNavKillRot_);
 	AddControl(&btnNavHorzLevel_);
-	AddControl(&dspNavHorzLevel_);
+	AddControl(&btnLightNavHorzLevel_);
 	AddControl(&btnNavPrograde_);
-	AddControl(&dspNavPrograde_);
+	AddControl(&btnLightNavPrograde_);
 	AddControl(&btnNavRetrograde_);
-	AddControl(&dspNavRetrograde_);
+	AddControl(&btnLightNavRetrograde_);
 	AddControl(&btnNavNormal_);
-	AddControl(&dspNavNormal_);
+	AddControl(&btnLightNavNormal_);
 	AddControl(&btnNavAntiNorm_);
-	AddControl(&dspNavAntiNorm_);
+	AddControl(&btnLightNavAntiNorm_);
 
 	/*  Propulsion  */
 	AddControl(&gaugeFuelFlow_);
@@ -169,15 +169,15 @@ retroEngines_(this, RETRO_AMPS)
 	AddControl(&switchTransferSelect_);
 	AddControl(&lightFuelAvail_);
 	AddControl(&btnFuelTransferPump_);
-	AddControl(&dspFuelTransfer_);
+	AddControl(&btnLightFuelTransferPump_);
 	AddControl(&btnFuelValveOpen_);
-	AddControl(&dspFuelValveOpen_);
+	AddControl(&btnLightFuelValveOpen_);
 
 	/*  RCS  */
 	AddControl(&btnRCSLinear_);
-	AddControl(&dspRCSLinear_);
+	AddControl(&btnLightRCSLinear_);
 	AddControl(&btnRCSRotate_);
-	AddControl(&dspRCSRotate_);
+	AddControl(&btnLightRCSRotate_);
 
 	/*  Retro Doors  */
 	AddControl(&switchRetroDoors_);
@@ -206,6 +206,7 @@ retroEngines_(this, RETRO_AMPS)
 
 	/*  Attitude  */
 	AddControl(&attitudeDisplay_);
+	AddControl(&attitudeFlag_);
 
 	/*  HSI  */
 	AddControl(&hsiRoseCompass_);
@@ -222,9 +223,26 @@ retroEngines_(this, RETRO_AMPS)
 	AddControl(&hsiMilesOnes_);
 	AddControl(&hsiMilesTens_);
 	AddControl(&hsiMilesHunds_);
+	AddControl(&comStatusFlag_);
+	AddControl(&hsiOffFlag_);
+	AddControl(&hsiExoFlag_);
+
+	/*  Airspeed  */
+	AddControl(&airspeedKeasOnes_);
+	AddControl(&airspeedKeasTens_);
+	AddControl(&airspeedKeasHunds_);
+	AddControl(&airspeedSpeed_);
+	AddControl(&airspeedKies_);
+	AddControl(&airspeedMaxMach_);
+	AddControl(&speedIsEnabledFlag_);
+	AddControl(&speedIsVelocityFlag_);
+	AddControl(&airspeedMACHOnes_);
+	AddControl(&airspeedMACHTens_);
+	AddControl(&airspeedMACHHunds_);
+
 
 	//
-	AddComponent(&lightNav_);
+	AddComponent(&navLight_);
 	AddComponent(&beacon_);
 	AddComponent(&strobe_);
 	AddComponent(&altimeter_);
@@ -236,10 +254,10 @@ retroEngines_(this, RETRO_AMPS)
 	// These are here because the template deduction does not seem to work in the header file.
 	// These objects will die at the end of this method, but they will have done their job.
 
-	//bco::connector  navLightSwitch	{ switchNavigationLights.Signal(),				lightNav_.Slot() };
+	//bco::connector  navLightSwitch	{ switchNavigationLights.Signal(),				navLight_.Slot() };
 
 	// Lights
-	bco::connect( switchNavigationLights.Signal(),			lightNav_.Slot());
+	bco::connect( switchNavigationLights.Signal(),			navLight_.Slot());
 	bco::connect( switchBeaconLights.Signal(),				beacon_.Slot());
 	bco::connect( switchStrobeLights.Signal(),				strobe_.Slot());
 
@@ -247,21 +265,19 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( switchMainPower.Signal(),					powerSystem_.MainPowerSlot());
 	bco::connect( switchConnectExternalPower.Signal(),		powerSystem_.ExternalConnectSlot());
 	bco::connect( switchConnectFuelCell.Signal(),			powerSystem_.FuelCellConnectSlot());
+	bco::connect( powerSystem_.FuelCellConnectedSignal(),	lightFuelCellConnected_.Slot());
+	bco::connect( powerSystem_.ExternalAvailableSignal(),	lightExternalAvail_.Slot());
+	bco::connect( powerSystem_.ExternalConnectedSignal(),	lightExternalConnected_.Slot());
 	
 	// Fuel cell					// A signal can drive more then one slot
 	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
 	bco::connect( fuelCell_.IsAvailableSignal(),			lightFuelCellAvail_.Slot());
-	bco::connect( switchFuelCellPower.Signal(),				fuelCell_.MainPowerSlot());
+	bco::connect( switchFuelCellPower.Signal(),				fuelCell_.IsEnabledSlot());
 	bco::connect( powerSystem_.AmpLoadSignal(),				fuelCell_.AmpLoadSlot());
 
 	// Power gauges
 	bco::connect( powerSystem_.VoltLevelSignal(),			gaugePowerVolts_.Slot());
 	bco::connect( powerSystem_.AmpLoadSignal(),				gaugePowerAmps_.Slot());
-
-	// Power status lights
-	bco::connect( powerSystem_.FuelCellConnectedSignal(),	lightFuelCellConnected_.Slot());
-	bco::connect( powerSystem_.ExternalAvailableSignal(),	lightExternalAvail_.Slot());
-	bco::connect( powerSystem_.ExternalConnectedSignal(),	lightExternalConnected_.Slot());
 
 	// Canopy
 	bco::connect( switchCanopyPower.Signal(),				canopy_.PowerEnabledSlot());
@@ -286,25 +302,25 @@ retroEngines_(this, RETRO_AMPS)
 
 	// HUD
 	bco::connect( btnHudDocking_.Signal(),					headsUpDisplay_.DockModeSlot());
-	bco::connect( headsUpDisplay_.DockModeSignal(),			dspHudDocking_.Slot());
+	bco::connect( headsUpDisplay_.DockModeSignal(),			btnLightHudDocking_.Slot());
 	bco::connect( btnHudSurface_.Signal(),					headsUpDisplay_.SurfaceModeSlot());
-	bco::connect( headsUpDisplay_.SurfaceModeSignal(),		dspHudSurface_.Slot());
+	bco::connect( headsUpDisplay_.SurfaceModeSignal(),		btnLightHudSurface_.Slot());
 	bco::connect( btnHudOrbit_.Signal(),					headsUpDisplay_.OrbitModeSlot());
-	bco::connect( headsUpDisplay_.OrbitModeSignal(),		dspHudOrbit_.Slot());
+	bco::connect( headsUpDisplay_.OrbitModeSignal(),		btnLightHudOrbit_.Slot());
 
 	// Hydrogen
 	bco::connect( hydrogenTank_.LevelSignal(),				gaugeHydroLevel_.Slot());
 	bco::connect( powerSystem_.ExternalAvailableSignal(),	hydrogenTank_.ExternAvailableSlot());
 	bco::connect( hydrogenTank_.IsAvailableSignal(),		lightHydrogenAvail_.Slot());
 	bco::connect( btnHydroFill_.Signal(),					hydrogenTank_.ToggleFillSlot());
-	bco::connect( hydrogenTank_.IsFillingSignal(),			dspHydroFill_.Slot());
+	bco::connect( hydrogenTank_.IsFillingSignal(),			btnLightHydroFill_.Slot());
 
 	// Oxygen
 	bco::connect( oxygenTank_.LevelSignal(),				gaugeO2Level_.Slot());
 	bco::connect( powerSystem_.ExternalAvailableSignal(),	oxygenTank_.ExternAvailableSlot());
 	bco::connect( oxygenTank_.IsAvailableSignal(),			lightO2Avail_.Slot());
 	bco::connect( btnO2Fill_.Signal(),						oxygenTank_.ToggleFillSlot());
-	bco::connect( oxygenTank_.IsFillingSignal(),			dspO2Fill_.Slot());
+	bco::connect( oxygenTank_.IsFillingSignal(),			btnLightO2Fill.Slot());
 
 	// Airbrake
 	bco::connect( btnDecreaseAirbrake_.Signal(),			airBrake_.DecreaseSlot());
@@ -318,17 +334,17 @@ retroEngines_(this, RETRO_AMPS)
 
 	// Nav Modes
 	bco::connect( btnNavKillRot_.Signal(),					navModes_.IsKillRotSlot());
-	bco::connect( navModes_.IsKillRotSignal(),				dspNavKillRot_.Slot());
+	bco::connect( navModes_.IsKillRotSignal(),				btnLightNavKillRot_.Slot());
 	bco::connect( btnNavHorzLevel_.Signal(),				navModes_.IsHorzLevelSlot());
-	bco::connect( navModes_.IsHorzLevelSignal(),			dspNavHorzLevel_.Slot());
+	bco::connect( navModes_.IsHorzLevelSignal(),			btnLightNavHorzLevel_.Slot());
 	bco::connect( btnNavPrograde_.Signal(),					navModes_.IsProgradeSlot());
-	bco::connect( navModes_.IsProgradeSignal(),				dspNavPrograde_.Slot());
+	bco::connect( navModes_.IsProgradeSignal(),				btnLightNavPrograde_.Slot());
 	bco::connect( btnNavRetrograde_.Signal(),				navModes_.IsRetroGradeSlot());
-	bco::connect( navModes_.IsRetroGradeSignal(),			dspNavRetrograde_.Slot());
+	bco::connect( navModes_.IsRetroGradeSignal(),			btnLightNavRetrograde_.Slot());
 	bco::connect( btnNavNormal_.Signal(),					navModes_.IsNormalSlot());
-	bco::connect( navModes_.IsNormalSignal(),				dspNavNormal_.Slot());
+	bco::connect( navModes_.IsNormalSignal(),				btnLightNavNormal_.Slot());
 	bco::connect( btnNavAntiNorm_.Signal(),					navModes_.IsAntiNormalSlot());
-	bco::connect( navModes_.IsAntiNormalSignal(),			dspNavAntiNorm_.Slot());
+	bco::connect( navModes_.IsAntiNormalSignal(),			btnLightNavAntiNorm_.Slot());
 
 	// Propulsion
 	bco::connect( propulsionController_.FuelFlowSignal(),		gaugeFuelFlow_.Slot());
@@ -339,15 +355,15 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( switchTransferSelect_.Signal(),				propulsionController_.FuelTransferSelSlot());
 	bco::connect( propulsionController_.IsFuelAvailSignal(),	lightFuelAvail_.Slot());
 	bco::connect( btnFuelTransferPump_.Signal(),				propulsionController_.TransferPumpSlot());
-	bco::connect( propulsionController_.IsTransferPumpOn(),		dspFuelTransfer_.Slot());
+	bco::connect( propulsionController_.IsTransferPumpOn(),		btnLightFuelTransferPump_.Slot());
 	bco::connect( btnFuelValveOpen_.Signal(),					propulsionController_.FuelValveOpenSlot());
-	bco::connect( propulsionController_.IsFuelValveOpen(),		dspFuelValveOpen_.Slot());
+	bco::connect( propulsionController_.IsFuelValveOpen(),		btnLightFuelValveOpen_.Slot());
 
 	// RCS
 	bco::connect( btnRCSLinear_.Signal(),					rcsSystem_.ToggleLinearSlot());
-	bco::connect( rcsSystem_.IsLinearSignal(),				dspRCSLinear_.Slot());
+	bco::connect( rcsSystem_.IsLinearSignal(),				btnLightRCSLinear_.Slot());
 	bco::connect( btnRCSRotate_.Signal(),					rcsSystem_.ToggleRotateSlot());
-	bco::connect( rcsSystem_.IsRotateSignal(),				dspRCSRotate_.Slot());
+	bco::connect( rcsSystem_.IsRotateSignal(),				btnLightRCSRotate_.Slot());
 
 	// Retro Doors
 	bco::connect( switchRetroDoors_.Signal(),				retroEngines_.RetroDoorsSlot());
@@ -359,20 +375,25 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( altimeter_.AltimeterThousandsSignal(),	altimeter10Hand_.Slot());
 	bco::connect( altimeter_.AltimeterTenThousandsSignal(),	altimeter100Hand_.Slot());
 
-	bco::connect(altimeter_.AltimeterTensSignal(),			tdiAltOnes_.SlotTransform());
-	bco::connect(altimeter_.AltimeterHundredsSignal(),		tdiAltTens_.SlotTransform());
-	bco::connect(altimeter_.AltimeterThousandsSignal(),		tdiAltHunds_.SlotTransform());
-	bco::connect(altimeter_.AltimeterTenThousandsSignal(),	tdiAltThou_.SlotTransform());
-	bco::connect(altimeter_.AltimeterHundThousandsSignal(),	tdiAltTenThou_.SlotTransform());
+	bco::connect( altimeter_.AltimeterTensSignal(),			tdiAltOnes_.SlotTransform());
+	bco::connect( altimeter_.AltimeterHundredsSignal(),		tdiAltTens_.SlotTransform());
+	bco::connect( altimeter_.AltimeterThousandsSignal(),	tdiAltHunds_.SlotTransform());
+	bco::connect( altimeter_.AltimeterTenThousandsSignal(),	tdiAltThou_.SlotTransform());
+	bco::connect( altimeter_.AltimeterHundThousandsSignal(),tdiAltTenThou_.SlotTransform());
+
+	bco::connect( altimeter_.IsExoModeSignal(),				altimeterExoModeFlag_.Slot());
+	bco::connect( altimeter_.IsEnabledSignal(),				altimeterEnabledFlag_.Slot());
 
 	// VSI
 	bco::connect( switchAvionPower_.Signal(),				vsi_.EnabledSlot());
 	bco::connect( vsi_.VSINeedleSignal(),					vsiHand_.Slot());
+	bco::connect( switchAvionPower_.Signal(),				vsiActiveFlag_.Slot());
 
 	// Attitude
 	bco::connect( switchAvionPower_.Signal(),				attitude_.EnabledSlot());
 	bco::connect( attitude_.BankSignal(),					attitudeDisplay_.SlotAngle());
 	bco::connect( attitude_.PitchSignal(),					attitudeDisplay_.SlotTransform());
+	bco::connect( switchAvionPower_.Signal(),				attitudeFlag_.Slot());
 
 	// HSI
 	bco::connect( switchAvionPower_.Signal(),				hsi_.EnabledSlot());
@@ -380,7 +401,10 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( hsi_.YawSignal(),							hsiRoseCompass_.Slot());
 	bco::connect( hsi_.SetHeadingSignal(),					hsiHeadingBug_.Slot());
 	bco::connect( hsi_.BearingSignal(),						hsiBearing_.Slot());
-	
+	bco::connect( hsi_.ComStatusSignal(),					comStatusFlag_.Slot());
+	bco::connect( hsi_.ShowOffFlagSignal(),					hsiOffFlag_.Slot());
+	bco::connect( hsi_.ShowExoFlagSignal(),					hsiExoFlag_.Slot());
+
 			// Course/heading dials drive the aerodata course slots.  Source of 'truth' is in AeroData.
 	bco::connect( dialSetCourseIncrement_.Signal(),			aeroData_.SetCourseIncSlot());
 	bco::connect( dialSetCourseDecrement_.Signal(),			aeroData_.SetCourseDecSlot());
@@ -400,6 +424,20 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( hsi_.MilesTensSignal(),					hsiMilesTens_.SlotTransform());
 	bco::connect( hsi_.MilesHundsSignal(),					hsiMilesHunds_.SlotTransform());
 
+	// Airspeed
+	bco::connect( switchAvionPower_.Signal(),				airspeed_.EnabledSlot());
+	bco::connect( switchAvionMode_.Signal(),				airspeed_.AvionicsModeSlot());
+	bco::connect( airspeed_.KeasOnesSignal(),				airspeedKeasOnes_.SlotTransform());
+	bco::connect( airspeed_.KeasTensSignal(),				airspeedKeasTens_.SlotTransform());
+	bco::connect( airspeed_.KeasHundsSignal(),				airspeedKeasHunds_.SlotTransform());
+	bco::connect( airspeed_.MACHMaxSignal(),				airspeedMaxMach_.Slot());
+	bco::connect( airspeed_.SpeedSignal(),					airspeedSpeed_.Slot());
+	bco::connect( airspeed_.KiasSpeedSignal(),				airspeedKies_.Slot());
+	bco::connect( airspeed_.IsEnabledSignal(),				speedIsEnabledFlag_.Slot());
+	bco::connect( airspeed_.IsVelocityFlagSignal(),			speedIsVelocityFlag_.Slot());
+	bco::connect( airspeed_.MACHOnesSignal(),				airspeedMACHOnes_.SlotTransform());
+	bco::connect( airspeed_.MACHTensSignal(),				airspeedMACHTens_.SlotTransform());
+	bco::connect( airspeed_.MACHHundsSignal(),				airspeedMACHHunds_.SlotTransform());
 }
 
 

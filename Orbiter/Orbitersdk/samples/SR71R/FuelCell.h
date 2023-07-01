@@ -76,7 +76,7 @@ public:
 	virtual void ChangePowerLevel(double level) override
 	{
 		bco::PoweredComponent::ChangePowerLevel(level);
-		SetIsFuelCellPowerAvailable(HasPower() && isSlotPowerOn_);
+		SetIsFuelCellPowerAvailable(HasPower() && slotIsEnabled_.value());
 	}
 
 
@@ -88,8 +88,8 @@ public:
 	bco::signal<double>& AvailablePowerSignal() { return sigAvailPower_; }
 	bco::signal<bool>& IsAvailableSignal() { return sigIsAvail_; }
 
-	bco::slot<bool>& MainPowerSlot() { return slotMainPower_; }
-	bco::slot<double>& AmpLoadSlot() { return slotAmpLoad_; }
+	bco::slot<bool>&	IsEnabledSlot() { return slotIsEnabled_; }
+	bco::slot<double>&	AmpLoadSlot()	{ return slotAmpLoad_; }
 
 	void SetOxygenSystem(	IConsumable* os)	{ oxygenSystem_ = os; }
 	void SetHydrogenSytem(	IConsumable* hs)	{ hydrogenSystem_ = hs; }
@@ -101,10 +101,9 @@ private:
 	bco::signal<double>	sigAvailPower_;
 	bco::signal<bool>	sigIsAvail_;
 
-	bco::slot<bool>		slotMainPower_;
+	bco::slot<bool>		slotIsEnabled_;
 	bco::slot<double>	slotAmpLoad_;		// Comes from the power system.
 
-	bool				isSlotPowerOn_{ false };
 	bool				isFuelCellAvailable_;
 	double				availablePower_;
 	double				ampDrawFactor_{ 0.0 };

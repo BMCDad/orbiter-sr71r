@@ -276,6 +276,9 @@
     <ClInclude Include="HSI.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="Airspeed.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">

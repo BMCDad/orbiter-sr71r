@@ -74,12 +74,16 @@ public:
 		signalBearing_.fire(bearing);
 		signalGlideScope_.fire(glideSlope);
 		signalNavError_.fire(navError);
+		signalComStatus_.fire(comStatus);
 
 		// Miles barrels
 		bco::GetDigits(milesBeacon, parts);
 		signalMilesOnes_.fire(parts.Tens);
 		signalMilesTens_.fire(parts.Hundreds);
 		signalMilesHunds_.fire(parts.Thousands);
+
+		signalShowOffFlag_.fire(!EnabledSlot().value());
+		signalShowExoFlag_.fire(EnabledSlot().value() && AvionicsModeSlot().value());
 	}
 
 	bco::signal<double>&	YawSignal()			{ return signalYaw_; }
@@ -88,6 +92,7 @@ public:
 	bco::signal<double>&	BearingSignal()		{ return signalBearing_; }
 	bco::signal<double>&	GlideScopeSignal()	{ return signalGlideScope_; }
 	bco::signal<double>&	NavErrorSignal()	{ return signalNavError_; }
+	bco::signal<bool>&		ComStatusSignal()	{ return signalComStatus_; }
 
 	bco::slot<double>&		SetCourseSlot()		{ return slotSetCourse_; }
 	bco::slot<double>&		SetHeadingSlot()	{ return slotSetHeading_; }
@@ -102,6 +107,9 @@ public:
 
 	bco::slot<bool>&		NavModeSignal()		{ return slotNavMode_; }
 
+	bco::signal<bool>&		ShowOffFlagSignal() { return signalShowOffFlag_; }			// Off flag
+	bco::signal<bool>&		ShowExoFlagSignal() { return signalShowExoFlag_; }
+
 private:
 
 	bco::signal<double>		signalYaw_;
@@ -110,6 +118,9 @@ private:
 	bco::signal<double>		signalBearing_;
 	bco::signal<double>		signalGlideScope_;
 	bco::signal<double>		signalNavError_;		// Course error transform, rotation matches course.
+	bco::signal<bool>		signalComStatus_;
+	bco::signal<bool>		signalShowOffFlag_;			// Off flag
+	bco::signal<bool>		signalShowExoFlag_;
 
 	bco::signal<double>		signalCrsOnes_;
 	bco::signal<double>		signalCrsTens_;

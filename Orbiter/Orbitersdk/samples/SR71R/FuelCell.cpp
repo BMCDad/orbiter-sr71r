@@ -26,7 +26,6 @@ PoweredComponent(vessel, amps, 26.0),
 oxygenSystem_(nullptr),
 hydrogenSystem_(nullptr),
 isFuelCellAvailable_(false),
-slotMainPower_([&](bool v) { isSlotPowerOn_ = v; }),
 slotAmpLoad_([&](double v) { ampDrawFactor_ = v / 100; })
 {
 }
@@ -35,7 +34,7 @@ void FuelCell::Step(double simt, double simdt, double mjd)
 {
 	if ((nullptr == oxygenSystem_) || 
 		(nullptr == hydrogenSystem_) || 
-		!(HasPower() && isSlotPowerOn_))
+		!(HasPower() && slotIsEnabled_.value()))
 	{
 		SetIsFuelCellPowerAvailable(false);
 	}
@@ -58,7 +57,7 @@ void FuelCell::Step(double simt, double simdt, double mjd)
 
 double FuelCell::CurrentDraw()
 {
-	return (HasPower() && isSlotPowerOn_) ? PoweredComponent::CurrentDraw() : 0.0;
+	return (HasPower() && slotIsEnabled_.value()) ? PoweredComponent::CurrentDraw() : 0.0;
 }
 
 bool FuelCell::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
@@ -80,7 +79,7 @@ bool FuelCell::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* config
 void FuelCell::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
-	auto val = (isSlotPowerOn_) ? 0 : 1;
+	auto val = (slotIsEnabled_.value()) ? 0 : 1;
 
 	sprintf_s(cbuf, "%i", val);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);

@@ -29,7 +29,7 @@ PowerSystem::PowerSystem(bco::BaseVessel* vessel) :
 	isBatteryDraw_(false),
 	prevTime_(0.0),
 	prevAvailPower_(-1.0),
-	slotMainPower_([&](bool v) { Update(); }),
+	slotIsEnabled_([&](bool v) { Update(); }),
 	slotConnectExternal_([&](bool v) { Update(); }),
 	slotConnectFuelCell_([&](bool v) { Update(); }),
 	slotFuelCellAvailablePower_([&](double v) {Update(); })
@@ -118,7 +118,7 @@ void PowerSystem::Update()
 	// If main switch is off, then powersource is nullptr--no power.
 	// Otherwise see if either external or fuel cell is on.  External
 	// power will take precedence if on.
-	if ( slotMainPower_.value() )
+	if ( slotIsEnabled_.value() )
 	{
 		auto availBattery = batteryLevel_ * FULL_POWER;
 

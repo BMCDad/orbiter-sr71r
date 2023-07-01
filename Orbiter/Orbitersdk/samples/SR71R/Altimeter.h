@@ -33,6 +33,10 @@ public:
 	Altimeter() {}
 	~Altimeter() {}
 
+	void OnEnabledChanged() override { OnChanged(); }
+	void OnAvionModeChanged() override { OnChanged(); }
+
+
 	// post_step
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override {
 		double altFeet = 0.0;
@@ -55,18 +59,30 @@ public:
 		altimeterHundThousands_.fire(parts.HundredThousands);
 	}
 
-	bco::signal<double>& AltimeterTensSignal()			{ return altimeterTens_; }
-	bco::signal<double>& AltimeterHundredsSignal()		{ return altimeterHundreds_; }
-	bco::signal<double>& AltimeterThousandsSignal()		{ return altimeterThousands_; }
-	bco::signal<double>& AltimeterTenThousandsSignal()	{ return altimeterTenThousands_; }
-	bco::signal<double>& AltimeterHundThousandsSignal()	{ return altimeterHundThousands_; }
+	bco::signal<double>&	AltimeterTensSignal()			{ return altimeterTens_; }
+	bco::signal<double>&	AltimeterHundredsSignal()		{ return altimeterHundreds_; }
+	bco::signal<double>&	AltimeterThousandsSignal()		{ return altimeterThousands_; }
+	bco::signal<double>&	AltimeterTenThousandsSignal()	{ return altimeterTenThousands_; }
+	bco::signal<double>&	AltimeterHundThousandsSignal()	{ return altimeterHundThousands_; }
+
+	bco::signal<bool>&		IsEnabledSignal()				{ return isEnabledSignal_; }
+	bco::signal<bool>&		IsExoModeSignal()				{ return isExoMode_; }
 
 private:
+
+	void OnChanged() {
+		// Logic for flags and stuff here.
+		isEnabledSignal_.fire(EnabledSlot().value());
+		isExoMode_.fire(EnabledSlot().value() && AvionicsModeSlot().value());
+	}
 
 	bco::signal<double>	altimeterTens_;
 	bco::signal<double>	altimeterHundreds_;
 	bco::signal<double>	altimeterThousands_;
 	bco::signal<double>	altimeterTenThousands_;
 	bco::signal<double>	altimeterHundThousands_;
+
+	bco::signal<bool> isEnabledSignal_;
+	bco::signal<bool> isExoMode_;
 };
 

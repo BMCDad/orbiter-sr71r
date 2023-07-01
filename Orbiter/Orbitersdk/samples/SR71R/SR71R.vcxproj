@@ -111,6 +111,7 @@
   <ItemGroup>
     <ClInclude Include="AeroData.h" />
     <ClInclude Include="AirBrake.h" />
+    <ClInclude Include="Airspeed.h" />
     <ClInclude Include="Altimeter.h" />
     <ClInclude Include="APU.h" />
     <ClInclude Include="AttitudeIndicator.h" />
