@@ -18,10 +18,6 @@
 
 #include "bc_orbiter\bco.h"
 #include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\PushButtonSwitch.h"
-#include "bc_orbiter\TextureVisual.h"
-#include "bc_orbiter\PanelButton.h"
-#include "bc_orbiter\PanelTextureVisual.h"
 
 #include "SR71r_mesh.h"
 

@@ -17,10 +17,7 @@
 #pragma once
 
 #include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\OnOffSwitch.h"
 #include "bc_orbiter\Circuit.h"
-#include "bc_orbiter\VCGauge.h"
-#include "bc_orbiter\VCToggleSwitch.h"
 #include "bc_orbiter\signals.h"
 
 #include "FuelCell.h"

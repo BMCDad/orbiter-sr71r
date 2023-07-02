@@ -45,7 +45,7 @@ airBrake_(              this),
 //lights_(                this,   LIGHTS_AMPS),  TODO
 clock_(                 this),
 shutters_(              this),
-computer_(              this,   COMPUTER_AMPS),
+//computer_(              this,   COMPUTER_AMPS),
 hoverEngines_(this, HOVER_AMPS),
 retroEngines_(this, RETRO_AMPS)
 {
@@ -69,7 +69,7 @@ retroEngines_(this, RETRO_AMPS)
 	RegisterComponent(&airBrake_);
 	RegisterComponent(&clock_);
 	RegisterComponent(&shutters_);
-	RegisterComponent(&computer_);
+	//RegisterComponent(&computer_);
 	RegisterComponent(&hoverEngines_);
 	RegisterComponent(&retroEngines_);
 
@@ -470,8 +470,8 @@ void SR71Vessel::SetupVesselComponents()
 
     // Flight Computer
 //    computer_.SetAvionics(&avionics_);
-	computer_.SetSurfaceControl(&surfaceControl_);
-	computer_.SetPropulsionControl(&propulsionController_);
+//	computer_.SetSurfaceControl(&surfaceControl_);
+//	computer_.SetPropulsionControl(&propulsionController_);
 
 
 

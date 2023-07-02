@@ -17,7 +17,6 @@
 #pragma once
 
 #include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\TextureVisual.h"
 
 #include "LandingGear.h"
 #include "CargoBayController.h"
@@ -74,32 +73,32 @@ private:
 	int						vcRedrawArea_;
 
 	CargoBayController*		cargoBay_;
-	bco::TextureVisual		msgCargoBay_;
+//	bco::TextureVisual		msgCargoBay_;
 
     Canopy*                 canopy_;
-    bco::TextureVisual		msgCanopy_;
+//    bco::TextureVisual		msgCanopy_;
 
 	//Avionics*				avionics_;
 	//bco::TextureVisual		msgKeasWarning_;
 
 	PowerSystem*			power_;
-	bco::TextureVisual		msgBattery_;
+//	bco::TextureVisual		msgBattery_;
 
 	PropulsionController*	propulsion_;
-	bco::TextureVisual		msgThrustLimit_;
+//	bco::TextureVisual		msgThrustLimit_;
 
     RetroEngines*           retro_;
-    bco::TextureVisual      msgRetroDoors_;
+//    bco::TextureVisual      msgRetroDoors_;
 
     HoverEngines*           hover_;
-    bco::TextureVisual      msgHoverDoors_;
+//    bco::TextureVisual      msgHoverDoors_;
 
 	APU*					apu_;
-	bco::TextureVisual		msgApu_;
+//	bco::TextureVisual		msgApu_;
 
-	bco::TextureVisual		msgDock_;
-	bco::TextureVisual		msgFuel_;
+//	bco::TextureVisual		msgDock_;
+//	bco::TextureVisual		msgFuel_;
 
 	AirBrake*				airBrake_;
-	bco::TextureVisual		msgAirBrake_;
+//	bco::TextureVisual		msgAirBrake_;
 };

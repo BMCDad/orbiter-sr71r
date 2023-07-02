@@ -20,13 +20,7 @@
 
 #include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\Animation.h"
-#include "bc_orbiter\MeshVisual.h"
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\TextureVisual.h"
-#include "bc_orbiter\PushButtonSwitch.h"
-#include "bc_orbiter\RotarySwitch.h"
-#include "bc_orbiter\VCGauge.h"
-#include "bc_orbiter\VCToggleSwitch.h"
+#include "bc_orbiter\BaseVessel.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"

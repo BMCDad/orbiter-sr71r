@@ -18,11 +18,9 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter\OnOffSwitch.h"
 #include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\Animation.h"
-#include "bc_orbiter\VCToggleSwitch.h"
-
+#include "bc_orbiter\BaseVessel.h"
 #include "IConsumable.h"
 #include "PowerSystem.h"
 #include "SR71r_mesh.h"

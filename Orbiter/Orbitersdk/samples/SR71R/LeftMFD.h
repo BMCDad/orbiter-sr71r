@@ -20,8 +20,6 @@
 
 #include "bc_orbiter\MFDBase.h"
 #include "bc_orbiter\Tools.h"
-#include "bc_orbiter\PushButtonSwitch.h"
-#include "bc_orbiter\TextureVisual.h"
 
 #include "SR71r_mesh.h"
 

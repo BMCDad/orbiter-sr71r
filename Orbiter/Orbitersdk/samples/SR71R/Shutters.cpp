@@ -24,10 +24,10 @@
 
 Shutters::Shutters(bco::BaseVessel * vessel) :
 	bco::Component(vessel),
-	visShuttersSideLeft_(	bm::vc::CanopyWindowInsideLeft_verts,		bm::vc::CanopyWindowInsideLeft_id, 6),
-	visShuttersSideRight_(	bm::vc::CanopyWindowSI_verts,		bm::vc::CanopyWindowSI_id, 6),
-	visShuttersFrontLeft_(	bm::vc::ForwardWindowInsideLeft_verts,		bm::vc::ForwardWindowInsideLeft_id, 3),
-	visShuttersFrontRight_(	bm::vc::WindowSFI_verts,	bm::vc::WindowSFI_id, 3),
+	//visShuttersSideLeft_(	bm::vc::CanopyWindowInsideLeft_verts,		bm::vc::CanopyWindowInsideLeft_id, 6),
+	//visShuttersSideRight_(	bm::vc::CanopyWindowSI_verts,		bm::vc::CanopyWindowSI_id, 6),
+	//visShuttersFrontLeft_(	bm::vc::ForwardWindowInsideLeft_verts,		bm::vc::ForwardWindowInsideLeft_id, 3),
+	//visShuttersFrontRight_(	bm::vc::WindowSFI_verts,	bm::vc::WindowSFI_id, 3),
 	shuttersSlot_([&](bool v) { Update(); })
 {
 	//swShutters_.OnFunction([this] {Update(); });
@@ -73,15 +73,15 @@ void Shutters::Update()
 	//auto trans = swShutters_.IsOn() ? 0.22 : 0.0;
 	auto trans = shuttersSlot_.value() ? 0.22 : 0.0;
 
-	visShuttersFrontLeft_.SetTranslate(_V(trans, 0.0, 0.0));
-	visShuttersFrontLeft_.RotateMesh(devMesh);
+	//visShuttersFrontLeft_.SetTranslate(_V(trans, 0.0, 0.0));
+	//visShuttersFrontLeft_.RotateMesh(devMesh);
 
-	visShuttersFrontRight_.SetTranslate(_V(trans, 0.0, 0.0));
-	visShuttersFrontRight_.RotateMesh(devMesh);
+	//visShuttersFrontRight_.SetTranslate(_V(trans, 0.0, 0.0));
+	//visShuttersFrontRight_.RotateMesh(devMesh);
 
-	visShuttersSideLeft_.SetTranslate(_V(trans, 0.0, 0.0));
-	visShuttersSideLeft_.RotateMesh(devMesh);
+	//visShuttersSideLeft_.SetTranslate(_V(trans, 0.0, 0.0));
+	//visShuttersSideLeft_.RotateMesh(devMesh);
 
-	visShuttersSideRight_.SetTranslate(_V(0.0, trans, 0.0));
-	visShuttersSideRight_.RotateMesh(devMesh);
+	//visShuttersSideRight_.SetTranslate(_V(0.0, trans, 0.0));
+	//visShuttersSideRight_.RotateMesh(devMesh);
 }

@@ -30,11 +30,11 @@ Clock::Clock(bco::BaseVessel * vessel) :
 	isTimerRunning_(false),
 	currentTimerTime_(0.0)
 {
-    switchResetElapsed_.SetPressedFunc([this] { ResetElapsed(); });
-    vessel->RegisterVCEventTarget(&switchResetElapsed_);
+    //switchResetElapsed_.SetPressedFunc([this] { ResetElapsed(); });
+    //vessel->RegisterVCEventTarget(&switchResetElapsed_);
 
-    switchStopWatch_.SetPressedFunc([this] { ResetTimer(); });
-    vessel->RegisterVCEventTarget(&switchStopWatch_);
+    //switchStopWatch_.SetPressedFunc([this] { ResetTimer(); });
+    //vessel->RegisterVCEventTarget(&switchStopWatch_);
 }
 
 void Clock::OnSetClassCaps()

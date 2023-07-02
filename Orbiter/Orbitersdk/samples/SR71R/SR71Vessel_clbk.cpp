@@ -126,23 +126,23 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 			return 1;
 
 		case OAPI_KEY_1:	// Main auto pilot toggle.
-			computer_.APMainButton().Push();
+//			computer_.APMainButton().Push();
 			return 1;
 
 		case OAPI_KEY_2:	// Toggle hold heading
-			computer_.APHeadingButton().Push();
+//			computer_.APHeadingButton().Push();
 			return 1;
 
 		case OAPI_KEY_3:
-			computer_.APAltitudeButton().Push();
+//			computer_.APAltitudeButton().Push();
 			return 1;
 
 		case OAPI_KEY_4:
-			computer_.APKEASButton().Push();
+//			computer_.APKEASButton().Push();
 			return 1;
 
 		case OAPI_KEY_5:
-			computer_.APMACHButton().Push();
+//			computer_.APMACHButton().Push();
 			return 1;
 
 		//case OAPI_KEY_6:
@@ -202,7 +202,7 @@ void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 	airBrake_.Step(simt, simdt, mjd);
 //	lights_.Step(simt, simdt, mjd);
 	clock_.Step(simt, simdt, mjd);
-	computer_.Step(simt, simdt, mjd);
+//	computer_.Step(simt, simdt, mjd);
     hoverEngines_.Step(simt, simdt, mjd);
     retroEngines_.Step(simt, simdt, mjd);
 
@@ -216,7 +216,7 @@ bool SR71Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad*
 	headsUpDisplay_.DrawHUD(mode, hps, skp);
     landingGear_.DrawHUD(mode, hps, skp);
 //    autoPilot_.DrawHUD(mode, hps, skp);
-	computer_.DrawHUD(mode, hps, skp);
+//	computer_.DrawHUD(mode, hps, skp);
     navModes_.DrawHUD(mode, hps, skp);
     propulsionController_.DrawHUD(mode, hps, skp);
     hoverEngines_.DrawHUD(mode, hps, skp);

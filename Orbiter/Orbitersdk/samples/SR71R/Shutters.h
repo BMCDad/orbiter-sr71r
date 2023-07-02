@@ -18,9 +18,9 @@
 
 #include "bc_orbiter\Component.h"
 #include "bc_orbiter\Animation.h"
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\TextureVisual.h"
-#include "bc_orbiter\VCToggleSwitch.h"
+#include "bc_orbiter\BaseVessel.h"
+
+#include "bc_orbiter\signals.h"
 
 #include "SR71r_mesh.h"
 
@@ -49,9 +49,9 @@ private:
     //                                            bm::vc::DoorsRightAxis_location
     //                                        };
 
-	bco::TextureVisual		visShuttersSideLeft_;
-	bco::TextureVisual		visShuttersSideRight_;
+	//bco::TextureVisual		visShuttersSideLeft_;
+	//bco::TextureVisual		visShuttersSideRight_;
 
-	bco::TextureVisual		visShuttersFrontLeft_;
-	bco::TextureVisual		visShuttersFrontRight_;
+	//bco::TextureVisual		visShuttersFrontLeft_;
+	//bco::TextureVisual		visShuttersFrontRight_;
 };

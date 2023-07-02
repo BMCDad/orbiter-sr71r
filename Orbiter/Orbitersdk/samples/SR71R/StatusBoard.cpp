@@ -23,24 +23,24 @@
 
 StatusBoard::StatusBoard(bco::BaseVessel* vessel, double amps) :
 bco::PoweredComponent(vessel, amps, 20.0),
-cargoBay_(nullptr),
-msgCanopy_(				bm::vc::MsgLightCanopy_verts,		bm::vc::MsgLightCanopy_id),
-msgCargoBay_(			bm::vc::MsgLightBay_verts,			bm::vc::MsgLightBay_id),
-//msgKeasWarning_(		bm::vc::MsgLightKeasWarn_verts,	bm::vc::MsgLightKeasWarn_id),
-msgBattery_(			bm::vc::MsgLightBattery_verts,		bm::vc::MsgLightBattery_id),
-msgThrustLimit_(		bm::vc::MsgLightThrustLimit_verts,	bm::vc::MsgLightThrustLimit_id),
-msgApu_(				bm::vc::MsgLightAPU_verts,			bm::vc::MsgLightAPU_id),
-msgDock_(				bm::vc::MsgLightDock_verts,		bm::vc::MsgLightDock_id),
-msgFuel_(				bm::vc::MsgLightFuelWarn_verts,	bm::vc::MsgLightFuelWarn_id),
-msgAirBrake_(			bm::vc::MsgLightSpeedBrake_verts,	bm::vc::MsgLightSpeedBrake_id),
-msgHoverDoors_(         bm::vc::MsgLightHover_verts,       bm::vc::MsgLightHover_id),
-msgRetroDoors_(         bm::vc::MsgLightRetro_verts,       bm::vc::MsgLightRetro_id)
+cargoBay_(nullptr)
+//msgCanopy_(				bm::vc::MsgLightCanopy_verts,		bm::vc::MsgLightCanopy_id),
+//msgCargoBay_(			bm::vc::MsgLightBay_verts,			bm::vc::MsgLightBay_id),
+////msgKeasWarning_(		bm::vc::MsgLightKeasWarn_verts,	bm::vc::MsgLightKeasWarn_id),
+//msgBattery_(			bm::vc::MsgLightBattery_verts,		bm::vc::MsgLightBattery_id),
+//msgThrustLimit_(		bm::vc::MsgLightThrustLimit_verts,	bm::vc::MsgLightThrustLimit_id),
+//msgApu_(				bm::vc::MsgLightAPU_verts,			bm::vc::MsgLightAPU_id),
+//msgDock_(				bm::vc::MsgLightDock_verts,		bm::vc::MsgLightDock_id),
+//msgFuel_(				bm::vc::MsgLightFuelWarn_verts,	bm::vc::MsgLightFuelWarn_id),
+//msgAirBrake_(			bm::vc::MsgLightSpeedBrake_verts,	bm::vc::MsgLightSpeedBrake_id),
+//msgHoverDoors_(         bm::vc::MsgLightHover_verts,       bm::vc::MsgLightHover_id),
+//msgRetroDoors_(         bm::vc::MsgLightRetro_verts,       bm::vc::MsgLightRetro_id)
 {
 }
 
 void StatusBoard::OnSetClassCaps()
 {
-	vcRedrawArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
+//	vcRedrawArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 bool StatusBoard::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
@@ -103,21 +103,21 @@ double StatusBoard::GetWarnMsgOffset(double state)
 
 void StatusBoard::DrawDoorsMsg(DEVMESHHANDLE devMesh)
 {
-	auto ofs = GetWarnMsgOffset(canopy_->GetCanopyState());
-	msgCanopy_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgCanopy_.RotateMesh(devMesh);
+	//auto ofs = GetWarnMsgOffset(canopy_->GetCanopyState());
+	//msgCanopy_.SetTranslate(_V(ofs, 0.0, 0.0));
+	//msgCanopy_.RotateMesh(devMesh);
 
-	//ofs = GetWarnMsgOffset(cargoBay_->GetCargoBayState());	TODO <- signal
-	msgCargoBay_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgCargoBay_.RotateMesh(devMesh);
+	////ofs = GetWarnMsgOffset(cargoBay_->GetCargoBayState());	TODO <- signal
+	//msgCargoBay_.SetTranslate(_V(ofs, 0.0, 0.0));
+	//msgCargoBay_.RotateMesh(devMesh);
 
-    ofs = GetWarnMsgOffset(retro_->GetRetroDoorsState());
-    msgRetroDoors_.SetTranslate(_V(ofs, 0.0, 0.0));
-    msgRetroDoors_.RotateMesh(devMesh);
+ //   ofs = GetWarnMsgOffset(retro_->GetRetroDoorsState());
+ //   msgRetroDoors_.SetTranslate(_V(ofs, 0.0, 0.0));
+ //   msgRetroDoors_.RotateMesh(devMesh);
 
-    ofs = GetWarnMsgOffset(hover_->GetHoverDoorsState());
-    msgHoverDoors_.SetTranslate(_V(ofs, 0.0, 0.0));
-    msgHoverDoors_.RotateMesh(devMesh);
+ //   ofs = GetWarnMsgOffset(hover_->GetHoverDoorsState());
+ //   msgHoverDoors_.SetTranslate(_V(ofs, 0.0, 0.0));
+ //   msgHoverDoors_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawKEASMsg(DEVMESHHANDLE devMesh)
@@ -130,9 +130,9 @@ void StatusBoard::DrawKEASMsg(DEVMESHHANDLE devMesh)
 void StatusBoard::DrawThrustLimit(DEVMESHHANDLE devMesh)
 {
 // TODO	auto ofs = GetWarnMsgOffset(propulsion_->ThrustLimitSwitch().IsOn() ? 0.0 : 0.5);
-	auto ofs = GetWarnMsgOffset(0.0);  // TODO ^
-	msgThrustLimit_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgThrustLimit_.RotateMesh(devMesh);
+	//auto ofs = GetWarnMsgOffset(0.0);  // TODO ^
+	//msgThrustLimit_.SetTranslate(_V(ofs, 0.0, 0.0));
+	//msgThrustLimit_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawBattery(DEVMESHHANDLE devMesh)
@@ -145,20 +145,20 @@ void StatusBoard::DrawBattery(DEVMESHHANDLE devMesh)
 
 void StatusBoard::DrawAPU(DEVMESHHANDLE devMesh)
 {
-	auto ofs = GetWarnMsgOffset(apu_->GetHydraulicLevel());
+	//auto ofs = GetWarnMsgOffset(apu_->GetHydraulicLevel());
 
-	msgApu_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgApu_.RotateMesh(devMesh);
+	//msgApu_.SetTranslate(_V(ofs, 0.0, 0.0));
+	//msgApu_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawDock(DEVMESHHANDLE devMesh)
 {
-	auto id = GetBaseVessel()->DockingStatus(0);
+	//auto id = GetBaseVessel()->DockingStatus(0);
 
-	auto ofs = id == 1.0 ? OnOffset : OffOffset;
+	//auto ofs = id == 1.0 ? OnOffset : OffOffset;
 
-	msgDock_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgDock_.RotateMesh(devMesh);
+	//msgDock_.SetTranslate(_V(ofs, 0.0, 0.0));
+	//msgDock_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawFuel(DEVMESHHANDLE devMesh)
@@ -179,8 +179,8 @@ void StatusBoard::DrawFuel(DEVMESHHANDLE devMesh)
         }
     }
 
-	msgFuel_.SetTranslate(_V(ofsf, 0.0, 0.0));
-	msgFuel_.RotateMesh(devMesh);
+	//msgFuel_.SetTranslate(_V(ofsf, 0.0, 0.0));
+	//msgFuel_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawAirBrakeMsg(DEVMESHHANDLE devMesh)
@@ -191,6 +191,6 @@ void StatusBoard::DrawAirBrakeMsg(DEVMESHHANDLE devMesh)
 		ofs = (airBrake_->GetAirBrakeState() > 0.0) ? WrnOffset : OffOffset;
 	}
 
-	msgAirBrake_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgAirBrake_.RotateMesh(devMesh);
+	//msgAirBrake_.SetTranslate(_V(ofs, 0.0, 0.0));
+	//msgAirBrake_.RotateMesh(devMesh);
 }

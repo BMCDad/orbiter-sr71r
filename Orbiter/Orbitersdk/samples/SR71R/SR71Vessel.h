@@ -31,7 +31,7 @@
 #include "AirBrake.h"
 #include "Clock.h"
 #include "Shutters.h"
-#include "FlightComputer.h"
+//#include "FlightComputer.h"
 #include "VesselControl.h"
 #include "HoverEngines.h"
 #include "RetroEngines.h"
@@ -111,7 +111,7 @@ private:
 	AirBrake				airBrake_;
 	Clock					clock_;
 	Shutters				shutters_;
-	FC::FlightComputer		computer_;
+//	FC::FlightComputer		computer_;
     HoverEngines            hoverEngines_;
     RetroEngines            retroEngines_;
 
@@ -787,30 +787,40 @@ private:
 		[](double d) {return (d / 10); }	// Transform to anim range.
 	};
 	bco::flat_roll			tdiAltOnes_{
+		bm::vc::vcTDIAltOnes_id,
+		bm::vc::vcTDIAltOnes_verts,
 		bm::pnl::pnlTDIAltOnes_id,
 		bm::pnl::pnlTDIAltOnes_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			tdiAltTens_{
+		bm::vc::vcTDIAltTens_id,
+		bm::vc::vcTDIAltTens_verts,
 		bm::pnl::pnlTDIAltTens_id,
 		bm::pnl::pnlTDIAltTens_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			tdiAltHunds_{
+		bm::vc::vcTDIAltHunds_id,
+		bm::vc::vcTDIAltHunds_verts,
 		bm::pnl::pnlTDIAltHund_id,
 		bm::pnl::pnlTDIAltHund_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			tdiAltThou_{
+		bm::vc::vcTDIAltThous_id,
+		bm::vc::vcTDIAltThous_verts,
 		bm::pnl::pnlTDIAltThous_id,
 		bm::pnl::pnlTDIAltThous_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			tdiAltTenThou_{
+		bm::vc::vcTDIAltTenThous_id,
+		bm::vc::vcTDIAltTenThous_verts,
 		bm::pnl::pnlTDIAltTenThou_id,
 		bm::pnl::pnlTDIAltTenThou_verts,
 		0.1084,
@@ -920,36 +930,48 @@ private:
 		bm::pnl::pnlHSICourseNeedle_verts
 	};
 	bco::flat_roll			hsiCRSOnes_{
+		bm::vc::vcCrsOnes_id,
+		bm::vc::vcCrsOnes_verts,
 		bm::pnl::pnlHSICRSOnes_id,
 		bm::pnl::pnlHSICRSOnes_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			hsiCRSTens_{
+		bm::vc::vcCrsTens_id,
+		bm::vc::vcCrsTens_verts,
 		bm::pnl::pnlHSICRSTens_id,
 		bm::pnl::pnlHSICRSTens_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			hsiCRSHunds_{
+		bm::vc::vcCrsHunds_id,
+		bm::vc::vcCrsHunds_verts,
 		bm::pnl::pnlHSICRSHunds_id,
 		bm::pnl::pnlHSICRSHunds_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			hsiMilesOnes_{
+		bm::vc::vcMilesOnes_id,
+		bm::vc::vcMilesOnes_verts,
 		bm::pnl::pnlHSIMilesOnes_id,
 		bm::pnl::pnlHSIMilesOnes_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			hsiMilesTens_{
+		bm::vc::vcMilesTens_id,
+		bm::vc::vcMilesTens_verts,
 		bm::pnl::pnlHSIMilesTens_id,
 		bm::pnl::pnlHSIMilesTens_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			hsiMilesHunds_{
+		bm::vc::vcMilesHunds_id,
+		bm::vc::vcMilesHunds_verts,
 		bm::pnl::pnlHSIMilesHunds_id,
 		bm::pnl::pnlHSIMilesHunds_verts,
 		0.1084,
@@ -1041,36 +1063,48 @@ private:
 		0.0244
 	};
 	bco::flat_roll			airspeedKeasOnes_{
+		bm::vc::vcTDIKeasOnes_id,
+		bm::vc::vcTDIKeasOnes_verts,
 		bm::pnl::pnlTDIKEASOnes_id,
 		bm::pnl::pnlTDIKEASOnes_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			airspeedKeasTens_{
+		bm::vc::vcTDIKeasTens_id,
+		bm::vc::vcTDIKeasTens_verts,
 		bm::pnl::pnlTDIKEASTens_id,
 		bm::pnl::pnlTDIKEASTens_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			airspeedKeasHunds_{
+		bm::vc::vcTDIKeasHunds_id,
+		bm::vc::vcTDIKeasHunds_verts,
 		bm::pnl::pnlTDIKEASHunds_id,
 		bm::pnl::pnlTDIKEASHunds_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			airspeedMACHOnes_{
+		bm::vc::vcTDIMachOne_id,
+		bm::vc::vcTDIMachOne_verts,
 		bm::pnl::pnlTDIMACHOne_id,
 		bm::pnl::pnlTDIMACHOne_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			airspeedMACHTens_{
+		bm::vc::vcTDIMachTens_id,
+		bm::vc::vcTDIMachTens_verts,
 		bm::pnl::pnlTDIMACHTens_id,
 		bm::pnl::pnlTDIMACHTens_verts,
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
 	bco::flat_roll			airspeedMACHHunds_{
+		bm::vc::vcTDIMachHunds_id,
+		bm::vc::vcTDIMachHunds_verts,
 		bm::pnl::pnlTDIMACHHunds_id,
 		bm::pnl::pnlTDIMACHHunds_verts,
 		0.1084,

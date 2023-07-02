@@ -162,58 +162,16 @@
     <ClInclude Include="bc_orbiter\Component.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\DialSwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\EventTarget.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\IAnimationState.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\MeshVisual.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\MFDBase.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\OnOffSwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\PoweredComponent.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\PushButtonSwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\RotarySwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\TextureVisual.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\Tools.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\VCGauge.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\VCRotorSwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\VCToggleSwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\Visual.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\PanelElement.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\PanelButton.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\PanelTextureVisual.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="NavLights.h">

@@ -64,11 +64,11 @@ bool PowerSystem::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* con
 void PowerSystem::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
-	auto val = 1; // TODO (swPower_.GetState() == 0.0) ? 0 : 1;
-	auto ext = 0; // TODO (swConnectExternal_.GetState() == 0.0) ? 0 : 1;
-	auto fc = 1; // TODO (swConnectFuelCell_.GetState() == 0.0) ? 0 : 1;
-	auto vlt = 0; // TODO mainCircuit_.GetVoltLevel();
-	auto blv = 1.0;
+	int val = 1; // TODO (swPower_.GetState() == 0.0) ? 0 : 1;
+	int ext = 0; // TODO (swConnectExternal_.GetState() == 0.0) ? 0 : 1;
+	int fc = 1; // TODO (swConnectFuelCell_.GetState() == 0.0) ? 0 : 1;
+	double vlt = 0.0; // TODO mainCircuit_.GetVoltLevel();
+	double blv = 1.0;
 
 	sprintf_s(cbuf, "%i %i %i %0.2f %0.2f", val, ext, fc, vlt, blv);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);

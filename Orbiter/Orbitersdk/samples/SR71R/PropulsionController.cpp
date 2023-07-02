@@ -318,7 +318,7 @@ void PropulsionController::OnSetClassCaps()
 
 	// swThrustLimit_.SetOff();
 	
-	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
+//	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
 bool PropulsionController::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)

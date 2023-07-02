@@ -76,7 +76,7 @@ bool AirBrake::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* config
 void AirBrake::OnSaveConfiguration(FILEHANDLE scn) const
 {
 	char cbuf[256];
-	auto val = 0.0; // TODO airBrakeSwitch_.GetStep();
+	int val = 0; // TODO airBrakeSwitch_.GetStep();
 
 	sprintf_s(cbuf, "%i", val);
 	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);

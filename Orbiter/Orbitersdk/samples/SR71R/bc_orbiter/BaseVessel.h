@@ -18,12 +18,8 @@
 #pragma once
 #include "Orbitersdk.h"
 #include "Component.h"
-#include "EventTarget.h"
 #include "Animation.h"
 #include "IAnimationState.h"
-#include "PanelElement.h"
-
-#include "OnOffSwitch.h"  // TEMP, remove when on_off_input has a proper control base class.
 
 #include "Control.h"
 
@@ -41,18 +37,6 @@ namespace bc_orbiter
 namespace bc_orbiter
 {
 	/**
-	Used by the RegisterVCEvent method calls.  Indicates the type of
-	event to register.
-	*/
-	enum VCIdMode
-	{
-		None		= 0x000,	// All off
-		OnVCMouseEvent	= 0x001,	// Mouse Event
-		RedrawEvent	= 0x002,	// Redraw Event
-		All			= OnVCMouseEvent | RedrawEvent
-	};
-
-	/**
 	Base class for Orbiter vessels.
 	*/
     class BaseVessel : public VESSEL4
@@ -64,53 +48,6 @@ namespace bc_orbiter
         Adds a component to the base class component list.
         */
         virtual void RegisterComponent(Component* comp);
-
-        /**
-        */
-        virtual int RegisterVCEvent(Component* comp, VCIdMode mode);
-
-        /**	RegisterVCRedrawEvent
-        Registers a handler for a VC redraw event.  An event id is created and returned
-        to the caller.  That id can then be used to request a redraw.
-        */
-        virtual int RegisterVCRedrawEvent(Component* comp) { return RegisterVCEvent(comp, VCIdMode::RedrawEvent); }
-
-        /**	RegisterVCMouseEvent
-        Registers a handler for a VC mouse event.  An event id is created and returned
-        to the caller.  When orbiter sees this id it will call the passed component to
-        handle it.
-        */
-        virtual int RegisterVCMouseEvent(Component* comp) { return RegisterVCEvent(comp, VCIdMode::OnVCMouseEvent); }
-
-        virtual void RegisterVCEventTarget(EventTarget* target) 
-        {
-            auto id = ++nextEventId_;
-
-            vcEventTargetMap_[id] = target;
-            target->SetEventId(id);
-        }
-    
-		virtual void RegisterPanelEventTarget(PanelEventTarget* target)
-		{
-			auto id = ++nextEventId_;
-
-			pnlEventTargetMap_[id] = target;
-			target->SetEventId(id);
-		}
-
-		virtual void RegisterPanelRedrawTarget(PanelElement* el) 
-		{
-			auto id = ++nextEventId_; 
-			panelRedrawTarget_[id] = el;
-			el->SetTargetId(id);
-		}
-
-		virtual int BaseVessel::RegisterPanelRedrawEvent(Component* comp)
-		{
-			auto id = ++nextEventId_;
-			panelRedrawMap_[id] = comp;
-			return id;
-		}
 
 		// clbk overrides:
 		virtual bool clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) override;
@@ -221,56 +158,6 @@ namespace bc_orbiter
 			return id;
 		}
 
-		//****  NEW STYLE  *****
-
-		/**
-		Creates a virtual cockpit animation and registers it with the base vessel.  These
-		animations will only recieve time in Step when in VC cockpit mode.
-		@param target IAnimationState object that will control the animation state.
-		@param speed The speed of the animation.
-		@param func The function to call when the animation hits its target state.
-		*/
-		template<typename AT = Animation>
-		UINT CreateVCAnimation(IAnimationState* target, double speed = 1.0, TargetAchievedFunc func = nullptr)
-		{
-			auto animId = VESSEL3::CreateAnimation(0.0);
-
-			vcAnimations_[animId] = std::make_unique<AT>(target, speed, func);
-			return animId;
-		}
-
-		/**
-		Adds an animation group to an existing animation.  See CreateVesselAnimation.
-		@param animId The animation id returned from CreateVesselAnimation.
-		@param meshIdx The mesh index to animate.
-		@param trans The mesh transformation.
-		@param parent The parent group if any.
-		*/
-		ANIMATIONCOMPONENT_HANDLE AddVCAnimationComponent(
-			UINT animId,
-			UINT meshIdx,
-			AnimationGroup* transform,
-			ANIMATIONCOMPONENT_HANDLE parent = nullptr)
-		{
-			ANIMATIONCOMPONENT_HANDLE result = nullptr;
-
-			auto eh = vcAnimations_.find(animId);
-
-			if (eh != vcAnimations_.end())
-			{
-				transform->transform_->mesh = meshIdx;
-				result = VESSEL3::AddAnimationComponent(
-					animId,
-					transform->start_,
-					transform->stop_,
-					transform->transform_.get(),
-					parent);
-			}
-
-			return result;
-		}
-
-
 		int GetControlId() { return ++nextEventId_; }
 
 		void AddControl(control* ctrl) { controls_.push_back(ctrl); }
@@ -373,11 +260,6 @@ namespace bc_orbiter
 		std::vector<control*>			controls_;
 
 	private:
-		bool IsModeSet(VCIdMode test, VCIdMode mode) const
-		{
-			return ((test & mode) == test);
-		}
-
 		std::vector<Component*>		vesselComponents_;
 
 		// Manage components registering for redraw events.  We maintain a separate
@@ -387,8 +269,8 @@ namespace bc_orbiter
 		
 		std::map<int, Component*>	vcMouseEventMap_;
 
-        std::map<int, EventTarget*> vcEventTargetMap_;
-		std::map<int, PanelEventTarget*> pnlEventTargetMap_;
+//        std::map<int, EventTarget*> vcEventTargetMap_;
+//		std::map<int, PanelEventTarget*> pnlEventTargetMap_;
 
 		// Map a control id to its component so we know who to call.
 		std::map<int, Component*>	idComponentMap_;
@@ -396,8 +278,6 @@ namespace bc_orbiter
         std::map<UINT, std::unique_ptr<IAnimation>>      animations_;
 
 		int		nextEventId_		{ 0 };
-
-		std::map<int, PanelElement*> panelRedrawTarget_;
 
 		bool isCreated_{ false };	// Set true after clbkPostCreation
 
@@ -434,16 +314,6 @@ namespace bc_orbiter
 		comp->SetRedrawId(redrawId);
 	}
 
-	inline int BaseVessel::RegisterVCEvent(Component* comp, VCIdMode mode)
-	{
-		auto id = ++nextEventId_;
-
-		if (IsModeSet(VCIdMode::OnVCMouseEvent, mode))	vcMouseEventMap_[id] = comp;
-		if (IsModeSet(VCIdMode::RedrawEvent, mode))	vcRedrawMap_[id] = comp;
-
-		return id;
-	}
-
 	inline void BaseVessel::clbkLoadStateEx(FILEHANDLE scn, void *vs)
 	{
 		char *line;
@@ -472,7 +342,7 @@ namespace bc_orbiter
 	{
 		for (auto& p : vesselComponents_)	p->OnLoadVC(id);
 
-        for (auto& et : vcEventTargetMap_)	et.second->RegisterMouseEvents();
+//        for (auto& et : vcEventTargetMap_)	et.second->RegisterMouseEvents();
 
 		HandleLoadVC();
 		return true;
@@ -498,8 +368,8 @@ namespace bc_orbiter
 		auto eh = vcMouseEventMap_.find(id);
 		if (eh != vcMouseEventMap_.end())	return eh->second->OnVCMouseEvent(id, event);
 
-        auto el = vcEventTargetMap_.find(id);
-        if (el != vcEventTargetMap_.end())	return el->second->HandleMouse(event);
+        //auto el = vcEventTargetMap_.find(id);
+        //if (el != vcEventTargetMap_.end())	return el->second->HandleMouse(event);
 
 		// Old new mode...
 		auto c = idComponentMap_.find(id);
@@ -610,11 +480,11 @@ namespace bc_orbiter
 
 	inline bool BaseVessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
 	{
-		for (auto& et : pnlEventTargetMap_)
-		{
-			et.second->OnLoad(id, hPanel, (VESSEL4*)this);
-			et.second->RegisterMouseEvents();
-		}
+		//for (auto& et : pnlEventTargetMap_)
+		//{
+		//	et.second->OnLoad(id, hPanel, (VESSEL4*)this);
+		//	et.second->RegisterMouseEvents();
+		//}
 
 		for (auto& p : vesselComponents_)	p->OnLoadPanel2D(id, hPanel);
 
@@ -653,8 +523,8 @@ namespace bc_orbiter
 
 	inline bool BaseVessel::clbkPanelMouseEvent(int id, int event, int mx, int my)
 	{
-		auto el = pnlEventTargetMap_.find(id);
-		if (el != pnlEventTargetMap_.end())	return el->second->HandleMouse(event);
+		//auto el = pnlEventTargetMap_.find(id);
+		//if (el != pnlEventTargetMap_.end())	return el->second->HandleMouse(event);
 
 		// Old New mode...
 		auto c = idComponentMap_.find(id);

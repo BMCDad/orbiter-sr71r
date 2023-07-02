@@ -18,9 +18,7 @@
 
 #include "bc_orbiter\Component.h"
 #include "bc_orbiter\Animation.h"
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\PushButtonSwitch.h"
-#include "bc_orbiter\VCGauge.h"
+#include "bc_orbiter\BaseVessel.h"
 #include "bc_orbiter\signals.h"
 
 #include "SR71r_mesh.h"
@@ -58,8 +56,8 @@ private:
     bco::signal<double>     signalMinute_;              // Current mission time minutes (0 - 59)
     bco::signal<double>     signalHour_;                // Current mission time hours (0 - 11)
 
-    bco::PushButtonSwitch	switchResetElapsed_ { bm::vc::ClockElapsedReset_location,  0.01 };
-    bco::PushButtonSwitch	switchStopWatch_    { bm::vc::ClockTimerReset_location,    0.01 };
+    //bco::PushButtonSwitch	switchResetElapsed_ { bm::vc::ClockElapsedReset_location,  0.01 };
+    //bco::PushButtonSwitch	switchStopWatch_    { bm::vc::ClockTimerReset_location,    0.01 };
 
 	double					startElapsedTime_;
 	double					startTimerTime_;

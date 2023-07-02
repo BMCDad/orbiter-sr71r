@@ -17,7 +17,6 @@
 #pragma once
 
 #include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\VCRotorSwitch.h"
 
 #include "SR71r_mesh.h"
 

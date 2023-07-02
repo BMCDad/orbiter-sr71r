@@ -18,7 +18,6 @@
 
 #include "bc_orbiter\Component.h"
 #include "bc_orbiter\Animation.h"
-#include "bc_orbiter\RotarySwitch.h"
 #include "APU.h"
 
 #include "SR71r_mesh.h"

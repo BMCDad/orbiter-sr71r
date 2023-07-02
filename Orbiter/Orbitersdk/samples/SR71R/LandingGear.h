@@ -18,7 +18,6 @@
 
 #include "bc_orbiter\Component.h"
 #include "bc_orbiter\Animation.h"
-#include "bc_orbiter\EventTarget.h"
 #include "bc_orbiter\Animation.h"
 
 #include "APU.h"

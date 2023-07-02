@@ -163,11 +163,11 @@ namespace FC
 		void ChangePowerLevel(double newLevel) override;
         double CurrentDraw() override;
 
-		bco::PushButtonSwitch   APMainButton()		const { return swAPMain_; }
-		bco::PushButtonSwitch   APHeadingButton()	const { return swAPHeading_; }
-		bco::PushButtonSwitch   APAltitudeButton()	const { return swAPHAltitude_; }
-		bco::PushButtonSwitch   APKEASButton()		const { return swAPKEAS_; }
-		bco::PushButtonSwitch   APMACHButton()		const { return swAPMACH_; }
+		//bco::PushButtonSwitch   APMainButton()		const { return swAPMain_; }
+		//bco::PushButtonSwitch   APHeadingButton()	const { return swAPHeading_; }
+		//bco::PushButtonSwitch   APAltitudeButton()	const { return swAPHAltitude_; }
+		//bco::PushButtonSwitch   APKEASButton()		const { return swAPKEAS_; }
+		//bco::PushButtonSwitch   APMACHButton()		const { return swAPMACH_; }
 
         // Computer interface
 		void ClearScreen();
@@ -349,20 +349,20 @@ namespace FC
 			{FCProgFlags::HoldMACH,        &prgHoldMach_ }
 		};
 
-		// Auto pilot panel
-		bco::TextureVisual		visAPMainOn_;
-		bco::PushButtonSwitch   swAPMain_{ bm::vc::SwAPMain_location, 0.01 };
-		
-		bco::TextureVisual		visAPHeadingOn_;
-		bco::PushButtonSwitch   swAPHeading_{ bm::vc::SwAPHeading_location, 0.01 };
+		//// Auto pilot panel
+		//bco::TextureVisual		visAPMainOn_;
+		//bco::PushButtonSwitch   swAPMain_{ bm::vc::SwAPMain_location, 0.01 };
+		//
+		//bco::TextureVisual		visAPHeadingOn_;
+		//bco::PushButtonSwitch   swAPHeading_{ bm::vc::SwAPHeading_location, 0.01 };
 
-		bco::TextureVisual		visAPAltitudeOn_;
-		bco::PushButtonSwitch   swAPHAltitude_{ bm::vc::SwAPAltitude_location, 0.01 };
+		//bco::TextureVisual		visAPAltitudeOn_;
+		//bco::PushButtonSwitch   swAPHAltitude_{ bm::vc::SwAPAltitude_location, 0.01 };
 
-		bco::TextureVisual		visAPKEASOn_;
-		bco::PushButtonSwitch   swAPKEAS_{ bm::vc::SwAPKEAS_location, 0.01 };
+		//bco::TextureVisual		visAPKEASOn_;
+		//bco::PushButtonSwitch   swAPKEAS_{ bm::vc::SwAPKEAS_location, 0.01 };
 
-		bco::TextureVisual		visAPMACHOn_;
-		bco::PushButtonSwitch   swAPMACH_{ bm::vc::SwAPMACH_location, 0.01 };
+		//bco::TextureVisual		visAPMACHOn_;
+		//bco::PushButtonSwitch   swAPMACH_{ bm::vc::SwAPMACH_location, 0.01 };
     };
 }

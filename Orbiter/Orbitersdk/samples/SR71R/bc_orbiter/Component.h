@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include "bco.h"
+
 namespace bc_orbiter
 {
 	class BaseVessel;
