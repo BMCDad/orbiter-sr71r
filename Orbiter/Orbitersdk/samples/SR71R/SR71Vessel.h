@@ -12,7 +12,7 @@
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
-#include "Avionics.h"
+//#include "Avionics.h"
 #include "SurfaceController.h"
 #include "CryogenicTank.h"
 #include "PropulsionController.h"
@@ -40,8 +40,8 @@
 #include "Strobe.h"
 #include "AeroData.h"
 #include "Altimeter.h"
-#include "VSI.h"
-#include "AttitudeIndicator.h"
+//#include "VSI.h"
+//#include "AttitudeIndicator.h"
 //#include "TestComponent.h"
 #include "HSI.h"
 #include "Airspeed.h"
@@ -92,7 +92,7 @@ private:
 	// Components:
 	APU						apu_;
 //	AutoPilot				autoPilot_;
-	Avionics				avionics_;
+//	Avionics				avionics_;
 	CargoBayController		cargoBayController_;
     Canopy                  canopy_;
 	FuelCell				fuelCell_;
@@ -1105,8 +1105,8 @@ private:
 	Beacon				beacon_;
 	Strobe				strobe_;
 	Altimeter			altimeter_;
-	VSI					vsi_;
-	AttitudeIndicator	attitude_;
+	//VSI					vsi_;
+	//AttitudeIndicator	attitude_;
 	HSI					hsi_;
 	AeroData			aeroData_;
 	Airspeed			airspeed_;

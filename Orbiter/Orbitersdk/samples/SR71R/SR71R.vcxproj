@@ -114,9 +114,7 @@
     <ClInclude Include="Airspeed.h" />
     <ClInclude Include="Altimeter.h" />
     <ClInclude Include="APU.h" />
-    <ClInclude Include="AttitudeIndicator.h" />
     <ClInclude Include="AvionBase.h" />
-    <ClInclude Include="Avionics.h" />
     <ClInclude Include="bc_orbiter\Animation.h" />
     <ClInclude Include="bc_orbiter\BaseVessel.h" />
     <ClInclude Include="bc_orbiter\bco.h" />
@@ -183,13 +181,11 @@
     <ClInclude Include="bc_orbiter\transform_display.h" />
     <ClInclude Include="TestComponent.h" />
     <ClInclude Include="VesselControl.h" />
-    <ClInclude Include="VSI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AeroData.cpp" />
     <ClCompile Include="AirBrake.cpp" />
     <ClCompile Include="APU.cpp" />
-    <ClCompile Include="Avionics.cpp" />
     <ClCompile Include="Canopy.cpp" />
     <ClCompile Include="CargoBayController.cpp" />
     <ClCompile Include="Clock.cpp" />

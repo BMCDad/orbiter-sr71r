@@ -25,7 +25,7 @@ bco::BaseVessel(hvessel, flightmodel),
 meshVirtualCockpit_(nullptr),
 apu_(                   this,   APU_AMPS),
 //autoPilot_(             this,   AUTOP_AMPS),
-avionics_(              this,   AVIONICS_AMPS),
+//avionics_(              this,   AVIONICS_AMPS),
 cargoBayController_(    this,   CARGO_AMPS),
 canopy_(                this,   CANOPY_AMPS),
 fuelCell_(              this,   FUELCELL_AMPS),
@@ -50,7 +50,7 @@ hoverEngines_(this, HOVER_AMPS),
 retroEngines_(this, RETRO_AMPS)
 {
 	RegisterComponent(&apu_);
-	RegisterComponent(&avionics_);
+//	RegisterComponent(&avionics_);
 	RegisterComponent(&cargoBayController_);
 	RegisterComponent(&canopy_);
 	RegisterComponent(&fuelCell_);
@@ -246,8 +246,8 @@ retroEngines_(this, RETRO_AMPS)
 	AddComponent(&beacon_);
 	AddComponent(&strobe_);
 	AddComponent(&altimeter_);
-	AddComponent(&vsi_);
-	AddComponent(&attitude_);
+	//AddComponent(&vsi_);
+	//AddComponent(&attitude_);
 	AddComponent(&hsi_);
 	AddComponent(&aeroData_);
 
@@ -385,14 +385,14 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( altimeter_.IsEnabledSignal(),				altimeterEnabledFlag_.Slot());
 
 	// VSI
-	bco::connect( switchAvionPower_.Signal(),				vsi_.EnabledSlot());
-	bco::connect( vsi_.VSINeedleSignal(),					vsiHand_.Slot());
+//	bco::connect( switchAvionPower_.Signal(),				vsi_.EnabledSlot());
+//	bco::connect( vsi_.VSINeedleSignal(),					vsiHand_.Slot());
 	bco::connect( switchAvionPower_.Signal(),				vsiActiveFlag_.Slot());
 
 	// Attitude
-	bco::connect( switchAvionPower_.Signal(),				attitude_.EnabledSlot());
-	bco::connect( attitude_.BankSignal(),					attitudeDisplay_.SlotAngle());
-	bco::connect( attitude_.PitchSignal(),					attitudeDisplay_.SlotTransform());
+//	bco::connect( switchAvionPower_.Signal(),				attitude_.EnabledSlot());
+//	bco::connect( attitude_.BankSignal(),					attitudeDisplay_.SlotAngle());
+//	bco::connect( attitude_.PitchSignal(),					attitudeDisplay_.SlotTransform());
 	bco::connect( switchAvionPower_.Signal(),				attitudeFlag_.Slot());
 
 	// HSI
@@ -459,7 +459,7 @@ void SR71Vessel::SetupVesselComponents()
 
 	// Status board
 	statusBoard_.SetCargoBay(&cargoBayController_);
-	statusBoard_.SetAvionics(&avionics_);
+//	statusBoard_.SetAvionics(&avionics_);
 	statusBoard_.SetPower(&powerSystem_);
 	statusBoard_.SetPropulsion(&propulsionController_);
 	statusBoard_.SetAPU(&apu_);
@@ -469,31 +469,31 @@ void SR71Vessel::SetupVesselComponents()
     statusBoard_.SetCanopy(&canopy_);
 
     // Flight Computer
-    computer_.SetAvionics(&avionics_);
+//    computer_.SetAvionics(&avionics_);
 	computer_.SetSurfaceControl(&surfaceControl_);
 	computer_.SetPropulsionControl(&propulsionController_);
 
 
 
 	// Setup power and add powered devices:
-	powerSystem_.AddMainCircuitDevice(&avionics_);
-	powerSystem_.AddMainCircuitDevice(&headsUpDisplay_);
-	powerSystem_.AddMainCircuitDevice(&rcsSystem_);
-	powerSystem_.AddMainCircuitDevice(&navModes_);
-	powerSystem_.AddMainCircuitDevice(&mfdLeft_);
-	powerSystem_.AddMainCircuitDevice(&mfdRight_);
-	powerSystem_.AddMainCircuitDevice(&cargoBayController_);
-    powerSystem_.AddMainCircuitDevice(&canopy_);
-	powerSystem_.AddMainCircuitDevice(&apu_);
-	powerSystem_.AddMainCircuitDevice(&fuelCell_);
-	powerSystem_.AddMainCircuitDevice(&statusBoard_);
-	powerSystem_.AddMainCircuitDevice(&propulsionController_);
-//	powerSystem_.AddMainCircuitDevice(&lights_);		 // TODO
-	powerSystem_.AddMainCircuitDevice(&computer_);
-    powerSystem_.AddMainCircuitDevice(&hoverEngines_);
-    powerSystem_.AddMainCircuitDevice(&retroEngines_);
-    powerSystem_.AddMainCircuitDevice(&oxygenTank_);
-    powerSystem_.AddMainCircuitDevice(&hydrogenTank_);
+//	powerSystem_.AddMainCircuitDevice(&avionics_);
+//	powerSystem_.AddMainCircuitDevice(&headsUpDisplay_);
+//	powerSystem_.AddMainCircuitDevice(&rcsSystem_);
+//	powerSystem_.AddMainCircuitDevice(&navModes_);
+//	powerSystem_.AddMainCircuitDevice(&mfdLeft_);
+//	powerSystem_.AddMainCircuitDevice(&mfdRight_);
+//	powerSystem_.AddMainCircuitDevice(&cargoBayController_);
+//    powerSystem_.AddMainCircuitDevice(&canopy_);
+//	powerSystem_.AddMainCircuitDevice(&apu_);
+//	powerSystem_.AddMainCircuitDevice(&fuelCell_);
+//	powerSystem_.AddMainCircuitDevice(&statusBoard_);
+//	powerSystem_.AddMainCircuitDevice(&propulsionController_);
+////	powerSystem_.AddMainCircuitDevice(&lights_);		 // TODO
+//	powerSystem_.AddMainCircuitDevice(&computer_);
+//    powerSystem_.AddMainCircuitDevice(&hoverEngines_);
+//    powerSystem_.AddMainCircuitDevice(&retroEngines_);
+//    powerSystem_.AddMainCircuitDevice(&oxygenTank_);
+//    powerSystem_.AddMainCircuitDevice(&hydrogenTank_);
 }
 
 void SR71Vessel::SetupAerodynamics()

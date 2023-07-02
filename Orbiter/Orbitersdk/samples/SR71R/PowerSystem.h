@@ -67,28 +67,28 @@ public:
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
 
-	void Step(double simt, double simdt, double mjd);
-
-    void PostCreation();
-
-	void AddMainCircuitDevice(bco::PoweredComponent* device);
-
-	bool IsBatteryPower()							{ return isBatteryDraw_; }
-
-	double GetAmpDraw()								{ return mainCircuit_.GetTotalAmps(); }	// TODO: Make signal
+//	double GetAmpDraw()								{ return mainCircuit_.GetTotalAmps(); }	// TODO: Make signal
 
 	bco::signal<double>& VoltLevelSignal()			{ return signalVoltLevel_; }			// Changes in volt level
 	bco::signal<double>& AmpLoadSignal()			{ return signalAmpLoad_; }				// Changes in amp load 
 	bco::signal<bool>& ExternalAvailableSignal()	{ return signalExternalAvailable_; }	// External resources available
 	bco::signal<bool>& ExternalConnectedSignal()	{ return signalExternalConnected_; }	// External connection status
 	bco::signal<bool>& FuelCellConnectedSignal()	{ return signalFuelCellConnected_; }	// Fuelcell connection status
+	bco::signal<bool>& IsDrawingBatterSignal()		{ return signalIsDrawingBattery_; }		// Are we on batter power?
 
 	// These slots driven by toggle switches.
 	bco::slot<bool>& MainPowerSlot()				{ return slotIsEnabled_; }				// Main power switch
 	bco::slot<bool>& ExternalConnectSlot()			{ return slotConnectExternal_; }		// External connect switch
 	bco::slot<bool>& FuelCellConnectSlot()			{ return slotConnectFuelCell_; }		// Fuelcell connect switch
+	bco::slot<double>& AmpDrawSlot()				{ return slotAmpDraw_; }				// Recieve amp draw signals.
 
 	bco::slot<double>& FuelCellAvailablePowerSlot() { return slotFuelCellAvailablePower_; }	// Availability of fuelcell power
+
+	void PostAmpStep() { 
+		signalAmpLoad_.fire(ampDraw_);	// Should be the sum of all component amp draws for the current step.
+		Update();
+		ampDraw_ = 0.0; 
+	}
 
 private:
 	void Update();
@@ -97,26 +97,28 @@ private:
 	const double			USEABLE_POWER	=  24.0;
 	const double			AMP_OVERLOAD	= 100.0;
 
+
 	bco::signal<double>		signalVoltLevel_;
 	bco::signal<double>		signalAmpLoad_;
 	bco::signal<bool>		signalExternalAvailable_;
 	bco::signal<bool>		signalExternalConnected_;
 	bco::signal<bool>		signalFuelCellConnected_;
+	bco::signal<bool>		signalIsDrawingBattery_;
 
 	// Slots for the on / off switches.
-	bco::slot<bool>			slotIsEnabled_;
+	bco::slot<bool>			slotIsEnabled_;				// Input for the main power switch
 	bco::slot<bool>			slotConnectExternal_;
 	bco::slot<bool>			slotConnectFuelCell_;
 	bco::slot<double>		slotFuelCellAvailablePower_;
 
-	bco::Circuit			mainCircuit_;
+	bco::slot<double>		slotAmpDraw_;				// Components call this to report amp draw, will be summed over a step.
+	double					ampDraw_{ 0.0 };			// Collects the total amps drawn during a step.
+
+//	bco::Circuit			mainCircuit_;
 
 	// Power ports:
-	double					powerExternal_;
+//	double					powerExternal_;
 	const char*				ConfigKey = "POWER";
 
-	bool					isBatteryDraw_;
 	double					batteryLevel_;
-	double					prevTime_;
-	double					prevAvailPower_;
 };

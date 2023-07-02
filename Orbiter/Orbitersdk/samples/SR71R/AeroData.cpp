@@ -34,6 +34,38 @@ AeroData::AeroData() :
 
 // post_step
 void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) {
+	double gforce	 = 0.0;
+	double trim		 = 0.0;
+	double aoa		 = 0.0;
+	double amps		 = 0.0;
+	auto   vertSpeed = 0.0;
+	double bank		 = 0.0;
+	double pitch	 = 0.0;
+
+	isAeroDataActive_.fire(enabledSlot_.value() && (voltsInputSlot_.value() > MIN_VOLTS));
+
+	if (isAeroDataActive_.current()) {
+		gforce		= bco::GetVesselGs(&vessel);
+		trim		= vessel.GetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM);
+		aoa			= vessel.GetAOA();
+		vertSpeed	= bco::GetVerticalSpeedFPM(&vessel);
+		pitch		= vessel.GetPitch();
+		bank		= vessel.GetBank();
+	}
+
+	// Vertical speed:
+	double isPos = (vertSpeed >= 0) ? 1 : -1;
+	auto absSpd = abs(vertSpeed);
+	if (absSpd > 6000) absSpd = 6000;
+	double spRot = (1 - pow((6000 - absSpd) / 6000, 2)) / 2;
+	
+	signalBank_		 .fire(bank);
+	signalPitch_	 .fire(0.100093 * pitch);
+	vsiNeedleSignal_ .fire(0.5 + (isPos * spRot));
+	gforceSignal_	 .fire(gforce);
+	trimSignal_		 .fire(trim);
+	aoaSignal_		 .fire(aoa);
+	ampsSignal_		 .fire(amps);
 }
 
 void AeroData::SetCourse(double s)

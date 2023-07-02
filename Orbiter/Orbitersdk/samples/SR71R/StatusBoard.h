@@ -25,7 +25,6 @@
 #include "PowerSystem.h"
 #include "PropulsionController.h"
 #include "APU.h"
-#include "Avionics.h"
 #include "AirBrake.h"
 #include "HoverEngines.h"
 #include "RetroEngines.h"
@@ -45,7 +44,7 @@ public:
 
 	void SetCargoBay(		CargoBayController* cb)	{ cargoBay_ = cb; }
     void SetCanopy(         Canopy* c)              { canopy_ = c; }
-	void SetAvionics(		Avionics* av)			{ avionics_ = av; }
+//	void SetAvionics(		Avionics* av)			{ avionics_ = av; }
 	void SetPower(			PowerSystem* ps)		{ power_ = ps; }
 	void SetPropulsion(		PropulsionController* pc)	{ propulsion_ = pc; }
 	void SetAPU(			APU* ap)				{ apu_ = ap; }
@@ -80,8 +79,8 @@ private:
     Canopy*                 canopy_;
     bco::TextureVisual		msgCanopy_;
 
-	Avionics*				avionics_;
-	bco::TextureVisual		msgKeasWarning_;
+	//Avionics*				avionics_;
+	//bco::TextureVisual		msgKeasWarning_;
 
 	PowerSystem*			power_;
 	bco::TextureVisual		msgBattery_;

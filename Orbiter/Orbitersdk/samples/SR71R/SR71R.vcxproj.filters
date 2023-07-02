@@ -69,9 +69,6 @@
     <ClInclude Include="FuelCell.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Avionics.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="SurfaceController.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -258,14 +255,8 @@
     <ClInclude Include="AvionBase.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="VSI.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\transform_display.h">
       <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="AttitudeIndicator.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\flat_roll.h">
       <Filter>bc_orbiter</Filter>
@@ -303,9 +294,6 @@
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="APU.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="Avionics.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="CargoBayController.cpp">

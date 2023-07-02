@@ -26,7 +26,7 @@ bco::PoweredComponent(vessel, amps, 20.0),
 cargoBay_(nullptr),
 msgCanopy_(				bm::vc::MsgLightCanopy_verts,		bm::vc::MsgLightCanopy_id),
 msgCargoBay_(			bm::vc::MsgLightBay_verts,			bm::vc::MsgLightBay_id),
-msgKeasWarning_(		bm::vc::MsgLightKeasWarn_verts,	bm::vc::MsgLightKeasWarn_id),
+//msgKeasWarning_(		bm::vc::MsgLightKeasWarn_verts,	bm::vc::MsgLightKeasWarn_id),
 msgBattery_(			bm::vc::MsgLightBattery_verts,		bm::vc::MsgLightBattery_id),
 msgThrustLimit_(		bm::vc::MsgLightThrustLimit_verts,	bm::vc::MsgLightThrustLimit_id),
 msgApu_(				bm::vc::MsgLightAPU_verts,			bm::vc::MsgLightAPU_id),
@@ -122,9 +122,9 @@ void StatusBoard::DrawDoorsMsg(DEVMESHHANDLE devMesh)
 
 void StatusBoard::DrawKEASMsg(DEVMESHHANDLE devMesh)
 {
-	auto ofs = (avionics_->IsOverSpeed() ? ErrOffset : OffOffset);
-	msgKeasWarning_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgKeasWarning_.RotateMesh(devMesh);
+	//auto ofs = (avionics_->IsOverSpeed() ? ErrOffset : OffOffset);
+	//msgKeasWarning_.SetTranslate(_V(ofs, 0.0, 0.0));
+	//msgKeasWarning_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawThrustLimit(DEVMESHHANDLE devMesh)
@@ -137,9 +137,10 @@ void StatusBoard::DrawThrustLimit(DEVMESHHANDLE devMesh)
 
 void StatusBoard::DrawBattery(DEVMESHHANDLE devMesh)
 {
-	auto ofs = GetWarnMsgOffset(power_->IsBatteryPower() ? 0.5 : 0.0);
-	msgBattery_.SetTranslate(_V(ofs, 0.0, 0.0));
-	msgBattery_.RotateMesh(devMesh);
+	// TODO : like much else here, this is a signal from the power system.
+	//auto ofs = GetWarnMsgOffset(power_->IsBatteryPower() ? 0.5 : 0.0);
+	//msgBattery_.SetTranslate(_V(ofs, 0.0, 0.0));
+	//msgBattery_.RotateMesh(devMesh);
 }
 
 void StatusBoard::DrawAPU(DEVMESHHANDLE devMesh)

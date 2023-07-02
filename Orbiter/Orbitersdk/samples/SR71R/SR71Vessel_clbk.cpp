@@ -188,14 +188,14 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
 	apu_.Step(simt, simdt, mjd);
-	avionics_.Step(simt, simdt, mjd);
+//	avionics_.Step(simt, simdt, mjd);
 	cargoBayController_.Step(simt, simdt, mjd);
     canopy_.Step(simt, simdt, mjd);
 	fuelCell_.Step(simt, simdt, mjd);
 	hydrogenTank_.Step(simt, simdt, mjd);
 	landingGear_.Step(simt, simdt, mjd);
 	oxygenTank_.Step(simt, simdt, mjd);
-	powerSystem_.Step(simt, simdt, mjd);
+//	powerSystem_.Step(simt, simdt, mjd);
 	propulsionController_.Step(simt, simdt, mjd);
 	surfaceControl_.Step(simt, simdt, mjd);
 	statusBoard_.Step(simt, simdt, mjd);
@@ -207,6 +207,8 @@ void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
     retroEngines_.Step(simt, simdt, mjd);
 
     BaseVessel::clbkPostStep(simt, simdt, mjd);
+
+	powerSystem_.PostAmpStep();		// Handles all amp draws for time step.
 }
 
 bool SR71Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
@@ -226,8 +228,6 @@ bool SR71Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad*
 void SR71Vessel::clbkPostCreation()
 {
 	BaseVessel::clbkPostCreation();
-
-    powerSystem_.PostCreation();
 }
 
 bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)

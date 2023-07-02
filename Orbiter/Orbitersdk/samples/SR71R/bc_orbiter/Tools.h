@@ -342,12 +342,12 @@ namespace bc_orbiter
 	Calculate the G force on the vessel.
 	@param vessel Vessel to calculate G forces for.
 	*/
-	inline double GetVesselGs(const VESSEL3* vessel)
+	inline double GetVesselGs(const VESSEL3& vessel)
 	{
 		VECTOR3 vW, vF;
-		vessel->GetWeightVector(vW);
-		vessel->GetForceVector(vF);
-		auto m = vessel->GetMass();
+		vessel.GetWeightVector(vW);
+		vessel.GetForceVector(vF);
+		auto m = vessel.GetMass();
 
 		auto vA = (vF - vW) / m;
 		return length(vA) / 9.81;

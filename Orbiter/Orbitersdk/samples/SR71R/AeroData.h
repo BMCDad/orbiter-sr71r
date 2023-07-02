@@ -39,23 +39,38 @@ public:
 	void SetHeading(double s);
 
 	// Slots:
-	//bco::slot<bool>&		EnabledSlot()			{ return enabledSlot_; }
-	//bco::slot<bool>&		AvionicsModeSlot()		{ return avionicsModeSlot_;	}
+	bco::slot<bool>&		EnabledSlot()			{ return enabledSlot_; }			// Main avionics switch
+	bco::slot<bool>&		AvionicsModeSlot()		{ return avionicsModeSlot_;	}		// Avionics mode switch
+	bco::slot<double>&		VoltsInputSlot()		{ return voltsInputSlot_; }			// Volts input from power
+	bco::signal<double>&	AmpsSignal()			{ return ampsSignal_; }				// Signal amps back to power
+	bco::signal<bool>&		IsAeroActiveSignal()	{ return isAeroDataActive_; }		// All aero components should use this for 'is enabled'.
+
 	bco::slot<bool>&		SetCourseIncSlot()		{ return setCourseIncSlot_; }
 	bco::slot<bool>&		SetCourseDecSlot()		{ return setCourseDecSlot_; }
 	bco::slot<bool>&		SetHeadingIncSlot()		{ return setHeadingIncSlot_; }
 	bco::slot<bool>&		SetHeadingDecSlot()		{ return setHeadingDecSlot_; }
-
 
 	// Signals:
 //	bco::signal<AvionMode>& AvionicsModeSignal()	{ return avionicsModeSignal_; }
 	bco::signal<double>&	SetCourseSignal()		{ return setCourseSignal_; }
 	bco::signal<double>&	SetHeadingSignal()		{ return setHeadingSignal_; }
 
+	bco::signal<double>&	GForceSignal()			{ return gforceSignal_; }
+	bco::signal<double>&	TrimSignal()			{ return trimSignal_; }
+	bco::signal<double>&	AOASignal()				{ return aoaSignal_; }
+	bco::signal<double>&	VSINeedleSignal()		{ return vsiNeedleSignal_; }
+	bco::signal<double>&	BankSignal()			{ return signalBank_; }
+	bco::signal<double>&	PitchSignal()			{ return signalPitch_; }
+
 private:
-	// Slots:
-	//bco::slot<bool>			enabledSlot_;				// Main avion power switch.
-	//bco::slot<bool>			avionicsModeSlot_;
+	const double			MIN_VOLTS = 25.0;			// No areo data if voltage input drops below.
+	const double			AMPS_USED = 5.0;
+
+
+	bco::slot<bool>			enabledSlot_;				// Main avion power switch input.
+	bco::slot<bool>			avionicsModeSlot_;			// Avionics mode switch input.
+	bco::slot<double>		voltsInputSlot_;			// Power input.
+	bco::signal<double>		ampsSignal_;				// Report amps to power system.
 
 	bco::slot<bool>			setCourseIncSlot_;
 	bco::slot<bool>			setCourseDecSlot_;
@@ -64,8 +79,18 @@ private:
 
 	// Signals:
 //	bco::signal<AvionMode>	avionicsModeSignal_;
+	bco::signal<bool>		isAeroDataActive_;
 	bco::signal<double>		setCourseSignal_;
 	bco::signal<double>		setHeadingSignal_;
+
+	bco::signal<double>		gforceSignal_;
+	bco::signal<double>		trimSignal_;
+	bco::signal<double>		aoaSignal_;
+
+	bco::signal<double >	vsiNeedleSignal_;
+	bco::signal<double>		signalBank_;
+	bco::signal<double>		signalPitch_;
+
 
 	void UpdateSetCourse(double i);
 	void UpdateSetHeading(double i);
