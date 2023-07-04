@@ -118,9 +118,9 @@ public:
 	bco::signal<double>&	KiasSpeedSignal()		{ return signalKiasSpeed_; }
 	bco::signal<bool>&		IsEnabledSignal()		{ return signalIsEnabled_; }
 	bco::signal<bool>&		IsVelocityFlagSignal()	{ return signalIsVelocityFlag_; }
-	bco::signal<double>&	MACHOnesSignal()		{ return signalKeasOnes_; }
-	bco::signal<double>&	MACHTensSignal()		{ return signalKeasTens_; }
-	bco::signal<double>&	MACHHundsSignal()		{ return signalKeasHunds_; }
+	bco::signal<double>&	MACHOnesSignal()		{ return signalMACHOnes_; }
+	bco::signal<double>&	MACHTensSignal()		{ return signalMACHTens_; }
+	bco::signal<double>&	MACHHundsSignal()		{ return signalMACHHunds_; }
 
 
 private:

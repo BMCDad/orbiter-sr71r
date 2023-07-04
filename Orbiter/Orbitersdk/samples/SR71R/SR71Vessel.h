@@ -299,7 +299,7 @@ private:
 	};
 
 	// *** POWER STATUS LIGHTS:
-	bco::on_off_display		lightFuelCellAvail_{
+	bco::on_off_display	lightFuelCellAvail_{
 		GetControlId(),
 		bm::vc::FuelCellAvailableLight_id,
 		bm::vc::FuelCellAvailableLight_verts,
@@ -307,7 +307,7 @@ private:
 		bm::pnl::pnlLgtFCPwrAvail_verts,
 		0.0244 
 	};
-	bco::on_off_display		lightExternalAvail_{
+	bco::on_off_display	lightExternalAvail_{
 		GetControlId(),
 		bm::vc::ExtAvailableLight_id,
 		bm::vc::ExtAvailableLight_verts,
@@ -315,7 +315,7 @@ private:
 		bm::pnl::pnlLgtExtPwrAvail_verts,
 		0.0244
 	};
-	bco::on_off_display		lightFuelCellConnected_{
+	bco::on_off_display	lightFuelCellConnected_{
 		GetControlId(),
 		bm::vc::FuelCellConnectedLight_id,
 		bm::vc::FuelCellConnectedLight_verts,
@@ -323,7 +323,7 @@ private:
 		bm::pnl::pnlLgtFCPwrOn_verts,
 		0.0244
 	};
-	bco::on_off_display		lightExternalConnected_{
+	bco::on_off_display	lightExternalConnected_{
 		GetControlId(),
 		bm::vc::ExtConnectedLight_id,
 		bm::vc::ExtConnectedLight_verts,
@@ -333,13 +333,13 @@ private:
 	};
 
 	// *** HUD *** 
-	bco::simple_event		btnHudDocking_{
+	bco::simple_event<>		btnHudDocking_{
 		GetControlId(),
 		bm::vc::vcHUDDock_location,
 		0.01,
 		bm::pnl::pnlHUDDock_RC
 	};
-	bco::on_off_display		btnLightHudDocking_{
+	bco::on_off_display	btnLightHudDocking_{
 		GetControlId(),
 		bm::vc::vcHUDDock_id,
 		bm::vc::vcHUDDock_verts,
@@ -347,13 +347,13 @@ private:
 		bm::pnl::pnlHUDDock_verts,
 		0.0352
 	};
-	bco::simple_event		btnHudOrbit_{
+	bco::simple_event<>		btnHudOrbit_{
 		GetControlId(),
 		bm::vc::vcHUDOrbit_location,
 		0.01,
 		bm::pnl::pnlHUDOrbit_RC
 	};
-	bco::on_off_display		btnLightHudOrbit_{
+	bco::on_off_display	btnLightHudOrbit_{
 		GetControlId(),
 		bm::vc::vcHUDOrbit_id,
 		bm::vc::vcHUDOrbit_verts,
@@ -361,13 +361,13 @@ private:
 		bm::pnl::pnlHUDOrbit_verts,
 		0.0352
 	};
-	bco::simple_event		btnHudSurface_{
+	bco::simple_event<>		btnHudSurface_{
 		GetControlId(),
 		bm::vc::vcHUDSURF_location,
 		0.01,
 		bm::pnl::pnlHUDSurf_RC
 	};
-	bco::on_off_display		btnLightHudSurface_{
+	bco::on_off_display	btnLightHudSurface_{
 		GetControlId(),
 		bm::vc::vcHUDSURF_id,
 		bm::vc::vcHUDSURF_verts,
@@ -386,7 +386,7 @@ private:
 		0.2,
 		[](double d) {return (d); }	// Transform to amps.
 	};
-	bco::on_off_display		lightHydrogenAvail_{
+	bco::on_off_display	lightHydrogenAvail_{
 		GetControlId(),
 		bm::vc::LH2SupplyOnLight_id,
 		bm::vc::LH2SupplyOnLight_verts,
@@ -394,13 +394,13 @@ private:
 		bm::pnl::pnlLH2Avail_verts,
 		0.0244
 	};
-	bco::simple_event		btnHydroFill_{
+	bco::simple_event<>		btnHydroFill_{
 		GetControlId(),
 		bm::vc::LH2ValveOpenSwitch_location,
 		0.01,
 		bm::pnl::pnlLH2Switch_RC
 	};
-	bco::on_off_display		btnLightHydroFill_{
+	bco::on_off_display	btnLightHydroFill_{
 		GetControlId(),
 		bm::vc::LH2ValveOpenSwitch_id,
 		bm::vc::LH2ValveOpenSwitch_verts,
@@ -419,7 +419,7 @@ private:
 		0.2,
 		[](double d) {return (d); }	// Transform to amps.
 	};
-	bco::on_off_display		lightO2Avail_{
+	bco::on_off_display	lightO2Avail_{
 		GetControlId(),
 		bm::vc::LOXSupplyOnLight_id,
 		bm::vc::LOXSupplyOnLight_verts,
@@ -427,13 +427,13 @@ private:
 		bm::pnl::pnlO2Avail_verts,
 		0.0244
 	};
-	bco::simple_event		btnO2Fill_{
+	bco::simple_event<>		btnO2Fill_{
 		GetControlId(),
 		bm::vc::LOXValveOpenSwitch_location,
 		0.01,
 		bm::pnl::pnlO2Switch_RC
 	};
-	bco::on_off_display		btnLightO2Fill{
+	bco::on_off_display	btnLightO2Fill{
 		GetControlId(),
 		bm::vc::LOXValveOpenSwitch_id,
 		bm::vc::LOXValveOpenSwitch_verts,
@@ -443,13 +443,13 @@ private:
 	};
 
 	// ***  AIR BRAKE  *** //
-	bco::simple_event		btnDecreaseAirbrake_{
+	bco::simple_event<>		btnDecreaseAirbrake_{
 		GetControlId(),
 		bm::vc::ABTargetDecrease_location,
 		0.01,
 		bm::pnl::pnlAirBrakeDecrease_RC
 	};
-	bco::simple_event		btnIncreaseAirbrake_{
+	bco::simple_event<>		btnIncreaseAirbrake_{
 		GetControlId(),
 		bm::vc::ABTargetIncrease_location,
 		0.01,
@@ -457,13 +457,13 @@ private:
 	};
 
 	// *** LANDING GEAR *** //
-	bco::simple_event		btnRaiseLandingGear_{
+	bco::simple_event<>		btnRaiseLandingGear_{
 		GetControlId(),
 		bm::vc::GearLeverUpTarget_location,
 		0.01,
 		bm::pnl::pnlLandingGearUp_RC
 	};
-	bco::simple_event		btnLowerLandingGear_{
+	bco::simple_event<>		btnLowerLandingGear_{
 		GetControlId(),
 		bm::vc::GearLeverDownTarget_location,
 		0.01,
@@ -500,13 +500,14 @@ private:
 	};
 
 	// ***  NAV MODES  *** //
-	bco::simple_event		btnNavKillRot_{
+	bco::simple_event<int>	btnNavKillRot_{
 		GetControlId(),
 		bm::vc::vcNavKillRot_location,
 		0.01,
-		bm::pnl::pnlNavKillrot_RC
+		bm::pnl::pnlNavKillrot_RC,
+		NAVMODE_KILLROT
 	};
-	bco::on_off_display		btnLightNavKillRot_{
+	bco::on_off_display	btnLightNavKillRot_{
 		GetControlId(),
 		bm::vc::vcNavKillRot_id,
 		bm::vc::vcNavKillRot_verts,
@@ -514,13 +515,14 @@ private:
 		bm::pnl::pnlNavKillrot_verts,
 		0.0352
 	};
-	bco::simple_event		btnNavHorzLevel_{
+	bco::simple_event<int>	btnNavHorzLevel_{
 		GetControlId(),
 		bm::vc::vcNavHorzLvl_location,
 		0.01,
-		bm::pnl::pnlNavHorzLvl_RC
+		bm::pnl::pnlNavHorzLvl_RC,
+		NAVMODE_HLEVEL
 	};
-	bco::on_off_display		btnLightNavHorzLevel_{
+	bco::on_off_display	btnLightNavHorzLevel_{
 		GetControlId(),
 		bm::vc::vcNavHorzLvl_id,
 		bm::vc::vcNavHorzLvl_verts,
@@ -528,13 +530,14 @@ private:
 		bm::pnl::pnlNavHorzLvl_verts,
 		0.0352
 	};
-	bco::simple_event		btnNavPrograde_{
+	bco::simple_event<int>	btnNavPrograde_{
 		GetControlId(),
 		bm::vc::vcNavProGrade_location,
 		0.01,
-		bm::pnl::pnlNavPrograde_RC
+		bm::pnl::pnlNavPrograde_RC,
+		NAVMODE_PROGRADE
 	};
-	bco::on_off_display		btnLightNavPrograde_{
+	bco::on_off_display	btnLightNavPrograde_{
 		GetControlId(),
 		bm::vc::vcNavProGrade_id,
 		bm::vc::vcNavProGrade_verts,
@@ -542,13 +545,14 @@ private:
 		bm::pnl::pnlNavPrograde_verts,
 		0.0352
 	};
-	bco::simple_event		btnNavRetrograde_{
+	bco::simple_event<int>	btnNavRetrograde_{
 		GetControlId(),
 		bm::vc::vcNavRetro_location,
 		0.01,
-		bm::pnl::pnlNavRetro_RC
+		bm::pnl::pnlNavRetro_RC,
+		NAVMODE_RETROGRADE
 	};
-	bco::on_off_display		btnLightNavRetrograde_{
+	bco::on_off_display	btnLightNavRetrograde_{
 		GetControlId(),
 		bm::vc::vcNavRetro_id,
 		bm::vc::vcNavRetro_verts,
@@ -556,13 +560,14 @@ private:
 		bm::pnl::pnlNavRetro_verts,
 		0.0352
 	};
-	bco::simple_event		btnNavNormal_{
+	bco::simple_event<int>	btnNavNormal_{
 		GetControlId(),
 		bm::vc::vcNavNorm_location,
 		0.01,
-		bm::pnl::pnlNavNorm_RC
+		bm::pnl::pnlNavNorm_RC,
+		NAVMODE_NORMAL
 	};
-	bco::on_off_display		btnLightNavNormal_{
+	bco::on_off_display	btnLightNavNormal_{
 		GetControlId(),
 		bm::vc::vcNavNorm_id,
 		bm::vc::vcNavNorm_verts,
@@ -570,13 +575,14 @@ private:
 		bm::pnl::pnlNavNorm_verts,
 		0.0352
 	};
-	bco::simple_event		btnNavAntiNorm_{
+	bco::simple_event<int>	btnNavAntiNorm_{
 		GetControlId(),
 		bm::vc::vcNavAntiNorm_location,
 		0.01,
-		bm::pnl::pnlNavAntiNorm_RC
+		bm::pnl::pnlNavAntiNorm_RC,
+		NAVMODE_ANTINORMAL
 	};
-	bco::on_off_display		btnLightNavAntiNorm_{
+	bco::on_off_display	btnLightNavAntiNorm_{
 		GetControlId(),
 		bm::vc::vcNavAntiNorm_id,
 		bm::vc::vcNavAntiNorm_verts,
@@ -640,7 +646,7 @@ private:
 		bm::pnl::pnlFuelTransferSelect_verts,
 		bm::pnl::pnlFuelTransferSelect_RC
 	};
-	bco::on_off_display		lightFuelAvail_{
+	bco::on_off_display	lightFuelAvail_{
 		GetControlId(),
 		bm::vc::FuelSupplyOnLight_id,
 		bm::vc::FuelSupplyOnLight_verts,
@@ -648,13 +654,13 @@ private:
 		bm::pnl::pnlFuelAvail_verts,
 		0.0244
 	};
-	bco::simple_event		btnFuelTransferPump_{
+	bco::simple_event<>		btnFuelTransferPump_{
 		GetControlId(),
 		bm::vc::FuelTransferSwitch_location,
 		0.01,
 		bm::pnl::pnlFuelTransfer_RC
 	};
-	bco::on_off_display		btnLightFuelTransferPump_{
+	bco::on_off_display	btnLightFuelTransferPump_{
 		GetControlId(),
 		bm::vc::FuelTransferSwitch_id,
 		bm::vc::FuelTransferSwitch_verts,
@@ -662,13 +668,13 @@ private:
 		bm::pnl::pnlFuelTransfer_verts,
 		0.0352
 	};
-	bco::simple_event		btnFuelValveOpen_{
+	bco::simple_event<>		btnFuelValveOpen_{
 		GetControlId(),
 		bm::vc::FuelValveOpenSwitch_location,
 		0.01,
 		bm::pnl::pnlFuelValveSwitch_RC
 	};
-	bco::on_off_display		btnLightFuelValveOpen_{
+	bco::on_off_display	btnLightFuelValveOpen_{
 		GetControlId(),
 		bm::vc::FuelValveOpenSwitch_id,
 		bm::vc::FuelValveOpenSwitch_verts,
@@ -678,13 +684,13 @@ private:
 	};
 
 	// ***  RCS  *** //
-	bco::simple_event		btnRCSLinear_{
+	bco::simple_event<>		btnRCSLinear_{
 		GetControlId(),
 		bm::vc::vcRCSLin_location,
 		0.01,
 		bm::pnl::pnlRCSLin_RC
 	};
-	bco::on_off_display		btnLightRCSLinear_{
+	bco::on_off_display	btnLightRCSLinear_{
 		GetControlId(),
 		bm::vc::vcRCSLin_id,
 		bm::vc::vcRCSLin_verts,
@@ -692,13 +698,13 @@ private:
 		bm::pnl::pnlRCSLin_verts,
 		0.0352
 	};
-	bco::simple_event		btnRCSRotate_{
+	bco::simple_event<>		btnRCSRotate_{
 		GetControlId(),
 		bm::vc::vcRCSRot_location,
 		0.01,
 		bm::pnl::pnlRCSRot_RC
 	};
-	bco::on_off_display		btnLightRCSRotate_{
+	bco::on_off_display	btnLightRCSRotate_{
 		GetControlId(),
 		bm::vc::vcRCSRot_id,
 		bm::vc::vcRCSRot_verts,
@@ -826,7 +832,7 @@ private:
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
-	bco::on_off_display		altimeterEnabledFlag_{
+	bco::on_off_display	altimeterEnabledFlag_{
 		GetControlId(),
 		bm::vc::AltimeterOffFlag_id,
 		bm::vc::AltimeterOffFlag_verts,
@@ -834,7 +840,7 @@ private:
 		bm::pnl::pnlAltimeterOffFlag_verts,
 		0.0244
 	};
-	bco::on_off_display		altimeterExoModeFlag_{
+	bco::on_off_display	altimeterExoModeFlag_{
 		GetControlId(),
 		bm::vc::AltimeterGround_id,
 		bm::vc::AltimeterGround_verts,
@@ -853,7 +859,7 @@ private:
 		2.0,
 		[](double d) {return (d); }	// Transform to amps.
 	};
-	bco::on_off_display		vsiActiveFlag_{
+	bco::on_off_display	vsiActiveFlag_{
 		GetControlId(),
 		bm::vc::VSIOffFlag_id,
 		bm::vc::VSIOffFlag_verts,
@@ -869,7 +875,7 @@ private:
 		bm::pnl::pnlAttitudeIndicator_id,
 		bm::pnl::pnlAttitudeIndicator_verts
 	};
-	bco::on_off_display		attitudeFlag_{
+	bco::on_off_display	attitudeFlag_{
 		GetControlId(),
 		bm::vc::AttitudeFlagOff_id,
 		bm::vc::AttitudeFlagOff_verts,
@@ -877,7 +883,7 @@ private:
 		bm::pnl::pnlAttitudeFlagOff_verts,
 		0.0244
 	};
-	bco::on_off_display		comStatusFlag_{
+	bco::on_off_display	comStatusFlag_{
 		GetControlId(),
 		bm::vc::COMStatusPanel_id,
 		bm::vc::COMStatusPanel_verts,
@@ -977,31 +983,31 @@ private:
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
-	bco::simple_event		dialSetCourseIncrement_{
+	bco::simple_event<>		dialSetCourseIncrement_{
 		GetControlId(),
 		bm::vc::CourseKnob_location,
 		0.01,
 		bm::pnl::pnlSetCourseInc_RC
 	};
-	bco::simple_event		dialSetCourseDecrement_{
+	bco::simple_event<>		dialSetCourseDecrement_{
 		GetControlId(),
 		bm::vc::CourseKnob_location,
 		0.01,
 		bm::pnl::pnlSetCourseDec_RC
 	};
-	bco::simple_event		dialSetHeadingIncrement_{
+	bco::simple_event<>		dialSetHeadingIncrement_{
 		GetControlId(),
 		bm::vc::HeadingKnob_location,
 		0.01,
 		bm::pnl::pnlSetHeadingInc_RC
 	};
-	bco::simple_event		dialSetHeadingDecrement_{
+	bco::simple_event<>		dialSetHeadingDecrement_{
 		GetControlId(),
 		bm::vc::HeadingKnob_location,
 		0.01,
 		bm::pnl::pnlSetHeadingDec_RC
 	};
-	bco::on_off_display		hsiOffFlag_{
+	bco::on_off_display	hsiOffFlag_{
 		GetControlId(),
 		bm::vc::HSIOffFlag_id,
 		bm::vc::HSIOffFlag_verts,
@@ -1009,7 +1015,7 @@ private:
 		bm::pnl::pnlHSIOffFlag_verts,
 		0.0244
 	};
-	bco::on_off_display		hsiExoFlag_{
+	bco::on_off_display	hsiExoFlag_{
 		GetControlId(),
 		bm::vc::HSIExoFlag_id,
 		bm::vc::HSIExoFlag_verts,
@@ -1026,7 +1032,7 @@ private:
 		bm::pnl::pnlSpeedNeedle_verts,
 		(300 * RAD),	// Clockwise
 		2.0,
-		[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
+		[](double d) {return bco::AngleToState(d); }	// Transform to anim range.
 	};
 	bco::rotary_display<bco::AnimationWrap>	airspeedKies_{
 		{ bm::vc::SpeedIndicatorKies_id },
@@ -1046,7 +1052,7 @@ private:
 		2.0,
 		[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
 	};
-	bco::on_off_display		speedIsEnabledFlag_{
+	bco::on_off_display	speedIsEnabledFlag_{
 		GetControlId(),
 		bm::vc::SpeedFlagOff_id,
 		bm::vc::SpeedFlagOff_verts,
@@ -1054,7 +1060,7 @@ private:
 		bm::pnl::pnlSpeedFlagOff_verts,
 		0.0244
 	};
-	bco::on_off_display		speedIsVelocityFlag_{
+	bco::on_off_display	speedIsVelocityFlag_{
 		GetControlId(),
 		bm::vc::SpeedVelocityFlag_id,
 		bm::vc::SpeedVelocityFlag_verts,

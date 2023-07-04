@@ -18,6 +18,7 @@
 
 #include "bc_orbiter\bco.h"
 #include "bc_orbiter\PoweredComponent.h"
+#include "bc_orbiter\BaseVessel.h"
 
 #include "SR71r_mesh.h"
 
@@ -29,48 +30,33 @@ namespace bco = bc_orbiter;
 /**
 Models the nav mode selector function.
 */
-class NavModes : public bco::PoweredComponent
+class NavModes
 {
 public:
-	NavModes(bco::BaseVessel* vessel, double amps);
+	NavModes(bco::BaseVessel& baseVessel);
 
 	// These overrides come directly from SR71Vessel callbacks.
 	void OnNavMode(int mode, bool active);
 	bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
-	bco::slot<bool>&	IsKillRotSlot()			{ return slotIsKillRot_; }		// Receives button event, no state
-	bco::slot<bool>&	IsHorzLevelSlot()		{ return slotIsHorzLvl_; }
-	bco::slot<bool>&	IsProgradeSlot()		{ return slotIsPrograd_; }
-	bco::slot<bool>&	IsRetroGradeSlot()		{ return slotIsRetroGr_; }
-	bco::slot<bool>&	IsNormalSlot()			{ return slotIsNorm_; }		
-	bco::slot<bool>&	IsAntiNormalSlot()		{ return slotIsAntNorm_; }
-
-	bco::signal<bool>&	IsKillRotSignal()		{ return sigIsKillRot_; }
-	bco::signal<bool>&	IsHorzLevelSignal()		{ return sigIsHorzLvl_; }
-	bco::signal<bool>&	IsProgradeSignal()		{ return sigIsPrograd_; }
-	bco::signal<bool>&	IsRetroGradeSignal()	{ return sigIsRetroGr_; }
-	bco::signal<bool>&	IsNormalSignal()		{ return sigIsNorm_; }
-	bco::signal<bool>&	IsAntiNormalSignal()	{ return sigIsAntNorm_; }
+	bco::slot<bool>&					IsEnabledSlot()			{ return slotIsEnabled_; }
+	bco::slot<int>&						NavButtonSlot()			{ return slotNavButton_; }		// Nav button inputs.
+	bco::slot<bco::draw_hud_data>&		DrawHudSlot()			{ return slotDrawHud_; }		// Nav mode change notifications from vessel.
+	
+	bco::signal<bco::navmode_data>&		NavModeSignal()			{ return sigNavMode_; }
 
 protected:
 	void Update();
 
 private:
+	bco::BaseVessel&					baseVessel_;
 	void ToggleMode(int mode);
 
-	bco::slot<bool>		slotIsKillRot_;
-	bco::slot<bool>		slotIsHorzLvl_;
-	bco::slot<bool>		slotIsPrograd_;
-	bco::slot<bool>		slotIsRetroGr_;
-	bco::slot<bool>		slotIsNorm_;
-	bco::slot<bool>		slotIsAntNorm_;
+	bco::slot<bool>						slotIsEnabled_;
+	bco::slot<int>						slotNavButton_;
+	bco::slot<bco::draw_hud_data>		slotDrawHud_;
 
-	bco::signal<bool>	sigIsKillRot_;
-	bco::signal<bool>	sigIsHorzLvl_;
-	bco::signal<bool>	sigIsPrograd_;
-	bco::signal<bool>	sigIsRetroGr_;
-	bco::signal<bool>	sigIsNorm_;
-	bco::signal<bool>	sigIsAntNorm_;
+	bco::signal<bco::navmode_data>		sigNavMode_;
 
 	int		vcUIArea_{ 0 };
 	int		panelUIArea_{ 0 };

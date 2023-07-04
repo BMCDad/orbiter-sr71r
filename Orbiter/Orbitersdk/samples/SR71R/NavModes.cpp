@@ -24,46 +24,23 @@
 
 #include <assert.h>
 
-NavModes::NavModes(bco::BaseVessel* vessel, double amps) :
-PoweredComponent(vessel, amps, 20.0),
-slotIsKillRot_([&](bool v)	{ ToggleMode(NAVMODE_KILLROT);		slotIsKillRot_.set(); }),
-slotIsHorzLvl_([&](bool v)	{ ToggleMode(NAVMODE_HLEVEL);		slotIsHorzLvl_.set(); }),
-slotIsPrograd_([&](bool v)	{ ToggleMode(NAVMODE_PROGRADE);		slotIsPrograd_.set(); }),
-slotIsRetroGr_([&](bool v)	{ ToggleMode(NAVMODE_RETROGRADE);	slotIsRetroGr_.set(); }),
-slotIsNorm_([&](bool v)		{ ToggleMode(NAVMODE_NORMAL);		slotIsNorm_.set(); }),
-slotIsAntNorm_([&](bool v)	{ ToggleMode(NAVMODE_ANTINORMAL);	slotIsAntNorm_.set(); })
+NavModes::NavModes(bco::BaseVessel& baseVessel) :
+baseVessel_(baseVessel),
+slotNavButton_([&](int v) { ToggleMode(v); slotNavButton_.set(); }),
+slotDrawHud_([&](bco::draw_hud_data v) { DrawHUD(v.mode, v.paintSpec, v.sketchPad); })
 {
 }
 
 void NavModes::OnNavMode(int mode, bool active)
 {
-	switch (mode) {
-	case NAVMODE_KILLROT:
-		sigIsKillRot_.fire(active);
-		break;
-	case NAVMODE_HLEVEL:
-		sigIsHorzLvl_.fire(active);
-		break;
-	case NAVMODE_PROGRADE:
-		sigIsPrograd_.fire(active);
-		break;
-	case NAVMODE_RETROGRADE:
-		sigIsRetroGr_.fire(active);
-		break;
-	case NAVMODE_NORMAL:
-		sigIsNorm_.fire(active);
-		break;
-	case NAVMODE_ANTINORMAL:
-		sigIsAntNorm_.fire(active);
-		break;
-	}
+	sigNavMode_.fire({mode, active});
 }
 
 void NavModes::ToggleMode(int mode)
 {
-	if (HasPower())
+	if (slotIsEnabled_.value())
 	{
-		GetBaseVessel()->ToggleNavmode(mode);
+        baseVessel_.ToggleNavmode(mode);
 	}
 
 	Update();
@@ -71,17 +48,15 @@ void NavModes::ToggleMode(int mode)
 
 void NavModes::Update()
 {
-	auto vessel = GetBaseVessel();
-
-	if (!HasPower())
+	if (!IsEnabledSlot().value())
 	{
 		// Shut down all modes:
-		vessel->DeactivateNavmode(NAVMODE_KILLROT);
-		vessel->DeactivateNavmode(NAVMODE_HLEVEL);
-		vessel->DeactivateNavmode(NAVMODE_PROGRADE);
-		vessel->DeactivateNavmode(NAVMODE_RETROGRADE);
-		vessel->DeactivateNavmode(NAVMODE_NORMAL);
-		vessel->DeactivateNavmode(NAVMODE_ANTINORMAL);
+		baseVessel_.DeactivateNavmode(NAVMODE_KILLROT);
+		baseVessel_.DeactivateNavmode(NAVMODE_HLEVEL);
+		baseVessel_.DeactivateNavmode(NAVMODE_PROGRADE);
+		baseVessel_.DeactivateNavmode(NAVMODE_RETROGRADE);
+		baseVessel_.DeactivateNavmode(NAVMODE_NORMAL);
+		baseVessel_.DeactivateNavmode(NAVMODE_ANTINORMAL);
 	}
 }
 

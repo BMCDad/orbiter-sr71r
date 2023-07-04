@@ -22,6 +22,7 @@
 #include "IAnimationState.h"
 
 #include "Control.h"
+#include "signals.h"
 
 #include <vector>
 #include <map>
@@ -36,6 +37,29 @@ namespace bc_orbiter
 
 namespace bc_orbiter
 {
+	struct vessel_data {
+		BaseVessel* vessel;
+		
+		bool operator!=(const vessel_data& other) const {
+			return (vessel != other.vessel);
+		}
+	};
+
+	struct draw_hud_data : public vessel_data {
+		int					mode;
+		const HUDPAINTSPEC*	paintSpec;
+		oapi::Sketchpad*	sketchPad;
+	};
+
+	struct navmode_data {
+		int	mode;
+		bool active;
+
+		bool operator!=(const navmode_data& other) const {
+			return ((mode != other.mode) || (active != other.active));
+		}
+	};
+
 	/**
 	Base class for Orbiter vessels.
 	*/
@@ -50,6 +74,7 @@ namespace bc_orbiter
         virtual void RegisterComponent(Component* comp);
 
 		// clbk overrides:
+		virtual bool clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 		virtual bool clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) override;
 		virtual void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
 		virtual bool clbkLoadVC(int id) override;
@@ -163,7 +188,14 @@ namespace bc_orbiter
 		void AddControl(control* ctrl) { controls_.push_back(ctrl); }
 
 		void AddComponent(vessel_component* c) { components_.push_back(c); }
+
+		// Callback signals.
+		signal<draw_hud_data>&		DrawHudSignal()		{ return hudSignal_; }
 	private:
+		// sigs
+		signal<draw_hud_data>	hudSignal_;
+
+
 		void HandleClassCaps()
 		{
 			for each (auto& vc in controls_)
@@ -207,6 +239,8 @@ namespace bc_orbiter
 				if (auto* ac = dynamic_cast<post_step*>(cc)) comp_post_step_.push_back(ac);
 
 				if (auto* ac = dynamic_cast<set_class_caps*>(cc)) comp_set_class_caps_.push_back(ac);
+
+				if (auto* ac = dynamic_cast<draw_hud*>(cc)) comp_draw_hud_.push_back(ac);
 			}
 
 			for each (auto & sc in comp_set_class_caps_) {
@@ -254,7 +288,8 @@ namespace bc_orbiter
 		std::vector<vessel_component*>					components_;
 		std::vector<post_step*>							comp_post_step_;
 		std::vector<set_class_caps*>					comp_set_class_caps_;
-		
+		std::vector<draw_hud*>							comp_draw_hud_;
+
 		//**** END NEW STYLE
 
 		std::vector<control*>			controls_;
@@ -312,6 +347,15 @@ namespace bc_orbiter
 		vcRedrawMap_[redrawId] = comp;
 		panelRedrawMap_[redrawId] = comp;
 		comp->SetRedrawId(redrawId);
+	}
+
+	inline bool BaseVessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+	{
+		hudSignal_.fire({ this, mode, hps, skp });
+		//for (auto& ps : comp_draw_hud_) {
+		//	ps->handle_draw_hud(*this, mode, hps, skp);
+		//}
+		return true;
 	}
 
 	inline void BaseVessel::clbkLoadStateEx(FILEHANDLE scn, void *vs)

@@ -24,8 +24,10 @@ namespace bc_orbiter {
 	* simple_event
 	* Provides a simple event only control.  No state is retained, and no UI change is made.
 	* For the VC, a VECTOR position and hit radius are required.  For panel, a RECT is required.
-	* A signal fires an event that is always true.
+	* The simple event is template driven and can specify the type of signal to fire, and the data fired.
+	* This can be an id or data structure.
 	*/
+	template<typename T=bool>
 	class simple_event :
 		public control,
 		public vc_event_target,
@@ -35,12 +37,14 @@ namespace bc_orbiter {
 			int const ctrlId,
 			const VECTOR3& vcLocation,
 			double vcRadius,
-			const RECT& pnlRect
+			const RECT& pnlRect,
+			T data = T()
 		) :
 			control(ctrlId),
 			vcLocation_(vcLocation),
 			vcRadius_(vcRadius),
-			pnlRect_(pnlRect)
+			pnlRect_(pnlRect),
+			data_(data)
 		{ }
 
 		// vc_event_target
@@ -56,16 +60,17 @@ namespace bc_orbiter {
 
 		// event_target
 		bool on_event() override {
-			signal_.fire(true);
+			signal_.fire(data_);
 			return true;
 		}
 
 		// signal
-		signal<bool>& Signal() { return signal_; }
+		signal<T>& Signal() { return signal_; }
 	private:
+		T				data_;
 		VECTOR3			vcLocation_;
 		double			vcRadius_;
 		RECT			pnlRect_;
-		signal<bool>	signal_;
+		signal<T>		signal_;
 	};
 }

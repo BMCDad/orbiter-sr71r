@@ -123,6 +123,15 @@ namespace bc_orbiter {
 	};
 
 	/**
+	draw_hud
+	Indicates the class participates in clbkDrawHud.  The class must implement the call
+	handle_draw_hud(BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp).
+	*/
+	struct draw_hud {
+		virtual void handle_draw_hud(BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) = 0;
+	};
+
+	/**
 	* Base class for a control.
 	*/
 	class control {// : public IControl {

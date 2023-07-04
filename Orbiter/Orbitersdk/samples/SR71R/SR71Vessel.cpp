@@ -34,7 +34,7 @@ hydrogenTank_(          this,   HYDRO_SUPPLY, HYDROGEN_FILL_RATE, HYDRO_NER, "HY
 landingGear_(           this),
 mfdLeft_(               this,   MFD_AMPS),
 mfdRight_(              this,   MFD_AMPS),
-navModes_(              this,   NAV_AMPS),
+navModes_(              *this),
 oxygenTank_(            this,   O2_SUPPLY, OXYGEN_FILL_RATE, O2_NER, "OXYGEN"),
 powerSystem_(           this),
 propulsionController_(  this,   PROPULS_AMPS),
@@ -59,7 +59,7 @@ retroEngines_(this, RETRO_AMPS)
 	RegisterComponent(&landingGear_);
 	RegisterComponent(&mfdLeft_);
 	RegisterComponent(&mfdRight_);
-	RegisterComponent(&navModes_);
+//	RegisterComponent(&navModes_);
 	RegisterComponent(&oxygenTank_);
 	RegisterComponent(&powerSystem_);
 	RegisterComponent(&propulsionController_);
@@ -250,6 +250,7 @@ retroEngines_(this, RETRO_AMPS)
 	//AddComponent(&attitude_);
 	AddComponent(&hsi_);
 	AddComponent(&aeroData_);
+	AddComponent(&airspeed_);
 
 	// These are here because the template deduction does not seem to work in the header file.
 	// These objects will die at the end of this method, but they will have done their job.
@@ -333,18 +334,18 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( apu_.HydroPressSignal(),					landingGear_.HydraulicPressSlot());
 
 	// Nav Modes
-	bco::connect( btnNavKillRot_.Signal(),					navModes_.IsKillRotSlot());
-	bco::connect( navModes_.IsKillRotSignal(),				btnLightNavKillRot_.Slot());
-	bco::connect( btnNavHorzLevel_.Signal(),				navModes_.IsHorzLevelSlot());
-	bco::connect( navModes_.IsHorzLevelSignal(),			btnLightNavHorzLevel_.Slot());
-	bco::connect( btnNavPrograde_.Signal(),					navModes_.IsProgradeSlot());
-	bco::connect( navModes_.IsProgradeSignal(),				btnLightNavPrograde_.Slot());
-	bco::connect( btnNavRetrograde_.Signal(),				navModes_.IsRetroGradeSlot());
-	bco::connect( navModes_.IsRetroGradeSignal(),			btnLightNavRetrograde_.Slot());
-	bco::connect( btnNavNormal_.Signal(),					navModes_.IsNormalSlot());
-	bco::connect( navModes_.IsNormalSignal(),				btnLightNavNormal_.Slot());
-	bco::connect( btnNavAntiNorm_.Signal(),					navModes_.IsAntiNormalSlot());
-	bco::connect( navModes_.IsAntiNormalSignal(),			btnLightNavAntiNorm_.Slot());
+	bco::connect( btnNavKillRot_.Signal(),					navModes_.NavButtonSlot());
+	bco::connect( btnNavHorzLevel_.Signal(),				navModes_.NavButtonSlot());
+	bco::connect( btnNavPrograde_.Signal(),					navModes_.NavButtonSlot());
+	bco::connect( btnNavRetrograde_.Signal(),				navModes_.NavButtonSlot());
+	bco::connect( btnNavNormal_.Signal(),					navModes_.NavButtonSlot());
+	bco::connect( btnNavAntiNorm_.Signal(),					navModes_.NavButtonSlot());
+	//bco::connect( navModes_.NavModeSignal(),				btnLightNavKillRot_.Slot());
+	//bco::connect( navModes_.NavModeSignal(),				btnLightNavHorzLevel_.Slot());
+	//bco::connect( navModes_.NavModeSignal(),				btnLightNavPrograde_.Slot());
+	//bco::connect( navModes_.NavModeSignal(),				btnLightNavRetrograde_.Slot());
+	//bco::connect( navModes_.NavModeSignal(),				btnLightNavNormal_.Slot());
+	//bco::connect( navModes_.NavModeSignal(),				btnLightNavAntiNorm_.Slot());
 
 	// Propulsion
 	bco::connect( propulsionController_.FuelFlowSignal(),		gaugeFuelFlow_.Slot());
