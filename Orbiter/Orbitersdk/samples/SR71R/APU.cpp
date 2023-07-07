@@ -47,10 +47,6 @@ double APU::CurrentDraw()
 	return (HasPower() && slotIsEnabled_.value()) ? PoweredComponent::CurrentDraw() : 0.0;
 }
 
-void APU::OnSetClassCaps()
-{
-}
-
 bool APU::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
 {
 	if (_strnicmp(key, ConfigKey, 3) != 0)

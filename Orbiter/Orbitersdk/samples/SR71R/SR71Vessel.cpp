@@ -28,22 +28,21 @@ apu_(                   this,   APU_AMPS),
 //avionics_(              this,   AVIONICS_AMPS),
 cargoBayController_(    this,   CARGO_AMPS),
 canopy_(                this,   CANOPY_AMPS),
-fuelCell_(              this,   FUELCELL_AMPS),
+//fuelCell_(              this,   FUELCELL_AMPS),
 headsUpDisplay_(        this,   HUD_AMPS),
-hydrogenTank_(          this,   HYDRO_SUPPLY, HYDROGEN_FILL_RATE, HYDRO_NER, "HYDROGEN"),
+hydrogenTank_(					HYDRO_SUPPLY, HYDROGEN_FILL_RATE, HYDRO_NER),
 landingGear_(           this),
 mfdLeft_(               this,   MFD_AMPS),
 mfdRight_(              this,   MFD_AMPS),
 navModes_(              *this),
-oxygenTank_(            this,   O2_SUPPLY, OXYGEN_FILL_RATE, O2_NER, "OXYGEN"),
-powerSystem_(           this),
+oxygenTank_(					O2_SUPPLY, OXYGEN_FILL_RATE, O2_NER),
 propulsionController_(  this,   PROPULS_AMPS),
 rcsSystem_(             this,   RCS_AMPS),
 surfaceControl_(        this),
 statusBoard_(           this,   STATUS_AMPS),
 airBrake_(              this),
 //lights_(                this,   LIGHTS_AMPS),  TODO
-clock_(                 this),
+//clock_(                 this),
 shutters_(              this),
 //computer_(              this,   COMPUTER_AMPS),
 hoverEngines_(this, HOVER_AMPS),
@@ -53,21 +52,21 @@ retroEngines_(this, RETRO_AMPS)
 //	RegisterComponent(&avionics_);
 	RegisterComponent(&cargoBayController_);
 	RegisterComponent(&canopy_);
-	RegisterComponent(&fuelCell_);
+//	RegisterComponent(&fuelCell_);
 	RegisterComponent(&headsUpDisplay_);
-	RegisterComponent(&hydrogenTank_);
+//	RegisterComponent(&hydrogenTank_);
 	RegisterComponent(&landingGear_);
 	RegisterComponent(&mfdLeft_);
 	RegisterComponent(&mfdRight_);
 //	RegisterComponent(&navModes_);
-	RegisterComponent(&oxygenTank_);
-	RegisterComponent(&powerSystem_);
+//	RegisterComponent(&oxygenTank_);
+//	RegisterComponent(&powerSystem_);
 	RegisterComponent(&propulsionController_);
 	RegisterComponent(&rcsSystem_);
 	RegisterComponent(&surfaceControl_);
 	RegisterComponent(&statusBoard_);
 	RegisterComponent(&airBrake_);
-	RegisterComponent(&clock_);
+//	RegisterComponent(&clock_);
 	RegisterComponent(&shutters_);
 	//RegisterComponent(&computer_);
 	RegisterComponent(&hoverEngines_);
@@ -114,6 +113,8 @@ retroEngines_(this, RETRO_AMPS)
 	AddControl(&clockTimerMinutesHand_);
 	AddControl(&clockElapsedMinutesHand_);
 	AddControl(&clockElapsedHoursHand_);
+	AddControl(&clockTimerReset_);
+	AddControl(&clockElapsedReset_);
 
 	/*  Hover switch  */
 	AddControl(&switchHoverOpen);
@@ -242,25 +243,36 @@ retroEngines_(this, RETRO_AMPS)
 
 
 	//
-	AddComponent(&navLight_);
-	AddComponent(&beacon_);
-	AddComponent(&strobe_);
-	AddComponent(&altimeter_);
-	//AddComponent(&vsi_);
-	//AddComponent(&attitude_);
-	AddComponent(&hsi_);
 	AddComponent(&aeroData_);
 	AddComponent(&airspeed_);
+	AddComponent(&altimeter_);
+	AddComponent(&beacon_);
+	AddComponent(&clock_);
+	AddComponent(&fuelCell_);
+	AddComponent(&hydrogenTank_);
+	AddComponent(&hsi_);
+	AddComponent(&navLight_);
+	AddComponent(&oxygenTank_);
+	AddComponent(&strobe_);
 
-	// These are here because the template deduction does not seem to work in the header file.
-	// These objects will die at the end of this method, but they will have done their job.
+	// Wire up controls.
+	powerSystem_.add_user(&aeroData_);
+	powerSystem_.add_user(&beacon_);
+	powerSystem_.add_user(&hydrogenTank_);
+	powerSystem_.add_user(&navLight_);
+	powerSystem_.add_user(&oxygenTank_);
+	powerSystem_.add_user(&strobe_);
+	powerSystem_.add_user(&fuelCell_);
 
-	//bco::connector  navLightSwitch	{ switchNavigationLights.Signal(),				navLight_.Slot() };
+	// Connect consumables
 
 	// Lights
 	bco::connect( switchNavigationLights.Signal(),			navLight_.Slot());
 	bco::connect( switchBeaconLights.Signal(),				beacon_.Slot());
 	bco::connect( switchStrobeLights.Signal(),				strobe_.Slot());
+	bco::connect( powerSystem_.VoltLevelSignal(),			beacon_.VoltsInputSlot());
+	bco::connect( powerSystem_.VoltLevelSignal(),			strobe_.VoltsInputSlot());
+	bco::connect( powerSystem_.VoltLevelSignal(),			navLight_.VoltsInputSlot());
 
 	// Power connections
 	bco::connect( switchMainPower.Signal(),					powerSystem_.MainPowerSlot());
@@ -275,6 +287,7 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( fuelCell_.IsAvailableSignal(),			lightFuelCellAvail_.Slot());
 	bco::connect( switchFuelCellPower.Signal(),				fuelCell_.IsEnabledSlot());
 	bco::connect( powerSystem_.AmpLoadSignal(),				fuelCell_.AmpLoadSlot());
+	bco::connect( powerSystem_.VoltLevelSignal(),			fuelCell_.VoltsInputSlot());
 
 	// Power gauges
 	bco::connect( powerSystem_.VoltLevelSignal(),			gaugePowerVolts_.Slot());
@@ -297,6 +310,8 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( clock_.TimerMinutesSignal(),				clockTimerMinutesHand_.Slot());
 	bco::connect( clock_.ElapsedMinutesSignal(),			clockElapsedMinutesHand_.Slot());
 	bco::connect( clock_.ElapsedHoursSignal(),				clockElapsedHoursHand_.Slot());
+	bco::connect( clockElapsedReset_.Signal(),				clock_.ElapsedResetSlot());
+	bco::connect( clockTimerReset_.Signal(),				clock_.TimerResetSlot());
 
 	// Hover doors
 	bco::connect( switchHoverOpen.Signal(),					hoverEngines_.HoverOpenSlot());
@@ -455,8 +470,8 @@ void SR71Vessel::SetupVesselComponents()
 	apu_.SetPropulsionControl(&propulsionController_);
 
 	// Fuelcell
-	fuelCell_.SetHydrogenSytem(&hydrogenTank_);
-	fuelCell_.SetOxygenSystem(&oxygenTank_);
+	//fuelCell_.SetHydrogenSytem(&hydrogenTank_);
+	//fuelCell_.SetOxygenSystem(&oxygenTank_);
 
 	// Status board
 	statusBoard_.SetCargoBay(&cargoBayController_);

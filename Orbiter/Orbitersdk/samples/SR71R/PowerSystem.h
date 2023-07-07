@@ -30,65 +30,57 @@ namespace bco = bc_orbiter;
 class FuelCell;
 
 /**	Power System
-	Models the main power circuit for the ship.  Contains a 'Circuit' class which all of 
-	the powered components of the ship are attached to.  At each step the circuit is queried
-	to determine what the current amp draw is.  Changes to the power availability are also
-	communicated to the components via the circuit.
+	Manages the connections and distribution of the three main power sources:
+	- External connection (ship is stopped or docked)
+	- Fuelcell
+	- Battery
+	Allows the pilot to select the power source to use, and monitors voltage availability and consumption.
 
-	Three energy sources are available:
-	- External: when parked on the ground.
-	- Fuel cell:
-	- Backup battery: <not imlemented>
-		Battery - 50 amp hour should last 40 minutes with nothing on.
-
-	Enable power:
-	To enable power you need to attach an available power source to the main circuit.  For
-	external and fuel cell, there is an 'AVAIL' light that will come on when that power
-	source is available.  The backup battery will engage with the main power switch is on 
-	but no power source is attached to the main circuit.  The [BATT] light will illuminate
-	in the message panel when power is being drawn off of the backup battery.
-
-	Configuration:
-	POWER a b c d e
-	a - Main power switch			0/1 - 0ff/on.
-	b - External power attached		0/1 - off/attached.
-	c - Fuel cell attached			0/1 - off/attached.
-	d - Buss voltage				double 27.0
-	e - Battery level				double (0 - 1)
+	What a powered component needs to do:
+	Hook a reciever slot up to the VoltLevelSignal() and an amp signal up to the AmpDrawSlot().
+	On a change to the receiver slot, check that the new voltage level is adequate.
+	On each step, report through the amp signal the current amp usage for that component.
 */
-class PowerSystem :	public bco::PoweredComponent
+class PowerSystem :	
+	public bco::vessel_component,
+	public bco::post_step,
+	public bco::manage_state
 {
 public:
-	PowerSystem(bco::BaseVessel* vessel);
+	PowerSystem();
 
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
-
-//	double GetAmpDraw()								{ return mainCircuit_.GetTotalAmps(); }	// TODO: Make signal
-
-	bco::signal<double>& VoltLevelSignal()			{ return signalVoltLevel_; }			// Changes in volt level
-	bco::signal<double>& AmpLoadSignal()			{ return signalAmpLoad_; }				// Changes in amp load 
-	bco::signal<bool>& ExternalAvailableSignal()	{ return signalExternalAvailable_; }	// External resources available
-	bco::signal<bool>& ExternalConnectedSignal()	{ return signalExternalConnected_; }	// External connection status
-	bco::signal<bool>& FuelCellConnectedSignal()	{ return signalFuelCellConnected_; }	// Fuelcell connection status
-	bco::signal<bool>& IsDrawingBatterSignal()		{ return signalIsDrawingBattery_; }		// Are we on batter power?
-
-	// These slots driven by toggle switches.
-	bco::slot<bool>& MainPowerSlot()				{ return slotIsEnabled_; }				// Main power switch
-	bco::slot<bool>& ExternalConnectSlot()			{ return slotConnectExternal_; }		// External connect switch
-	bco::slot<bool>& FuelCellConnectSlot()			{ return slotConnectFuelCell_; }		// Fuelcell connect switch
-	bco::slot<double>& AmpDrawSlot()				{ return slotAmpDraw_; }				// Recieve amp draw signals.
-
-	bco::slot<double>& FuelCellAvailablePowerSlot() { return slotFuelCellAvailablePower_; }	// Availability of fuelcell power
-
-	void PostAmpStep() { 
-		signalAmpLoad_.fire(ampDraw_);	// Should be the sum of all component amp draws for the current step.
-		Update();
-		ampDraw_ = 0.0; 
+	// post_step
+	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override
+	{
+		Update(vessel);
 	}
 
+	// manage_state
+	bool handle_load_state(const std::string& line) override;
+	std::string handle_save_state() override;
+
+	void add_user(bco::power_consumer* user) { power_users_.push_back(user); }
+
+	// Inputs:
+	bco::slot<bool>&	MainPowerSlot()					{ return slotIsEnabled_; }				// Switch:  Main power
+	bco::slot<bool>&	ExternalConnectSlot()			{ return slotConnectExternal_; }		// Switch:  External connected to bus
+	bco::slot<bool>&	FuelCellConnectSlot()			{ return slotConnectFuelCell_; }		// Switch:  Fuelcell connected to bus
+	bco::slot<double>&	AmpDrawSlot()					{ return slotAmpDraw_; }				// Receives and combines amp draw signals.
+	bco::slot<double>&	FuelCellAvailablePowerSlot()	{ return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
+
+	// Outputs:
+	bco::signal<double>&	VoltLevelSignal()			{ return signalVoltLevel_; }			// Current volts available
+	bco::signal<double>&	AmpLoadSignal()				{ return signalAmpLoad_; }				// Current amp usage
+	bco::signal<bool>&		ExternalAvailableSignal()	{ return signalExternalAvailable_; }	// Is external connection available (drives ext light)
+	bco::signal<bool>&		ExternalConnectedSignal()	{ return signalExternalConnected_; }	// Is External connection providing power to bus (light)
+	bco::signal<bool>&		FuelCellConnectedSignal()	{ return signalFuelCellConnected_; }	// Is fuelcell providing power to bus (light)
+	bco::signal<bool>&		IsDrawingBatterySignal()	{ return signalIsDrawingBattery_; }		// Is the battery being used.
+
+	// Todo:
+	// Battery level signal
+
 private:
-	void Update();
+	void Update(bco::BaseVessel& vessel);
 
 	const double			FULL_POWER		=  28.0;
 	const double			USEABLE_POWER	=  24.0;
@@ -110,12 +102,7 @@ private:
 
 	bco::slot<double>		slotAmpDraw_;				// Components call this to report amp draw, will be summed over a step.
 	double					ampDraw_{ 0.0 };			// Collects the total amps drawn during a step.
-
-//	bco::Circuit			mainCircuit_;
-
-	// Power ports:
-//	double					powerExternal_;
-	const char*				ConfigKey = "POWER";
-
 	double					batteryLevel_;
+
+	std::vector<bco::power_consumer*>	power_users_;
 };

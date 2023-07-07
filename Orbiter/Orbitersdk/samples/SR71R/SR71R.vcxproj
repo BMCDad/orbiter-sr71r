@@ -125,6 +125,7 @@
     <ClInclude Include="bc_orbiter\Component.h" />
     <ClInclude Include="bc_orbiter\control.h" />
     <ClInclude Include="bc_orbiter\flat_roll.h" />
+    <ClInclude Include="bc_orbiter\generic_tank.h" />
     <ClInclude Include="bc_orbiter\IAnimationState.h" />
     <ClInclude Include="bc_orbiter\MFDBase.h" />
     <ClInclude Include="bc_orbiter\on_off_display_event.h" />
@@ -139,7 +140,7 @@
     <ClInclude Include="Canopy.h" />
     <ClInclude Include="CargoBayController.h" />
     <ClInclude Include="Clock.h" />
-    <ClInclude Include="CryogenicTank.h" />
+    <ClInclude Include="bc_orbiter\cryogenic_tank.h" />
     <ClInclude Include="FlightComputer.h" />
     <ClInclude Include="HoverEngines.h" />
     <ClInclude Include="HSI.h" />
@@ -178,7 +179,6 @@
     <ClCompile Include="Canopy.cpp" />
     <ClCompile Include="CargoBayController.cpp" />
     <ClCompile Include="Clock.cpp" />
-    <ClCompile Include="CryogenicTank.cpp" />
     <ClCompile Include="FlightComputer.cpp" />
     <ClCompile Include="FuelCell.cpp" />
     <ClCompile Include="HoverEngines.cpp" />

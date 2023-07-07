@@ -37,7 +37,6 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	double gforce	 = 0.0;
 	double trim		 = 0.0;
 	double aoa		 = 0.0;
-	double amps		 = 0.0;
 	auto   vertSpeed = 0.0;
 	double bank		 = 0.0;
 	double pitch	 = 0.0;
@@ -65,7 +64,31 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	gforceSignal_	 .fire(gforce);
 	trimSignal_		 .fire(trim);
 	aoaSignal_		 .fire(aoa);
-	ampsSignal_		 .fire(amps);
+}
+
+// manage_state
+bool AeroData::handle_load_state(const std::string& line) {
+	// [a b]  :  [course heading]
+	int course = 0.0;
+	int heading = 0.0;
+
+	std::istringstream in(line);
+
+	if (in >> course >> heading) {
+		setCourseSignal_.fire(course);
+		setHeadingSignal_.fire(heading);
+		return true;
+	}
+	else {
+		return false;
+	}
+
+}
+
+std::string AeroData::handle_save_state() {
+	std::ostringstream os;
+	os << setCourseSignal_.current() << " " << setHeadingSignal_.current();
+	return os.str();
 }
 
 void AeroData::SetCourse(double s)

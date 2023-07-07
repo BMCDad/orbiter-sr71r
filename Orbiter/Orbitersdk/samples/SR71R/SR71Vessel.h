@@ -9,12 +9,12 @@
 #include "bc_orbiter\simple_event.h"
 #include "bc_orbiter\transform_display.h"
 #include "bc_orbiter\flat_roll.h"
+#include "bc_orbiter\cryogenic_tank.h"
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
 //#include "Avionics.h"
 #include "SurfaceController.h"
-#include "CryogenicTank.h"
 #include "PropulsionController.h"
 #include "HUD.h"
 #include "RCSSystem.h"
@@ -72,6 +72,8 @@ public:
 	bool					clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
 	bool					clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) override;
+	void					clbkLoadStateEx(FILEHANDLE scn, void* vs) override;
+	void					clbkSaveState(FILEHANDLE scn) override;
 
 	// Setup
 	void					SetupVesselComponents();
@@ -95,21 +97,19 @@ private:
 //	Avionics				avionics_;
 	CargoBayController		cargoBayController_;
     Canopy                  canopy_;
-	FuelCell				fuelCell_;
+//	FuelCell				fuelCell_;
 	HUD						headsUpDisplay_;
-	CryogenicTank			hydrogenTank_;
+//	CryogenicTank			hydrogenTank_;
 	LandingGear				landingGear_;
 	LeftMFD					mfdLeft_;
 	RightMFD				mfdRight_;
 	NavModes				navModes_;
-	CryogenicTank			oxygenTank_;
-	PowerSystem				powerSystem_;
+//	CryogenicTank			oxygenTank_;
 	PropulsionController	propulsionController_;
 	RCSSystem				rcsSystem_;
 	SurfaceController		surfaceControl_;
 	StatusBoard				statusBoard_;
 	AirBrake				airBrake_;
-	Clock					clock_;
 	Shutters				shutters_;
 //	FC::FlightComputer		computer_;
     HoverEngines            hoverEngines_;
@@ -118,6 +118,29 @@ private:
 	// DRAG
 	double					bDrag{ 0.0 };
 	// Collections:
+
+	// ** COMPONENTS **
+	AeroData			aeroData_;
+	Airspeed			airspeed_;
+	Altimeter			altimeter_;
+	Beacon				beacon_;
+	Clock				clock_;
+	HSI					hsi_;
+	bco::cryogenic_tank	hydrogenTank_;
+	NavLight			navLight_;
+	bco::cryogenic_tank	oxygenTank_;
+	PowerSystem			powerSystem_;
+	Strobe				strobe_;
+	
+	FuelCell			fuelCell_	{ oxygenTank_, hydrogenTank_ };
+
+
+	// Map components that handle config state with a key for that component.
+	std::map <std::string, bco::manage_state*>		mapStateManagement_{
+		{"CLOCK",		&clock_},
+		{"POWER",		&powerSystem_},
+		{"AERODATA",	&aeroData_}
+	};
 
 	// TRY ADDING A NEW CONTROL
 
@@ -260,7 +283,7 @@ private:
 		[](double d) {return (d); }	// Transform to amps.
 	};
 
-	// *** CLOCK HANDS ***
+	// *** CLOCK ***
 	bco::rotary_display<bco::AnimationWrap>	clockTimerSecondsHand_{
 		{ bm::vc::ClockSecond_id },
 		bm::vc::ClockSecond_location, bm::vc::ClockAxisFront_location,
@@ -297,9 +320,21 @@ private:
 		0.4,
 		[](double d) {return (d / 12); }	// Transform to anim range.
 	};
+	bco::simple_event<>		clockTimerReset_{
+		GetControlId(),
+		bm::vc::ClockTimerReset_location,
+		0.01,
+		bm::pnl::pnlClockTimerReset_RC
+	};
+	bco::simple_event<>		clockElapsedReset_{
+		GetControlId(),
+		bm::vc::ClockElapsedReset_location,
+		0.01,
+		bm::pnl::pnlClockElapsedReset_RC
+	};
 
 	// *** POWER STATUS LIGHTS:
-	bco::on_off_display	lightFuelCellAvail_{
+	bco::on_off_display		lightFuelCellAvail_{
 		GetControlId(),
 		bm::vc::FuelCellAvailableLight_id,
 		bm::vc::FuelCellAvailableLight_verts,
@@ -307,7 +342,7 @@ private:
 		bm::pnl::pnlLgtFCPwrAvail_verts,
 		0.0244 
 	};
-	bco::on_off_display	lightExternalAvail_{
+	bco::on_off_display		lightExternalAvail_{
 		GetControlId(),
 		bm::vc::ExtAvailableLight_id,
 		bm::vc::ExtAvailableLight_verts,
@@ -315,7 +350,7 @@ private:
 		bm::pnl::pnlLgtExtPwrAvail_verts,
 		0.0244
 	};
-	bco::on_off_display	lightFuelCellConnected_{
+	bco::on_off_display		lightFuelCellConnected_{
 		GetControlId(),
 		bm::vc::FuelCellConnectedLight_id,
 		bm::vc::FuelCellConnectedLight_verts,
@@ -323,7 +358,7 @@ private:
 		bm::pnl::pnlLgtFCPwrOn_verts,
 		0.0244
 	};
-	bco::on_off_display	lightExternalConnected_{
+	bco::on_off_display		lightExternalConnected_{
 		GetControlId(),
 		bm::vc::ExtConnectedLight_id,
 		bm::vc::ExtConnectedLight_verts,
@@ -339,7 +374,7 @@ private:
 		0.01,
 		bm::pnl::pnlHUDDock_RC
 	};
-	bco::on_off_display	btnLightHudDocking_{
+	bco::on_off_display		btnLightHudDocking_{
 		GetControlId(),
 		bm::vc::vcHUDDock_id,
 		bm::vc::vcHUDDock_verts,
@@ -353,7 +388,7 @@ private:
 		0.01,
 		bm::pnl::pnlHUDOrbit_RC
 	};
-	bco::on_off_display	btnLightHudOrbit_{
+	bco::on_off_display		btnLightHudOrbit_{
 		GetControlId(),
 		bm::vc::vcHUDOrbit_id,
 		bm::vc::vcHUDOrbit_verts,
@@ -367,7 +402,7 @@ private:
 		0.01,
 		bm::pnl::pnlHUDSurf_RC
 	};
-	bco::on_off_display	btnLightHudSurface_{
+	bco::on_off_display		btnLightHudSurface_{
 		GetControlId(),
 		bm::vc::vcHUDSURF_id,
 		bm::vc::vcHUDSURF_verts,
@@ -386,7 +421,7 @@ private:
 		0.2,
 		[](double d) {return (d); }	// Transform to amps.
 	};
-	bco::on_off_display	lightHydrogenAvail_{
+	bco::on_off_display		lightHydrogenAvail_{
 		GetControlId(),
 		bm::vc::LH2SupplyOnLight_id,
 		bm::vc::LH2SupplyOnLight_verts,
@@ -400,7 +435,7 @@ private:
 		0.01,
 		bm::pnl::pnlLH2Switch_RC
 	};
-	bco::on_off_display	btnLightHydroFill_{
+	bco::on_off_display		btnLightHydroFill_{
 		GetControlId(),
 		bm::vc::LH2ValveOpenSwitch_id,
 		bm::vc::LH2ValveOpenSwitch_verts,
@@ -419,7 +454,7 @@ private:
 		0.2,
 		[](double d) {return (d); }	// Transform to amps.
 	};
-	bco::on_off_display	lightO2Avail_{
+	bco::on_off_display		lightO2Avail_{
 		GetControlId(),
 		bm::vc::LOXSupplyOnLight_id,
 		bm::vc::LOXSupplyOnLight_verts,
@@ -433,7 +468,7 @@ private:
 		0.01,
 		bm::pnl::pnlO2Switch_RC
 	};
-	bco::on_off_display	btnLightO2Fill{
+	bco::on_off_display		btnLightO2Fill{
 		GetControlId(),
 		bm::vc::LOXValveOpenSwitch_id,
 		bm::vc::LOXValveOpenSwitch_verts,
@@ -507,7 +542,7 @@ private:
 		bm::pnl::pnlNavKillrot_RC,
 		NAVMODE_KILLROT
 	};
-	bco::on_off_display	btnLightNavKillRot_{
+	bco::on_off_display		btnLightNavKillRot_{
 		GetControlId(),
 		bm::vc::vcNavKillRot_id,
 		bm::vc::vcNavKillRot_verts,
@@ -522,7 +557,7 @@ private:
 		bm::pnl::pnlNavHorzLvl_RC,
 		NAVMODE_HLEVEL
 	};
-	bco::on_off_display	btnLightNavHorzLevel_{
+	bco::on_off_display		btnLightNavHorzLevel_{
 		GetControlId(),
 		bm::vc::vcNavHorzLvl_id,
 		bm::vc::vcNavHorzLvl_verts,
@@ -537,7 +572,7 @@ private:
 		bm::pnl::pnlNavPrograde_RC,
 		NAVMODE_PROGRADE
 	};
-	bco::on_off_display	btnLightNavPrograde_{
+	bco::on_off_display		btnLightNavPrograde_{
 		GetControlId(),
 		bm::vc::vcNavProGrade_id,
 		bm::vc::vcNavProGrade_verts,
@@ -552,7 +587,7 @@ private:
 		bm::pnl::pnlNavRetro_RC,
 		NAVMODE_RETROGRADE
 	};
-	bco::on_off_display	btnLightNavRetrograde_{
+	bco::on_off_display		btnLightNavRetrograde_{
 		GetControlId(),
 		bm::vc::vcNavRetro_id,
 		bm::vc::vcNavRetro_verts,
@@ -567,7 +602,7 @@ private:
 		bm::pnl::pnlNavNorm_RC,
 		NAVMODE_NORMAL
 	};
-	bco::on_off_display	btnLightNavNormal_{
+	bco::on_off_display		btnLightNavNormal_{
 		GetControlId(),
 		bm::vc::vcNavNorm_id,
 		bm::vc::vcNavNorm_verts,
@@ -582,7 +617,7 @@ private:
 		bm::pnl::pnlNavAntiNorm_RC,
 		NAVMODE_ANTINORMAL
 	};
-	bco::on_off_display	btnLightNavAntiNorm_{
+	bco::on_off_display		btnLightNavAntiNorm_{
 		GetControlId(),
 		bm::vc::vcNavAntiNorm_id,
 		bm::vc::vcNavAntiNorm_verts,
@@ -646,7 +681,7 @@ private:
 		bm::pnl::pnlFuelTransferSelect_verts,
 		bm::pnl::pnlFuelTransferSelect_RC
 	};
-	bco::on_off_display	lightFuelAvail_{
+	bco::on_off_display		lightFuelAvail_{
 		GetControlId(),
 		bm::vc::FuelSupplyOnLight_id,
 		bm::vc::FuelSupplyOnLight_verts,
@@ -660,7 +695,7 @@ private:
 		0.01,
 		bm::pnl::pnlFuelTransfer_RC
 	};
-	bco::on_off_display	btnLightFuelTransferPump_{
+	bco::on_off_display		btnLightFuelTransferPump_{
 		GetControlId(),
 		bm::vc::FuelTransferSwitch_id,
 		bm::vc::FuelTransferSwitch_verts,
@@ -674,7 +709,7 @@ private:
 		0.01,
 		bm::pnl::pnlFuelValveSwitch_RC
 	};
-	bco::on_off_display	btnLightFuelValveOpen_{
+	bco::on_off_display		btnLightFuelValveOpen_{
 		GetControlId(),
 		bm::vc::FuelValveOpenSwitch_id,
 		bm::vc::FuelValveOpenSwitch_verts,
@@ -690,7 +725,7 @@ private:
 		0.01,
 		bm::pnl::pnlRCSLin_RC
 	};
-	bco::on_off_display	btnLightRCSLinear_{
+	bco::on_off_display		btnLightRCSLinear_{
 		GetControlId(),
 		bm::vc::vcRCSLin_id,
 		bm::vc::vcRCSLin_verts,
@@ -704,7 +739,7 @@ private:
 		0.01,
 		bm::pnl::pnlRCSRot_RC
 	};
-	bco::on_off_display	btnLightRCSRotate_{
+	bco::on_off_display		btnLightRCSRotate_{
 		GetControlId(),
 		bm::vc::vcRCSRot_id,
 		bm::vc::vcRCSRot_verts,
@@ -832,7 +867,7 @@ private:
 		0.1084,
 		[](double v) {return floor(v) / 10; }
 	};
-	bco::on_off_display	altimeterEnabledFlag_{
+	bco::on_off_display		altimeterEnabledFlag_{
 		GetControlId(),
 		bm::vc::AltimeterOffFlag_id,
 		bm::vc::AltimeterOffFlag_verts,
@@ -840,7 +875,7 @@ private:
 		bm::pnl::pnlAltimeterOffFlag_verts,
 		0.0244
 	};
-	bco::on_off_display	altimeterExoModeFlag_{
+	bco::on_off_display		altimeterExoModeFlag_{
 		GetControlId(),
 		bm::vc::AltimeterGround_id,
 		bm::vc::AltimeterGround_verts,
@@ -859,7 +894,7 @@ private:
 		2.0,
 		[](double d) {return (d); }	// Transform to amps.
 	};
-	bco::on_off_display	vsiActiveFlag_{
+	bco::on_off_display		vsiActiveFlag_{
 		GetControlId(),
 		bm::vc::VSIOffFlag_id,
 		bm::vc::VSIOffFlag_verts,
@@ -875,7 +910,7 @@ private:
 		bm::pnl::pnlAttitudeIndicator_id,
 		bm::pnl::pnlAttitudeIndicator_verts
 	};
-	bco::on_off_display	attitudeFlag_{
+	bco::on_off_display		attitudeFlag_{
 		GetControlId(),
 		bm::vc::AttitudeFlagOff_id,
 		bm::vc::AttitudeFlagOff_verts,
@@ -883,7 +918,7 @@ private:
 		bm::pnl::pnlAttitudeFlagOff_verts,
 		0.0244
 	};
-	bco::on_off_display	comStatusFlag_{
+	bco::on_off_display		comStatusFlag_{
 		GetControlId(),
 		bm::vc::COMStatusPanel_id,
 		bm::vc::COMStatusPanel_verts,
@@ -1007,7 +1042,7 @@ private:
 		0.01,
 		bm::pnl::pnlSetHeadingDec_RC
 	};
-	bco::on_off_display	hsiOffFlag_{
+	bco::on_off_display		hsiOffFlag_{
 		GetControlId(),
 		bm::vc::HSIOffFlag_id,
 		bm::vc::HSIOffFlag_verts,
@@ -1015,7 +1050,7 @@ private:
 		bm::pnl::pnlHSIOffFlag_verts,
 		0.0244
 	};
-	bco::on_off_display	hsiExoFlag_{
+	bco::on_off_display		hsiExoFlag_{
 		GetControlId(),
 		bm::vc::HSIExoFlag_id,
 		bm::vc::HSIExoFlag_verts,
@@ -1032,7 +1067,7 @@ private:
 		bm::pnl::pnlSpeedNeedle_verts,
 		(300 * RAD),	// Clockwise
 		2.0,
-		[](double d) {return bco::AngleToState(d); }	// Transform to anim range.
+		[](double d) {return d; }	// Transform to anim range.
 	};
 	bco::rotary_display<bco::AnimationWrap>	airspeedKies_{
 		{ bm::vc::SpeedIndicatorKies_id },
@@ -1041,7 +1076,7 @@ private:
 		bm::pnl::pnlSpeedIndicatorKies_verts,
 		(300 * RAD),	// Clockwise
 		2.0,
-		[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
+		[](double d) { return d; }	// Transform to anim range.
 	};
 	bco::rotary_display<bco::AnimationWrap>	airspeedMaxMach_{
 		{ bm::vc::SpeedNeedleMax_id },
@@ -1050,9 +1085,9 @@ private:
 		bm::pnl::pnlSpeedNeedleMax_verts,
 		(300 * RAD),	// Clockwise
 		2.0,
-		[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
+		[](double d) {return d; }	// Transform to anim range.
 	};
-	bco::on_off_display	speedIsEnabledFlag_{
+	bco::on_off_display		speedIsEnabledFlag_{
 		GetControlId(),
 		bm::vc::SpeedFlagOff_id,
 		bm::vc::SpeedFlagOff_verts,
@@ -1060,7 +1095,7 @@ private:
 		bm::pnl::pnlSpeedFlagOff_verts,
 		0.0244
 	};
-	bco::on_off_display	speedIsVelocityFlag_{
+	bco::on_off_display		speedIsVelocityFlag_{
 		GetControlId(),
 		bm::vc::SpeedVelocityFlag_id,
 		bm::vc::SpeedVelocityFlag_verts,
@@ -1140,16 +1175,5 @@ private:
 	//	bm::pnl::pnlMilesTens_RC
 	//};
 
-	// ** COMPONENTS **
-	NavLight			navLight_;
-	Beacon				beacon_;
-	Strobe				strobe_;
-	Altimeter			altimeter_;
-	//VSI					vsi_;
-	//AttitudeIndicator	attitude_;
-	HSI					hsi_;
-	AeroData			aeroData_;
-	Airspeed			airspeed_;
-//	TestComponent		test_;
 };
 

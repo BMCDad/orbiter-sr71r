@@ -191,24 +191,22 @@ void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 //	avionics_.Step(simt, simdt, mjd);
 	cargoBayController_.Step(simt, simdt, mjd);
     canopy_.Step(simt, simdt, mjd);
-	fuelCell_.Step(simt, simdt, mjd);
-	hydrogenTank_.Step(simt, simdt, mjd);
+//	fuelCell_.Step(simt, simdt, mjd);
+//	hydrogenTank_.Step(simt, simdt, mjd);
 	landingGear_.Step(simt, simdt, mjd);
-	oxygenTank_.Step(simt, simdt, mjd);
+//	oxygenTank_.Step(simt, simdt, mjd);
 //	powerSystem_.Step(simt, simdt, mjd);
 	propulsionController_.Step(simt, simdt, mjd);
 	surfaceControl_.Step(simt, simdt, mjd);
 	statusBoard_.Step(simt, simdt, mjd);
 	airBrake_.Step(simt, simdt, mjd);
 //	lights_.Step(simt, simdt, mjd);
-	clock_.Step(simt, simdt, mjd);
+//	clock_.Step(simt, simdt, mjd);
 //	computer_.Step(simt, simdt, mjd);
     hoverEngines_.Step(simt, simdt, mjd);
     retroEngines_.Step(simt, simdt, mjd);
 
     BaseVessel::clbkPostStep(simt, simdt, mjd);
-
-	powerSystem_.PostAmpStep();		// Handles all amp draws for time step.
 }
 
 bool SR71Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
@@ -266,4 +264,41 @@ bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD 
 	SetPanelScaling(hPanel, defscale, extscale);
 
 	return BaseVessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
+}
+
+void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
+{
+	char* line;
+
+	while (oapiReadScenario_nextline(scn, line))
+	{
+		bool handled = false;
+		std::istringstream ps(line);
+		std::string key;
+		ps >> key;
+		std::string configLine;
+		std::getline(ps >> std::ws, configLine);
+
+		auto eh = mapStateManagement_.find(key);
+		if (eh != mapStateManagement_.end()) {
+			eh->second->handle_load_state(configLine);
+			handled = true;
+		}
+
+		if (!handled) {
+			ParseScenarioLineEx(line, vs);
+		}
+	}
+}
+
+void SR71Vessel::clbkSaveState(FILEHANDLE scn)
+{
+	VESSEL3::clbkSaveState(scn);	// Save default state.
+
+	for (auto& p : mapStateManagement_) {
+		oapiWriteScenario_string(
+			scn, 
+			(char*)p.first.c_str(), 
+			(char*)p.second->handle_save_state().c_str());
+	}
 }

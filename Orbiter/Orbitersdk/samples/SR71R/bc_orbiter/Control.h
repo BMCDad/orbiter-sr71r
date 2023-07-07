@@ -100,7 +100,7 @@ namespace bc_orbiter {
 	struct vessel_component
 	{
 	public:
-		virtual ~vessel_component() {};
+		virtual ~vessel_component() = default;
 	};
 
 	/**
@@ -129,6 +129,49 @@ namespace bc_orbiter {
 	*/
 	struct draw_hud {
 		virtual void handle_draw_hud(BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) = 0;
+	};
+
+	/**
+	manage_state
+	Indicates the class can provide its internal state as a string, and that it can take that string back
+	in order to set the internal state.  The string provided should be appropriate for use in an Orbiter
+	config file, but does not provide the key, which will be provided by whatever is actually managing the config.
+	*/
+	struct manage_state {
+		/**
+		handle_load_state
+		param line A single line of text representing the state.
+		return true if the state was succesfully restored.
+		*/
+		virtual bool handle_load_state(const std::string& line) = 0;
+		
+		/**
+		handle_save
+		Return a single string that represents the internal state of the component.
+				*/
+		virtual std::string handle_save_state() = 0;
+	};
+
+	/**
+	Indicates the class uses electrical power from the main power system.
+	*/
+	struct power_consumer {
+		/**
+		amp_load
+		Called from a power provider to determine the amp load of the component.
+		*/
+		virtual double amp_load() = 0;
+	};
+
+	/**
+	Indicates the class manages a consumable of some sort that consumers will draw.
+	*/
+	struct consumable {
+		/**
+		draw
+		Called by a consumer to draw the consumable.
+		*/
+		virtual double draw(double amount) = 0;
 	};
 
 	/**

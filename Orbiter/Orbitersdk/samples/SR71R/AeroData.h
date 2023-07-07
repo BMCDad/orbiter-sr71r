@@ -24,7 +24,9 @@ namespace bco = bc_orbiter;
 
 class AeroData :
 	public bco::vessel_component,
-	public bco::post_step {
+	public bco::post_step,
+	public bco::manage_state,
+	public bco::power_consumer {
 
 public:
 	enum AvionMode { AvionAtmo, AvionExo };
@@ -35,15 +37,21 @@ public:
 	// post_step
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
+	// manage_state
+	bool handle_load_state(const std::string& line) override;
+	std::string handle_save_state() override;
+
+	// power_consumer
+	double amp_load() override { return isAeroDataActive_.current() ? AMPS_USED : 0.0; }
+
 	void SetCourse(double s);
 	void SetHeading(double s);
 
 	// Slots:
-	bco::slot<bool>&		EnabledSlot()			{ return enabledSlot_; }			// Main avionics switch
-	bco::slot<bool>&		AvionicsModeSlot()		{ return avionicsModeSlot_;	}		// Avionics mode switch
+	bco::slot<bool>&		EnabledSlot()			{ return enabledSlot_; }			// Switch:  Main avionics is enabled
+	bco::slot<bool>&		AvionicsModeSlot()		{ return avionicsModeSlot_;	}		// Switch:  Avionics mode switch, ON = ATMOSPHERE, OFF = EXO
 	bco::slot<double>&		VoltsInputSlot()		{ return voltsInputSlot_; }			// Volts input from power
-	bco::signal<double>&	AmpsSignal()			{ return ampsSignal_; }				// Signal amps back to power
-	bco::signal<bool>&		IsAeroActiveSignal()	{ return isAeroDataActive_; }		// All aero components should use this for 'is enabled'.
+	bco::signal<bool>&		IsAeroActiveSignal()	{ return isAeroDataActive_; }		// Is aero available (switch is on, power is adequate)
 
 	bco::slot<bool>&		SetCourseIncSlot()		{ return setCourseIncSlot_; }
 	bco::slot<bool>&		SetCourseDecSlot()		{ return setCourseDecSlot_; }
@@ -70,7 +78,6 @@ private:
 	bco::slot<bool>			enabledSlot_;				// Main avion power switch input.
 	bco::slot<bool>			avionicsModeSlot_;			// Avionics mode switch input.
 	bco::slot<double>		voltsInputSlot_;			// Power input.
-	bco::signal<double>		ampsSignal_;				// Report amps to power system.
 
 	bco::slot<bool>			setCourseIncSlot_;
 	bco::slot<bool>			setCourseDecSlot_;

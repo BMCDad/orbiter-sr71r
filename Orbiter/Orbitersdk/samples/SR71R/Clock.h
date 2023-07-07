@@ -16,34 +16,34 @@
 
 #pragma once
 
-#include "bc_orbiter\Component.h"
-#include "bc_orbiter\Animation.h"
 #include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter\Control.h"
 #include "bc_orbiter\signals.h"
-
-#include "SR71r_mesh.h"
 
 namespace bco = bc_orbiter;
 
-class Clock : public bco::Component
+class Clock : 
+    public bco::vessel_component, 
+    public bco::post_step, 
+    public bco::manage_state
 {
 public:
-	Clock(bco::BaseVessel* vessel);
+	Clock();
 
-	// Component
-	void OnSetClassCaps() override;
-	bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	void OnSaveConfiguration(FILEHANDLE scn) const override;
+    // post_step
+    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
-    bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-    bool OnPanelMouseEvent(int id, int event) override;
+	// manage_state
+	bool handle_load_state(const std::string& line) override;
+    std::string handle_save_state() override;
 
-	void Step(double simt, double simdt, double mjd);
-	
     bco::signal<double>&    TimerSecondsSignal()    { return signalTimerSecond_; }
     bco::signal<double>&    TimerMinutesSignal()    { return signalTimerMinute_; }
     bco::signal<double>&    ElapsedMinutesSignal()  { return signalMinute_; }
     bco::signal<double>&    ElapsedHoursSignal()    { return signalHour_; }
+
+    bco::slot<bool>&        TimerResetSlot()        { return slotTimerReset_; }
+    bco::slot<bool>&        ElapsedResetSlot()      { return slotElapsedReset_; }
 
 private:
     void ResetElapsed();
@@ -56,36 +56,11 @@ private:
     bco::signal<double>     signalMinute_;              // Current mission time minutes (0 - 59)
     bco::signal<double>     signalHour_;                // Current mission time hours (0 - 11)
 
-    //bco::PushButtonSwitch	switchResetElapsed_ { bm::vc::ClockElapsedReset_location,  0.01 };
-    //bco::PushButtonSwitch	switchStopWatch_    { bm::vc::ClockTimerReset_location,    0.01 };
+    bco::slot<bool>         slotTimerReset_;
+    bco::slot<bool>         slotElapsedReset_;
 
 	double					startElapsedTime_;
 	double					startTimerTime_;
 	double					currentTimerTime_;
 	bool					isTimerRunning_;
-
-	int						eidResetElapsed_;
-	int						eidResetTimer_;
-
-    struct AD
-    {
-        const UINT group;
-        const NTVERTEX* verts;
-    };
-
-    const int ID_ResetTimer     = GetBaseVessel()->GetIdForComponent(this);
-    const int ID_ResetElapsed   = GetBaseVessel()->GetIdForComponent(this);
-
-    struct PE
-    {
-        int id;
-        const UINT group;
-        const RECT rc;
-        std::function<void(void)> update;
-    };
-    std::vector<PE> pnlEvents_
-    {
-        {ID_ResetElapsed,   bm::pnl::pnlClockElapsedReset_id,  bm::pnl::pnlClockElapsedReset_RC, [&](void) { ResetElapsed(); }},
-        {ID_ResetTimer,     bm::pnl::pnlClockTimerReset_id,    bm::pnl::pnlClockTimerReset_RC,   [&](void) { ResetTimer(); }}
-    };
 };

@@ -66,7 +66,7 @@ public:
 
 			auto spGauge = (mach > MAX_MACH) ? MAX_MACH : mach;
 
-			if (AvionicsModeSlot().value())  // if exo mode, use velocity for spGauge
+			if (!AvionicsModeSlot().value())  // if exo mode, use velocity for spGauge
 			{
 				spGauge = vessel.GetAirspeed() / 100;
 				maxMach = 22.0;

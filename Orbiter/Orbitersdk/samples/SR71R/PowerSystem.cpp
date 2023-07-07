@@ -22,56 +22,26 @@
 
 #include <assert.h>
 
-PowerSystem::PowerSystem(bco::BaseVessel* vessel) :
-	PoweredComponent(vessel, 0.0, 0.0),
+PowerSystem::PowerSystem() :
 	batteryLevel_(1.0),			// Always available for now.
-	slotIsEnabled_([&](bool v) { Update(); }),
-	slotConnectExternal_([&](bool v) { Update(); }),
-	slotConnectFuelCell_([&](bool v) { Update(); }),
-	slotFuelCellAvailablePower_([&](double v) {Update(); }),
+	slotIsEnabled_([&](bool v) { }),
+	slotConnectExternal_([&](bool v) { }),
+	slotConnectFuelCell_([&](bool v) { }),
+	slotFuelCellAvailablePower_([&](double v) { }),
 	slotAmpDraw_([&](double v) { ampDraw_ += v; })
 {
 }
 
-bool PowerSystem::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool PowerSystem::handle_load_state(const std::string& line)
 {
-	if (_strnicmp(key, ConfigKey, 5) != 0)
-	{
-		return false;
-	}
-
-	int main = 0;
-	int external = 0;
-	int fuelcell = 0;
-	double volt = 0.0;
-	double batLvl = 1.0;
-
-	sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
-
-	// TODO
-//	swPower_.SetState((main == 0) ? 0.0 : 1.0);
-//	swConnectExternal_.SetState((external == 0) ? 0.0 : 1.0);
-//	swConnectFuelCell_.SetState((fuelcell == 0) ? 0.0 : 1.0);
-
-	volt = max(0.0, min(30.0, volt));		// Bracket to 0-30
-	//mainCircuit_.PowerVolts((double)volt);
-
-	batteryLevel_ = max(0.0, min(1.0, batLvl));
-
+	// Only thing to persist right now is batt level, and that is not currently modelled.
+	batteryLevel_ = 1.0;
 	return true;
 }
 
-void PowerSystem::OnSaveConfiguration(FILEHANDLE scn) const
+std::string PowerSystem::handle_save_state()
 {
-	char cbuf[256];
-	int val = 1; // TODO (swPower_.GetState() == 0.0) ? 0 : 1;
-	int ext = 0; // TODO (swConnectExternal_.GetState() == 0.0) ? 0 : 1;
-	int fc = 1; // TODO (swConnectFuelCell_.GetState() == 0.0) ? 0 : 1;
-	double vlt = 0.0; // TODO mainCircuit_.GetVoltLevel();
-	double blv = 1.0;
-
-	sprintf_s(cbuf, "%i %i %i %0.2f %0.2f", val, ext, fc, vlt, blv);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	return "1.0";
 }
 
 //void PowerSystem::AddMainCircuitDevice(bco::PoweredComponent* device)
@@ -79,21 +49,29 @@ void PowerSystem::OnSaveConfiguration(FILEHANDLE scn) const
 //	mainCircuit_.AddDevice(device);
 //}
 
-void PowerSystem::Update()
+void PowerSystem::Update(bco::BaseVessel& vessel)
 {
 	/* Power system update:
 	*	Determine if we have a power source available and how much it provides.
 	*	Check the current amp total and determine if we have an overload.
 	*	Report the voltage available signal so components know what they have to work with.
 	*/
-	signalExternalAvailable_.fire((GetBaseVessel()->IsStoppedOrDocked()) ? FULL_POWER : 0.0);
+	signalExternalAvailable_.fire(vessel.IsStoppedOrDocked());
 	
-	auto availExternal = slotConnectExternal_.value() ? signalExternalAvailable_.current() : 0.0;
-	auto availFuelCell = slotConnectFuelCell_.value() ? FuelCellAvailablePowerSlot().value() : 0.0;
+	// handle connected power
+	auto availExternal = 
+		slotConnectExternal_.value() && signalExternalAvailable_.current()		// External available, and the connect switch is on
+		? FULL_POWER 
+		: 0.0;
+
+	// handle fuelcell power
+	auto availFuelCell = slotConnectFuelCell_.value() ? slotFuelCellAvailablePower_.value() : 0.0;
+	signalFuelCellConnected_.fire((slotFuelCellAvailablePower_.value() > USEABLE_POWER) && slotConnectFuelCell_.value());
+
+	// handle battery power
 	auto availBattery = batteryLevel_ * FULL_POWER;
 
 	auto availPower = 0.0;
-	signalIsDrawingBattery_.fire(false);
 	if (slotIsEnabled_.value())
 	{
 		availPower = fmax(availExternal, availFuelCell);
@@ -101,10 +79,25 @@ void PowerSystem::Update()
 			signalIsDrawingBattery_.fire(true);
 			availPower = availBattery;
 		}
+		else {
+			signalIsDrawingBattery_.fire(false);
+		}
+	}
+	else {
+		signalIsDrawingBattery_.fire(false);
 	}
 
 	signalVoltLevel_.fire(availPower);
 
-	// Switch is on, and external power is actually there.
-	signalFuelCellConnected_.fire((slotFuelCellAvailablePower_.value() > USEABLE_POWER) && slotConnectFuelCell_.value());
+	auto ampTotal = 0.0;
+
+	for (auto& a : power_users_) {
+		ampTotal += a->amp_load();
+	}
+
+	if (ampTotal > AMP_OVERLOAD) {
+		// Signal overload
+	}
+
+	signalAmpLoad_.fire(ampTotal);
 }

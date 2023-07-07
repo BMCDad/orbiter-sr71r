@@ -27,6 +27,9 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 namespace bc_orbiter
 {
@@ -76,13 +79,13 @@ namespace bc_orbiter
 		// clbk overrides:
 		virtual bool clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 		virtual bool clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) override;
-		virtual void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
+//		virtual void clbkLoadStateEx(FILEHANDLE scn, void *vs) override;
 		virtual bool clbkLoadVC(int id) override;
 		virtual bool clbkPanelMouseEvent(int id, int event, int mx, int my) override;
 		virtual bool clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context) override;
 		virtual void clbkPostCreation() override;
         virtual void clbkPostStep(double simt, double simdt, double mjd) override;
-		virtual void clbkSaveState(FILEHANDLE scn) override;
+		//virtual void clbkSaveState(FILEHANDLE scn) override;
 		virtual void clbkSetClassCaps(FILEHANDLE cfg) override;
 		virtual bool clbkVCMouseEvent(int id, int event, VECTOR3 &p) override;
 		virtual bool clbkVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
@@ -278,21 +281,21 @@ namespace bc_orbiter
 			}
 		}
 
-		std::map<UINT, std::unique_ptr<IAnimation>>     vcAnimations_;
-		std::map<int, vc_event_target*>					mapVCTargets_;
-		std::map<int, panel_event_target*>				mapPNLTargets_;
-		std::vector<panel_animation*>					vecPNLAnimations_;
-		std::vector<vc_tex_animation*>					vecVCTexAnimations_;
-		std::map<int, vc_animation*>					mapVCAnimations_;
-		
-		std::vector<vessel_component*>					components_;
-		std::vector<post_step*>							comp_post_step_;
-		std::vector<set_class_caps*>					comp_set_class_caps_;
-		std::vector<draw_hud*>							comp_draw_hud_;
+std::map<UINT, std::unique_ptr<IAnimation>>     vcAnimations_;
+std::map<int, vc_event_target*>					mapVCTargets_;
+std::map<int, panel_event_target*>				mapPNLTargets_;
+std::vector<panel_animation*>					vecPNLAnimations_;
+std::vector<vc_tex_animation*>					vecVCTexAnimations_;
+std::map<int, vc_animation*>					mapVCAnimations_;
 
-		//**** END NEW STYLE
+std::vector<vessel_component*>					components_;
+std::vector<post_step*>							comp_post_step_;
+std::vector<set_class_caps*>					comp_set_class_caps_;
+std::vector<draw_hud*>							comp_draw_hud_;
 
-		std::vector<control*>			controls_;
+//**** END NEW STYLE
+
+std::vector<control*>			controls_;
 
 	private:
 		std::vector<Component*>		vesselComponents_;
@@ -301,18 +304,18 @@ namespace bc_orbiter
 		// map for VC and Panels.
 		std::map<int, Component*>	vcRedrawMap_;
 		std::map<int, Component*>	panelRedrawMap_;
-		
+
 		std::map<int, Component*>	vcMouseEventMap_;
 
-//        std::map<int, EventTarget*> vcEventTargetMap_;
-//		std::map<int, PanelEventTarget*> pnlEventTargetMap_;
+		//        std::map<int, EventTarget*> vcEventTargetMap_;
+		//		std::map<int, PanelEventTarget*> pnlEventTargetMap_;
 
-		// Map a control id to its component so we know who to call.
+				// Map a control id to its component so we know who to call.
 		std::map<int, Component*>	idComponentMap_;
 
-        std::map<UINT, std::unique_ptr<IAnimation>>      animations_;
+		std::map<UINT, std::unique_ptr<IAnimation>>      animations_;
 
-		int		nextEventId_		{ 0 };
+		int		nextEventId_{ 0 };
 
 		bool isCreated_{ false };	// Set true after clbkPostCreation
 
@@ -321,12 +324,12 @@ namespace bc_orbiter
 		MESHHANDLE			vcMeshHandle0_;
 		MESHHANDLE			panelMeshHandle0_{ nullptr };
 		UINT				vcIndex0_;
-        UINT                mainIndex_;
+		UINT                mainIndex_;
 		VESSELSTATUS2		vesselStatus_;
 
-        // Propellent (multiple components need this on setup, so put it in the vessel class)
-        PROPELLANT_HANDLE	    mainPropellant_;
-        PROPELLANT_HANDLE	    rcsPropellant_;
+		// Propellent (multiple components need this on setup, so put it in the vessel class)
+		PROPELLANT_HANDLE	    mainPropellant_;
+		PROPELLANT_HANDLE	    rcsPropellant_;
 	};
 
 	inline BaseVessel::BaseVessel(OBJHANDLE hvessel, int flightmodel) :
@@ -358,29 +361,28 @@ namespace bc_orbiter
 		return true;
 	}
 
-	inline void BaseVessel::clbkLoadStateEx(FILEHANDLE scn, void *vs)
-	{
-		char *line;
+	//inline void BaseVessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
+	//{
+	//	char* line;
 
-		while (oapiReadScenario_nextline(scn, line))
-		{
-			bool handled = false;
+	//	while (oapiReadScenario_nextline(scn, line))
+	//	{
+	//		bool handled = false;
 
-			for (auto &p : vesselComponents_)
-			{
-				if (p->OnLoadConfiguration(line, scn, line))
-				{
-					handled = true;
-					break;
-				}
-			}
-
-			if (!handled)
-			{
-				ParseScenarioLineEx(line, vs);
-			}
-		}
-	}
+	//		for (auto& p : vesselComponents_)
+	//		{
+	//			if (p->OnLoadConfiguration(line, scn, line))
+	//			{
+	//				handled = true;
+	//				break;
+	//			}
+	//		}
+	//		
+	//		if (!handled) {
+	//			ParseScenarioLineEx(line, vs);
+	//		}
+	//	}
+	//}
 
 	inline bool BaseVessel::clbkLoadVC(int id)
 	{
@@ -392,12 +394,20 @@ namespace bc_orbiter
 		return true;
 	}
 
-	inline void BaseVessel::clbkSaveState(FILEHANDLE scn)
-	{
-		VESSEL3::clbkSaveState(scn);	// Save default state.
+	//inline void BaseVessel::clbkSaveState(FILEHANDLE scn)
+	//{
+	//	VESSEL3::clbkSaveState(scn);	// Save default state.
 
-		for (auto &p : vesselComponents_)	p->OnSaveConfiguration(scn);
-	}
+	//	for (auto &p : vesselComponents_)	p->OnSaveConfiguration(scn);
+
+	//	for (auto& p : comp_manage_state_) {
+	//		std::string key;
+	//		std::string config;
+	//		p->handle_save(key, config);
+
+	//		oapiWriteScenario_string(scn, (char*)key.c_str(), (char*)(config.c_str()));
+	//	}
+	//}
 
 	inline void BaseVessel::clbkSetClassCaps(FILEHANDLE cfg)
 	{

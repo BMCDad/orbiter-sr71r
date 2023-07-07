@@ -62,7 +62,6 @@ public:
 	virtual double CurrentDraw() override;
 
 	// *** Component ***
-    virtual void OnSetClassCaps() override;
 
 	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
 	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;

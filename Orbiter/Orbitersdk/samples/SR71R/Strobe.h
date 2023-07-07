@@ -27,12 +27,13 @@ namespace bco = bc_orbiter;
 
 class Strobe :
 	public bco::vessel_component,
-	public bco::set_class_caps {
+	public bco::set_class_caps,
+	public bco::power_consumer {
 
 public:
 	Strobe()
 		:
-		slot_([&](bool v) { SetActive(); })
+		enabledSlot_([&](bool v) { SetActive(); })
 	{
 	}
 
@@ -42,15 +43,27 @@ public:
 		vessel.AddBeacon(&specStrobeRight_);
 	}
 
+	// power_consumer
+	double amp_load() override {
+		return
+			enabledSlot_.value() && (voltsInputSlot_.value() > MIN_VOLTS)
+			? AMPS
+			: 0.0;
+	}
 
-	bco::slot<bool>& Slot() { return slot_; }
+	bco::slot<bool>& Slot() { return enabledSlot_; }			// Switch: is beacon on
+	bco::slot<double>& VoltsInputSlot() { return voltsInputSlot_; }			// Volts input from power
+
 private:
 
-	bco::slot<bool> slot_;
+	const double AMPS = 2.0;
+	const double MIN_VOLTS = 24.0;
+
+	bco::slot<bool>			enabledSlot_;
+	bco::slot<double>		voltsInputSlot_;
 
 	void SetActive() {
-		auto hasPower = true;
-		auto state = (hasPower && slot_.value());
+		auto state = ((voltsInputSlot_.value() > MIN_VOLTS) && enabledSlot_.value());
 		specStrobeLeft_.active = state;
 		specStrobeRight_.active = state;
 	}

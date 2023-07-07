@@ -120,9 +120,6 @@
     <ClInclude Include="AirBrake.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="CryogenicTank.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Clock.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -228,6 +225,12 @@
     <ClInclude Include="Airspeed.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="bc_orbiter\cryogenic_tank.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\generic_tank.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">
@@ -285,9 +288,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AirBrake.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="CryogenicTank.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="Clock.cpp">

@@ -21,23 +21,25 @@
 #include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\Animation.h"
 #include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter\Control.h"
+
 #include "IConsumable.h"
 #include "PowerSystem.h"
 #include "SR71r_mesh.h"
 
 class PowerSystem;
 
-const double OXYGEN_BURN_RATE   = 0.00025;		// 2 lbs per hour @ 100 amps.  lbs->liter 0.453, so 0.906 per hour or 0.00025 per second.
-const double HYDROGEN_BURN_RATE = 0.00004;		// 0.3 lbs per hour @ 100 amps.  
+const double OXYGEN_BURN_RATE_PER_SEC   = 0.00025;		// 2 lbs per hour @ 100 amps.  lbs->liter 0.453, so 0.906 per hour or 0.00025 per second.
+const double HYDROGEN_BURN_RATE_PER_SEC = 0.00004;		// 0.3 lbs per hour @ 100 amps.  
 
 namespace bco = bc_orbiter;
 
 /**	Fuel cell.
 	Models the plane's fuel cell.
 
-	The fuel cell uses oxygen and hydrogen to produce electricity.  The fuel cell requires the main curcuit
-	to be powered in order to start, but can then power itself.  It has a fixed amp draw while operating.
-	When operating the fuel call can provide 28 volts of power to the main circuit.
+	The fuel cell uses oxygen and hydrogen to produce electricity.  The fuel cell does require a 28v source to run (start up)
+	so there must be battery or external connection to start the fuel cell.  When operating it provides 28 volts of power.  
+	Resource burn rate will be dependent on the current ships amp usage, which comes from the main power system.
 
 	To Start:
 	- Connect external power to the main circuit.
@@ -55,45 +57,36 @@ namespace bco = bc_orbiter;
 		
 */
 class FuelCell : 
-	public bco::PoweredComponent
+	public bco::vessel_component,
+	public bco::power_consumer,
+	public bco::post_step
 {
 	const double MAX_VOLTS = 28.0;
+	const double MIN_VOLTS = 20.0;
+	const double AMP_DRAW =	  4.0;
 
 public:
-	FuelCell(bco::BaseVessel* vessel, double amps);
-
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
+	FuelCell(bco::consumable& hydrogen, bco::consumable& oxygen);
 
 	/**
 		Draw down the oxygen and hydrogen levels based on the current amp load.
 	*/
-	void Step(double simt, double simdt, double mjd);
-	virtual double CurrentDraw() override;
 
-	virtual void ChangePowerLevel(double level) override
-	{
-		bco::PoweredComponent::ChangePowerLevel(level);
-		SetIsFuelCellPowerAvailable(HasPower() && slotIsEnabled_.value());
-	}
+	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
+	double amp_load() override;
 
+	// Inputs
+	bco::slot<bool>&		IsEnabledSlot()			{ return slotIsEnabled_; }			// Switch:  Main fuel cell enabled
+	bco::slot<double>&		AmpLoadSlot()			{ return slotAmpLoad_; }			// Current amps in use.  Impacts resource usage.
+	bco::slot<double>&		VoltsInputSlot()		{ return slotVoltsInput_; }			// Volts input from power
 
-	bool IsFuelCellPowerAvailable()
-	{
-		return isFuelCellAvailable_; 
-	}
-
-	bco::signal<double>& AvailablePowerSignal() { return sigAvailPower_; }
-	bco::signal<bool>& IsAvailableSignal() { return sigIsAvail_; }
-
-	bco::slot<bool>&	IsEnabledSlot() { return slotIsEnabled_; }
-	bco::slot<double>&	AmpLoadSlot()	{ return slotAmpLoad_; }
-
-	void SetOxygenSystem(	IConsumable* os)	{ oxygenSystem_ = os; }
-	void SetHydrogenSytem(	IConsumable* hs)	{ hydrogenSystem_ = hs; }
+	// Outputs
+	bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
+	bco::signal<bool>&		IsAvailableSignal()		{ return sigIsAvail_; }				// Is fc power available
 
 private:
 		
+	bool IsPowered() const { return slotIsEnabled_.value() && (slotVoltsInput_.value() > MIN_VOLTS); }
 	void SetIsFuelCellPowerAvailable(bool newValue);
 
 	bco::signal<double>	sigAvailPower_;
@@ -101,14 +94,15 @@ private:
 
 	bco::slot<bool>		slotIsEnabled_;
 	bco::slot<double>	slotAmpLoad_;		// Comes from the power system.
+	bco::slot<double>	slotVoltsInput_;
 
 	bool				isFuelCellAvailable_;
 	double				availablePower_;
 	double				ampDrawFactor_{ 0.0 };
 
 	PowerSystem*		powerSystem_;
-	IConsumable*		oxygenSystem_;
-	IConsumable*		hydrogenSystem_;
+	bco::consumable&	oxygenSystem_;
+	bco::consumable&	hydrogenSystem_;
 
 	const char*			ConfigKey = "FUELCELL";
 };
