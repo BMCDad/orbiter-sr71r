@@ -22,57 +22,43 @@
 #include "SR71r_mesh.h"
 
 
-RetroEngines::RetroEngines(bco::BaseVessel* vessel, double amps) : 
-    PoweredComponent(vessel, amps, 10),
+RetroEngines::RetroEngines() : 
     retroDoorsSlot_([&](bool v) { if (!v) { EnableRetros(false); } })
 {
-    //swRetroDoors_.OnFunction([this] {});
-    //swRetroDoors_.OffFunction([this] {EnableRetros(false); });
     animRetroDoors_.SetTargetFunction([this] {EnableRetros(true); });
 }
 
 
-void RetroEngines::Step(double simt, double simdt, double mjd)
+void RetroEngines::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
 {
-    if (HasPower())
-    {
+    if (slotVoltsInput_.value() > MIN_VOLTS) {
         animRetroDoors_.Step(retroDoorsSlot_.value() ? 1.0 : 0.0, simdt);
     }
 }
 
-double RetroEngines::CurrentDraw()
+void RetroEngines::handle_set_class_caps(bco::BaseVessel& vessel)
 {
-    return (HasPower() && ((animRetroDoors_.GetState() > 0.0) && (animRetroDoors_.GetState() < 1.0)))
-        ? PoweredComponent::CurrentDraw()
-        : 0.0;
-}
+    auto main = vessel.GetMainMeshIndex();
 
-void RetroEngines::OnSetClassCaps()
-{
-    auto vessel = GetBaseVessel();
-    auto main = vessel->GetMainMeshIndex();
-
-//    swRetroDoors_.Setup(vessel);
-
-    auto aid = vessel->CreateVesselAnimation(&animRetroDoors_, 0.2);
-    vessel->AddVesselAnimationComponent(aid, main, &gpDoors_);
+    auto aid = vessel.CreateVesselAnimation(&animRetroDoors_, 0.2);
+    vessel.AddVesselAnimationComponent(aid, main, &gpDoors_);
 
 
-    retroThrustHandles_[0] = vessel->CreateThruster(
+    retroThrustHandles_[0] = vessel.CreateThruster(
         bm::main::ThrustRetroP_location,
         _V(0, 0, -1),
         RETRO_THRUST,
-        vessel->MainPropellant(),
+        vessel.MainPropellant(),
         THRUST_ISP);
 
-    retroThrustHandles_[1] = vessel->CreateThruster(
+    retroThrustHandles_[1] = vessel.CreateThruster(
         bm::main::ThrustRetroS_location,
         _V(0, 0, -1),
         RETRO_THRUST,
-        vessel->MainPropellant(),
+        vessel.MainPropellant(),
         THRUST_ISP);
 
-    vessel->CreateThrusterGroup(retroThrustHandles_, 2, THGROUP_RETRO);
+    vessel.CreateThrusterGroup(retroThrustHandles_, 2, THGROUP_RETRO);
 
     EXHAUSTSPEC es_retro[2] =
     {
@@ -86,40 +72,9 @@ void RetroEngines::OnSetClassCaps()
         PARTICLESTREAMSPEC::ATM_PLOG, 1e-5, 0.1
     };
 
-    for (auto i = 0; i < 2; i++) vessel->AddExhaust(es_retro + i);
-    vessel->AddExhaustStream(retroThrustHandles_[0], _V(-4.38, 0, 3), &exhaust_retro);
-    vessel->AddExhaustStream(retroThrustHandles_[1], _V(4.38, 0, 3), &exhaust_retro);
-}
-
-bool RetroEngines::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
-{
-    if (_strnicmp(key, ConfigKey, 5) != 0)
-    {
-        return false;
-    }
-
-    int hover;
-    double hoveranim;
-
-    sscanf_s(configLine + 5, "%i%lf", &hover, &hoveranim);
-
-    // TODO swRetroDoors_.SetState((hover == 0) ? 0.0 : 1.0);
-    animRetroDoors_.SetState(hoveranim);
-
-    // TODO EnableRetros(swRetroDoors_.IsOn());
-
-    return true;
-}
-
-void RetroEngines::OnSaveConfiguration(FILEHANDLE scn) const
-{
-    char cbuf[256];
-    auto val = 0; // TODO (swRetroDoors_.GetState() == 0.0) ? 0 : 1;
-
-    auto hover = animRetroDoors_.GetState();
-
-    sprintf_s(cbuf, "%i %0.3lf", val, hover);
-    oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+    for (auto i = 0; i < 2; i++) vessel.AddExhaust(es_retro + i);
+    vessel.AddExhaustStream(retroThrustHandles_[0], _V(-4.38, 0, 3), &exhaust_retro);
+    vessel.AddExhaustStream(retroThrustHandles_[1], _V(4.38, 0, 3), &exhaust_retro);
 }
 
 void RetroEngines::EnableRetros(bool isEnabled)
@@ -129,23 +84,24 @@ void RetroEngines::EnableRetros(bool isEnabled)
         // Enable retros if doors are open.
         if (animRetroDoors_.GetState() == 1.0)
         {
-            GetBaseVessel()->SetThrusterResource(retroThrustHandles_[0], GetBaseVessel()->MainPropellant());
-            GetBaseVessel()->SetThrusterResource(retroThrustHandles_[1], GetBaseVessel()->MainPropellant());
+            // TODO
+            //GetBaseVessel()->SetThrusterResource(retroThrustHandles_[0], GetBaseVessel()->MainPropellant());
+            //GetBaseVessel()->SetThrusterResource(retroThrustHandles_[1], GetBaseVessel()->MainPropellant());
         }
     }
     else
     {
         // Disable retros, regardless of door position.
-        GetBaseVessel()->SetThrusterResource(retroThrustHandles_[0], nullptr);
-        GetBaseVessel()->SetThrusterResource(retroThrustHandles_[1], nullptr);
+        //GetBaseVessel()->SetThrusterResource(retroThrustHandles_[0], nullptr);
+        //GetBaseVessel()->SetThrusterResource(retroThrustHandles_[1], nullptr);
     }
 }
 
-bool RetroEngines::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void RetroEngines::handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
-    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return false;
+    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 
-    if (animRetroDoors_.GetState() == 0.0) return false;
+    if (animRetroDoors_.GetState() == 0.0) return;
 
     if ((animRetroDoors_.GetState() == 1.0) || (fmod(oapiGetSimTime(), 1.0) < 0.5))
     {
@@ -175,9 +131,5 @@ bool RetroEngines::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* s
         skp->Line(ptx, pty, ptx, ptyt);
         skp->Line(ptx, pty, ptxl, ptyt);
         skp->Line(ptx, pty, ptxr, ptyt);
-
-        return true;
     }
-
-    return false;
 }

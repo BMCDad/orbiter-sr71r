@@ -23,11 +23,11 @@
 SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) : 
 bco::BaseVessel(hvessel, flightmodel),
 meshVirtualCockpit_(nullptr),
-apu_(                   this,   APU_AMPS),
+//apu_(                   this,   APU_AMPS),
 //autoPilot_(             this,   AUTOP_AMPS),
 //avionics_(              this,   AVIONICS_AMPS),
-cargoBayController_(    this,   CARGO_AMPS),
-canopy_(                this,   CANOPY_AMPS),
+//cargoBayController_(    this,   CARGO_AMPS),
+//canopy_(                this,   CANOPY_AMPS),
 //fuelCell_(              this,   FUELCELL_AMPS),
 headsUpDisplay_(        this,   HUD_AMPS),
 hydrogenTank_(					HYDRO_SUPPLY, HYDROGEN_FILL_RATE, HYDRO_NER),
@@ -35,6 +35,8 @@ landingGear_(           this),
 mfdLeft_(               this,   MFD_AMPS),
 mfdRight_(              this,   MFD_AMPS),
 navModes_(              *this),
+mainFuelTank_(					MAX_FUEL, FUEL_TRANFER_RATE),
+rcsFuelTank_(					MAX_RCS_FUEL, FUEL_TRANFER_RATE),
 oxygenTank_(					O2_SUPPLY, OXYGEN_FILL_RATE, O2_NER),
 propulsionController_(  this,   PROPULS_AMPS),
 rcsSystem_(             this,   RCS_AMPS),
@@ -43,15 +45,15 @@ statusBoard_(           this,   STATUS_AMPS),
 airBrake_(              this),
 //lights_(                this,   LIGHTS_AMPS),  TODO
 //clock_(                 this),
-shutters_(              this),
+shutters_(              this)
 //computer_(              this,   COMPUTER_AMPS),
-hoverEngines_(this, HOVER_AMPS),
-retroEngines_(this, RETRO_AMPS)
+//hoverEngines_(this, HOVER_AMPS),
+//retroEngines_(this, RETRO_AMPS)
 {
-	RegisterComponent(&apu_);
+//	RegisterComponent(&apu_);
 //	RegisterComponent(&avionics_);
-	RegisterComponent(&cargoBayController_);
-	RegisterComponent(&canopy_);
+//	RegisterComponent(&cargoBayController_);
+//	RegisterComponent(&canopy_);
 //	RegisterComponent(&fuelCell_);
 	RegisterComponent(&headsUpDisplay_);
 //	RegisterComponent(&hydrogenTank_);
@@ -65,12 +67,12 @@ retroEngines_(this, RETRO_AMPS)
 	RegisterComponent(&rcsSystem_);
 	RegisterComponent(&surfaceControl_);
 	RegisterComponent(&statusBoard_);
-	RegisterComponent(&airBrake_);
+//	RegisterComponent(&airBrake_);
 //	RegisterComponent(&clock_);
 	RegisterComponent(&shutters_);
 	//RegisterComponent(&computer_);
-	RegisterComponent(&hoverEngines_);
-	RegisterComponent(&retroEngines_);
+//	RegisterComponent(&hoverEngines_);
+//	RegisterComponent(&retroEngines_);
 
 	// Add Controls
 	/*  TOGGLE SWITCHES */
@@ -244,25 +246,37 @@ retroEngines_(this, RETRO_AMPS)
 
 	//
 	AddComponent(&aeroData_);
+	AddComponent(&airBrake_);
 	AddComponent(&airspeed_);
 	AddComponent(&altimeter_);
 	AddComponent(&beacon_);
+	AddComponent(&canopy_);
+	AddComponent(&cargobay_);
 	AddComponent(&clock_);
 	AddComponent(&fuelCell_);
+	AddComponent(&hoverEngines_);
 	AddComponent(&hydrogenTank_);
 	AddComponent(&hsi_);
 	AddComponent(&navLight_);
 	AddComponent(&oxygenTank_);
+	AddComponent(&retroEngines_);
 	AddComponent(&strobe_);
 
 	// Wire up controls.
 	powerSystem_.add_user(&aeroData_);
 	powerSystem_.add_user(&beacon_);
+	powerSystem_.add_user(&canopy_);
+	powerSystem_.add_user(&cargobay_);
+	powerSystem_.add_user(&hoverEngines_);
 	powerSystem_.add_user(&hydrogenTank_);
 	powerSystem_.add_user(&navLight_);
 	powerSystem_.add_user(&oxygenTank_);
 	powerSystem_.add_user(&strobe_);
 	powerSystem_.add_user(&fuelCell_);
+	powerSystem_.add_user(&apu_);
+	powerSystem_.add_user(&mainFuelTank_);
+	powerSystem_.add_user(&rcsFuelTank_);
+	powerSystem_.add_user(&retroEngines_);
 
 	// Connect consumables
 
@@ -298,8 +312,8 @@ retroEngines_(this, RETRO_AMPS)
 	bco::connect( switchCanopyOpen.Signal(),				canopy_.CanopyOpenSlot());
 
 	// Cargo
-	bco::connect( switchCargoPower.Signal(),				cargoBayController_.PowerEnabledSlot());
-	bco::connect( switchCargoOpen.Signal(),					cargoBayController_.CargoOpenSlot());
+	bco::connect( switchCargoPower.Signal(),				cargobay_.PowerEnabledSlot());
+	bco::connect( switchCargoOpen.Signal(),					cargobay_.CargoOpenSlot());
 
 	// APU
 	bco::connect( switchApuPower.Signal(),					apu_.IsEnabledSlot());
@@ -467,14 +481,14 @@ void SR71Vessel::SetupVesselComponents()
 	surfaceControl_.SetAPU(&apu_);
 
 	// APU
-	apu_.SetPropulsionControl(&propulsionController_);
+//	apu_.SetPropulsionControl(&propulsionController_);
 
 	// Fuelcell
 	//fuelCell_.SetHydrogenSytem(&hydrogenTank_);
 	//fuelCell_.SetOxygenSystem(&oxygenTank_);
 
 	// Status board
-	statusBoard_.SetCargoBay(&cargoBayController_);
+//	statusBoard_.SetCargoBay(&cargoBayController_);
 //	statusBoard_.SetAvionics(&avionics_);
 	statusBoard_.SetPower(&powerSystem_);
 	statusBoard_.SetPropulsion(&propulsionController_);

@@ -22,75 +22,49 @@
 #include "CargoBayController.h"
 #include "SR71r_mesh.h"
 
-bool CargoBayController::CargoBayHasPower() 
-{ 
-    return HasPower() && slotCargoPowered_.value();
-}
+CargoBayController::CargoBayController()
+{ }
 
-CargoBayController::CargoBayController(bco::BaseVessel* vessel, double amps) :
-    PoweredComponent(vessel, amps, 26.0),
-    slotCargoPowered_([&](bool v) { powerSwitchOn_ = v; }),
-    slotCargoOpenClose_([&](bool v) {})
+void CargoBayController::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
 {
-}
-
-double CargoBayController::CurrentDraw()
-{
-    return ((animCargoBayDoors_.GetState() > 0.0) && (animCargoBayDoors_.GetState() < 1.0))
-        ? PoweredComponent::CurrentDraw()
-        : 0.0;
-}
-
-void CargoBayController::Step(double simt, double simdt, double mjd)
-{
-	if (CargoBayHasPower())
+	if (IsPowered())
 	{
         animCargoBayDoors_.Step(slotCargoOpenClose_.value() ? 1.0 : 0.0, simdt);
 	}
 }
 
-bool CargoBayController::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool CargoBayController::handle_load_state(const std::string& line)
 {
-    if (_strnicmp(key, ConfigKeyCargo, 8) != 0) return false;
+    // [a]  a = animation position
 
-    // TODO
- //   int isOn;
-	//int isOpen;
-	//double state;
+    int animPosition = 0;
 
-	//sscanf_s(configLine + 8, "%d%d%lf", &isOn, &isOpen, &state);
+    std::istringstream in(line);
 
-	//swCargoPower_.SetState((isOn == 0) ? 0.0 : 1.0);
-	//swCargoOpen_.SetState((isOpen == 0) ? 0.0 : 1.0);
-	//animCargoBayDoors_.SetState(state);
- //   
- //   // Set the actual animation to the starting state.
- //   GetBaseVessel()->SetAnimationState(idCargoAnim_, state);
-
-	return true;
+    if (in >> animPosition) {
+        animCargoBayDoors_.SetState(animPosition);
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
-void CargoBayController::OnSaveConfiguration(FILEHANDLE scn) const
+std::string CargoBayController::handle_save_state()
 {
-    // TODO
-	//char cbuf[256];
+    std::ostringstream os;
 
-	//sprintf_s(cbuf, "%d %d %lf",
-	//	((swCargoPower_.GetState() == 0) ? 0 : 1),
-	//	((swCargoOpen_.GetState() == 0) ? 0 : 1),
-	//	animCargoBayDoors_.GetState());
-
-	//oapiWriteScenario_string(scn, (char*)ConfigKeyCargo, cbuf);
+    os << animCargoBayDoors_.GetState();
+    return os.str();
 }
 
-void CargoBayController::OnSetClassCaps()
+void CargoBayController::handle_set_class_caps(bco::BaseVessel& vessel)
 {
-    auto vessel = GetBaseVessel();
-    auto mIdx = vessel->GetMainMeshIndex();
+    auto mIdx = vessel.GetMainMeshIndex();
 
-    idCargoAnim_ = vessel->CreateVesselAnimation(&animCargoBayDoors_, 0.01);
-    vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoLeftFront_);
-    vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoRightFront_);
-    vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoLeftMain_);
-    vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoRightMain_);
+    auto id = vessel.CreateVesselAnimation(&animCargoBayDoors_, 0.01);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftFront_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightFront_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftMain_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightMain_);
 }

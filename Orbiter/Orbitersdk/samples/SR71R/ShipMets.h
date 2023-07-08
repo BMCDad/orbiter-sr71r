@@ -33,6 +33,12 @@ const double HOVER_THRUST       = 100000        ; // * 3
 const double RCS_THRUST         =   5000        ; // (DG is 2500)
 const double ELEV_AREA          =      0.2      ;
 
+const double FUEL_FILL_RATE		=	  40.0		; // kg per sec.
+const double FUEL_TRANFER_RATE	=     20.0		;		// Transfers between tanks will be slow.
+const double FUEL_DUMP_RATE		=     80.0		;
+const double FUEL_MINIMUM_DUMP	=   8400.0 * 0.4536;	// LBS. -> kg.
+
+
 const VECTOR3 PMI               = _V(52.72,  59.60,  7.36);		// From Shipedit
 const VECTOR3 CROSSSECTIONS     = _V(51.78, 233.47, 10.20);     // From Shipedit
 const VECTOR3 ROTDRAG           = _V( 0.20,   0.26,  0.04);		// From DG (for now).

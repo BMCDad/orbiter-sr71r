@@ -29,11 +29,6 @@ namespace bco = bc_orbiter;
 
 class VESSEL3;
 
-const double FUEL_FILL_RATE     =  170.0;
-const double FUEL_TRANFER_RATE  =   20.0;	// Transfers between tanks will be slow.
-const double FUEL_DUMP_RATE     =  130.0;
-const double FUEL_MINIMUM_DUMP  = 8400.0 * 0.4536;	// LBS. -> kg.
-
 /**
 Manages propulsion and propellents for the vessel including thrust limiter and fuel
 fill, transfer, and dump functions.

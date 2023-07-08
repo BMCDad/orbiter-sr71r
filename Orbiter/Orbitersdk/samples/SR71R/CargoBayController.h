@@ -18,9 +18,10 @@
 
 #include "OrbiterSDK.h"
 
-#include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\Animation.h"
 #include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter\Control.h"
+#include "ShipMets.h"
 
 #include "SR71r_mesh.h"
 
@@ -46,44 +47,45 @@ namespace bco = bc_orbiter;
 	b - 0/1 Open close switch closed/open.
 	c - 0.0-1.0 current door position.
 */
-class CargoBayController : public bco::PoweredComponent
+class CargoBayController : 
+    public bco::vessel_component,
+    public bco::set_class_caps,
+    public bco::power_consumer,
+    public bco::post_step,
+    public bco::manage_state
 {
 public:
-	CargoBayController(bco::BaseVessel* vessel, double amps);
+	CargoBayController();
 
-	virtual void OnSetClassCaps() override;
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
-	/**
-		We override from the base class because the calculation for this
-		is determined by which doors are currently in motion.
-	*/
-	virtual double CurrentDraw() override;
+    // power_consumer
+    double amp_load() override { return IsPowered() && IsMoving() ? CARGO_AMPS : 0.0; }
 
-	/**
-		Provide time steps for the animations.
-	*/
-	void Step(double simt, double simdt, double mjd);
+    // post_step
+    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
-//    double				GetCargoBayState();
+    // manage_state
+    bool handle_load_state(const std::string& line) override;
+    std::string handle_save_state() override;
 
-    bco::slot<bool>& PowerEnabledSlot() { return slotCargoPowered_; }
-    bco::slot<bool>& CargoOpenSlot() { return slotCargoOpenClose_; }
 
+    // Inputs
+    bco::slot<bool>&    PowerEnabledSlot()  { return slotCargoPowered_; }
+    bco::slot<bool>&    CargoOpenSlot()     { return slotCargoOpenClose_; }
+    bco::slot<double>   VoltsLevelSlot()    { return slotVoltsInput_; }         // Volts input from power.
 private:
-	bool CargoBayHasPower();
+    const double MIN_VOLTS = 20.0;
 
-    const char*			    ConfigKeyCargo = "CARGOBAY";
+	bool IsPowered() { return slotCargoPowered_.value() && (slotVoltsInput_.value() > MIN_VOLTS); }
+    bool IsMoving() { return (animCargoBayDoors_.GetState() > 0.0) && (animCargoBayDoors_.GetState() < 1.0); }
 
     bco::slot<bool>         slotCargoPowered_;
     bco::slot<bool>         slotCargoOpenClose_;
-
-    bool                    powerSwitchOn_{ false };
+    bco::slot<double>       slotVoltsInput_;
 
     bco::Animation		    animCargoBayDoors_{ 0.01 };
-
-    UINT idCargoAnim_{ 0 };
 
     bco::AnimationGroup     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
                                                     bm::main::Bay1AxisPA_location, bm::main::Bay1AxisPF_location,

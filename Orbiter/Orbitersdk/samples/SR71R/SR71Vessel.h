@@ -10,6 +10,7 @@
 #include "bc_orbiter\transform_display.h"
 #include "bc_orbiter\flat_roll.h"
 #include "bc_orbiter\cryogenic_tank.h"
+#include "bc_orbiter\generic_tank.h"
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
@@ -92,11 +93,11 @@ private:
 
 
 	// Components:
-	APU						apu_;
+//	APU						apu_;
 //	AutoPilot				autoPilot_;
 //	Avionics				avionics_;
-	CargoBayController		cargoBayController_;
-    Canopy                  canopy_;
+//	CargoBayController		cargoBayController_;
+//    Canopy                  canopy_;
 //	FuelCell				fuelCell_;
 	HUD						headsUpDisplay_;
 //	CryogenicTank			hydrogenTank_;
@@ -109,11 +110,11 @@ private:
 	RCSSystem				rcsSystem_;
 	SurfaceController		surfaceControl_;
 	StatusBoard				statusBoard_;
-	AirBrake				airBrake_;
+//	AirBrake				airBrake_;
 	Shutters				shutters_;
 //	FC::FlightComputer		computer_;
-    HoverEngines            hoverEngines_;
-    RetroEngines            retroEngines_;
+//    HoverEngines            hoverEngines_;
+//    RetroEngines            retroEngines_;
 
 	// DRAG
 	double					bDrag{ 0.0 };
@@ -121,25 +122,37 @@ private:
 
 	// ** COMPONENTS **
 	AeroData			aeroData_;
+	AirBrake			airBrake_;
 	Airspeed			airspeed_;
 	Altimeter			altimeter_;
 	Beacon				beacon_;
+	Canopy				canopy_;
+	CargoBayController	cargobay_;
 	Clock				clock_;
+	HoverEngines		hoverEngines_;
 	HSI					hsi_;
 	bco::cryogenic_tank	hydrogenTank_;
 	NavLight			navLight_;
 	bco::cryogenic_tank	oxygenTank_;
 	PowerSystem			powerSystem_;
+	RetroEngines		retroEngines_;
 	Strobe				strobe_;
 	
 	FuelCell			fuelCell_	{ oxygenTank_, hydrogenTank_ };
 
+	bco::generic_tank	mainFuelTank_;
+	bco::generic_tank	rcsFuelTank_;
+
+	APU					apu_		{ mainFuelTank_ };
+
 
 	// Map components that handle config state with a key for that component.
 	std::map <std::string, bco::manage_state*>		mapStateManagement_{
-		{"CLOCK",		&clock_},
-		{"POWER",		&powerSystem_},
-		{"AERODATA",	&aeroData_}
+		  {"CLOCK",		&clock_			}
+		, {"POWER",		&powerSystem_	}
+		, {"AERODATA",	&aeroData_		}
+		, {"CANOPY",	&canopy_		}
+		, {"CARGO",		&cargobay_		}
 	};
 
 	// TRY ADDING A NEW CONTROL

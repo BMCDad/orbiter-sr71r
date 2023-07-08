@@ -25,6 +25,7 @@ namespace bc_orbiter {
 
 	/**
 	Base class for a basic tank that reports level, can be filled via a pump, and can be drawn from.
+	capacity is kg, fillrate kgs per second
 	*/
 	class generic_tank :
 		public vessel_component,

@@ -188,7 +188,7 @@ void StatusBoard::DrawAirBrakeMsg(DEVMESHHANDLE devMesh)
 	auto ofs = OffOffset;
 	if (nullptr != airBrake_)
 	{
-		ofs = (airBrake_->GetAirBrakeState() > 0.0) ? WrnOffset : OffOffset;
+		ofs = WrnOffset; // TODO (airBrake_->GetAirBrakeState() > 0.0) ? WrnOffset : OffOffset;
 	}
 
 	//msgAirBrake_.SetTranslate(_V(ofs, 0.0, 0.0));

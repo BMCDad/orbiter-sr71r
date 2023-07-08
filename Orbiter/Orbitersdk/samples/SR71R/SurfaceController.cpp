@@ -42,7 +42,7 @@ void SurfaceController::Step(double simt, double simdt, double mjd)
 	}
 
 	// Determine if our hydro state has change, enable or disable controls.
-	auto hydPress = apu_->GetHydraulicLevel();
+	auto hydPress = 1.0; // TODO get from signal apu_->GetHydraulicLevel();
 	if (hydPress != prevHydraulicState_)
 	{
 		if (prevHydraulicState_ == 0.0)

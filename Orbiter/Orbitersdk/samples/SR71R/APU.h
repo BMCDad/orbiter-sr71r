@@ -21,6 +21,7 @@
 #include "bc_orbiter\Animation.h"
 #include "bc_orbiter\IAnimationState.h"
 #include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter\Control.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
@@ -49,39 +50,42 @@ class VESSEL3;
 	None.
 */
 class APU : 
-	public bco::PoweredComponent
+	public bco::vessel_component,
+	public bco::post_step,
+	public bco::power_consumer
 {
 public:
-	APU(bco::BaseVessel* vessel, double amps);
+	APU(bco::consumable& main_fuel);
 
 	// *** PoweredComponent ***
 	/**
 		Draws a fixed amp load when the main circuit is powered and
 		the APU switch is on.
 	*/
-	virtual double CurrentDraw() override;
 
-	// *** Component ***
+	// post_step
+	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
-    
-    void Step(double simt, double simdt, double mjd);
+	// power_consumer
+	double amp_load() override { return IsPowered() ? AMP_DRAW : 0.0; }
 
-    // *** APU ***
-	double GetHydraulicLevel() const;
-	void SetPropulsionControl(PropulsionController* pc);
+	// Inputs:
+	bco::slot<bool>&		IsEnabledSlot()		{ return slotIsEnabled_; }			// Switch: main APU on/off switch
+	bco::slot<double>&		VoltsInputSlot()	{ return slotVoltsInput_; }			// Power supply volts.
 
-	bco::slot<bool>&		IsEnabledSlot()		{ return slotIsEnabled_; }			// Driven by main APU on/off switch
-	
 	bco::signal<double>&	HydroPressSignal()	{ return signalHydPressure_; }		// Drives the hydraulic pressure gauge
 
 private:
-	PropulsionController*	propulsionControl_;
+	const double MIN_VOLTS = 24.0;
+	const double AMP_DRAW = 5.0;
 
-	const char*				ConfigKey = "APU";
+	bool IsPowered() { return slotIsEnabled_.value() && (slotVoltsInput_.value() > MIN_VOLTS); }
+
 
 	bco::slot<bool>			slotIsEnabled_;
+	bco::slot<double>		slotVoltsInput_;
 
 	bco::signal<double>		signalHydPressure_;
+
+	bco::consumable&		main_fuel_;
 };

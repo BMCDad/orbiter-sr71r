@@ -21,8 +21,10 @@
 #include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\Animation.h"
 #include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter\Control.h"
 
 #include "SR71r_mesh.h"
+#include "ShipMets.h"
 
 namespace bco = bc_orbiter;
 
@@ -56,43 +58,47 @@ on_off_input (canopy open):
 - inputs:
 :slot - has power
 */
-class Canopy : public bco::PoweredComponent
+class Canopy : 
+    public bco::vessel_component,
+    public bco::set_class_caps,
+    public bco::power_consumer,
+    public bco::post_step,
+    public bco::manage_state
 {
 public:
-    Canopy(bco::BaseVessel* vessel, double amps);
+    Canopy();
 
-    virtual void OnSetClassCaps() override;
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
-    /**
-    The draw is only active when in motion.
-    */
-    virtual double CurrentDraw() override;
+    // power_consumer
+    double amp_load() override { return IsPowered() && CanopyIsMoving() ? CANOPY_AMPS : 0.0; }
 
-    /**
-    Provide time steps for the animations.
-    */
-    void Step(double simt, double simdt, double mjd);
+    // post_step
+    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
-    double				GetCanopyState();
+    // manage_state
+    bool handle_load_state(const std::string& line) override;
+    std::string handle_save_state() override;
 
-    bco::slot<bool>& PowerEnabledSlot() { return slotCanopyPowered_; }
-    bco::slot<bool>& CanopyOpenSlot() { return slotCanopyOpenClose_; }
+    // inputs
+    bco::slot<bool>&    PowerEnabledSlot()  { return slotCanopyPowered_; }      // Switch:  canopy power
+    bco::slot<bool>&    CanopyOpenSlot()    { return slotCanopyOpenClose_; }    // Switch:  canopy open on=open
+    bco::slot<double>   VoltsLevelSlot()    { return slotVoltsInput_; }         // Volts input from power.
 
 private:
-    bool CanopyHasPower();
-    bool CanopyIsMoving() { return CanopyHasPower() && (animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0); }
-
-    const char*			    ConfigKeyCanopy = "CANOPY";
+    const double MIN_VOLTS = 20.0;
+    
+    bool IsPowered() { return slotCanopyPowered_.value() && (slotVoltsInput_.value() > MIN_VOLTS); }
+    
+    bool CanopyIsMoving() { return IsPowered() && (animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0); }
 
     bco::Animation		    animCanopy_{ 0.2 };
     UINT                    idAnim_         { 0 };
 
     bco::slot<bool>         slotCanopyPowered_;
     bco::slot<bool>         slotCanopyOpenClose_;
-
-    bool                    powerSwitchOn_{ false };
+    bco::slot<double>       slotVoltsInput_;
 
     bco::AnimationGroup     gpCanopy_       { { bm::main::CanopyFO_id,
                                                 bm::main::ForwardCanopyWindow_id,

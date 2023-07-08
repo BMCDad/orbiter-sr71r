@@ -22,41 +22,46 @@
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
+#include "ShipMets.h"
 
 namespace bco = bc_orbiter;
 
-class RetroEngines : public bco::PoweredComponent
+class RetroEngines : 
+    public bco::vessel_component,
+    public bco::set_class_caps,
+    public bco::power_consumer,
+    public bco::post_step,
+    public bco::draw_hud
 {
 public:
-    RetroEngines(bco::BaseVessel* vessel, double amps);
+    RetroEngines();
 
-    virtual double CurrentDraw() override;
-    virtual void OnSetClassCaps() override;
-    virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-    virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
-	void Step(double simt, double simdt, double mjd);
+    // power_consumer
+    double amp_load() override { return (slotVoltsInput_.value() > MIN_VOLTS) && IsMoving() ? RETRO_AMPS : 0.0; }
 
-    double GetRetroDoorsState() { return animRetroDoors_.GetState(); }
-    bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+    // post_step
+    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
+
+    void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+
 
     bco::slot<bool>&    RetroDoorsSlot() { return retroDoorsSlot_; }
+    bco::slot<double>& VoltsInputSlot() { return slotVoltsInput_; }
 
 private:
+    const double MIN_VOLTS = 20.0;
+
+    bool IsMoving() { return (animRetroDoors_.GetState() > 0.0) && (animRetroDoors_.GetState() < 1.0); }
 
     bco::slot<bool>     retroDoorsSlot_;
+    bco::slot<double>   slotVoltsInput_;
 
     void EnableRetros(bool isEnabled);
 
-
     THRUSTER_HANDLE     retroThrustHandles_[2];
-
-    const char*	        ConfigKey = "RETRO";
-
-    //bco::VCToggleSwitch swRetroDoors_   {   bm::vc::swRetroDoors_id, 
-    //                                        bm::vc::swRetroDoors_location, 
-    //                                        bm::vc::DoorsRightAxis_location
-    //                                    };
 
     bco::Animation      animRetroDoors_ {   0.2};
 

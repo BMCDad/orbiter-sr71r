@@ -23,47 +23,45 @@
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
+#include "ShipMets.h"
 
 namespace bco = bc_orbiter;
 
-class HoverEngines : public bco::PoweredComponent
+class HoverEngines : 
+    public bco::vessel_component,
+    public bco::set_class_caps,
+    public bco::power_consumer,
+    public bco::post_step,
+    public bco::draw_hud
 {
 public:
-    HoverEngines(bco::BaseVessel* vessel, double amps);
+    HoverEngines();
 
-    virtual double CurrentDraw() override;
-    virtual void OnSetClassCaps() override;
-    virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-    virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
-    //bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-    //bool OnPanelMouseEvent(int id, int event) override;
-    //bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
+    // power_consumer
+    double amp_load() override { return (slotVoltsInput_.value() > MIN_VOLTS) && IsMoving() ? HOVER_AMPS : 0.0; }
 
-	void Step(double simt, double simdt, double mjd);
+    // post_step
+    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
-    double GetHoverDoorsState() { return animHoverDoors_.GetState(); }
-    bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+    void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-    bco::slot<bool>&    HoverOpenSlot() { return slotHoverOpen_; }
+    bco::slot<bool>&    HoverOpenSlot()     { return slotHoverOpen_; }
+    bco::slot<double>&  VoltsInputSlot()    { return slotVoltsInput_; }
 
 private:
+    const double MIN_VOLTS = 20.0;
+
+    bool IsMoving() { return (animHoverDoors_.GetState() > 0.0) && (animHoverDoors_.GetState() < 1.0); }
 
     void EnableHover(bool isEnabled);
 
     bco::slot<bool>     slotHoverOpen_;
+    bco::slot<double>   slotVoltsInput_;
 
     THRUSTER_HANDLE     hoverThrustHandles_[3];
-
-    const char*	        ConfigKey = "HOVER";
-
-    int                 hoverMouseId_;
-
-
-    //bco::VCToggleSwitch     swOpen_ {   bm::vc::swHoverDoor_id, 
-    //                                    bm::vc::swHoverDoor_location,  
-    //                                    bm::vc::DoorsRightAxis_location
-    //                                };
 
     bco::Animation          animHoverDoors_ {   0.2};
 
@@ -90,6 +88,4 @@ private:
                                                 (100 * RAD),
                                                 0, 1
                                             };
-
-    const int ID_DOOR = { GetBaseVessel()->GetIdForComponent(this) };
 };

@@ -20,58 +20,23 @@
 #include "Orbitersdk.h"
 #include "SR71r_mesh.h"
 
-APU::APU(bco::BaseVessel* vessel, double amps) :
-bco::PoweredComponent(vessel, amps, APU_MIN_VOLT),
-propulsionControl_(nullptr),
+APU::APU(bco::consumable& main_fuel) :
+main_fuel_(main_fuel),
 slotIsEnabled_([&](bool v) {})
 {
 }
 
-void APU::Step(double simt, double simdt, double mjd)
+void APU::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
 {
-	if ((nullptr == propulsionControl_) || !HasPower() || !slotIsEnabled_.value())
+	if (!IsPowered())
 	{
 		signalHydPressure_.fire(0.0);
 	}
 	else
 	{
 		auto fuelDraw = APU_BURN_RATE * simdt;
-		auto actualDraw = propulsionControl_->DrawRCSFuel(fuelDraw);
+		auto actualDraw = main_fuel_.draw(fuelDraw);
 
 		signalHydPressure_.fire((fuelDraw == actualDraw) ? 1.0 : 0.0);
 	}
 }
-
-double APU::CurrentDraw()
-{
-	return (HasPower() && slotIsEnabled_.value()) ? PoweredComponent::CurrentDraw() : 0.0;
-}
-
-bool APU::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
-{
-	if (_strnicmp(key, ConfigKey, 3) != 0)
-	{
-		return false;
-	}
-
-	int state;
-
-	sscanf_s(configLine + 3, "%i", &state);
-
-// TODO	swPower_.SetState((state == 0) ? 0.0 : 1.0);
-
-	return true;
-}
-
-void APU::OnSaveConfiguration(FILEHANDLE scn) const
-{
-	// TODO
-	//char cbuf[256];
-	//auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
-
-	//sprintf_s(cbuf, "%i", val);
-	//oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
-}
-
-double              APU::GetHydraulicLevel() const { return 0.0; } // TODO Make this a signal
-void                APU::SetPropulsionControl(PropulsionController* pc) { propulsionControl_ = pc; }

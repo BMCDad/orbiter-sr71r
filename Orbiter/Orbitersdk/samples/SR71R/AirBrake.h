@@ -18,6 +18,7 @@
 
 #include "bc_orbiter\Component.h"
 #include "bc_orbiter\Animation.h"
+#include "bc_orbiter\Control.h"
 #include "APU.h"
 
 #include "SR71r_mesh.h"
@@ -37,21 +38,23 @@ AIRBRAKE a
 a = 0.0 position, 0.0 closed, 1.0 fully open
 */
 class AirBrake :
-	public bco::Component
+	public bco::vessel_component,
+    public bco::set_class_caps,
+    public bco::post_step,
+    public bco::manage_state
 {
 public:
 	AirBrake(bco::BaseVessel* vessel);
 
-    // *** Component ***
-	virtual void OnSetClassCaps() override;
-	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
-    void Step(double simt, double simdt, double mjd);
+    // post_step
+    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
-    // *** AirBrake ***
-	double AirBrake::GetAirBrakeState();
+    // manage_state
+    bool handle_load_state(const std::string& line) override;
+    std::string handle_save_state() override;
 
     bco::slot<bool>&    IncreaseSlot()          { return increaseSlot_; }
     bco::slot<bool>&    DecreaseSlot()          { return decreaseSlot_; }
@@ -65,8 +68,6 @@ private:
 
 	double					dragFactor_;
     double                  position_{ 0.0 };
-
-	const char*				ConfigKey = "AIRBRAKE";
 
     // Animations:  animSurface is only active when we have hydraulic power, the external surface animations
     //              key off of that, as well as the drag factor.  animSwitch will show the desired state regardless

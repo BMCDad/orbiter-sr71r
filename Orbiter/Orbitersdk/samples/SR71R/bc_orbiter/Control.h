@@ -154,6 +154,7 @@ namespace bc_orbiter {
 
 	/**
 	Indicates the class uses electrical power from the main power system.
+	The consumer must be added to the power supply as a 'power_consumer*'.
 	*/
 	struct power_consumer {
 		/**
