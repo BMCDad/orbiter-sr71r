@@ -21,14 +21,16 @@
 #include "Canopy.h"
 #include "SR71r_mesh.h"
 
-Canopy::Canopy()
-{ } 
+Canopy::Canopy(bco::power_provider& pwr) :
+    power_(pwr)
+{ 
+    power_.attach_consumer(this);
+}
 
 void Canopy::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
 {
-    if (IsPowered())
-    {
-        animCanopy_.Step(slotCanopyOpenClose_.value() ? 1.0 : 0.0, simdt);
+    if (IsPowered()) {
+        animCanopy_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
     }
 }
 
@@ -63,7 +65,10 @@ void Canopy::handle_set_class_caps(bco::BaseVessel& vessel)
     auto vcIdx = vessel.GetVCMeshIndex();
     auto mIdx = vessel.GetMainMeshIndex();
 
-    idAnim_ = vessel.CreateVesselAnimation(&animCanopy_, 0.2);
-    vessel.AddVesselAnimationComponent(idAnim_, vcIdx, &gpCanopyVC_);
-    vessel.AddVesselAnimationComponent(idAnim_, mIdx, &gpCanopy_);
+    auto idAnim = vessel.CreateVesselAnimation(&animCanopy_, 0.2);
+    vessel.AddVesselAnimationComponent(idAnim, vcIdx, &gpCanopyVC_);
+    vessel.AddVesselAnimationComponent(idAnim, mIdx, &gpCanopy_);
+
+    vessel.AddControl(&switchOpen_);
+    vessel.AddControl(&switchPower_);
 }

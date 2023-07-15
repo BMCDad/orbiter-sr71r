@@ -31,16 +31,17 @@ namespace bc_orbiter {
 	class simple_event :
 		public control,
 		public vc_event_target,
-		public panel_event_target {
+		public panel_event_target,
+		public signaller 
+	{
 	public:
 		simple_event(
-			int const ctrlId,
 			const VECTOR3& vcLocation,
 			double vcRadius,
 			const RECT& pnlRect,
 			T data = T()
 		) :
-			control(ctrlId),
+			control(-1),
 			vcLocation_(vcLocation),
 			vcRadius_(vcRadius),
 			pnlRect_(pnlRect),
@@ -60,7 +61,8 @@ namespace bc_orbiter {
 
 		// event_target
 		bool on_event() override {
-			signal_.fire(data_);
+			signal_.fire(data_);		// Remove eventually
+			fire();
 			return true;
 		}
 

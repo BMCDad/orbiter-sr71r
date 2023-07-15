@@ -22,53 +22,46 @@
 
 #include <assert.h>
 
-Shutters::Shutters(bco::BaseVessel * vessel) :
-	bco::Component(vessel),
-	//visShuttersSideLeft_(	bm::vc::CanopyWindowInsideLeft_verts,		bm::vc::CanopyWindowInsideLeft_id, 6),
-	//visShuttersSideRight_(	bm::vc::CanopyWindowSI_verts,		bm::vc::CanopyWindowSI_id, 6),
-	//visShuttersFrontLeft_(	bm::vc::ForwardWindowInsideLeft_verts,		bm::vc::ForwardWindowInsideLeft_id, 3),
-	//visShuttersFrontRight_(	bm::vc::WindowSFI_verts,	bm::vc::WindowSFI_id, 3),
-	shuttersSlot_([&](bool v) { Update(); })
+Shutters::Shutters(bco::BaseVessel& vessel)
 {
-	//swShutters_.OnFunction([this] {Update(); });
-	//swShutters_.OffFunction([this] {Update(); });
-
-	//swShutters_.SetOff();
+	vessel.AddControl(&switchShutters_);
+	switchShutters_.attach([&]() { Update(); });
 }
 
-bool Shutters::OnLoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
+bool Shutters::handle_load_state(const std::string& line)
 {
-	if (_strnicmp(key, ConfigKey, 8) != 0)
-	{
-		return false;
-	}
+	//if (_strnicmp(key, ConfigKey, 8) != 0)
+	//{
+	//	return false;
+	//}
 
-	int isOpen;
+	//int isOpen;
 
-	sscanf_s(configLine + 8, "%i", &isOpen);
+	//sscanf_s(configLine + 8, "%i", &isOpen);
 
-	// TODO (isOpen == 1) ? swShutters_.SetOn() : swShutters_.SetOff();
+	//// TODO (isOpen == 1) ? swShutters_.SetOn() : swShutters_.SetOff();
 
 	return true;
 }
 
-void Shutters::OnSaveConfiguration(FILEHANDLE scn) const
+std::string Shutters::handle_save_state()
 {
-	char cbuf[256];
+	//char cbuf[256];
 
-	auto state = 0; // TODO = swShutters_.IsOn() ? 1 : 0;
+	//auto state = 0; // TODO = swShutters_.IsOn() ? 1 : 0;
 
-	sprintf_s(cbuf, "%i", state);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	//sprintf_s(cbuf, "%i", state);
+	//oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	return std::string();
 }
 
 void Shutters::Update()
 {
-	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-	if (devMesh == nullptr)
-	{
-		return;
-	}
+	//auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
+	//if (devMesh == nullptr)
+	//{
+	//	return;
+	//}
 
 	//auto trans = swShutters_.IsOn() ? 0.22 : 0.0;
 	auto trans = shuttersSlot_.value() ? 0.22 : 0.0;

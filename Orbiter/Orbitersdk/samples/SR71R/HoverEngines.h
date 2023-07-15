@@ -17,49 +17,57 @@
 #pragma once
 
 #include "Orbitersdk.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/on_off_input.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
 class HoverEngines : 
     public bco::vessel_component,
-    public bco::set_class_caps,
     public bco::power_consumer,
     public bco::post_step,
+    public bco::set_class_caps,
     public bco::draw_hud
 {
 public:
-    HoverEngines();
+    HoverEngines(bco::power_provider& pwr, bco::BaseVessel& vessel);
 
     // set_class_caps
     void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
     // power_consumer
-    double amp_load() override { return (slotVoltsInput_.value() > MIN_VOLTS) && IsMoving() ? HOVER_AMPS : 0.0; }
+    double amp_draw() const override { return IsMoving() ? 4.0 : 0.0; }
 
     // post_step
     void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
     void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-    bco::slot<bool>&    HoverOpenSlot()     { return slotHoverOpen_; }
-    bco::slot<double>&  VoltsInputSlot()    { return slotVoltsInput_; }
-
 private:
     const double MIN_VOLTS = 20.0;
 
-    bool IsMoving() { return (animHoverDoors_.GetState() > 0.0) && (animHoverDoors_.GetState() < 1.0); }
+    bco::power_provider& power_;
+    bco::BaseVessel& vessel_;
+
+    bool IsPowered() const { 
+        return 
+            power_.volts_available() > MIN_VOLTS; 
+    }
+    
+    bool IsMoving() const { 
+        return 
+            IsPowered() &&
+            (animHoverDoors_.GetState() > 0.0) && 
+            (animHoverDoors_.GetState() < 1.0); 
+    }
 
     void EnableHover(bool isEnabled);
-
-    bco::slot<bool>     slotHoverOpen_;
-    bco::slot<double>   slotVoltsInput_;
 
     THRUSTER_HANDLE     hoverThrustHandles_[3];
 
@@ -88,4 +96,12 @@ private:
                                                 (100 * RAD),
                                                 0, 1
                                             };
+
+    bco::on_off_input		switchOpen_     { { bm::vc::swHoverDoor_id },
+                                                bm::vc::swHoverDoor_location, bm::vc::DoorsRightAxis_location,
+                                                toggleOnOff,
+                                                bm::pnl::pnlDoorHover_id,
+                                                bm::pnl::pnlDoorHover_verts,
+                                                bm::pnl::pnlDoorHover_RC
+                                        };
 };

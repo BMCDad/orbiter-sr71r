@@ -20,16 +20,31 @@
 
 #include "AeroData.h"
 
-AeroData::AeroData() :
-	vessel_component(),
-	post_step(),
-//	enabledSlot_([&](bool v) {}),
-//	avionicsModeSlot_([&](bool v) { avionicsModeSignal_.fire(v ? AvionMode::AvionAtmo : AvionMode::AvionExo); }),
-	setCourseIncSlot_([&](bool v) { UpdateSetCourse(0.0175); setCourseIncSlot_.set(); }),
-	setCourseDecSlot_([&](bool v) { UpdateSetCourse(-0.0175); setCourseDecSlot_.set(); }),
-	setHeadingIncSlot_([&](bool v) { UpdateSetHeading(0.0175); setHeadingIncSlot_.set(); }),
-	setHeadingDecSlot_([&](bool v) { UpdateSetHeading(-0.0175); setHeadingDecSlot_.set(); })
-{}
+AeroData::AeroData(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+	power_(pwr)
+{
+	power_.attach_consumer(this);
+
+	vessel.AddControl(&switchAvionMode_);
+	vessel.AddControl(&switchAvionPower_);
+	vessel.AddControl(&switchNavMode_);
+
+	vessel.AddControl(&dialSetCourseDecrement_);
+	vessel.AddControl(&dialSetCourseIncrement_);
+	vessel.AddControl(&dialSetHeadingDecrement_);
+	vessel.AddControl(&dialSetHeadingIncrement_);
+
+	dialSetCourseDecrement_.attach([&]() { UpdateSetCourse(0.0175); });
+	dialSetCourseIncrement_.attach([&]() { UpdateSetCourse(-0.0175); });
+	dialSetHeadingDecrement_.attach([&]() { UpdateSetHeading(0.0175); });
+	dialSetHeadingIncrement_.attach([&]() { UpdateSetHeading(-0.0175); });
+
+	vessel.AddControl(&vsiHand_);
+	vessel.AddControl(&vsiActiveFlag_);
+	
+	vessel.AddControl(&attitudeDisplay_);
+	vessel.AddControl(&attitudeFlag_);
+}
 
 
 // post_step
@@ -41,7 +56,7 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	double bank		 = 0.0;
 	double pitch	 = 0.0;
 
-	isAeroDataActive_.fire(enabledSlot_.value() && (voltsInputSlot_.value() > MIN_VOLTS));
+	isAeroDataActive_.fire(IsPowered());
 
 	if (isAeroDataActive_.current()) {
 		gforce		= bco::GetVesselGs(&vessel);
@@ -58,12 +73,21 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	if (absSpd > 6000) absSpd = 6000;
 	double spRot = (1 - pow((6000 - absSpd) / 6000, 2)) / 2;
 	
-	signalBank_		 .fire(bank);
-	signalPitch_	 .fire(0.100093 * pitch);
-	vsiNeedleSignal_ .fire(0.5 + (isPos * spRot));
+//	signalBank_		 .fire(bank);
+//	signalPitch_	 .fire(0.100093 * pitch);
+//	vsiNeedleSignal_ .fire(0.5 + (isPos * spRot));
 	gforceSignal_	 .fire(gforce);
 	trimSignal_		 .fire(trim);
 	aoaSignal_		 .fire(aoa);
+
+	// vsi
+	vsiHand_.set_state(0.5 + (isPos * spRot));
+	vsiActiveFlag_.set_state(!IsPowered());
+
+	// attitude
+	attitudeDisplay_.SlotAngle().notify(bank);
+	attitudeDisplay_.SlotTransform().notify(0.100093 * pitch);
+	attitudeFlag_.set_state(!IsPowered());
 }
 
 // manage_state
@@ -82,7 +106,6 @@ bool AeroData::handle_load_state(const std::string& line) {
 	else {
 		return false;
 	}
-
 }
 
 std::string AeroData::handle_save_state() {

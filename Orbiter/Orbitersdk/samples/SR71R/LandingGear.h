@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include "bc_orbiter\Component.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\Animation.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/Component.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/simple_event.h"
 
-#include "APU.h"
 #include "SR71r_mesh.h"
 
 namespace bco = bc_orbiter;
@@ -38,31 +38,32 @@ class VESSEL;
 	a = 0/1 up/down.
 	b = 0.0 position
 */
-class LandingGear : public bco::Component
+class LandingGear : 
+    public bco::vessel_component,
+    public bco::set_class_caps,
+    public bco::post_step,
+    public bco::manage_state,
+    public bco::draw_hud
 {
 public:
-	LandingGear(bco::BaseVessel* vessel);
+	LandingGear(bco::BaseVessel& vessel);
 
-	virtual void OnSetClassCaps() override;
-	virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
-	void Step(double simt, double simdt, double mjd);
+    // post_step
+    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
+    // manage_state
+    bool handle_load_state(const std::string& line) override;
+    std::string handle_save_state() override;
 
-//	void SetAPU(APU* apu) { apu_ = apu; }
+    void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-    bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
-
-    bco::slot<bool>&    GearDownSlot()          { return gearDownSlot_; }
-    bco::slot<bool>&    GearUpSlot()            { return gearUpSlot_; }
     bco::slot<double>&  HydraulicPressSlot()    { return hydraulicPressSlot_; }
 
 private:
 
-    bco::slot<bool>         gearDownSlot_;
-    bco::slot<bool>         gearUpSlot_;
     bco::slot<double>       hydraulicPressSlot_;
 
     double                  position_{ 0.0 };
@@ -162,4 +163,15 @@ private:
                                                 };
 
     const VECTOR3 sTrans{ bm::pnl::pnlLandingGearKnobDown_location - bm::pnl::pnlLandingGearKnobUp_location };
+
+    // *** LANDING GEAR *** //
+    bco::simple_event<>		btnRaiseGear_       {   bm::vc::GearLeverUpTarget_location,
+                                                    0.01,
+                                                    bm::pnl::pnlLandingGearUp_RC
+                                                };
+
+    bco::simple_event<>		btnLowerGear_       {   bm::vc::GearLeverDownTarget_location,
+                                                    0.01,
+                                                    bm::pnl::pnlLandingGearDown_RC
+                                                };
 };

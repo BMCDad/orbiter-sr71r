@@ -69,9 +69,6 @@
     <ClInclude Include="FuelCell.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="SurfaceController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="PropulsionController.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -231,6 +228,18 @@
     <ClInclude Include="bc_orbiter\generic_tank.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
+    <ClInclude Include="bc_orbiter\electrical_component.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="SR71r_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HydrogenTank.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="OxygenTank.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">
@@ -248,13 +257,7 @@
     <ClCompile Include="PropulsionController.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="SurfaceController.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
     <ClCompile Include="PowerSystem.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="APU.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="CargoBayController.cpp">

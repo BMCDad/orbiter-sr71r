@@ -16,9 +16,16 @@
 
 #pragma
 
-#include "bc_orbiter\control.h"
-#include "bc_orbiter\signals.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/signals.h"
+#include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/on_off_display.h"
+#include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/rotary_display.h"
+#include "bc_orbiter/transform_display.h"
 
+#include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
@@ -26,12 +33,13 @@ class AeroData :
 	public bco::vessel_component,
 	public bco::post_step,
 	public bco::manage_state,
-	public bco::power_consumer {
+	public bco::power_consumer
+{
 
 public:
 	enum AvionMode { AvionAtmo, AvionExo };
 
-	AeroData();
+	AeroData(bco::power_provider& pwr, bco::BaseVessel& vessel);
 	~AeroData() {}
 
 	// post_step
@@ -42,47 +50,26 @@ public:
 	std::string handle_save_state() override;
 
 	// power_consumer
-	double amp_load() override { return isAeroDataActive_.current() ? AMPS_USED : 0.0; }
+	double amp_draw() const { return IsPowered() ? 6.0 : 0.0; }
 
 	void SetCourse(double s);
 	void SetHeading(double s);
 
 	// Slots:
-	bco::slot<bool>&		EnabledSlot()			{ return enabledSlot_; }			// Switch:  Main avionics is enabled
-	bco::slot<bool>&		AvionicsModeSlot()		{ return avionicsModeSlot_;	}		// Switch:  Avionics mode switch, ON = ATMOSPHERE, OFF = EXO
-	bco::slot<double>&		VoltsInputSlot()		{ return voltsInputSlot_; }			// Volts input from power
 	bco::signal<bool>&		IsAeroActiveSignal()	{ return isAeroDataActive_; }		// Is aero available (switch is on, power is adequate)
 
-	bco::slot<bool>&		SetCourseIncSlot()		{ return setCourseIncSlot_; }
-	bco::slot<bool>&		SetCourseDecSlot()		{ return setCourseDecSlot_; }
-	bco::slot<bool>&		SetHeadingIncSlot()		{ return setHeadingIncSlot_; }
-	bco::slot<bool>&		SetHeadingDecSlot()		{ return setHeadingDecSlot_; }
-
 	// Signals:
-//	bco::signal<AvionMode>& AvionicsModeSignal()	{ return avionicsModeSignal_; }
 	bco::signal<double>&	SetCourseSignal()		{ return setCourseSignal_; }
 	bco::signal<double>&	SetHeadingSignal()		{ return setHeadingSignal_; }
 
 	bco::signal<double>&	GForceSignal()			{ return gforceSignal_; }
 	bco::signal<double>&	TrimSignal()			{ return trimSignal_; }
 	bco::signal<double>&	AOASignal()				{ return aoaSignal_; }
-	bco::signal<double>&	VSINeedleSignal()		{ return vsiNeedleSignal_; }
-	bco::signal<double>&	BankSignal()			{ return signalBank_; }
-	bco::signal<double>&	PitchSignal()			{ return signalPitch_; }
 
 private:
-	const double			MIN_VOLTS = 25.0;			// No areo data if voltage input drops below.
-	const double			AMPS_USED = 5.0;
+	bco::power_provider&	power_;
 
-
-	bco::slot<bool>			enabledSlot_;				// Main avion power switch input.
-	bco::slot<bool>			avionicsModeSlot_;			// Avionics mode switch input.
-	bco::slot<double>		voltsInputSlot_;			// Power input.
-
-	bco::slot<bool>			setCourseIncSlot_;
-	bco::slot<bool>			setCourseDecSlot_;
-	bco::slot<bool>			setHeadingIncSlot_;
-	bco::slot<bool>			setHeadingDecSlot_;
+	bool IsPowered() const { return switchAvionPower_.is_on() && (power_.volts_available() > 24.0); }
 
 	// Signals:
 //	bco::signal<AvionMode>	avionicsModeSignal_;
@@ -94,11 +81,93 @@ private:
 	bco::signal<double>		trimSignal_;
 	bco::signal<double>		aoaSignal_;
 
-	bco::signal<double >	vsiNeedleSignal_;
-	bco::signal<double>		signalBank_;
-	bco::signal<double>		signalPitch_;
-
-
 	void UpdateSetCourse(double i);
 	void UpdateSetHeading(double i);
+
+	bco::on_off_input		switchAvionPower_{		// Main avionics power
+		{ bm::vc::SwAvionics_id },
+			bm::vc::SwAvionics_location, bm::vc::PowerTopRightAxis_location,
+			toggleOnOff,
+			bm::pnl::pnlPwrAvion_id,
+			bm::pnl::pnlPwrAvion_verts,
+			bm::pnl::pnlPwrAvion_RC
+	};
+
+	bco::on_off_input		switchAvionMode_{		// Atmosphere=On, External=Off
+		{ bm::vc::vcAvionMode_id },
+			bm::vc::vcAvionMode_location, bm::vc::vcAttitudeSwitchesAxis_location,
+			toggleOnOff,
+			bm::pnl::pnlAvionMode_id,
+			bm::pnl::pnlAvionMode_verts,
+			bm::pnl::pnlAvionMode_RC
+	};
+
+	bco::on_off_input		switchNavMode_{		// Nav mode 1 2
+		{ bm::vc::vcNavMode_id },
+			bm::vc::vcNavMode_location, bm::vc::vcAttitudeSwitchesAxis_location,
+			toggleOnOff,
+			bm::pnl::pnlNavMode_id,
+			bm::pnl::pnlNavMode_verts,
+			bm::pnl::pnlNavMode_RC
+	};
+
+	bco::simple_event<>		dialSetCourseIncrement_{
+		bm::vc::CourseKnob_location,
+			0.01,
+			bm::pnl::pnlSetCourseInc_RC
+	};
+
+	bco::simple_event<>		dialSetCourseDecrement_{
+		bm::vc::CourseKnob_location,
+			0.01,
+			bm::pnl::pnlSetCourseDec_RC
+	};
+
+	bco::simple_event<>		dialSetHeadingIncrement_{
+		bm::vc::HeadingKnob_location,
+			0.01,
+			bm::pnl::pnlSetHeadingInc_RC
+	};
+
+	bco::simple_event<>		dialSetHeadingDecrement_{
+
+		bm::vc::HeadingKnob_location,
+			0.01,
+			bm::pnl::pnlSetHeadingDec_RC
+	};
+
+	// ***   VSI  *** //
+	bco::rotary_display<bco::Animation>		vsiHand_{
+		{ bm::vc::gaVSINeedle_id },
+			bm::vc::gaVSINeedle_location, bm::vc::VSIAxis_location,
+			bm::pnl::pnlVSINeedle_id,
+			bm::pnl::pnlVSINeedle_verts,
+			(340 * RAD),	// Clockwise
+			2.0,
+			[](double d) {return (d); }	// Transform to amps.
+	};
+	bco::on_off_display		vsiActiveFlag_{
+		bm::vc::VSIOffFlag_id,
+			bm::vc::VSIOffFlag_verts,
+			bm::pnl::pnlVSIOffFlag_id,
+			bm::pnl::pnlVSIOffFlag_verts,
+			0.0244
+	};
+
+	// ***  ATTITUDE  *** //
+	bco::transform_display	attitudeDisplay_{
+		bm::vc::AttitudeIndicator_id,
+			bm::vc::AttitudeIndicator_verts,
+			bm::pnl::pnlAttitudeIndicator_id,
+			bm::pnl::pnlAttitudeIndicator_verts
+	};
+	
+	bco::on_off_display		attitudeFlag_{
+		bm::vc::AttitudeFlagOff_id,
+			bm::vc::AttitudeFlagOff_verts,
+			bm::pnl::pnlAttitudeFlagOff_id,
+			bm::pnl::pnlAttitudeFlagOff_verts,
+			0.0244
+	};
+
 };

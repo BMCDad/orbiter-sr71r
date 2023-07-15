@@ -77,292 +77,292 @@
 */
 #pragma once
 
-#include "Orbitersdk.h"
-
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\Tools.h"
-
-#include "SR71r_mesh.h"
-#include "IAvionics.h"
-#include "PropulsionController.h"
-#include "SurfaceController.h"
-#include "VesselControl.h"
-
-#include <map>
-#include <functional>
-#include <sstream>
-#include <iomanip>
-#include <algorithm>
-
-namespace bco = bc_orbiter;
-namespace mvc = bm::vc;
-
-namespace FC
-{
-	enum GCKey
-	{
-		D0, D1, D2, D3, D4, D5, D6, D7, D8, D9,
-		Decimal,
-		PlusMinus,
-		Clear,
-		Enter,
-		Previous, Next,
-		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10,
-		Home
-	};
-
-	enum FCProg
-	{
-		Main,
-		Ascent,
-		Orbit,
-		ReEntry,
-		Atmosphere
-	};
-
-    /**	FlightComputer
-
-    Configuration:
-    COMPUTER
-
-	Configuration for AUTOPILOT
-	AUTOPILOT a b c d e
-	a = 0/1 main power.
-	b = 0/1 hold heading.
-	c = 0/1 hold altitude.
-	d = 0/1 hold speed.
-	e = 0/1 0 = MACH, 1 = KEAS
-	
-    */
-    class FlightComputer :
-        public bco::PoweredComponent,
-		public IVesselControl
-    {
-		using KeyFunc = std::function<void()>;
-
-    public:
-        const static int DISPLAY_COLS = 20;
-        const static int DISPLAY_ROWS = 11;
-
-        FlightComputer(bco::BaseVessel* vessel, double amps);
-
-		void Step(double simt, double simdt, double mjd);
-
-		bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
-
-		// Component overrides:
-        void OnSetClassCaps() override;
-		bool OnVCMouseEvent(int id, int event) override;
-		bool OnLoadVC(int id) override;
-		bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-		bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-		void OnSaveConfiguration(FILEHANDLE scn) const override;
-
-
-		// PoweredComponent overrides:
-		void ChangePowerLevel(double newLevel) override;
-        double CurrentDraw() override;
-
-		//bco::PushButtonSwitch   APMainButton()		const { return swAPMain_; }
-		//bco::PushButtonSwitch   APHeadingButton()	const { return swAPHeading_; }
-		//bco::PushButtonSwitch   APAltitudeButton()	const { return swAPHAltitude_; }
-		//bco::PushButtonSwitch   APKEASButton()		const { return swAPKEAS_; }
-		//bco::PushButtonSwitch   APMACHButton()		const { return swAPMACH_; }
-
-        // Computer interface
-		void ClearScreen();
-		void DisplayLine(int row, char* mask, ...);
-		void DisplayText(int row, int col, const char* text);
-        int DisplayCols() { return DISPLAY_COLS; }
-        int DisplayRows() { return DISPLAY_ROWS; }
-		double GetScratchPad();
-		void SetScratchPad(double value);
-
-        // Input:
-		void SetAvionics(IAvionics* av)						{ avionics_ = av; }
-        void SetPropulsionControl(PropulsionController* p)	{ propulsionControl_ = p; }
-        void SetSurfaceControl(SurfaceController* s)		{ surfaceController_ = s; }
-
-		// IVesselControl
-		IAvionics*              GetAvionics()               const override { return avionics_; }
-		PropulsionController*   GetPropulsionController()   const override { return propulsionControl_; }
-		SurfaceController*      GetSurfaceController()      const override { return surfaceController_; }
-
-		// Page Functions
-		void PageMain();
-		void NullFunc() {};
-		void PageOrbitOps() {};
-		void PageReEntry() {};
-		
-		// Atmo-AP
-		void PageAtmosphere();
-		void UpdateAtmospherePage();
-		FCProgFlags prevRunning_{ FCProgFlags::None };
-
-		// Ascent
-		void PageAscent();
-		void UpdateAscentPage();
-		void SetTargetIncDeg(double tgt);
-
-		KeyFunc   funcUpdate_ = []{};
-		double ascentTargetAlt_{ 0.0 };
-		double ascentTargetInc_{ 0.0 };
-		double ascentHeading_{ 0.0 };
-		double ascentHeadingAlt_{ 0.0 };
-		double launchLatitude_{ 0.0 };
-		bool isAscentPageDirty_{ true };
-
-    private:
-		void Update();
-		void Boot();
-
-		bool LoadAPConfiguration(FILEHANDLE scn, const char* configLine);
-		void SaveAPConfiguration(FILEHANDLE scn) const;
-
-		std::string					configKey_{ "COMPUTER" };
-		std::string					apConfigKey_{ "AUTOPILOT" };
-
-		bco::FontInfo				vcFont_;
-		int							allId_;
-		double						prevTime_{ 0.0 };
-
-		bool						isRunning_{ false };
-		bool						isDisplayDirty_;
-
-		char display_[DISPLAY_ROWS][DISPLAY_COLS] = 
-		{
-			"                   ", 
-			"                   ",
-			"                   ",
-			"                   ",
-			"                   ",
-			"                   ",
-			"                   ",
-			"                   ",
-			"                   ",
-			"                   ",
-			"                   "
-		};
-
-		std::map<int, FC::GCKey>	mapKey_;            // Map the mouse event id to the key.
-		std::vector<FC::GCKey>      keyBuffer_;
-
-        // Map the key to the location.  This is used during LoadVC
-        // to register mouse event id with a key.
-        std::map<FC::GCKey, VECTOR3>  mapKeyLocation_
-        {
-            { FC::GCKey::D0,        mvc::GCKey0_location},
-            { FC::GCKey::D1,        mvc::GCKey1_location },
-            { FC::GCKey::D2,        mvc::GCKey2_location },
-            { FC::GCKey::D3,        mvc::GCKey3_location },
-            { FC::GCKey::D4,        mvc::GCKey4_location },
-            { FC::GCKey::D5,        mvc::GCKey5_location },
-            { FC::GCKey::D6,        mvc::GCKey6_location },
-            { FC::GCKey::D7,        mvc::GCKey7_location },
-            { FC::GCKey::D8,        mvc::GCKey8_location },
-            { FC::GCKey::D9,        mvc::GCKey9_location },
-            { FC::GCKey::Clear,     mvc::GCKeyClear_location },
-            { FC::GCKey::Decimal,   mvc::GCKeyDecimal_location },
-            { FC::GCKey::Enter,     mvc::GCKeyEnter_location },
-            { FC::GCKey::Next,      mvc::GCKeyNext_location },
-            { FC::GCKey::Previous,  mvc::GCKeyPrev_location },
-            { FC::GCKey::PlusMinus, mvc::GCKeyPlusMinus_location },
-            { FC::GCKey::F1,        mvc::GCKeyFunc1_location },
-            { FC::GCKey::F2,        mvc::GCKeyFunc2_location },
-            { FC::GCKey::F3,        mvc::GCKeyFunc3_location },
-            { FC::GCKey::F4,        mvc::GCKeyFunc4_location },
-            { FC::GCKey::F5,        mvc::GCKeyFunc5_location },
-            { FC::GCKey::F6,        mvc::GCKeyFunc6_location },
-            { FC::GCKey::F7,        mvc::GCKeyFunc7_location },
-            { FC::GCKey::F8,        mvc::GCKeyFunc8_location },
-            { FC::GCKey::F9,        mvc::GCKeyFunc9_location },
-            { FC::GCKey::F10,       mvc::GCKeyFunc10_location },
-			{ FC::GCKey::Home,		mvc::GCKeyHome_location }
-        };
-
-		std::map<FC::GCKey, KeyFunc> mapKeyFunc_;
-
-		void MapKey(FC::GCKey key, KeyFunc fn) { mapKeyFunc_[key] = fn; }
-		void MapKey(FC::GCKey key) { mapKeyFunc_[key] = []{}; }
-		void ClearFuncKeys();
-
-		// Scratchpad impl
-		bool HandleScratchPadKey(FC::GCKey key);
-		void ClearScratchPad();
-		void SetScratchError(const char* msg);
-		bool						isScratchError_{ false };
-		bool						scratchIsPos_{ true };
-		std::string					scratchKeys_;
-		double						scratchValue_ = 0.0;
-
-		void SetProgramState(FCProgFlags pid, bool state)
-		{
-			runningPrograms_ = (state) ?
-				runningPrograms_ | pid :
-				runningPrograms_ & ~pid;
-		}
-
-		void UpdateProg(FCProgFlags current, FCProgFlags pid)
-		{
-			if ((current & pid) != (prevRunningProgs & pid))
-			{
-				auto prog = mapPrograms_[pid];
-				(current & pid) != FCProgFlags::None ? prog->Start() : prog->Stop();
-			}
-		}
-
-		void UpdateProgs(FCProgFlags current)
-		{
-			UpdateProg(current, FCProgFlags::HoldAltitude);
-			UpdateProg(current, FCProgFlags::HoldHeading);
-			UpdateProg(current, FCProgFlags::HoldKEAS);
-			UpdateProg(current, FCProgFlags::HoldMACH);
-		}
-
-		constexpr bool IsProgramRunning(FCProgFlags pid) const { return (runningPrograms_ & pid) == pid; }
-
-		void ToggleAtmoProgram(FCProgFlags pid)
-		{
-			SetProgramState(pid, !IsProgramRunning(pid));
-
-			if ((pid == FCProgFlags::HoldKEAS) && (IsProgramRunning(pid)))	SetProgramState(FCProgFlags::HoldMACH, false);
-			if ((pid == FCProgFlags::HoldMACH) && (IsProgramRunning(pid)))	SetProgramState(FCProgFlags::HoldKEAS, false);
-		}
-
-		FCProgFlags					runningPrograms_{ FCProgFlags::None };
-		FCProgFlags					prevRunningProgs{ FCProgFlags::None };
-
-		HoldAltitudeProgram			prgHoldAltitude_;
-		HoldHeadingProgram			prgHoldHeading_;
-		HoldKeasProgram				prgHoldKeas_;
-		HoldMachProgram				prgHoldMach_;
-		
-		PropulsionController*		propulsionControl_;
-		IAvionics*					avionics_;
-		SurfaceController*			surfaceController_;
-
-		std::map<FCProgFlags, ControlProgram*>     mapPrograms_
-		{
-			{FCProgFlags::HoldAltitude,    &prgHoldAltitude_},
-			{FCProgFlags::HoldHeading,     &prgHoldHeading_},
-			{FCProgFlags::HoldKEAS,        &prgHoldKeas_ },
-			{FCProgFlags::HoldMACH,        &prgHoldMach_ }
-		};
-
-		//// Auto pilot panel
-		//bco::TextureVisual		visAPMainOn_;
-		//bco::PushButtonSwitch   swAPMain_{ bm::vc::SwAPMain_location, 0.01 };
-		//
-		//bco::TextureVisual		visAPHeadingOn_;
-		//bco::PushButtonSwitch   swAPHeading_{ bm::vc::SwAPHeading_location, 0.01 };
-
-		//bco::TextureVisual		visAPAltitudeOn_;
-		//bco::PushButtonSwitch   swAPHAltitude_{ bm::vc::SwAPAltitude_location, 0.01 };
-
-		//bco::TextureVisual		visAPKEASOn_;
-		//bco::PushButtonSwitch   swAPKEAS_{ bm::vc::SwAPKEAS_location, 0.01 };
-
-		//bco::TextureVisual		visAPMACHOn_;
-		//bco::PushButtonSwitch   swAPMACH_{ bm::vc::SwAPMACH_location, 0.01 };
-    };
-}
+//#include "Orbitersdk.h"
+//
+//#include "bc_orbiter\PoweredComponent.h"
+//#include "bc_orbiter\Tools.h"
+//
+//#include "SR71r_mesh.h"
+//#include "IAvionics.h"
+//#include "PropulsionController.h"
+//#include "SurfaceController.h"
+//#include "VesselControl.h"
+//
+//#include <map>
+//#include <functional>
+//#include <sstream>
+//#include <iomanip>
+//#include <algorithm>
+//
+//namespace bco = bc_orbiter;
+//namespace mvc = bm::vc;
+//
+//namespace FC
+//{
+//	enum GCKey
+//	{
+//		D0, D1, D2, D3, D4, D5, D6, D7, D8, D9,
+//		Decimal,
+//		PlusMinus,
+//		Clear,
+//		Enter,
+//		Previous, Next,
+//		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10,
+//		Home
+//	};
+//
+//	enum FCProg
+//	{
+//		Main,
+//		Ascent,
+//		Orbit,
+//		ReEntry,
+//		Atmosphere
+//	};
+//
+//    /**	FlightComputer
+//
+//    Configuration:
+//    COMPUTER
+//
+//	Configuration for AUTOPILOT
+//	AUTOPILOT a b c d e
+//	a = 0/1 main power.
+//	b = 0/1 hold heading.
+//	c = 0/1 hold altitude.
+//	d = 0/1 hold speed.
+//	e = 0/1 0 = MACH, 1 = KEAS
+//	
+//    */
+//    class FlightComputer :
+//        public bco::PoweredComponent,
+//		public IVesselControl
+//    {
+//		using KeyFunc = std::function<void()>;
+//
+//    public:
+//        const static int DISPLAY_COLS = 20;
+//        const static int DISPLAY_ROWS = 11;
+//
+//        FlightComputer(bco::BaseVessel* vessel, double amps);
+//
+//		void Step(double simt, double simdt, double mjd);
+//
+//		bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+//
+//		// Component overrides:
+//        void OnSetClassCaps() override;
+//		bool OnVCMouseEvent(int id, int event) override;
+//		bool OnLoadVC(int id) override;
+//		bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+//		bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
+//		void OnSaveConfiguration(FILEHANDLE scn) const override;
+//
+//
+//		// PoweredComponent overrides:
+//		void ChangePowerLevel(double newLevel) override;
+//        double CurrentDraw() override;
+//
+//		//bco::PushButtonSwitch   APMainButton()		const { return swAPMain_; }
+//		//bco::PushButtonSwitch   APHeadingButton()	const { return swAPHeading_; }
+//		//bco::PushButtonSwitch   APAltitudeButton()	const { return swAPHAltitude_; }
+//		//bco::PushButtonSwitch   APKEASButton()		const { return swAPKEAS_; }
+//		//bco::PushButtonSwitch   APMACHButton()		const { return swAPMACH_; }
+//
+//        // Computer interface
+//		void ClearScreen();
+//		void DisplayLine(int row, char* mask, ...);
+//		void DisplayText(int row, int col, const char* text);
+//        int DisplayCols() { return DISPLAY_COLS; }
+//        int DisplayRows() { return DISPLAY_ROWS; }
+//		double GetScratchPad();
+//		void SetScratchPad(double value);
+//
+//        // Input:
+//		void SetAvionics(IAvionics* av)						{ avionics_ = av; }
+//        void SetPropulsionControl(PropulsionController* p)	{ propulsionControl_ = p; }
+//        void SetSurfaceControl(SurfaceController* s)		{ surfaceController_ = s; }
+//
+//		// IVesselControl
+//		IAvionics*              GetAvionics()               const override { return avionics_; }
+//		PropulsionController*   GetPropulsionController()   const override { return propulsionControl_; }
+//		SurfaceController*      GetSurfaceController()      const override { return surfaceController_; }
+//
+//		// Page Functions
+//		void PageMain();
+//		void NullFunc() {};
+//		void PageOrbitOps() {};
+//		void PageReEntry() {};
+//		
+//		// Atmo-AP
+//		void PageAtmosphere();
+//		void UpdateAtmospherePage();
+//		FCProgFlags prevRunning_{ FCProgFlags::None };
+//
+//		// Ascent
+//		void PageAscent();
+//		void UpdateAscentPage();
+//		void SetTargetIncDeg(double tgt);
+//
+//		KeyFunc   funcUpdate_ = []{};
+//		double ascentTargetAlt_{ 0.0 };
+//		double ascentTargetInc_{ 0.0 };
+//		double ascentHeading_{ 0.0 };
+//		double ascentHeadingAlt_{ 0.0 };
+//		double launchLatitude_{ 0.0 };
+//		bool isAscentPageDirty_{ true };
+//
+//    private:
+//		void Update();
+//		void Boot();
+//
+//		bool LoadAPConfiguration(FILEHANDLE scn, const char* configLine);
+//		void SaveAPConfiguration(FILEHANDLE scn) const;
+//
+//		std::string					configKey_{ "COMPUTER" };
+//		std::string					apConfigKey_{ "AUTOPILOT" };
+//
+//		bco::FontInfo				vcFont_;
+//		int							allId_;
+//		double						prevTime_{ 0.0 };
+//
+//		bool						isRunning_{ false };
+//		bool						isDisplayDirty_;
+//
+//		char display_[DISPLAY_ROWS][DISPLAY_COLS] = 
+//		{
+//			"                   ", 
+//			"                   ",
+//			"                   ",
+//			"                   ",
+//			"                   ",
+//			"                   ",
+//			"                   ",
+//			"                   ",
+//			"                   ",
+//			"                   ",
+//			"                   "
+//		};
+//
+//		std::map<int, FC::GCKey>	mapKey_;            // Map the mouse event id to the key.
+//		std::vector<FC::GCKey>      keyBuffer_;
+//
+//        // Map the key to the location.  This is used during LoadVC
+//        // to register mouse event id with a key.
+//        std::map<FC::GCKey, VECTOR3>  mapKeyLocation_
+//        {
+//            { FC::GCKey::D0,        mvc::GCKey0_location},
+//            { FC::GCKey::D1,        mvc::GCKey1_location },
+//            { FC::GCKey::D2,        mvc::GCKey2_location },
+//            { FC::GCKey::D3,        mvc::GCKey3_location },
+//            { FC::GCKey::D4,        mvc::GCKey4_location },
+//            { FC::GCKey::D5,        mvc::GCKey5_location },
+//            { FC::GCKey::D6,        mvc::GCKey6_location },
+//            { FC::GCKey::D7,        mvc::GCKey7_location },
+//            { FC::GCKey::D8,        mvc::GCKey8_location },
+//            { FC::GCKey::D9,        mvc::GCKey9_location },
+//            { FC::GCKey::Clear,     mvc::GCKeyClear_location },
+//            { FC::GCKey::Decimal,   mvc::GCKeyDecimal_location },
+//            { FC::GCKey::Enter,     mvc::GCKeyEnter_location },
+//            { FC::GCKey::Next,      mvc::GCKeyNext_location },
+//            { FC::GCKey::Previous,  mvc::GCKeyPrev_location },
+//            { FC::GCKey::PlusMinus, mvc::GCKeyPlusMinus_location },
+//            { FC::GCKey::F1,        mvc::GCKeyFunc1_location },
+//            { FC::GCKey::F2,        mvc::GCKeyFunc2_location },
+//            { FC::GCKey::F3,        mvc::GCKeyFunc3_location },
+//            { FC::GCKey::F4,        mvc::GCKeyFunc4_location },
+//            { FC::GCKey::F5,        mvc::GCKeyFunc5_location },
+//            { FC::GCKey::F6,        mvc::GCKeyFunc6_location },
+//            { FC::GCKey::F7,        mvc::GCKeyFunc7_location },
+//            { FC::GCKey::F8,        mvc::GCKeyFunc8_location },
+//            { FC::GCKey::F9,        mvc::GCKeyFunc9_location },
+//            { FC::GCKey::F10,       mvc::GCKeyFunc10_location },
+//			{ FC::GCKey::Home,		mvc::GCKeyHome_location }
+//        };
+//
+//		std::map<FC::GCKey, KeyFunc> mapKeyFunc_;
+//
+//		void MapKey(FC::GCKey key, KeyFunc fn) { mapKeyFunc_[key] = fn; }
+//		void MapKey(FC::GCKey key) { mapKeyFunc_[key] = []{}; }
+//		void ClearFuncKeys();
+//
+//		// Scratchpad impl
+//		bool HandleScratchPadKey(FC::GCKey key);
+//		void ClearScratchPad();
+//		void SetScratchError(const char* msg);
+//		bool						isScratchError_{ false };
+//		bool						scratchIsPos_{ true };
+//		std::string					scratchKeys_;
+//		double						scratchValue_ = 0.0;
+//
+//		void SetProgramState(FCProgFlags pid, bool state)
+//		{
+//			runningPrograms_ = (state) ?
+//				runningPrograms_ | pid :
+//				runningPrograms_ & ~pid;
+//		}
+//
+//		void UpdateProg(FCProgFlags current, FCProgFlags pid)
+//		{
+//			if ((current & pid) != (prevRunningProgs & pid))
+//			{
+//				auto prog = mapPrograms_[pid];
+//				(current & pid) != FCProgFlags::None ? prog->Start() : prog->Stop();
+//			}
+//		}
+//
+//		void UpdateProgs(FCProgFlags current)
+//		{
+//			UpdateProg(current, FCProgFlags::HoldAltitude);
+//			UpdateProg(current, FCProgFlags::HoldHeading);
+//			UpdateProg(current, FCProgFlags::HoldKEAS);
+//			UpdateProg(current, FCProgFlags::HoldMACH);
+//		}
+//
+//		constexpr bool IsProgramRunning(FCProgFlags pid) const { return (runningPrograms_ & pid) == pid; }
+//
+//		void ToggleAtmoProgram(FCProgFlags pid)
+//		{
+//			SetProgramState(pid, !IsProgramRunning(pid));
+//
+//			if ((pid == FCProgFlags::HoldKEAS) && (IsProgramRunning(pid)))	SetProgramState(FCProgFlags::HoldMACH, false);
+//			if ((pid == FCProgFlags::HoldMACH) && (IsProgramRunning(pid)))	SetProgramState(FCProgFlags::HoldKEAS, false);
+//		}
+//
+//		FCProgFlags					runningPrograms_{ FCProgFlags::None };
+//		FCProgFlags					prevRunningProgs{ FCProgFlags::None };
+//
+//		HoldAltitudeProgram			prgHoldAltitude_;
+//		HoldHeadingProgram			prgHoldHeading_;
+//		HoldKeasProgram				prgHoldKeas_;
+//		HoldMachProgram				prgHoldMach_;
+//		
+//		PropulsionController*		propulsionControl_;
+//		IAvionics*					avionics_;
+//		SurfaceController*			surfaceController_;
+//
+//		std::map<FCProgFlags, ControlProgram*>     mapPrograms_
+//		{
+//			{FCProgFlags::HoldAltitude,    &prgHoldAltitude_},
+//			{FCProgFlags::HoldHeading,     &prgHoldHeading_},
+//			{FCProgFlags::HoldKEAS,        &prgHoldKeas_ },
+//			{FCProgFlags::HoldMACH,        &prgHoldMach_ }
+//		};
+//
+//		//// Auto pilot panel
+//		//bco::TextureVisual		visAPMainOn_;
+//		//bco::PushButtonSwitch   swAPMain_{ bm::vc::SwAPMain_location, 0.01 };
+//		//
+//		//bco::TextureVisual		visAPHeadingOn_;
+//		//bco::PushButtonSwitch   swAPHeading_{ bm::vc::SwAPHeading_location, 0.01 };
+//
+//		//bco::TextureVisual		visAPAltitudeOn_;
+//		//bco::PushButtonSwitch   swAPHAltitude_{ bm::vc::SwAPAltitude_location, 0.01 };
+//
+//		//bco::TextureVisual		visAPKEASOn_;
+//		//bco::PushButtonSwitch   swAPKEAS_{ bm::vc::SwAPKEAS_location, 0.01 };
+//
+//		//bco::TextureVisual		visAPMACHOn_;
+//		//bco::PushButtonSwitch   swAPMACH_{ bm::vc::SwAPMACH_location, 0.01 };
+//    };
+//}

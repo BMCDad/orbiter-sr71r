@@ -19,15 +19,16 @@
 #include "LandingGear.h"
 #include "SR71r_mesh.h"
 
-LandingGear::LandingGear(bco::BaseVessel* vessel) :
-Component(vessel),
-gearDownSlot_([&](bool v) { position_ = 1.0;  gearDownSlot_.set(); }),
-gearUpSlot_([&](bool v) { position_ = 0.0;  gearUpSlot_.set(); }),
-hydraulicPressSlot_([&](double v) {})
+LandingGear::LandingGear(bco::BaseVessel& vessel)
 {
+    vessel.AddControl(&btnLowerGear_);
+    vessel.AddControl(&btnRaiseGear_);
+
+    btnLowerGear_.attach([&]() { position_ = 1.0; });
+    btnRaiseGear_.attach([&]() { position_ = 0.0; });
 }
 
-void LandingGear::Step(double simt, double simdt, double mjd)
+void LandingGear::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
 {
 	// Note:  The animLandingGear can only move if there is hydraulic power, that
 	// is the actual landing gear animation.  The animLGHandle_ is the landing gear
@@ -41,76 +42,68 @@ void LandingGear::Step(double simt, double simdt, double mjd)
 
     animLandingSwitch_.Step(position_, simdt);
 
-    bco::RotateMesh(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_verts, sTrans * animLandingSwitch_.GetState());
+    bco::RotateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_verts, sTrans * animLandingSwitch_.GetState());
 }
 
-bool LandingGear::OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool LandingGear::handle_load_state(const std::string& line)
 {
-	if (_strnicmp(key, ConfigKey, 4) != 0)
-	{
-		return false;
-	}
+    // [a] : a: air brake actual position (they can differ)
+    double lgPos = 0.0;
 
-    // TODO
-	//int isOn;
-	//double state;
+    std::istringstream in(line);
 
-	//sscanf_s(configLine + 4, "%i%lf", &isOn, &state);
-
-	//landingGearSwitch_.SetState((isOn == 0) ? 0.0 : 1.0);
-	//
- //   animLandingGear_.SetState(state);
- //   GetBaseVessel()->SetAnimationState(idAnim_, state);
-
-	return true;
+    if (in >> lgPos) {
+        animLandingGear_.SetState(lgPos);
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
-void LandingGear::OnSaveConfiguration(FILEHANDLE scn) const
+std::string LandingGear::handle_save_state()
 {
-    // TODO
-	//char cbuf[256];
-	//auto val = (landingGearSwitch_.GetState() == 0.0) ? 0 : 1;
+    std::ostringstream os;
 
-	//sprintf_s(cbuf, "%i %lf", val, landingGearSwitch_.GetState());
-	//oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+    os << position_ << " " << animLandingGear_.GetState();
+    return os.str();
 }
 
-void LandingGear::OnSetClassCaps()
+void LandingGear::handle_set_class_caps(bco::BaseVessel& vessel)
 {
-    auto vessel = GetBaseVessel();
-    auto vcMeshIdx = vessel->GetVCMeshIndex();
-    auto meshIdx = vessel->GetMainMeshIndex();
+    auto vcMeshIdx = vessel.GetVCMeshIndex();
+    auto meshIdx = vessel.GetMainMeshIndex();
 
     // VC
-    auto aid = vessel->CreateVesselAnimation(&animLandingSwitch_, 2.0);
-    vessel->AddVesselAnimationComponent(aid, vcMeshIdx, &lgHandle_);
+    auto aid = vessel.CreateVesselAnimation(&animLandingSwitch_, 2.0);
+    vessel.AddVesselAnimationComponent(aid, vcMeshIdx, &lgHandle_);
 
     // External
-    idAnim_ = vessel->CreateVesselAnimation(&animLandingGear_, 0.15);
+    idAnim_ = vessel.CreateVesselAnimation(&animLandingGear_, 0.15);
 
     // Front gear
-    vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightFrontDoor_);
-    vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftFrontDoor_);
-    vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpFrontGear_);
+    vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightFrontDoor_);
+    vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftFrontDoor_);
+    vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpFrontGear_);
 
     // Left gear
-    vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftOuterDoor_);
-    vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftInnerDoor_);
-    auto parent = vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftGearUpper_);
-    vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftGearLower_, parent);
+    vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftOuterDoor_);
+    vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftInnerDoor_);
+    auto parent = vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftGearUpper_);
+    vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpLeftGearLower_, parent);
 
     // Right gear
-    vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightOuterDoor_);
-    vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightInnerDoor_);
-    parent = vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightGearUpper_);
-    vessel->AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightGearLower_, parent);
+    vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightOuterDoor_);
+    vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightInnerDoor_);
+    parent = vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightGearUpper_);
+    vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightGearLower_, parent);
 }
 
-bool LandingGear::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void LandingGear::handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
-    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return false;
+    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
     
-    if (animLandingGear_.GetState() == 0.0) return false;
+    if (animLandingGear_.GetState() == 0.0) return;
 
     if ((animLandingGear_.GetState() == 1.0) || (fmod(oapiGetSimTime(), 1.0) < 0.5))
     {
@@ -138,9 +131,5 @@ bool LandingGear::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* sk
                         yCenter + ySep - halfFoot,
                         xCenter + xSep + halfFoot,
                         yCenter + ySep + halfFoot);
-
-        return true;
     }
-
-    return false;
 }

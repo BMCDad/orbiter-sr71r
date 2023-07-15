@@ -21,16 +21,18 @@
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
 
-HoverEngines::HoverEngines() :
-    slotHoverOpen_([&](bool v) {if (!v) EnableHover(false); })
+HoverEngines::HoverEngines(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+    power_(pwr),
+    vessel_(vessel)
 {
+    power_.attach_consumer(this);
     animHoverDoors_.SetTargetFunction([this] { EnableHover(true); });
 }
 
 void HoverEngines::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
 {
-    if (slotVoltsInput_.value() > MIN_VOLTS) {
-        animHoverDoors_.Step(slotHoverOpen_.value() ? 1.0 : 0.0, simdt);
+    if (IsPowered()) {
+        animHoverDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
     }
 }
 
@@ -97,17 +99,16 @@ void HoverEngines::EnableHover(bool isEnabled)
     {
         if (animHoverDoors_.GetState() == 1.0)
         {
-            // TODO
-            //GetBaseVessel()->SetThrusterResource(hoverThrustHandles_[0], GetBaseVessel()->MainPropellant());
-            //GetBaseVessel()->SetThrusterResource(hoverThrustHandles_[1], GetBaseVessel()->MainPropellant());
-            //GetBaseVessel()->SetThrusterResource(hoverThrustHandles_[2], GetBaseVessel()->MainPropellant());
+            vessel_.SetThrusterResource(hoverThrustHandles_[0], vessel_.MainPropellant());
+            vessel_.SetThrusterResource(hoverThrustHandles_[1], vessel_.MainPropellant());
+            vessel_.SetThrusterResource(hoverThrustHandles_[2], vessel_.MainPropellant());
         }
     }
     else
     {
-        //GetBaseVessel()->SetThrusterResource(hoverThrustHandles_[0], nullptr);
-        //GetBaseVessel()->SetThrusterResource(hoverThrustHandles_[1], nullptr);
-        //GetBaseVessel()->SetThrusterResource(hoverThrustHandles_[2], nullptr);
+        vessel_.SetThrusterResource(hoverThrustHandles_[0], nullptr);
+        vessel_.SetThrusterResource(hoverThrustHandles_[1], nullptr);
+        vessel_.SetThrusterResource(hoverThrustHandles_[2], nullptr);
     }
 }
 

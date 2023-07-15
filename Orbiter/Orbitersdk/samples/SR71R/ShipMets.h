@@ -88,12 +88,26 @@ const double COMPUTER_AMPS          =   8.0     ;
 const double HOVER_AMPS             =  10.0     ;   // Draw when hover doors open.
 const double RETRO_AMPS             =  18.0     ;   // Retro doors
 
+const float AILERON_RANGE = (float)(20.0 * RAD);
+/*	control settings.
+	These settings control the responsiveness of the flight control surfaces.  The area
+	settings are from the SR-71 manual and should probably be kept as is.  The dCl... settings
+	control the effectiveness of each control.  These can be tweaked to adjust the handling of the
+	vessel.  To see how these are applied look at the 'EnableControls' method of this class.
+*/
+const double InboardElevonArea = 3.6;		// From manual, inboard (39sf/3.6ms).
+const double dClInboard = 0.2;		// Adjust to impact mostly elevator function.
+const double OutboardElevonArea = 4.8;		// From manual, outboard (52.5sf/4.8ms).
+const double dClOutboard = 0.2;		// Adjust to impact both elevator and aileron function.
+const double RudderArea = 6.4;		// From manual, movable rudder area (70sf)
+const double dClRudder = 0.2;		// Adjust to implact rudder function.
+
+
 /*	Some stats from the SR-71 manual
 	Wing area 1605 sq feet.
 	Wing span 55 ft.
 	Dry weight 56,600 to 60,000 lbs.
 	Fuel JP-7 (fuel and coolant)
 	Engines - Pratt & Whitney JT11D-20
-
 
 */

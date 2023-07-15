@@ -23,14 +23,21 @@
 #include "SR71r_mesh.h"
 
 
-Clock::Clock() :
+Clock::Clock(bco::BaseVessel& vessel) :
 	startElapsedTime_(0.0),
 	startTimerTime_(0.0),
 	isTimerRunning_(false),
-	currentTimerTime_(0.0),
-	slotElapsedReset_([&](bool v) {ResetElapsed(); slotElapsedReset_.set(); }),
-	slotTimerReset_([&](bool v) {ResetTimer(); slotTimerReset_.set(); })
+	currentTimerTime_(0.0)
 {
+	vessel.AddControl(&clockTimerMinutesHand_);
+	vessel.AddControl(&clockTimerSecondsHand_);
+	vessel.AddControl(&clockElapsedHoursHand_);
+	vessel.AddControl(&clockElapsedMinutesHand_);
+	vessel.AddControl(&clockTimerReset_);
+	vessel.AddControl(&clockElapsedReset_);
+
+	clockTimerReset_.attach([&]() { ResetTimer(); });
+	clockElapsedReset_.attach([&]() { ResetElapsed(); });
 }
 
 void Clock::ResetElapsed()
@@ -73,16 +80,17 @@ void Clock::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt,
 
 	auto elapsedRun = simt - startElapsedTime_;
 
-	signalMinute_.fire(fmod((elapsedRun / 60), 60));
-	signalHour_.fire(fmod((elapsedRun / 3600), 12));
+	
+	clockElapsedMinutesHand_.set_state(fmod((elapsedRun / 60), 60));
+	clockElapsedHoursHand_.set_state(fmod((elapsedRun / 3600), 12));
 
 	if (isTimerRunning_)
 	{
 		currentTimerTime_ = simt - startTimerTime_;
 	}
 
-	signalTimerSecond_.fire(fmod(currentTimerTime_, 60));
-	signalTimerMinute_.fire(fmod((currentTimerTime_ / 60), 60));
+	clockTimerSecondsHand_.set_state(fmod(currentTimerTime_, 60));
+	clockTimerMinutesHand_.set_state(fmod((currentTimerTime_ / 60), 60));
 }
 
 // [elapsedMissionTime] [isTimerRunning] [elapsedTimer]

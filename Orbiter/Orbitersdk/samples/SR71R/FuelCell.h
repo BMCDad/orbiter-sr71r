@@ -18,14 +18,16 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\BaseVessel.h"
-#include "bc_orbiter\Control.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/on_off_display.h"
 
 #include "IConsumable.h"
 #include "PowerSystem.h"
 #include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 class PowerSystem;
 
@@ -58,51 +60,63 @@ namespace bco = bc_orbiter;
 */
 class FuelCell : 
 	public bco::vessel_component,
-	public bco::power_consumer,
-	public bco::post_step
+	public bco::post_step,
+	public bco::power_consumer
 {
 	const double MAX_VOLTS = 28.0;
 	const double MIN_VOLTS = 20.0;
 	const double AMP_DRAW =	  4.0;
 
 public:
-	FuelCell(bco::consumable& hydrogen, bco::consumable& oxygen);
+	FuelCell(bco::power_provider& pwr, bco::consumable& lox, bco::consumable& hydro);
 
 	/**
 		Draw down the oxygen and hydrogen levels based on the current amp load.
 	*/
 
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
-	double amp_load() override;
 
-	// Inputs
-	bco::slot<bool>&		IsEnabledSlot()			{ return slotIsEnabled_; }			// Switch:  Main fuel cell enabled
-	bco::slot<double>&		AmpLoadSlot()			{ return slotAmpLoad_; }			// Current amps in use.  Impacts resource usage.
-	bco::slot<double>&		VoltsInputSlot()		{ return slotVoltsInput_; }			// Volts input from power
+	// power_consumer
+	double amp_draw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
 
 	// Outputs
 	bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
-	bco::signal<bool>&		IsAvailableSignal()		{ return sigIsAvail_; }				// Is fc power available
+	bco::signal<double>&	LOXDrawSignal()			{ return signalLOXDraw_; }			// Reports LOX draw adjusted for step.
+	bco::signal<double>&	HYDDrawSignal()			{ return signalHYDDraw_; }			// Reports HYD draw adjusted for step.
 
 private:
-		
-	bool IsPowered() const { return slotIsEnabled_.value() && (slotVoltsInput_.value() > MIN_VOLTS); }
+	bco::power_provider&	power_;
+	bco::consumable&		lox_;
+	bco::consumable&		hydro_;
+
+	bool IsPowered() const {
+		return 
+			switchEnabled_.is_on() &&
+			(power_.volts_available() > MIN_VOLTS); 
+	}
+
 	void SetIsFuelCellPowerAvailable(bool newValue);
 
 	bco::signal<double>	sigAvailPower_;
-	bco::signal<bool>	sigIsAvail_;
-
-	bco::slot<bool>		slotIsEnabled_;
-	bco::slot<double>	slotAmpLoad_;		// Comes from the power system.
-	bco::slot<double>	slotVoltsInput_;
+	bco::signal<double>	signalLOXDraw_;
+	bco::signal<double>	signalHYDDraw_;
 
 	bool				isFuelCellAvailable_;
-	double				availablePower_;
 	double				ampDrawFactor_{ 0.0 };
 
-	PowerSystem*		powerSystem_;
-	bco::consumable&	oxygenSystem_;
-	bco::consumable&	hydrogenSystem_;
+	bco::on_off_input	switchEnabled_		{ { bm::vc::swFuelCellPower_id },
+												bm::vc::swFuelCellPower_location, bm::vc::PowerTopRightAxis_location,
+												toggleOnOff,
+												bm::pnl::pnlPwrFC_id,
+												bm::pnl::pnlPwrFC_verts,
+												bm::pnl::pnlPwrFC_RC
+											};
 
-	const char*			ConfigKey = "FUELCELL";
+	bco::on_off_display	lightAvailable_		{
+												bm::vc::FuelCellAvailableLight_id,
+												bm::vc::FuelCellAvailableLight_verts,
+												bm::pnl::pnlLgtFCPwrAvail_id,
+												bm::pnl::pnlLgtFCPwrAvail_verts,
+												0.0244
+											};
 };

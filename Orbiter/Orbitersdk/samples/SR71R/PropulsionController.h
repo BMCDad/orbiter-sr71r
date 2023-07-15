@@ -18,12 +18,18 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\BaseVessel.h"
+#include <string>
 
-#include "PropulsionController.h"
+#include "bc_orbiter/PoweredComponent.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/on_off_display.h"
+#include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/rotary_display.h"
+
 #include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
@@ -73,18 +79,34 @@ e = 0/1 Transfer pump is active.
 e = 0/1 Dump pump is active.
 */
 
-class PropulsionController : public bco::PoweredComponent
+class PropulsionController : 
+	public bco::vessel_component,
+	public bco::set_class_caps,
+	public bco::power_consumer,
+	public bco::post_step,
+	public bco::manage_state,
+	public bco::draw_hud
 {
 public:
-	PropulsionController(bco::BaseVessel* vessel, double amps);
+	PropulsionController(bco::power_provider& pwr, bco::BaseVessel& vessel);
 
     enum class Axis { Pitch = 0, Yaw = 1, Roll = 2 };
 
-	void Step(double simt, double simdt, double mjd);
+	// post_step
+	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
-	virtual void OnSetClassCaps() override;
-	virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void OnSaveConfiguration(FILEHANDLE scn) const override;
+	// power_consumer
+	double amp_draw() const { return 4.0; }
+
+	// set_class_caps
+	void handle_set_class_caps(bco::BaseVessel& vessel) override;
+
+	// manage_state
+	bool handle_load_state(const std::string& line) override;
+	std::string handle_save_state() override;
+
+	// draw_hud
+    void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
 	double GetVesselMainThrustLevel();
 	void SetVesselMainThrustLevel(double level);
@@ -97,46 +119,45 @@ public:
 	double DrawRCSFuel(double amount);
 	double FillRCSFuel(double amount);
 
-//	bco::OnOffSwitch&		ThrustLimitSwitch() { return swThrustLimit_; }
+	//bco::slot<bool>&		ThrottleLimitSlot()		{ return slotThrottleLimit_; }		// State of limit switch
+	//bco::slot<bool>&		FuelDumpSlot()			{ return slotFuelDump_; }			// State of fuel dump switch
+	//bco::slot<bool>&		FuelTransferSelSlot()	{ return slotTransferSel_; }		// State of transfer select switch
+	//bco::slot<bool>&		TransferPumpSlot()		{ return slotTransferPump_; }		// Pump toggle request
+	//bco::slot<bool>&		FuelValveOpenSlot()		{ return slotFuelValveOpen_; }		// Fuel valve toggle request
 
-    bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
-
-	bco::slot<bool>&		ThrottleLimitSlot()		{ return slotThrottleLimit_; }		// State of limit switch
-	bco::slot<bool>&		FuelDumpSlot()			{ return slotFuelDump_; }			// State of fuel dump switch
-	bco::slot<bool>&		FuelTransferSelSlot()	{ return slotTransferSel_; }		// State of transfer select switch
-	bco::slot<bool>&		TransferPumpSlot()		{ return slotTransferPump_; }		// Pump toggle request
-	bco::slot<bool>&		FuelValveOpenSlot()		{ return slotFuelValveOpen_; }		// Fuel valve toggle request
-
-	bco::signal<double>&	FuelFlowSignal()		{ return sigFuelFlowRate_; }		// Report flow rate. clamped 0-1
-	bco::signal<double>&	MainFuelLevelSignal()	{ return sigMainFuelLevel_; }		// Report fuel level full value
-	bco::signal<double>&	RCSFuelLevelSignal()	{ return sigRCSFuelLevel_; }		// Report RCS level full value
-	bco::signal<bool>&		IsFuelAvailSignal()		{ return sigIsFuelAvail_; }			// Report is external fuel available
-	bco::signal<bool>&		IsTransferPumpOn()		{ return sigIsTransferOn_; }		// Report is transfer pump on
-	bco::signal<bool>&		IsFuelValveOpen()		{ return sigIsFuelValveOpen_; }		// Report is fuel valve open
+//	bco::signal<double>&	FuelFlowSignal()		{ return sigFuelFlowRate_; }		// Report flow rate. clamped 0-1
+//	bco::signal<double>&	MainFuelLevelSignal()	{ return sigMainFuelLevel_; }		// Report fuel level full value
+//	bco::signal<double>&	RCSFuelLevelSignal()	{ return sigRCSFuelLevel_; }		// Report RCS level full value
+//	bco::signal<bool>&		IsFuelAvailSignal()		{ return sigIsFuelAvail_; }			// Report is external fuel available
+////	bco::signal<bool>&		IsTransferPumpOn()		{ return sigIsTransferOn_; }		// Report is transfer pump on
+//	bco::signal<bool>&		IsFuelValveOpen()		{ return sigIsFuelValveOpen_; }		// Report is fuel valve open
 
 	// TODO:
 	// signal to report current ThrottleLimit state
 private:
+	bco::BaseVessel&		vessel_;
+	bco::power_provider&	power_;
+
+	bool IsPowered() { return power_.volts_available() > 24.0; }
 
 	void SetThrustLevel(double newLevel);
 	void Update(double deltaUpdate);
 
 	void ToggleFill();
-	void ToggleTransfer();
 
 	void HandleTransfer(double deltaUpdate);
 
-	bco::slot<bool>		slotThrottleLimit_;
-	bco::slot<bool>		slotFuelDump_;
-	bco::slot<bool>		slotTransferSel_;
-	bco::slot<bool>		slotTransferPump_;
-	bco::slot<bool>		slotFuelValveOpen_;
+	//bco::slot<bool>		slotThrottleLimit_;
+	//bco::slot<bool>		slotFuelDump_;
+	//bco::slot<bool>		slotTransferSel_;
+	//bco::slot<bool>		slotTransferPump_;
+	//bco::slot<bool>		slotFuelValveOpen_;
 
 	bco::signal<double>	sigFuelFlowRate_;
 	bco::signal<double>	sigMainFuelLevel_;
 	bco::signal<double>	sigRCSFuelLevel_;
 	bco::signal<bool>	sigIsFuelAvail_;
-	bco::signal<bool>	sigIsTransferOn_;
+//	bco::signal<bool>	sigIsTransferOn_;
 	bco::signal<bool>	sigIsFuelValveOpen_;
 
 	THRUSTER_HANDLE		mainThrustHandles_[2];
@@ -150,4 +171,78 @@ private:
 	double		maxThrustLevel_;
 	int			areaId_;
 	double		prevTime_;
+
+	// Switches
+	bco::on_off_input		switchThrustLimit_{		// Thrust Limit
+		{ bm::vc::swThrottleLimit_id },
+			bm::vc::swThrottleLimit_location, bm::vc::TopRowSwitchRightAxis_location,
+			toggleOnOff,
+			bm::pnl::pnlThrottleLimit_id,
+			bm::pnl::pnlThrottleLimit_verts,
+			bm::pnl::pnlThrottleLimit_RC
+	};
+
+	bco::on_off_input		switchFuelDump_{		// Fuel dump
+		{ bm::vc::swDumpFuel_id },
+			bm::vc::swDumpFuel_location, bm::vc::FuelTransferRightAxis_location,
+			toggleOnOff,
+			bm::pnl::pnlFuelDump_id,
+			bm::pnl::pnlFuelDump_verts,
+			bm::pnl::pnlFuelDump_RC
+	};
+
+	// Gauges
+	bco::rotary_display<bco::Animation>		gaugeFuelFlow_{
+		{ bm::vc::gaFuelFlow_id },
+			bm::vc::gaFuelFlow_location, bm::vc::FuelFlowAxisFront_location,
+			bm::pnl::pnlGaFuelFlow_id,
+			bm::pnl::pnlGaFuelFlow_verts,
+			(270 * RAD),	// Clockwise
+			1.0,
+			[](double d) {return (d); }	// Transform to amps.
+	};
+
+	bco::rotary_display<bco::Animation>		gaugeFuelMain_{
+		{ bm::vc::gaMainFuel_id },
+			bm::vc::gaMainFuel_location, bm::vc::FuelLevelAxisFront_location,
+			bm::pnl::pnlGaFuelMain_id,
+			bm::pnl::pnlGaFuelMain_verts,
+			(256 * RAD),	// Clockwise
+			1.0,
+			[](double d) {return (d); }	// Transform to amps.
+	};
+
+	bco::rotary_display<bco::Animation>		gaugeFuelRCS_{
+		{ bm::vc::gaRCSFuel_id },
+			bm::vc::gaRCSFuel_location, bm::vc::RCSLevelAxisFront_location,
+			bm::pnl::pnlGaFuelRCS_id,
+			bm::pnl::pnlGaFuelRCS_verts,
+			(264 * RAD),	// Clockwise
+			1.0,
+			[](double d) {return (d); }	// Transform to amps.
+	};
+
+	// Displays
+	bco::on_off_display		lightFuelAvail_{
+		bm::vc::FuelSupplyOnLight_id,
+			bm::vc::FuelSupplyOnLight_verts,
+			bm::pnl::pnlFuelAvail_id,
+			bm::pnl::pnlFuelAvail_verts,
+			0.0244
+	};
+
+	// Load FUEL pump
+	bco::simple_event<>		btnFuelValveOpen_{
+		bm::vc::FuelValveOpenSwitch_location,
+			0.01,
+			bm::pnl::pnlFuelValveSwitch_RC
+	};
+
+	bco::on_off_display		lightFuelValveOpen_{
+		bm::vc::FuelValveOpenSwitch_id,
+			bm::vc::FuelValveOpenSwitch_verts,
+			bm::pnl::pnlFuelValveSwitch_id,
+			bm::pnl::pnlFuelValveSwitch_verts,
+			0.0352
+	};
 };

@@ -21,453 +21,67 @@
 #include "ShipMets.h"
 
 SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) : 
-bco::BaseVessel(hvessel, flightmodel),
-meshVirtualCockpit_(nullptr),
-//apu_(                   this,   APU_AMPS),
-//autoPilot_(             this,   AUTOP_AMPS),
-//avionics_(              this,   AVIONICS_AMPS),
-//cargoBayController_(    this,   CARGO_AMPS),
-//canopy_(                this,   CANOPY_AMPS),
-//fuelCell_(              this,   FUELCELL_AMPS),
-headsUpDisplay_(        this,   HUD_AMPS),
-hydrogenTank_(					HYDRO_SUPPLY, HYDROGEN_FILL_RATE, HYDRO_NER),
-landingGear_(           this),
-mfdLeft_(               this,   MFD_AMPS),
-mfdRight_(              this,   MFD_AMPS),
-navModes_(              *this),
-mainFuelTank_(					MAX_FUEL, FUEL_TRANFER_RATE),
-rcsFuelTank_(					MAX_RCS_FUEL, FUEL_TRANFER_RATE),
-oxygenTank_(					O2_SUPPLY, OXYGEN_FILL_RATE, O2_NER),
-propulsionController_(  this,   PROPULS_AMPS),
-rcsSystem_(             this,   RCS_AMPS),
-surfaceControl_(        this),
-statusBoard_(           this,   STATUS_AMPS),
-airBrake_(              this),
-//lights_(                this,   LIGHTS_AMPS),  TODO
-//clock_(                 this),
-shutters_(              this)
-//computer_(              this,   COMPUTER_AMPS),
-//hoverEngines_(this, HOVER_AMPS),
-//retroEngines_(this, RETRO_AMPS)
+	bco::BaseVessel(hvessel, flightmodel),
+	meshVirtualCockpit_(nullptr),
+	mfdLeft_(               this,   MFD_AMPS),
+	mfdRight_(              this,   MFD_AMPS),
+	navModes_(              *this),
+	statusBoard_(           this,   STATUS_AMPS),
+	slotHydraulicLevel_([&](double v) { UpdateHydraulicLevel(v); }),
+	ctrlSurfLeftAileron_(nullptr),
+	ctrlSurfRightAileron_(nullptr),
+	ctrlSurfLeftElevator_(nullptr),
+	ctrlSurfRightElevator_(nullptr),
+	ctrlSurfLeftRudder_(nullptr),
+	ctrlSurfRightRudder_(nullptr)
 {
-//	RegisterComponent(&apu_);
-//	RegisterComponent(&avionics_);
-//	RegisterComponent(&cargoBayController_);
-//	RegisterComponent(&canopy_);
-//	RegisterComponent(&fuelCell_);
-	RegisterComponent(&headsUpDisplay_);
-//	RegisterComponent(&hydrogenTank_);
-	RegisterComponent(&landingGear_);
 	RegisterComponent(&mfdLeft_);
 	RegisterComponent(&mfdRight_);
-//	RegisterComponent(&navModes_);
-//	RegisterComponent(&oxygenTank_);
-//	RegisterComponent(&powerSystem_);
-	RegisterComponent(&propulsionController_);
-	RegisterComponent(&rcsSystem_);
-	RegisterComponent(&surfaceControl_);
 	RegisterComponent(&statusBoard_);
-//	RegisterComponent(&airBrake_);
-//	RegisterComponent(&clock_);
-	RegisterComponent(&shutters_);
-	//RegisterComponent(&computer_);
-//	RegisterComponent(&hoverEngines_);
-//	RegisterComponent(&retroEngines_);
-
-	// Add Controls
-	/*  TOGGLE SWITCHES */
-	AddControl(&switchMainPower);
-	AddControl(&switchConnectExternalPower);
-	AddControl(&switchConnectFuelCell);
-
-	/*  LIGHT SWITCHES  */
-	AddControl(&switchNavigationLights);
-	AddControl(&switchBeaconLights);
-	AddControl(&switchStrobeLights);
-
-	/*  FUELCELL SWITCHES */
-	AddControl(&switchFuelCellPower);
-
-	/*  Canopy SWITCHES */
-	AddControl(&switchCanopyPower);
-	AddControl(&switchCanopyOpen);
-
-	/*	APU Switch */
-	AddControl(&switchApuPower);
-
-	/*  Cargo SWITCHES */
-	AddControl(&switchCargoPower);
-	AddControl(&switchCargoOpen);
-
-	/*  POWER LIGHTS  */
-	AddControl(&lightFuelCellAvail_);
-	AddControl(&lightExternalAvail_);
-	AddControl(&lightFuelCellConnected_);
-	AddControl(&lightExternalConnected_);
-
-	/*  Gauges  */
-	AddControl(&gaugePowerVolts_);
-	AddControl(&gaugePowerAmps_);
-	AddControl(&gaugeAPULevel_);
-
-	/*  Clock  */
-	AddControl(&clockTimerSecondsHand_);
-	AddControl(&clockTimerMinutesHand_);
-	AddControl(&clockElapsedMinutesHand_);
-	AddControl(&clockElapsedHoursHand_);
-	AddControl(&clockTimerReset_);
-	AddControl(&clockElapsedReset_);
-
-	/*  Hover switch  */
-	AddControl(&switchHoverOpen);
-
-	/*  HUD  */
-	AddControl(&btnHudDocking_);
-	AddControl(&btnLightHudDocking_);
-	AddControl(&btnHudSurface_);
-	AddControl(&btnLightHudSurface_);
-	AddControl(&btnHudOrbit_);
-	AddControl(&btnLightHudOrbit_);
-
-	/*  Hydrogen tank  */
-	AddControl(&gaugeHydroLevel_);
-	AddControl(&lightHydrogenAvail_);
-	AddControl(&btnHydroFill_);
-	AddControl(&btnLightHydroFill_);
-
-	/*  LOX tank  */
-	AddControl(&gaugeO2Level_);
-	AddControl(&lightO2Avail_);
-	AddControl(&btnO2Fill_);
-	AddControl(&btnLightO2Fill);
-
-	/*  Airbrake  */
-	AddControl(&btnDecreaseAirbrake_);
-	AddControl(&btnIncreaseAirbrake_);
-
-	/*  Landing Gear  */
-	AddControl(&btnLowerLandingGear_);
-	AddControl(&btnRaiseLandingGear_);
-
-	/*  Nav Modes  */
-	AddControl(&btnNavKillRot_);
-	AddControl(&btnLightNavKillRot_);
-	AddControl(&btnNavHorzLevel_);
-	AddControl(&btnLightNavHorzLevel_);
-	AddControl(&btnNavPrograde_);
-	AddControl(&btnLightNavPrograde_);
-	AddControl(&btnNavRetrograde_);
-	AddControl(&btnLightNavRetrograde_);
-	AddControl(&btnNavNormal_);
-	AddControl(&btnLightNavNormal_);
-	AddControl(&btnNavAntiNorm_);
-	AddControl(&btnLightNavAntiNorm_);
-
-	/*  Propulsion  */
-	AddControl(&gaugeFuelFlow_);
-	AddControl(&gaugeFuelMain_);
-	AddControl(&gaugeFuelRCS_);
-	AddControl(&switchThrustLimit_);
-	AddControl(&switchFuelDump_);
-	AddControl(&switchTransferSelect_);
-	AddControl(&lightFuelAvail_);
-	AddControl(&btnFuelTransferPump_);
-	AddControl(&btnLightFuelTransferPump_);
-	AddControl(&btnFuelValveOpen_);
-	AddControl(&btnLightFuelValveOpen_);
-
-	/*  RCS  */
-	AddControl(&btnRCSLinear_);
-	AddControl(&btnLightRCSLinear_);
-	AddControl(&btnRCSRotate_);
-	AddControl(&btnLightRCSRotate_);
-
-	/*  Retro Doors  */
-	AddControl(&switchRetroDoors_);
-
-	/*  Shutters  */
-	AddControl(&switchShutters_);
-
-	/*  Avionics  */
-	AddControl(&switchAvionMode_);
-	AddControl(&switchAvionPower_);
-	AddControl(&switchNavMode_);
-
-	/*  Altimeter  */
-	AddControl(&altimeter1Hand_);
-	AddControl(&altimeter10Hand_);
-	AddControl(&altimeter100Hand_);
-
-	AddControl(&tdiAltOnes_);
-	AddControl(&tdiAltTens_);
-	AddControl(&tdiAltHunds_);
-	AddControl(&tdiAltThou_);
-	AddControl(&tdiAltTenThou_);
-
-	/*  VSI  */
-	AddControl(&vsiHand_);
-
-	/*  Attitude  */
-	AddControl(&attitudeDisplay_);
-	AddControl(&attitudeFlag_);
-
-	/*  HSI  */
-	AddControl(&hsiRoseCompass_);
-	AddControl(&hsiHeadingBug_);
-	AddControl(&hsiCourse_);
-	AddControl(&dialSetCourseIncrement_);
-	AddControl(&dialSetCourseDecrement_);
-	AddControl(&hsiCRSOnes_);
-	AddControl(&hsiCRSTens_);
-	AddControl(&hsiCRSHunds_);
-	AddControl(&dialSetHeadingIncrement_);
-	AddControl(&dialSetHeadingDecrement_);
-	AddControl(&hsiBearing_);
-	AddControl(&hsiMilesOnes_);
-	AddControl(&hsiMilesTens_);
-	AddControl(&hsiMilesHunds_);
-	AddControl(&comStatusFlag_);
-	AddControl(&hsiOffFlag_);
-	AddControl(&hsiExoFlag_);
-
-	/*  Airspeed  */
-	AddControl(&airspeedKeasOnes_);
-	AddControl(&airspeedKeasTens_);
-	AddControl(&airspeedKeasHunds_);
-	AddControl(&airspeedSpeed_);
-	AddControl(&airspeedKies_);
-	AddControl(&airspeedMaxMach_);
-	AddControl(&speedIsEnabledFlag_);
-	AddControl(&speedIsVelocityFlag_);
-	AddControl(&airspeedMACHOnes_);
-	AddControl(&airspeedMACHTens_);
-	AddControl(&airspeedMACHHunds_);
-
 
 	//
 	AddComponent(&aeroData_);
 	AddComponent(&airBrake_);
 	AddComponent(&airspeed_);
 	AddComponent(&altimeter_);
+	AddComponent(&apu_);
 	AddComponent(&beacon_);
 	AddComponent(&canopy_);
 	AddComponent(&cargobay_);
 	AddComponent(&clock_);
 	AddComponent(&fuelCell_);
+	AddComponent(&headsUpDisplay_);
 	AddComponent(&hoverEngines_);
 	AddComponent(&hydrogenTank_);
 	AddComponent(&hsi_);
+	AddComponent(&landingGear_);
 	AddComponent(&navLight_);
 	AddComponent(&oxygenTank_);
+	AddComponent(&propulsion_);
+	AddComponent(&powerSystem_);
 	AddComponent(&retroEngines_);
 	AddComponent(&strobe_);
 
-	// Wire up controls.
-	powerSystem_.add_user(&aeroData_);
-	powerSystem_.add_user(&beacon_);
-	powerSystem_.add_user(&canopy_);
-	powerSystem_.add_user(&cargobay_);
-	powerSystem_.add_user(&hoverEngines_);
-	powerSystem_.add_user(&hydrogenTank_);
-	powerSystem_.add_user(&navLight_);
-	powerSystem_.add_user(&oxygenTank_);
-	powerSystem_.add_user(&strobe_);
-	powerSystem_.add_user(&fuelCell_);
-	powerSystem_.add_user(&apu_);
-	powerSystem_.add_user(&mainFuelTank_);
-	powerSystem_.add_user(&rcsFuelTank_);
-	powerSystem_.add_user(&retroEngines_);
 
-	// Connect consumables
-
-	// Lights
-	bco::connect( switchNavigationLights.Signal(),			navLight_.Slot());
-	bco::connect( switchBeaconLights.Signal(),				beacon_.Slot());
-	bco::connect( switchStrobeLights.Signal(),				strobe_.Slot());
-	bco::connect( powerSystem_.VoltLevelSignal(),			beacon_.VoltsInputSlot());
-	bco::connect( powerSystem_.VoltLevelSignal(),			strobe_.VoltsInputSlot());
-	bco::connect( powerSystem_.VoltLevelSignal(),			navLight_.VoltsInputSlot());
-
-	// Power connections
-	bco::connect( switchMainPower.Signal(),					powerSystem_.MainPowerSlot());
-	bco::connect( switchConnectExternalPower.Signal(),		powerSystem_.ExternalConnectSlot());
-	bco::connect( switchConnectFuelCell.Signal(),			powerSystem_.FuelCellConnectSlot());
-	bco::connect( powerSystem_.FuelCellConnectedSignal(),	lightFuelCellConnected_.Slot());
-	bco::connect( powerSystem_.ExternalAvailableSignal(),	lightExternalAvail_.Slot());
-	bco::connect( powerSystem_.ExternalConnectedSignal(),	lightExternalConnected_.Slot());
-	
 	// Fuel cell					// A signal can drive more then one slot
 	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
-	bco::connect( fuelCell_.IsAvailableSignal(),			lightFuelCellAvail_.Slot());
-	bco::connect( switchFuelCellPower.Signal(),				fuelCell_.IsEnabledSlot());
-	bco::connect( powerSystem_.AmpLoadSignal(),				fuelCell_.AmpLoadSlot());
-	bco::connect( powerSystem_.VoltLevelSignal(),			fuelCell_.VoltsInputSlot());
-
-	// Power gauges
-	bco::connect( powerSystem_.VoltLevelSignal(),			gaugePowerVolts_.Slot());
-	bco::connect( powerSystem_.AmpLoadSignal(),				gaugePowerAmps_.Slot());
-
-	// Canopy
-	bco::connect( switchCanopyPower.Signal(),				canopy_.PowerEnabledSlot());
-	bco::connect( switchCanopyOpen.Signal(),				canopy_.CanopyOpenSlot());
-
-	// Cargo
-	bco::connect( switchCargoPower.Signal(),				cargobay_.PowerEnabledSlot());
-	bco::connect( switchCargoOpen.Signal(),					cargobay_.CargoOpenSlot());
-
-	// APU
-	bco::connect( switchApuPower.Signal(),					apu_.IsEnabledSlot());
-	bco::connect( apu_.HydroPressSignal(),					gaugeAPULevel_.Slot());
-
-	// Clock
-	bco::connect( clock_.TimerSecondsSignal(),				clockTimerSecondsHand_.Slot());
-	bco::connect( clock_.TimerMinutesSignal(),				clockTimerMinutesHand_.Slot());
-	bco::connect( clock_.ElapsedMinutesSignal(),			clockElapsedMinutesHand_.Slot());
-	bco::connect( clock_.ElapsedHoursSignal(),				clockElapsedHoursHand_.Slot());
-	bco::connect( clockElapsedReset_.Signal(),				clock_.ElapsedResetSlot());
-	bco::connect( clockTimerReset_.Signal(),				clock_.TimerResetSlot());
-
-	// Hover doors
-	bco::connect( switchHoverOpen.Signal(),					hoverEngines_.HoverOpenSlot());
-
-	// HUD
-	bco::connect( btnHudDocking_.Signal(),					headsUpDisplay_.DockModeSlot());
-	bco::connect( headsUpDisplay_.DockModeSignal(),			btnLightHudDocking_.Slot());
-	bco::connect( btnHudSurface_.Signal(),					headsUpDisplay_.SurfaceModeSlot());
-	bco::connect( headsUpDisplay_.SurfaceModeSignal(),		btnLightHudSurface_.Slot());
-	bco::connect( btnHudOrbit_.Signal(),					headsUpDisplay_.OrbitModeSlot());
-	bco::connect( headsUpDisplay_.OrbitModeSignal(),		btnLightHudOrbit_.Slot());
-
-	// Hydrogen
-	bco::connect( hydrogenTank_.LevelSignal(),				gaugeHydroLevel_.Slot());
-	bco::connect( powerSystem_.ExternalAvailableSignal(),	hydrogenTank_.ExternAvailableSlot());
-	bco::connect( hydrogenTank_.IsAvailableSignal(),		lightHydrogenAvail_.Slot());
-	bco::connect( btnHydroFill_.Signal(),					hydrogenTank_.ToggleFillSlot());
-	bco::connect( hydrogenTank_.IsFillingSignal(),			btnLightHydroFill_.Slot());
-
-	// Oxygen
-	bco::connect( oxygenTank_.LevelSignal(),				gaugeO2Level_.Slot());
-	bco::connect( powerSystem_.ExternalAvailableSignal(),	oxygenTank_.ExternAvailableSlot());
-	bco::connect( oxygenTank_.IsAvailableSignal(),			lightO2Avail_.Slot());
-	bco::connect( btnO2Fill_.Signal(),						oxygenTank_.ToggleFillSlot());
-	bco::connect( oxygenTank_.IsFillingSignal(),			btnLightO2Fill.Slot());
 
 	// Airbrake
-	bco::connect( btnDecreaseAirbrake_.Signal(),			airBrake_.DecreaseSlot());
-	bco::connect( btnIncreaseAirbrake_.Signal(),			airBrake_.IncreaseSlot());
-	bco::connect( apu_.HydroPressSignal(),					airBrake_.HydraulicPressSlot());
+	bco::connect( apu_.HydroPressSignal(),					airBrake_.HydraulicPressSlot());	// still need this
 
 	// Landing Gear
-	bco::connect( btnRaiseLandingGear_.Signal(),			landingGear_.GearUpSlot());
-	bco::connect( btnLowerLandingGear_.Signal(),			landingGear_.GearDownSlot());
-	bco::connect( apu_.HydroPressSignal(),					landingGear_.HydraulicPressSlot());
-
-	// Nav Modes
-	bco::connect( btnNavKillRot_.Signal(),					navModes_.NavButtonSlot());
-	bco::connect( btnNavHorzLevel_.Signal(),				navModes_.NavButtonSlot());
-	bco::connect( btnNavPrograde_.Signal(),					navModes_.NavButtonSlot());
-	bco::connect( btnNavRetrograde_.Signal(),				navModes_.NavButtonSlot());
-	bco::connect( btnNavNormal_.Signal(),					navModes_.NavButtonSlot());
-	bco::connect( btnNavAntiNorm_.Signal(),					navModes_.NavButtonSlot());
-	//bco::connect( navModes_.NavModeSignal(),				btnLightNavKillRot_.Slot());
-	//bco::connect( navModes_.NavModeSignal(),				btnLightNavHorzLevel_.Slot());
-	//bco::connect( navModes_.NavModeSignal(),				btnLightNavPrograde_.Slot());
-	//bco::connect( navModes_.NavModeSignal(),				btnLightNavRetrograde_.Slot());
-	//bco::connect( navModes_.NavModeSignal(),				btnLightNavNormal_.Slot());
-	//bco::connect( navModes_.NavModeSignal(),				btnLightNavAntiNorm_.Slot());
-
-	// Propulsion
-	bco::connect( propulsionController_.FuelFlowSignal(),		gaugeFuelFlow_.Slot());
-	bco::connect( propulsionController_.MainFuelLevelSignal(),	gaugeFuelMain_.Slot());
-	bco::connect( propulsionController_.RCSFuelLevelSignal(),	gaugeFuelRCS_.Slot());
-	bco::connect( switchThrustLimit_.Signal(),					propulsionController_.ThrottleLimitSlot());
-	bco::connect( switchFuelDump_.Signal(),						propulsionController_.FuelDumpSlot());
-	bco::connect( switchTransferSelect_.Signal(),				propulsionController_.FuelTransferSelSlot());
-	bco::connect( propulsionController_.IsFuelAvailSignal(),	lightFuelAvail_.Slot());
-	bco::connect( btnFuelTransferPump_.Signal(),				propulsionController_.TransferPumpSlot());
-	bco::connect( propulsionController_.IsTransferPumpOn(),		btnLightFuelTransferPump_.Slot());
-	bco::connect( btnFuelValveOpen_.Signal(),					propulsionController_.FuelValveOpenSlot());
-	bco::connect( propulsionController_.IsFuelValveOpen(),		btnLightFuelValveOpen_.Slot());
+	bco::connect( apu_.HydroPressSignal(),					landingGear_.HydraulicPressSlot());	// still need this
 
 	// RCS
-	bco::connect( btnRCSLinear_.Signal(),					rcsSystem_.ToggleLinearSlot());
-	bco::connect( rcsSystem_.IsLinearSignal(),				btnLightRCSLinear_.Slot());
-	bco::connect( btnRCSRotate_.Signal(),					rcsSystem_.ToggleRotateSlot());
-	bco::connect( rcsSystem_.IsRotateSignal(),				btnLightRCSRotate_.Slot());
+	bco::connect( aeroData_.IsAeroActiveSignal(),			rcs_.IsAeroActiveSlot());
 
-	// Retro Doors
-	bco::connect( switchRetroDoors_.Signal(),				retroEngines_.RetroDoorsSlot());
-
-	// Altimeter
-	bco::connect( switchAvionPower_.Signal(),				altimeter_.EnabledSlot());
-	bco::connect( switchAvionMode_.Signal(),				altimeter_.AvionicsModeSlot());
-	bco::connect( altimeter_.AltimeterHundredsSignal(),		altimeter1Hand_.Slot());
-	bco::connect( altimeter_.AltimeterThousandsSignal(),	altimeter10Hand_.Slot());
-	bco::connect( altimeter_.AltimeterTenThousandsSignal(),	altimeter100Hand_.Slot());
-
-	bco::connect( altimeter_.AltimeterTensSignal(),			tdiAltOnes_.SlotTransform());
-	bco::connect( altimeter_.AltimeterHundredsSignal(),		tdiAltTens_.SlotTransform());
-	bco::connect( altimeter_.AltimeterThousandsSignal(),	tdiAltHunds_.SlotTransform());
-	bco::connect( altimeter_.AltimeterTenThousandsSignal(),	tdiAltThou_.SlotTransform());
-	bco::connect( altimeter_.AltimeterHundThousandsSignal(),tdiAltTenThou_.SlotTransform());
-
-	bco::connect( altimeter_.IsExoModeSignal(),				altimeterExoModeFlag_.Slot());
-	bco::connect( altimeter_.IsEnabledSignal(),				altimeterEnabledFlag_.Slot());
-
-	// VSI
-//	bco::connect( switchAvionPower_.Signal(),				vsi_.EnabledSlot());
-//	bco::connect( vsi_.VSINeedleSignal(),					vsiHand_.Slot());
-	bco::connect( switchAvionPower_.Signal(),				vsiActiveFlag_.Slot());
-
-	// Attitude
-//	bco::connect( switchAvionPower_.Signal(),				attitude_.EnabledSlot());
-//	bco::connect( attitude_.BankSignal(),					attitudeDisplay_.SlotAngle());
-//	bco::connect( attitude_.PitchSignal(),					attitudeDisplay_.SlotTransform());
-	bco::connect( switchAvionPower_.Signal(),				attitudeFlag_.Slot());
-
-	// HSI
-	bco::connect( switchAvionPower_.Signal(),				hsi_.EnabledSlot());
-	bco::connect( switchAvionMode_.Signal(),				hsi_.AvionicsModeSlot());
-	bco::connect( hsi_.YawSignal(),							hsiRoseCompass_.Slot());
-	bco::connect( hsi_.SetHeadingSignal(),					hsiHeadingBug_.Slot());
-	bco::connect( hsi_.BearingSignal(),						hsiBearing_.Slot());
-	bco::connect( hsi_.ComStatusSignal(),					comStatusFlag_.Slot());
-	bco::connect( hsi_.ShowOffFlagSignal(),					hsiOffFlag_.Slot());
-	bco::connect( hsi_.ShowExoFlagSignal(),					hsiExoFlag_.Slot());
-
-			// Course/heading dials drive the aerodata course slots.  Source of 'truth' is in AeroData.
-	bco::connect( dialSetCourseIncrement_.Signal(),			aeroData_.SetCourseIncSlot());
-	bco::connect( dialSetCourseDecrement_.Signal(),			aeroData_.SetCourseDecSlot());
-	bco::connect( dialSetHeadingIncrement_.Signal(),		aeroData_.SetHeadingIncSlot());
-	bco::connect( dialSetHeadingDecrement_.Signal(),		aeroData_.SetHeadingDecSlot());
 	// ...which in turn drive the HSI course and heading
 	bco::connect( aeroData_.SetCourseSignal(),				hsi_.SetCourseSlot());
 	bco::connect( aeroData_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
 			// ...which drives the course and heading needle and wheels.
-	bco::connect( hsi_.SetCourseSignal(),					hsiCourse_.Slot());
-	bco::connect( hsi_.SetCourseSignal(),					hsiCourseError_.SlotAngle());
-	bco::connect( hsi_.NavErrorSignal(),					hsiCourseError_.SlotTransform());
-	bco::connect( hsi_.CrsOnesSignal(),						hsiCRSOnes_.SlotTransform());
-	bco::connect( hsi_.CrsTensSignal(),						hsiCRSTens_.SlotTransform());
-	bco::connect( hsi_.CrsHundsSignal(),					hsiCRSHunds_.SlotTransform());
-	bco::connect( hsi_.MilesOnesSignal(),					hsiMilesOnes_.SlotTransform());
-	bco::connect( hsi_.MilesTensSignal(),					hsiMilesTens_.SlotTransform());
-	bco::connect( hsi_.MilesHundsSignal(),					hsiMilesHunds_.SlotTransform());
 
-	// Airspeed
-	bco::connect( switchAvionPower_.Signal(),				airspeed_.EnabledSlot());
-	bco::connect( switchAvionMode_.Signal(),				airspeed_.AvionicsModeSlot());
-	bco::connect( airspeed_.KeasOnesSignal(),				airspeedKeasOnes_.SlotTransform());
-	bco::connect( airspeed_.KeasTensSignal(),				airspeedKeasTens_.SlotTransform());
-	bco::connect( airspeed_.KeasHundsSignal(),				airspeedKeasHunds_.SlotTransform());
-	bco::connect( airspeed_.MACHMaxSignal(),				airspeedMaxMach_.Slot());
-	bco::connect( airspeed_.SpeedSignal(),					airspeedSpeed_.Slot());
-	bco::connect( airspeed_.KiasSpeedSignal(),				airspeedKies_.Slot());
-	bco::connect( airspeed_.IsEnabledSignal(),				speedIsEnabledFlag_.Slot());
-	bco::connect( airspeed_.IsVelocityFlagSignal(),			speedIsVelocityFlag_.Slot());
-	bco::connect( airspeed_.MACHOnesSignal(),				airspeedMACHOnes_.SlotTransform());
-	bco::connect( airspeed_.MACHTensSignal(),				airspeedMACHTens_.SlotTransform());
-	bco::connect( airspeed_.MACHHundsSignal(),				airspeedMACHHunds_.SlotTransform());
+	// Internal vessel stuff:
+	bco::connect( apu_.HydroPressSignal(),					slotHydraulicLevel_);	 // Get our hydraulic level for surface controls.
 }
 
 
@@ -478,7 +92,7 @@ SR71Vessel::~SR71Vessel()
 void SR71Vessel::SetupVesselComponents()
 {
 	// Setup surface controller:
-	surfaceControl_.SetAPU(&apu_);
+//	surfaceControl_.SetAPU(&apu_);
 
 	// APU
 //	apu_.SetPropulsionControl(&propulsionController_);
@@ -491,39 +105,12 @@ void SR71Vessel::SetupVesselComponents()
 //	statusBoard_.SetCargoBay(&cargoBayController_);
 //	statusBoard_.SetAvionics(&avionics_);
 	statusBoard_.SetPower(&powerSystem_);
-	statusBoard_.SetPropulsion(&propulsionController_);
+	statusBoard_.SetPropulsion(&propulsion_);
 	statusBoard_.SetAPU(&apu_);
 	statusBoard_.SetAirBrake(&airBrake_);
     statusBoard_.SetHover(&hoverEngines_);
     statusBoard_.SetRetro(&retroEngines_);
     statusBoard_.SetCanopy(&canopy_);
-
-    // Flight Computer
-//    computer_.SetAvionics(&avionics_);
-//	computer_.SetSurfaceControl(&surfaceControl_);
-//	computer_.SetPropulsionControl(&propulsionController_);
-
-
-
-	// Setup power and add powered devices:
-//	powerSystem_.AddMainCircuitDevice(&avionics_);
-//	powerSystem_.AddMainCircuitDevice(&headsUpDisplay_);
-//	powerSystem_.AddMainCircuitDevice(&rcsSystem_);
-//	powerSystem_.AddMainCircuitDevice(&navModes_);
-//	powerSystem_.AddMainCircuitDevice(&mfdLeft_);
-//	powerSystem_.AddMainCircuitDevice(&mfdRight_);
-//	powerSystem_.AddMainCircuitDevice(&cargoBayController_);
-//    powerSystem_.AddMainCircuitDevice(&canopy_);
-//	powerSystem_.AddMainCircuitDevice(&apu_);
-//	powerSystem_.AddMainCircuitDevice(&fuelCell_);
-//	powerSystem_.AddMainCircuitDevice(&statusBoard_);
-//	powerSystem_.AddMainCircuitDevice(&propulsionController_);
-////	powerSystem_.AddMainCircuitDevice(&lights_);		 // TODO
-//	powerSystem_.AddMainCircuitDevice(&computer_);
-//    powerSystem_.AddMainCircuitDevice(&hoverEngines_);
-//    powerSystem_.AddMainCircuitDevice(&retroEngines_);
-//    powerSystem_.AddMainCircuitDevice(&oxygenTank_);
-//    powerSystem_.AddMainCircuitDevice(&hydrogenTank_);
 }
 
 void SR71Vessel::SetupAerodynamics()
@@ -548,3 +135,99 @@ void SR71Vessel::SetupAerodynamics()
 		HORZ_WING_AR);
 }
 
+void SR71Vessel::SetupSurfaces()
+{
+	auto vessel = this;
+
+	// Left Aileron Animation
+	static UINT groupLeftAileron = bm::main::LeftOuterElevon_id;
+	static VECTOR3 leftAileronAxis = bm::main::AileronAxisPO_location - bm::main::AileronAxisPI_location;
+	static VECTOR3 leftElevatorAxis = bm::main::AileronAxisPI_location - bm::main::AileronAxisPO_location;
+
+	normalise(leftAileronAxis);
+	static MGROUP_ROTATE animGroupLeftAileron(
+		0,
+		&groupLeftAileron,
+		1,
+		bm::main::AileronAxisPI_location,
+		leftAileronAxis,
+		AILERON_RANGE);
+
+	normalise(leftElevatorAxis);
+	static MGROUP_ROTATE animGroupLeftElevator(
+		0,
+		&groupLeftAileron,
+		1,
+		bm::main::AileronAxisPI_location,
+		leftElevatorAxis,
+		AILERON_RANGE);
+
+	anim_left_aileron_ = vessel->CreateAnimation(0.5);
+	anim_left_elevator_ = vessel->CreateAnimation(0.5);
+
+	vessel->AddAnimationComponent(anim_left_aileron_, 0, 1, &animGroupLeftAileron);
+	vessel->AddAnimationComponent(anim_left_elevator_, 0, 1, &animGroupLeftElevator);
+
+
+	// Right Aileron Animation
+	static UINT groupRightAileron[1] = { bm::main::RightOuterElevon_id };
+	static VECTOR3 rightAileronAxis = bm::main::AileronAxisSO_location - bm::main::AileronAxisSI_location;
+
+	normalise(rightAileronAxis);
+	static MGROUP_ROTATE animGroupRightAileron(
+		0,
+		groupRightAileron,
+		1,
+		bm::main::AileronAxisSI_location,
+		rightAileronAxis,
+		AILERON_RANGE);
+
+	static MGROUP_ROTATE animGroupRightElevator(
+		0,
+		groupRightAileron,
+		1,
+		bm::main::AileronAxisSI_location,
+		rightAileronAxis,
+		AILERON_RANGE);
+
+	anim_right_aileron_ = vessel->CreateAnimation(0.5);
+	anim_right_elevator_ = vessel->CreateAnimation(0.5);
+
+	vessel->AddAnimationComponent(anim_right_aileron_, 0, 1, &animGroupRightAileron);
+	vessel->AddAnimationComponent(anim_right_elevator_, 0, 1, &animGroupRightElevator);
+
+
+	// Left Rudder Animation
+	static UINT groupLeftRudder = bm::main::LeftRudder_id;
+	static VECTOR3 leftRudderAxis = bm::main::RudderAxisPB_location - bm::main::RudderAxisPT_location;
+
+	normalise(leftRudderAxis);
+	static MGROUP_ROTATE animGroupLeftRudder(
+		0,
+		&groupLeftRudder,
+		1,
+		bm::main::RudderAxisPB_location,
+		leftRudderAxis,
+		AILERON_RANGE);
+
+
+	// Right Rudder Animation
+	static UINT groupRightRudder = bm::main::RightRudder_id;
+	static VECTOR3 rightRudderAxis = bm::main::RudderAxisSB_location - bm::main::RudderAxisST_location;
+
+	normalise(rightRudderAxis);
+	static MGROUP_ROTATE animGroupRightRudder(
+		0,
+		&groupRightRudder,
+		1,
+		bm::main::RudderAxisSB_location,
+		rightRudderAxis,
+		AILERON_RANGE);
+
+	// control surface animation.
+	anim_left_rudder_ = vessel->CreateAnimation(0.5);
+	anim_right_rudder_ = vessel->CreateAnimation(0.5);
+
+	vessel->AddAnimationComponent(anim_left_rudder_, 0, 1, &animGroupLeftRudder);
+	vessel->AddAnimationComponent(anim_right_rudder_, 0, 1, &animGroupRightRudder);
+}

@@ -19,12 +19,14 @@
 #include "AirBrake.h"
 #include "SR71r_mesh.h"
 
-AirBrake::AirBrake(bco::BaseVessel* vessel) :
-	dragFactor_(0.0),
-	increaseSlot_([&](bool v) {position_ = min(1.0, position_ + 0.33); increaseSlot_.set(); }),
-	decreaseSlot_([&](bool v) {position_ = max(0.0, position_ - 0.33); decreaseSlot_.set(); }),
-	hydraulicPressSlot_([&](double v) {})
+AirBrake::AirBrake(bco::BaseVessel& vessel) :
+	dragFactor_(0.0)
 {
+	vessel.AddControl(&btnDecreaseAirbrake_);
+	vessel.AddControl(&btnIncreaseAirbrake_);
+
+	btnIncreaseAirbrake_.attach([&]() { position_ = min(1.0, position_ + 0.33); });
+	btnDecreaseAirbrake_.attach([&]() { position_ = max(0.0, position_ - 0.33); });
 }
 
 void AirBrake::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)

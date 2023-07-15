@@ -18,10 +18,11 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\BaseVessel.h"
-#include "bc_orbiter\signals.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/on_off_display.h"
+#include "bc_orbiter/simple_event.h"
 
 #include "SR71r_mesh.h"
 
@@ -37,21 +38,20 @@ namespace bco = bc_orbiter;
 	Configuration:
 	The HUD mode is managed by Orbiter.
 */
-class HUD : public bco::PoweredComponent
+class HUD : 
+	public bco::vessel_component,
+	public bco::power_consumer,
+	public bco::load_vc,
+	public bco::draw_hud
 {
 public:
-	HUD(bco::BaseVessel* vessel, double amps);
+	HUD(bco::power_provider& pwr, bco::BaseVessel& vessel);
 
-	bool OnLoadVC(int id) override;
+	bool handle_load_vc(bco::BaseVessel& vessel, int vcid) override;
 
-	/**
-	Override to manage power based on vessel HUD state.
-	*/
-	virtual double CurrentDraw() override;
+	void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-	void ChangePowerLevel(double newLevel) override;
-
-	bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+	double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
 
 	void OnHudMode(int mode);
 
@@ -64,6 +64,10 @@ public:
 	bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
 
 private:
+	bco::power_provider& power_;
+
+	bool IsPowered() const {	return (HUD_NONE != oapiGetHUDMode()) && power_.volts_available() > 24.0; }
+
 	void OnChanged(int mode);
 
 	bco::slot<bool> slotDockMode_;
@@ -73,4 +77,41 @@ private:
 	bco::signal<bool> sigDockMode_;
 	bco::signal<bool> sigOrbitMode_;
 	bco::signal<bool> sigSurfaceMode_;
+
+	// *** HUD *** 
+	bco::simple_event<>		btnDocking_	{		bm::vc::vcHUDDock_location,
+												0.01,
+												bm::pnl::pnlHUDDock_RC
+											};
+
+	bco::on_off_display		btnLightDocking_ {	bm::vc::vcHUDDock_id,
+												bm::vc::vcHUDDock_verts,
+												bm::pnl::pnlHUDDock_id,
+												bm::pnl::pnlHUDDock_verts,
+												0.0352
+											};
+
+	bco::simple_event<>		btnOrbit_ {			bm::vc::vcHUDOrbit_location,
+												0.01,
+												bm::pnl::pnlHUDOrbit_RC
+											};
+
+	bco::on_off_display		btnLightOrbit_ {	bm::vc::vcHUDOrbit_id,
+												bm::vc::vcHUDOrbit_verts,
+												bm::pnl::pnlHUDOrbit_id,
+												bm::pnl::pnlHUDOrbit_verts,
+												0.0352
+											};
+
+	bco::simple_event<>		btnSurface_ {		bm::vc::vcHUDSURF_location,
+												0.01,
+												bm::pnl::pnlHUDSurf_RC
+										};
+
+	bco::on_off_display		btnLightSurface_ {	bm::vc::vcHUDSURF_id,
+												bm::vc::vcHUDSURF_verts,
+												bm::pnl::pnlHUDSurf_id,
+												bm::pnl::pnlHUDSurf_verts,
+												0.0352
+											};
 };

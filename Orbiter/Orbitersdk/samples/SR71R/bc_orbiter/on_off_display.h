@@ -30,26 +30,30 @@ namespace bc_orbiter {
 	'x' axis 'offset' amount to move from OFF to ON.
 	The state of the UI is control via a slot input.
 	**/
-	class on_off_display : public control, public vc_event_target, public panel_event_target {
+	class on_off_display : 
+		  public control
+		, public vc_event_target
+		, public panel_event_target 
+	{
 	public:
 		on_off_display(
-			int ctrlId,
-			const UINT vcGroupId,
-			const NTVERTEX* vcVerts,
-			const UINT pnlGroupId,
-			const NTVERTEX* pnlVerts,
-			double offset)
-			:
-			control(ctrlId),
-			vcGroupId_(vcGroupId),
-			vcVerts_(vcVerts),
-			pnlGroupId_(pnlGroupId),
-			pnlVerts_(pnlVerts),
-			offset_(offset),
-			slotState_([&](bool v) {
-				oapiTriggerRedrawArea(0, 0, get_id()); 
-				slotState_.set();
-			})
+			  const UINT vcGroupId
+			, const NTVERTEX* vcVerts
+			, const UINT pnlGroupId
+			, const NTVERTEX* pnlVerts
+			, double offset
+		) :
+			  control(-1)
+			, vcGroupId_(vcGroupId)
+			, vcVerts_(vcVerts)
+			, pnlGroupId_(pnlGroupId)
+			, pnlVerts_(pnlVerts)
+			, offset_(offset)
+			, slotState_([&](bool v) 
+				{
+					oapiTriggerRedrawArea(0, 0, get_id()); 
+					slotState_.set();
+				})
 		{
 		}
 
@@ -81,6 +85,8 @@ namespace bc_orbiter {
 			int vc_redraw_flags() { return PANEL_REDRAW_USER; }
 			int panel_mouse_flags() { return PANEL_MOUSE_IGNORE; }
 			int panel_redraw_flags() { return PANEL_REDRAW_USER; }
+
+			void set_state(bool s) { slotState_.notify(s); }		// Temp until we can remove the slot.
 
 			slot<bool>& Slot() { return slotState_; }
 	private:

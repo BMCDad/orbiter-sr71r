@@ -36,10 +36,11 @@ namespace bc_orbiter {
     */
     template<typename Tanim>
     class rotary_display : 
-        public control, 
-        public vc_animation, 
-        public panel_animation, 
-        public IAnimationState {
+          public control
+        , public vc_animation
+        , public panel_animation
+//        , public IAnimationState
+    {
     public:
         rotary_display(
             std::initializer_list<UINT> const& vcAnimGroupIds,
@@ -50,7 +51,7 @@ namespace bc_orbiter {
             double speed,
             std::function<double(double)> trans)
             : 
-            control(0),       // id not used for gauges.
+            control(-1),       // id not used for gauges.
             vcAnimGroup_(
                 vcAnimGroupIds,
                 vcLocation, vcAxisLocation,
@@ -67,7 +68,7 @@ namespace bc_orbiter {
 
         // vc_animation
         AnimationGroup*     vc_animation_group() override { return &vcAnimGroup_; }
-        IAnimationState*    vc_animation_state() override { return this; }
+//        IAnimationState*    vc_animation_state() override { return this; }
         double              vc_animation_speed() const override { return animSpeed_; }
         double vc_step(double simdt) override {
             animVC_.Step(state_, simdt);
@@ -75,13 +76,15 @@ namespace bc_orbiter {
         }
 
         // IAnimationState
-        double GetState() const { return state_; }
+//        double GetState() const { return state_; }
 
         // panel_animation
         void panel_step(MESHHANDLE mesh, double simdt) override {
             animPnl_.Step(state_, simdt);
             RotateMesh(mesh, pnlGroup_, pnlVerts_, (animPnl_.GetState() * -angle_));
         }
+
+        void set_state(double d) { slotState_.notify(d); }
 
         slot<double>& Slot() { return slotState_; }
     private:

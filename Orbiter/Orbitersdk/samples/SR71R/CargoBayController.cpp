@@ -22,14 +22,16 @@
 #include "CargoBayController.h"
 #include "SR71r_mesh.h"
 
-CargoBayController::CargoBayController()
-{ }
+CargoBayController::CargoBayController(bco::power_provider& pwr) :
+    power_(pwr)
+{
+    power_.attach_consumer(this);
+}
 
 void CargoBayController::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
 {
-	if (IsPowered())
-	{
-        animCargoBayDoors_.Step(slotCargoOpenClose_.value() ? 1.0 : 0.0, simdt);
+	if (IsPowered()) {
+        animCargoBayDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
 	}
 }
 

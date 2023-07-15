@@ -25,15 +25,52 @@
 #include <assert.h>
 
 NavModes::NavModes(bco::BaseVessel& baseVessel) :
-baseVessel_(baseVessel),
-slotNavButton_([&](int v) { ToggleMode(v); slotNavButton_.set(); }),
-slotDrawHud_([&](bco::draw_hud_data v) { DrawHUD(v.mode, v.paintSpec, v.sketchPad); })
+    baseVessel_(baseVessel)
 {
+    baseVessel_.AddControl(&btnKillRot_);
+    baseVessel_.AddControl(&btnHorzLevel_);
+    baseVessel_.AddControl(&btnAntiNorm_);
+    baseVessel_.AddControl(&btnNormal_);
+    baseVessel_.AddControl(&btnPrograde_);
+    baseVessel_.AddControl(&btnRetrograde_);
+
+    baseVessel_.AddControl(&lightKillRot_);
+    baseVessel_.AddControl(&lightHorzLevel_);
+    baseVessel_.AddControl(&lightAntiNorm_);
+    baseVessel_.AddControl(&lightNormal_);
+    baseVessel_.AddControl(&lightPrograde_);
+    baseVessel_.AddControl(&lightRetrograde_);
+
+    btnKillRot_     .attach([&]() { ToggleMode(NAVMODE_KILLROT); });
+    btnHorzLevel_   .attach([&]() { ToggleMode(NAVMODE_HLEVEL); });
+    btnAntiNorm_    .attach([&]() { ToggleMode(NAVMODE_ANTINORMAL); });
+    btnNormal_      .attach([&]() { ToggleMode(NAVMODE_NORMAL); });
+    btnPrograde_    .attach([&]() { ToggleMode(NAVMODE_PROGRADE); });
+    btnRetrograde_  .attach([&]() { ToggleMode(NAVMODE_RETROGRADE); });
 }
 
 void NavModes::OnNavMode(int mode, bool active)
 {
-	sigNavMode_.fire({mode, active});
+    switch (mode) {
+    case NAVMODE_ANTINORMAL:
+        lightAntiNorm_.set_state(active);
+        break;
+    case NAVMODE_HLEVEL:
+        lightHorzLevel_.set_state(active);
+        break;
+    case NAVMODE_KILLROT:
+        lightKillRot_.set_state(active);
+        break;
+    case NAVMODE_NORMAL:
+        lightNormal_.set_state(active);
+        break;
+    case NAVMODE_PROGRADE:
+        lightPrograde_.set_state(active);
+        break;
+    case NAVMODE_RETROGRADE:
+        lightRetrograde_.set_state(active);
+        break;
+    }
 }
 
 void NavModes::ToggleMode(int mode)
@@ -60,9 +97,9 @@ void NavModes::Update()
 	}
 }
 
-bool NavModes::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void NavModes::handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
-    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return false;
+    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
     int xLeft = 2;
     int yTop = hps->H - 30;
 
@@ -108,6 +145,4 @@ bool NavModes::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 
         if (navMode2_ == NAVMODE_HLEVEL) skp->Text(xLeft + 105, yTop + 1, "HLVL", 4);
     }
-
-    return true;
 }

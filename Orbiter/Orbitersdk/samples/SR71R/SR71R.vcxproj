@@ -124,6 +124,7 @@
     <ClInclude Include="bc_orbiter\Circuit.h" />
     <ClInclude Include="bc_orbiter\Component.h" />
     <ClInclude Include="bc_orbiter\control.h" />
+    <ClInclude Include="bc_orbiter\electrical_component.h" />
     <ClInclude Include="bc_orbiter\flat_roll.h" />
     <ClInclude Include="bc_orbiter\generic_tank.h" />
     <ClInclude Include="bc_orbiter\IAnimationState.h" />
@@ -144,14 +145,17 @@
     <ClInclude Include="FlightComputer.h" />
     <ClInclude Include="HoverEngines.h" />
     <ClInclude Include="HSI.h" />
+    <ClInclude Include="HydrogenTank.h" />
     <ClInclude Include="IAvionics.h" />
     <ClInclude Include="FuelCell.h" />
     <ClInclude Include="IConsumable.h" />
     <ClInclude Include="LandingGear.h" />
     <ClInclude Include="NavLights.h" />
+    <ClInclude Include="OxygenTank.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RetroEngines.h" />
     <ClInclude Include="Shutters.h" />
+    <ClInclude Include="SR71r_common.h" />
     <ClInclude Include="StatusBoard.h" />
     <ClInclude Include="LeftMFD.h" />
     <ClInclude Include="MfdMets.h" />
@@ -167,7 +171,6 @@
     <ClInclude Include="SR71Vessel.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="Strobe.h" />
-    <ClInclude Include="SurfaceController.h" />
     <ClInclude Include="bc_orbiter\transform_display.h" />
     <ClInclude Include="TestComponent.h" />
     <ClInclude Include="VesselControl.h" />
@@ -175,7 +178,6 @@
   <ItemGroup>
     <ClCompile Include="AeroData.cpp" />
     <ClCompile Include="AirBrake.cpp" />
-    <ClCompile Include="APU.cpp" />
     <ClCompile Include="Canopy.cpp" />
     <ClCompile Include="CargoBayController.cpp" />
     <ClCompile Include="Clock.cpp" />
@@ -201,7 +203,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SurfaceController.cpp" />
     <ClCompile Include="VesselControl.cpp" />
   </ItemGroup>
   <ItemGroup>

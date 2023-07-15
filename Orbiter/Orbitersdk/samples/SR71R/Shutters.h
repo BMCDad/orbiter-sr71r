@@ -16,24 +16,27 @@
 
 #pragma once
 
-#include "bc_orbiter\Component.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\BaseVessel.h"
-
-#include "bc_orbiter\signals.h"
+#include "bc_orbiter/Component.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/signals.h"
+#include "bc_orbiter/on_off_input.h"
 
 #include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
-class Shutters : public bco::Component
+class Shutters : 
+	public bco::vessel_component,
+	public bco::manage_state
 {
 public:
-	Shutters(bco::BaseVessel* vessel);
+	Shutters(bco::BaseVessel& vessel);
 
-	// Component
-	bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	void OnSaveConfiguration(FILEHANDLE scn) const override;
+	// manage_state
+	bool handle_load_state(const std::string& line) override;
+	std::string handle_save_state() override;
 
 	bco::slot<bool>& ShuttersSlot() { return shuttersSlot_; }
 
@@ -44,14 +47,13 @@ private:
 
 	const char*				ConfigKey = "SHUTTERS";
 
-    //bco::VCToggleSwitch     swShutters_     {   bm::vc::swShutter_id, 
-    //                                            bm::vc::swShutter_location, 
-    //                                            bm::vc::DoorsRightAxis_location
-    //                                        };
-
-	//bco::TextureVisual		visShuttersSideLeft_;
-	//bco::TextureVisual		visShuttersSideRight_;
-
-	//bco::TextureVisual		visShuttersFrontLeft_;
-	//bco::TextureVisual		visShuttersFrontRight_;
+	// ***  Shutters  *** //
+	bco::on_off_input		switchShutters_{		// Open close shutters
+		{ bm::vc::swShutter_id },
+			bm::vc::swShutter_location, bm::vc::DoorsRightAxis_location,
+			toggleOnOff,
+			bm::pnl::pnlScreenSwitch_id,
+			bm::pnl::pnlScreenSwitch_verts,
+			bm::pnl::pnlScreenSwitch_RC
+	};
 };

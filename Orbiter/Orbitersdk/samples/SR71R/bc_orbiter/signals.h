@@ -86,6 +86,29 @@ namespace bc_orbiter {
 		T value_{};
 	};
 
+	/**
+	* signal
+	* Along with slot, provides a means to pass events between components.
+	*/
+	class signaller {
+	public:
+		signaller() = default;
+		virtual ~signaller() = default;
+
+		void attach(const std::function<void()> sl) {
+			funcs_.emplace_back(sl);
+		}
+
+		void fire() {
+			for (const auto& s : funcs_) {
+				s();
+			}
+		}
+
+	private:
+		std::vector<std::function<void()>> funcs_;
+	};
+
 	template<typename TSignal, typename TSlot>
 	void connect(TSignal& sig, TSlot& slot)
 	{

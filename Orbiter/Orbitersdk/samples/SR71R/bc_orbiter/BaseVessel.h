@@ -188,7 +188,10 @@ namespace bc_orbiter
 
 		int GetControlId() { return ++nextEventId_; }
 
-		void AddControl(control* ctrl) { controls_.push_back(ctrl); }
+		void AddControl(control* ctrl) { 
+			if (ctrl->get_id() == -1) ctrl->set_id(GetControlId());
+			controls_.push_back(ctrl); 
+		}
 
 		void AddComponent(vessel_component* c) { components_.push_back(c); }
 
@@ -201,14 +204,25 @@ namespace bc_orbiter
 
 		void HandleClassCaps()
 		{
+			// set_class_caps will flesh out to a more general 'component' list (non-ui/control intities)
+			for each (auto & cc in components_) {
+				if (auto* ac = dynamic_cast<post_step*>(cc)) comp_post_step_.push_back(ac);
+
+				if (auto* ac = dynamic_cast<set_class_caps*>(cc)) comp_set_class_caps_.push_back(ac);
+
+				if (auto* ac = dynamic_cast<draw_hud*>(cc)) comp_draw_hud_.push_back(ac);
+
+				if (auto* ac = dynamic_cast<load_vc*>(cc)) comp_load_vc_.push_back(ac);
+			}
+
+			for each (auto & sc in comp_set_class_caps_) {
+				sc->handle_set_class_caps(*this);
+			}
+
 			for each (auto& vc in controls_)
 			{
 				if (auto* c = dynamic_cast<vc_animation*>(vc)) {
-					//auto aid = CreateVCAnimation(c->vc_animation_state(), c->vc_animation_speed());
-					//auto tr = c->vc_animation_group();
-					//AddVCAnimationComponent(aid, GetVCMeshIndex(), tr);
 					auto aid = VESSEL3::CreateAnimation(0);
-//					AddVCAnimationComponent(aid, GetVCMeshIndex(), c->vc_animation_group());
 					auto trans = c->vc_animation_group();
 					trans->transform_->mesh = GetVCMeshIndex();
 					VESSEL3::AddAnimationComponent(
@@ -237,18 +251,6 @@ namespace bc_orbiter
 				}
 			}
 
-			// set_class_caps will flesh out to a more general 'component' list (non-ui/control intities)
-			for each (auto & cc in components_) {
-				if (auto* ac = dynamic_cast<post_step*>(cc)) comp_post_step_.push_back(ac);
-
-				if (auto* ac = dynamic_cast<set_class_caps*>(cc)) comp_set_class_caps_.push_back(ac);
-
-				if (auto* ac = dynamic_cast<draw_hud*>(cc)) comp_draw_hud_.push_back(ac);
-			}
-
-			for each (auto & sc in comp_set_class_caps_) {
-				sc->handle_set_class_caps(*this);
-			}
 		}
 
 		void HandleLoadVC()
@@ -281,21 +283,22 @@ namespace bc_orbiter
 			}
 		}
 
-std::map<UINT, std::unique_ptr<IAnimation>>     vcAnimations_;
-std::map<int, vc_event_target*>					mapVCTargets_;
-std::map<int, panel_event_target*>				mapPNLTargets_;
-std::vector<panel_animation*>					vecPNLAnimations_;
-std::vector<vc_tex_animation*>					vecVCTexAnimations_;
-std::map<int, vc_animation*>					mapVCAnimations_;
+		std::map<UINT, std::unique_ptr<IAnimation>>     vcAnimations_;
+		std::map<int, vc_event_target*>					mapVCTargets_;
+		std::map<int, panel_event_target*>				mapPNLTargets_;
+		std::vector<panel_animation*>					vecPNLAnimations_;
+		std::vector<vc_tex_animation*>					vecVCTexAnimations_;
+		std::map<int, vc_animation*>					mapVCAnimations_;
 
-std::vector<vessel_component*>					components_;
-std::vector<post_step*>							comp_post_step_;
-std::vector<set_class_caps*>					comp_set_class_caps_;
-std::vector<draw_hud*>							comp_draw_hud_;
+		std::vector<vessel_component*>					components_;
+		std::vector<post_step*>							comp_post_step_;
+		std::vector<set_class_caps*>					comp_set_class_caps_;
+		std::vector<draw_hud*>							comp_draw_hud_;
+		std::vector<load_vc*>							comp_load_vc_;
 
-//**** END NEW STYLE
+		//**** END NEW STYLE
 
-std::vector<control*>			controls_;
+		std::vector<control*>			controls_;
 
 	private:
 		std::vector<Component*>		vesselComponents_;
@@ -391,6 +394,11 @@ std::vector<control*>			controls_;
 //        for (auto& et : vcEventTargetMap_)	et.second->RegisterMouseEvents();
 
 		HandleLoadVC();
+
+		for each (auto & vc in comp_load_vc_) {
+			vc->handle_load_vc(*this, id);
+		}
+
 		return true;
 	}
 
@@ -495,9 +503,6 @@ std::vector<control*>			controls_;
 		// NEW MODE  << This will go away eventually
 		if (oapiCockpitMode() == COCKPIT_VIRTUAL) {
 			for (auto& va : mapVCAnimations_) {
-				//va.second->Step(simdt);
-				//auto state = va.second->GetState();
-				//VESSEL3::SetAnimation(va.first, state);
 				auto newState = va.second->vc_step(simdt);
 				VESSEL3::SetAnimation(va.first, newState);
 			}

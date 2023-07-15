@@ -16,56 +16,56 @@
 
 #pragma once
 
-#include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\signals.h"
 #include "bc_orbiter\control.h"
+#include "bc_orbiter\electrical_component.h"
+
 #include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 #include <map>
 
 namespace bco = bc_orbiter;
 
 class Beacon : 
-	public bco::vessel_component,
-	public bco::set_class_caps,
-	public bco::power_consumer {
+	  public bco::vessel_component
+	, public bco::power_consumer
+	, public bco::set_class_caps {
 
 public:
-	Beacon()
+	Beacon(bco::power_provider& pwr) 
 		:
-		enabledSlot_([&](bool v) { SetActive(); })
-	{
-	}
-
-	// set_class_caps
-	void handle_set_class_caps(bco::BaseVessel& vessel) {
-		vessel.AddBeacon(&specBeaconTop_);
-		vessel.AddBeacon(&specBeaconBottom_);
+		power_(pwr)
+	{ 
+		switchBeaconLights_.attach_on_change([&]() { update(); });
+		power_.attach_consumer(this);
 	}
 
 	// power_consumer
-	double amp_load() override { 
-		return 
-			enabledSlot_.value() && (voltsInputSlot_.value() > MIN_VOLTS)
-			? AMPS 
-			: 0.0; }
+	void on_change(double v) override { update(); }
+	double amp_draw() const override { return switchBeaconLights_.is_on() ? 4.0 : 0.0; }
 
-	bco::slot<bool>&	Slot()				{ return enabledSlot_; }			// Switch: is beacon on
-	bco::slot<double>&	VoltsInputSlot()	{ return voltsInputSlot_; }			// Volts input from power
+	// set_class_caps
+	void handle_set_class_caps(bco::BaseVessel& vessel) override {
+		vessel.AddBeacon(&specBeaconTop_);
+		vessel.AddBeacon(&specBeaconBottom_);
+		
+		vessel.AddControl(&switchBeaconLights_);
+	}
 
 private:
 
-	const double AMPS = 2.0;
-	const double MIN_VOLTS = 24.0;
+	bco::power_provider& power_;
 
-	bco::slot<bool>			enabledSlot_;
-	bco::slot<double>		voltsInputSlot_;
+	void update() {
+		auto isActive = 
+			switchBeaconLights_.is_on() &&
+			(power_.volts_available() > 25.0);
 
-	void SetActive() {
-		auto state = ((voltsInputSlot_.value() > MIN_VOLTS) && enabledSlot_.value());
-		specBeaconTop_.active = state;
-		specBeaconBottom_.active = state;
+		specBeaconTop_.active = isActive;
+		specBeaconBottom_.active = isActive;
 	}
+
 
 	// Set light specs:
 	VECTOR3 colRed{ 1.0, 0.5, 0.5 };
@@ -94,6 +94,15 @@ private:
 		0.1,			// duration
 		0.0,			// tofs
 		false,			// active
+	};
+
+	bco::on_off_input		switchBeaconLights_{		// On off switch for external beacon lights.
+		  { bm::vc::SwitchBeaconLights_id }
+		, bm::vc::SwitchBeaconLights_location, bm::vc::LightsRightAxis_location
+		, toggleOnOff
+		, bm::pnl::pnlLightBeacon_id
+		, bm::pnl::pnlLightBeacon_verts
+		, bm::pnl::pnlLightBeacon_RC
 	};
 };
 

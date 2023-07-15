@@ -27,22 +27,22 @@ namespace bc_orbiter {
 		public generic_tank
 	{
 	public:
-		cryogenic_tank(double capacity, double fillRate, double lossPerHour) :
-			generic_tank(capacity, fillRate) {
+		cryogenic_tank(power_provider& pwr, double capacity, double fillRate, double lossPerHour) :
+			generic_tank(pwr, capacity, fillRate) {
 			lossRate_ = lossPerHour / 3600; // 60*60
 		}
 
 		// post_step
 		void handle_post_step(BaseVessel& vessel, double simt, double simdt, double mjd) override {
-			draw(Level() * (lossRate_ * simdt));	// evaporative loss
+// TODO			draw(Level() * (lossRate_ * simdt));	// evaporative loss
+//			if (IsPowered()) ReportAmps(AMPS_COOLING * simdt);
 			generic_tank::handle_post_step(vessel, simt, simdt, mjd);
 		}
 
-		// power_consumer
-		double amp_load() override {
-			return generic_tank::amp_load() + (IsPowered() ? AMPS_COOLING : 0.0);
-		}
-
+	protected:
+		//void AmpDraw(double simdt) override {
+		////	signalAmpDraw_.fire(amp_draw_ * simdt); 
+		//}
 	private:
 		const double AMPS_COOLING = 4.0;
 		double                  lossRate_;

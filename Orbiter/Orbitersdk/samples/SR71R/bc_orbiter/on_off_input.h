@@ -16,9 +16,11 @@
 
 #pragma once
 
-#include "Control.h"
+#include "control.h"
 
 namespace bc_orbiter {
+
+	using anim_ids = std::initializer_list<UINT>;
 
 	/**
 	* on_off_input_meta
@@ -38,30 +40,31 @@ namespace bc_orbiter {
 	};
 
 	/**
-	* on_off_input
-	* Provides and input only control, such as a physical toggle switch.  VC UI is an animation group, so
-	* a rotation axis and angle must be provided.  The Panel input is a texture, so the vertex and offset
-	* are required.  
-	* Since much of the metadata will be the same, many of the metrix are provided via a control_data structure
-	* that can be reused for many control. A bank of switches for example.
+	on_off_input
+	Provides an input only control, such as a physical toggle switch.  VC UI is an animation group, so
+	a rotation axis and angle must be provided.  The Panel input is a texture, so the vertex and offset
+	are required.  
+	Since much of the metadata will be the same, many of the metrics are provided via a control_data structure
+	that can be reused for many control. A bank of switches for example.
 	*/
 	class on_off_input :
-		public control,
-		public vc_animation,
-		public IAnimationState,
-		public vc_event_target,
-		public panel_event_target {
+		  public control
+		, public vc_animation
+		, public vc_event_target
+		, public panel_event_target
+		, public one_way_switch
+		, public signaller
+	{
 	public:
 		on_off_input(
-			int const ctrlId,
-			std::initializer_list<UINT> const& vcAnimGroupIds,
-			const VECTOR3& vcLocation, const VECTOR3& vcAxisLocation,
-			const on_off_input_meta& vcData,
-			const UINT pnlGroup,
-			const NTVERTEX* pnlVerts,
-			const RECT& pnl
+			  anim_ids const&			vcAnimGroupIds
+			, const VECTOR3&			vcLocation
+			, const VECTOR3&			vcAxisLocation
+			, const on_off_input_meta&	vcData
+			, const UINT				pnlGroup
+			, const NTVERTEX*			pnlVerts
+			, const RECT&				pnl
 		) :
-			control(ctrlId),
 			vcData_(vcData),
 			vcAnimGroup_(
 				vcAnimGroupIds,
@@ -76,18 +79,15 @@ namespace bc_orbiter {
 		{ }
 
 		bool IsOn() const { return state_; }
+		bool is_on() const override { return state_; }
 
 		// vc_animation
 		AnimationGroup*		vc_animation_group()		override { return &vcAnimGroup_; }
-		IAnimationState*	vc_animation_state()		override { return this; }
 		double				vc_animation_speed() const	override { return vcData_.animSpeed; }
 		double vc_step(double simdt) override {
 			animVC_.Step(state_ ? 1.0 : 0.0, simdt);
 			return animVC_.GetState();
 		}
-
-		// IAnimationState
-		double				GetState() const			override { return state_ ? 1.0 : 0.0; }
 
 		// vc_event_target
 		VECTOR3&			vc_event_location()			override { return vcAnimGroup_.location_; }
@@ -107,21 +107,21 @@ namespace bc_orbiter {
 		// event_target
 		bool on_event() override {
 			state_ = !state_;
-			signal_.fire(state_);
+			fire();
 			return true;
 		}
 
-		// signal
-		signal<bool>& Signal() { return signal_; }
+		void attach_on_change(const std::function<void()>& func) override {
+			attach(func);
+		}
 	private:
-		AnimationGroup	vcAnimGroup_;
-		bool			state_{ false };
-		on_off_input_meta		vcData_;
-		UINT			pnlGroup_;
-		const NTVERTEX* pnlVerts_;
-		RECT			pnlRect_;
-		double			pnlOffset_;
-		Animation		animVC_;
-		signal<bool>	signal_;
+		AnimationGroup		vcAnimGroup_;
+		bool				state_{ false };
+		on_off_input_meta	vcData_;
+		UINT				pnlGroup_;
+		const NTVERTEX*		pnlVerts_;
+		RECT				pnlRect_;
+		double				pnlOffset_;
+		Animation			animVC_;
 	};
 }

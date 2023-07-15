@@ -19,38 +19,24 @@
 #include "HUD.h"
 #include "SR71r_mesh.h"
 
-HUD::HUD(bco::BaseVessel* vessel, double amps)
-	: PoweredComponent(vessel, amps, 20.0),
-	slotDockMode_([&](bool b) {
-		OnChanged(HUD_DOCKING); 
-		slotDockMode_.set();	// Reset slot.
-	}),
-	slotOrbitMode_([&](bool b) {
-		OnChanged(HUD_ORBIT);
-		slotOrbitMode_.set();	// Reset slot.
-	}),
-	slotSurfaceMode_([&](bool b) {
-		OnChanged(HUD_SURFACE);
-		slotSurfaceMode_.set();	// Reset slot.
-	})
-{
+HUD::HUD(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+    power_(pwr)
+{ 
+    power_.attach_consumer(this),
+    vessel.AddControl(&btnLightDocking_);
+    vessel.AddControl(&btnLightSurface_);
+    vessel.AddControl(&btnLightOrbit_);
+    
+    vessel.AddControl(&btnDocking_);
+    vessel.AddControl(&btnSurface_);
+    vessel.AddControl(&btnOrbit_);
+
+    btnDocking_.attach( [&]() { OnChanged(HUD_DOCKING); });
+    btnOrbit_.attach(   [&]() { OnChanged(HUD_ORBIT); });
+    btnSurface_.attach( [&]() { OnChanged(HUD_SURFACE); });
 }
 
-double HUD::CurrentDraw()
-{
-	return (HasPower() && (HUD_NONE != oapiGetHUDMode()) ? PoweredComponent::CurrentDraw() : 0.0);
-}
-
-void HUD::ChangePowerLevel(double newLevel)
-{
-	PoweredComponent::ChangePowerLevel(newLevel);
-	if (!HasPower())
-	{
-		oapiSetHUDMode(HUD_NONE);
-	}
-}
-
-bool HUD::OnLoadVC(int id)
+bool HUD::handle_load_vc(bco::BaseVessel& vessel, int vcid)
 {
 	// Register HUD
 	static VCHUDSPEC huds =
@@ -68,32 +54,28 @@ bool HUD::OnLoadVC(int id)
 void HUD::OnHudMode(int mode)
 {
 	// HUD mode is changing, if it is NOT changing to NONE, and we don't have power, turn it off.
-	if ((HUD_NONE != mode) && (!HasPower()))
+	if (!IsPowered())
 	{
 		oapiSetHUDMode(HUD_NONE);
 	}
 
-	sigDockMode_.fire(mode == HUD_DOCKING);
-	sigOrbitMode_.fire(mode == HUD_ORBIT);
-	sigSurfaceMode_.fire(mode == HUD_SURFACE);
+    btnLightDocking_.set_state( mode == HUD_DOCKING);
+    btnLightSurface_.set_state( mode == HUD_SURFACE);
+    btnLightOrbit_.set_state(   mode == HUD_ORBIT);
 }
 
 void HUD::OnChanged(int mode)
 {
 	auto currentMode = oapiGetHUDMode();
-
-	if (GetBaseVessel()->IsCreated())
-	{
-		auto newMode = ((mode == currentMode) || !HasPower()) ? HUD_NONE : mode;
-		oapiSetHUDMode(newMode);;
-	}
+	auto newMode = ((mode == currentMode) || !IsPowered()) ? HUD_NONE : mode;
+	oapiSetHUDMode(newMode);;
 }
 
-
-bool HUD::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void HUD::handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
-    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return false;
-    auto am = GetBaseVessel()->GetAttitudeMode();
+    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
+
+    auto am = vessel.GetAttitudeMode();
 
     if (am != RCS_NONE)
     {
@@ -119,7 +101,4 @@ bool HUD::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
             break;
         }
     }
-
-
-    return true;
 }

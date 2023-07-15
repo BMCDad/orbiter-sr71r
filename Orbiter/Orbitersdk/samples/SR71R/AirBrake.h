@@ -16,10 +16,11 @@
 
 #pragma once
 
-#include "bc_orbiter\Component.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\Control.h"
-#include "APU.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/Component.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/Control.h"
+#include "bc_orbiter/simple_event.h"
 
 #include "SR71r_mesh.h"
 
@@ -44,7 +45,7 @@ class AirBrake :
     public bco::manage_state
 {
 public:
-	AirBrake(bco::BaseVessel* vessel);
+	AirBrake(bco::BaseVessel& vessel);
 
     // set_class_caps
     void handle_set_class_caps(bco::BaseVessel& vessel) override;
@@ -56,14 +57,10 @@ public:
     bool handle_load_state(const std::string& line) override;
     std::string handle_save_state() override;
 
-    bco::slot<bool>&    IncreaseSlot()          { return increaseSlot_; }
-    bco::slot<bool>&    DecreaseSlot()          { return decreaseSlot_; }
     bco::slot<double>&  HydraulicPressSlot()    { return hydraulicPressSlot_; }
 
 private:
 
-    bco::slot<bool>     increaseSlot_;
-    bco::slot<bool>     decreaseSlot_;
     bco::slot<double>   hydraulicPressSlot_;
 
 	double					dragFactor_;
@@ -108,4 +105,14 @@ private:
 
     // Panel
     const VECTOR3 sTrans { bm::pnl::pnlSpeedBrakeFull_location - bm::pnl::pnlSpeedBrakeOff_location };
+
+    bco::simple_event<>		btnDecreaseAirbrake_ {  bm::vc::ABTargetDecrease_location,
+                                                    0.01,
+                                                    bm::pnl::pnlAirBrakeDecrease_RC
+                                                };
+
+    bco::simple_event<>		btnIncreaseAirbrake_ {  bm::vc::ABTargetIncrease_location,
+                                                    0.01,
+                                                    bm::pnl::pnlAirBrakeIncrease_RC
+                                                };
 };

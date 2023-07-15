@@ -1,5 +1,5 @@
-//	APU - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	SR71r_common - SR-71r Orbiter Addon
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -14,29 +14,22 @@
 //	You should have received a copy of the GNU General Public License
 //	along with this program.If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
+#pragma once
 
-#include "APU.h"
-#include "Orbitersdk.h"
-#include "SR71r_mesh.h"
+#include "bc_orbiter/on_off_input.h"
 
-APU::APU(bco::consumable& main_fuel) :
-main_fuel_(main_fuel),
-slotIsEnabled_([&](bool v) {})
-{
-}
+namespace bco = bc_orbiter;
 
-void APU::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
-{
-	if (!IsPowered())
-	{
-		signalHydPressure_.fire(0.0);
-	}
-	else
-	{
-		auto fuelDraw = APU_BURN_RATE * simdt;
-		auto actualDraw = main_fuel_.draw(fuelDraw);
-
-		signalHydPressure_.fire((fuelDraw == actualDraw) ? 1.0 : 0.0);
-	}
-}
+/* control data for on/off up/down physical toggle switches */
+const bco::on_off_input_meta toggleOnOff {
+		 1.5708,			// Rotation angle (RAD)
+		10.0,				// Anim speed
+		 0.0,				// anim start
+		 1.0,				// anim end
+		 0.01,				// VC hit radius
+		 0.0148,			// Panel offset
+		PANEL_REDRAW_NEVER,	// vcRedrawFlags
+		PANEL_MOUSE_LBDOWN, // vcMouseFlag
+		PANEL_REDRAW_MOUSE, // panel redraw flag
+		PANEL_MOUSE_LBDOWN	// panel mouse flag
+};

@@ -16,9 +16,13 @@
 
 #pragma once
 
-#include "bc_orbiter\BaseVessel.h"
-#include "bc_orbiter\Control.h"
-#include "bc_orbiter\signals.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/signals.h"
+#include "bc_orbiter/rotary_display.h"
+#include "bc_orbiter/simple_event.h"
+
+#include "SR71r_mesh.h"
 
 namespace bco = bc_orbiter;
 
@@ -28,7 +32,7 @@ class Clock :
     public bco::manage_state
 {
 public:
-	Clock();
+	Clock(bco::BaseVessel& vessel);
 
     // post_step
     void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
@@ -37,30 +41,67 @@ public:
 	bool handle_load_state(const std::string& line) override;
     std::string handle_save_state() override;
 
-    bco::signal<double>&    TimerSecondsSignal()    { return signalTimerSecond_; }
-    bco::signal<double>&    TimerMinutesSignal()    { return signalTimerMinute_; }
-    bco::signal<double>&    ElapsedMinutesSignal()  { return signalMinute_; }
-    bco::signal<double>&    ElapsedHoursSignal()    { return signalHour_; }
-
-    bco::slot<bool>&        TimerResetSlot()        { return slotTimerReset_; }
-    bco::slot<bool>&        ElapsedResetSlot()      { return slotElapsedReset_; }
-
 private:
     void ResetElapsed();
     void ResetTimer();
 
 	const char*				ConfigKey = "CLOCK";
 
-    bco::signal<double>     signalTimerSecond_;         // Current timer seconds (0 - 59)
-    bco::signal<double>     signalTimerMinute_;         // Current timer minutes (0 - 59)
-    bco::signal<double>     signalMinute_;              // Current mission time minutes (0 - 59)
-    bco::signal<double>     signalHour_;                // Current mission time hours (0 - 11)
-
-    bco::slot<bool>         slotTimerReset_;
-    bco::slot<bool>         slotElapsedReset_;
-
 	double					startElapsedTime_;
 	double					startTimerTime_;
 	double					currentTimerTime_;
 	bool					isTimerRunning_;
+
+	bco::rotary_display<bco::AnimationWrap>	clockTimerSecondsHand_ {
+												{ bm::vc::ClockSecond_id },
+												bm::vc::ClockSecond_location, bm::vc::ClockAxisFront_location,
+												bm::pnl::pnlClockSecond_id,
+												bm::pnl::pnlClockSecond_verts,
+												(360 * RAD),	// Clockwise
+												0.4,
+												[](double d) {return (d / 60); }	// Transform to anim range.
+											};
+
+	bco::rotary_display<bco::AnimationWrap>	clockTimerMinutesHand_ {
+												{ bm::vc::ClockTimerMinute_id },
+												bm::vc::ClockTimerMinute_location, bm::vc::ClockAxisFront_location,
+												bm::pnl::pnlClockTimerMinute_id,
+												bm::pnl::pnlClockTimerMinute_verts,
+												(360 * RAD),	// Clockwise
+												0.4,
+												[](double d) {return (d / 60); }	// Transform to anim range.
+											};
+
+	bco::rotary_display<bco::AnimationWrap>	clockElapsedMinutesHand_ {
+												{ bm::vc::ClockMinute_id },
+												bm::vc::ClockMinute_location, bm::vc::ClockAxisFront_location,
+												bm::pnl::pnlClockMinute_id,
+												bm::pnl::pnlClockMinute_verts,
+												(360 * RAD),	// Clockwise
+												0.4,
+												[](double d) {return (d / 60); }	// Transform to anim range.
+											};
+
+	bco::rotary_display<bco::AnimationWrap>	clockElapsedHoursHand_ {
+												{ bm::vc::ClockHour_id },
+												bm::vc::ClockHour_location, bm::vc::ClockAxisFront_location,
+												bm::pnl::pnlClockHour_id,
+												bm::pnl::pnlClockHour_verts,
+												(360 * RAD),	// Clockwise
+												0.4,
+												[](double d) {return (d / 12); }	// Transform to anim range.
+											};
+
+	bco::simple_event<>						clockTimerReset_ {
+												bm::vc::ClockTimerReset_location,
+												0.01,
+												bm::pnl::pnlClockTimerReset_RC
+											};
+
+	bco::simple_event<>						clockElapsedReset_ {
+												bm::vc::ClockElapsedReset_location,
+												0.01,
+												bm::pnl::pnlClockElapsedReset_RC
+											};
+
 };

@@ -18,13 +18,14 @@
 
 #include "OrbiterSDK.h"
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\BaseVessel.h"
-#include "bc_orbiter\Control.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/on_off_input.h"
 
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
@@ -59,20 +60,20 @@ on_off_input (canopy open):
 :slot - has power
 */
 class Canopy : 
-    public bco::vessel_component,
-    public bco::set_class_caps,
-    public bco::power_consumer,
-    public bco::post_step,
-    public bco::manage_state
+      public bco::vessel_component
+    , public bco::set_class_caps
+    , public bco::post_step
+    , public bco::power_consumer
+    , public bco::manage_state
 {
 public:
-    Canopy();
+    Canopy(bco::power_provider& pwr);
 
     // set_class_caps
     void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
     // power_consumer
-    double amp_load() override { return IsPowered() && CanopyIsMoving() ? CANOPY_AMPS : 0.0; }
+    double amp_draw() const override { return CanopyIsMoving() ? 4.0 : 0.0; }
 
     // post_step
     void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
@@ -81,24 +82,25 @@ public:
     bool handle_load_state(const std::string& line) override;
     std::string handle_save_state() override;
 
-    // inputs
-    bco::slot<bool>&    PowerEnabledSlot()  { return slotCanopyPowered_; }      // Switch:  canopy power
-    bco::slot<bool>&    CanopyOpenSlot()    { return slotCanopyOpenClose_; }    // Switch:  canopy open on=open
-    bco::slot<double>   VoltsLevelSlot()    { return slotVoltsInput_; }         // Volts input from power.
-
 private:
     const double MIN_VOLTS = 20.0;
     
-    bool IsPowered() { return slotCanopyPowered_.value() && (slotVoltsInput_.value() > MIN_VOLTS); }
+    bco::power_provider& power_;
     
-    bool CanopyIsMoving() { return IsPowered() && (animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0); }
+    bool IsPowered() const { 
+        return 
+            (power_.volts_available() > MIN_VOLTS) &&
+            switchPower_.is_on();
+    }
+    
+    bool CanopyIsMoving() const { 
+        return 
+            IsPowered() && 
+            (animCanopy_.GetState() > 0.0) && 
+            (animCanopy_.GetState() < 1.0); 
+    }
 
-    bco::Animation		    animCanopy_{ 0.2 };
-    UINT                    idAnim_         { 0 };
-
-    bco::slot<bool>         slotCanopyPowered_;
-    bco::slot<bool>         slotCanopyOpenClose_;
-    bco::slot<double>       slotVoltsInput_;
+    bco::Animation		    animCanopy_     { 0.2 };
 
     bco::AnimationGroup     gpCanopy_       { { bm::main::CanopyFO_id,
                                                 bm::main::ForwardCanopyWindow_id,
@@ -117,5 +119,23 @@ private:
                                                 bm::main::CockpitAxisS_location, bm::main::CockpitAxisP_location,
                                                 (55 * RAD),
                                                 0, 1
+                                            };
+
+    bco::on_off_input		switchPower_    { { bm::vc::SwCanopyPower_id },
+                                                bm::vc::SwCanopyPower_location,
+                                                bm::vc::PowerTopRightAxis_location,
+                                                toggleOnOff,
+                                                bm::pnl::pnlPwrCanopy_id,
+                                                bm::pnl::pnlPwrCanopy_verts,
+                                                bm::pnl::pnlPwrCanopy_RC
+                                            };
+
+    bco::on_off_input		switchOpen_     { { bm::vc::SwCanopyOpen_id },
+                                                bm::vc::SwCanopyOpen_location,
+                                                bm::vc::DoorsRightAxis_location, 
+                                                toggleOnOff,
+                                                bm::pnl::pnlDoorCanopy_id,
+                                                bm::pnl::pnlDoorCanopy_verts,
+                                                bm::pnl::pnlDoorCanopy_RC
                                             };
 };

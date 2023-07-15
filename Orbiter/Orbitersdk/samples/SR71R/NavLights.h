@@ -16,11 +16,12 @@
 
 #pragma once
 
-#include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\signals.h"
 #include "bc_orbiter\control.h"
+#include "bc_orbiter\electrical_component.h"
 
 #include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 #include <map>
 
@@ -28,47 +29,44 @@ namespace bco = bc_orbiter;
 
 
 class NavLight : 
-	public bco::vessel_component,
-	public bco::set_class_caps,
-	public bco::power_consumer {
+	  public bco::vessel_component
+	, public bco::power_consumer
+	, public bco::set_class_caps {
+
 public:
-	NavLight() 
+	NavLight (bco::power_provider& pwr)
 		:
-		enabledSlot_([&](bool v) { SetActive(); })
+		power_(pwr)
 	{
+		switchNavigationLights_.attach_on_change([&]() { update(); });
+		power_.attach_consumer(this);
 	}
+
+	// power_consumer
+	void on_change(double v) override { update(); }
+	double amp_draw() const override { return switchNavigationLights_.is_on() ? 4.0 : 0.0; }
 
 	// set_class_caps
 	void handle_set_class_caps(bco::BaseVessel& vessel) {
 		vessel.AddBeacon(&specNavLeft_);
 		vessel.AddBeacon(&specNavRight_);
 		vessel.AddBeacon(&specNavRear_);
-	}
 
-	// power_consumer
-	double amp_load() override {
-		return
-			enabledSlot_.value() && (voltsInputSlot_.value() > MIN_VOLTS)
-			? AMPS
-			: 0.0;
+		vessel.AddControl(&switchNavigationLights_);
 	}
-
-	bco::slot<bool>&	Slot()				{ return enabledSlot_; }			// Switch: is beacon on
-	bco::slot<double>&	VoltsInputSlot()	{ return voltsInputSlot_; }			// Volts input from power
 
 private:
 
-	const double AMPS = 2.0;
-	const double MIN_VOLTS = 24.0;
+	bco::power_provider& power_;
 
-	bco::slot<bool>			enabledSlot_;
-	bco::slot<double>		voltsInputSlot_;
+	void update() {
+		auto isActive =
+			switchNavigationLights_.is_on() &&
+			(power_.volts_available() > 25.0);
 
-	void SetActive() {
-		auto state = ((voltsInputSlot_.value() > MIN_VOLTS) && enabledSlot_.value());
-		specNavLeft_.active = state;
-		specNavRear_.active = state;
-		specNavRight_.active = state;
+		specNavLeft_.active = isActive;
+		specNavRear_.active = isActive;
+		specNavRight_.active = isActive;
 	}
 
 	// Set light specs:
@@ -110,5 +108,14 @@ private:
 		0.1,			// duration
 		0.2,			// tofs
 		false,			// active
+	};
+
+	bco::on_off_input		switchNavigationLights_ {		// On off switch for external navigation lights.
+		{ bm::vc::SwitchNavLights_id },
+			bm::vc::SwitchNavLights_location, bm::vc::LightsRightAxis_location,
+			toggleOnOff,
+			bm::pnl::pnlLightNav_id,
+			bm::pnl::pnlLightNav_verts,
+			bm::pnl::pnlLightNav_RC
 	};
 };

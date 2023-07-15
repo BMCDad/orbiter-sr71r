@@ -17,8 +17,9 @@
 #pragma
 
 #include "bc_orbiter\bco.h"
-#include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/on_off_display.h"
 
 #include "SR71r_mesh.h"
 
@@ -30,20 +31,18 @@ namespace bco = bc_orbiter;
 /**
 Models the nav mode selector function.
 */
-class NavModes
+class NavModes :
+	bco::vessel_component,
+	bco::draw_hud
 {
 public:
 	NavModes(bco::BaseVessel& baseVessel);
 
 	// These overrides come directly from SR71Vessel callbacks.
 	void OnNavMode(int mode, bool active);
-	bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+	void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
-	bco::slot<bool>&					IsEnabledSlot()			{ return slotIsEnabled_; }
-	bco::slot<int>&						NavButtonSlot()			{ return slotNavButton_; }		// Nav button inputs.
-	bco::slot<bco::draw_hud_data>&		DrawHudSlot()			{ return slotDrawHud_; }		// Nav mode change notifications from vessel.
-	
-	bco::signal<bco::navmode_data>&		NavModeSignal()			{ return sigNavMode_; }
+	bco::slot<bool>&					IsEnabledSlot()			{ return slotIsEnabled_; }		// Will come from aerodata (avion enabled)
 
 protected:
 	void Update();
@@ -53,14 +52,102 @@ private:
 	void ToggleMode(int mode);
 
 	bco::slot<bool>						slotIsEnabled_;
-	bco::slot<int>						slotNavButton_;
-	bco::slot<bco::draw_hud_data>		slotDrawHud_;
-
-	bco::signal<bco::navmode_data>		sigNavMode_;
 
 	int		vcUIArea_{ 0 };
 	int		panelUIArea_{ 0 };
 
 	int		navMode1_{ 0 };	// HUD nav left area
 	int		navMode2_{ 0 };	// HUD nav right area
+
+	// ***  NAV MODES  *** //
+	bco::simple_event<int>	btnKillRot_{
+		bm::vc::vcNavKillRot_location,
+			0.01,
+			bm::pnl::pnlNavKillrot_RC,
+			NAVMODE_KILLROT
+	};
+
+	bco::on_off_display		lightKillRot_{
+		bm::vc::vcNavKillRot_id,
+			bm::vc::vcNavKillRot_verts,
+			bm::pnl::pnlNavKillrot_id,
+			bm::pnl::pnlNavKillrot_verts,
+			0.0352
+	};
+
+	bco::simple_event<int>	btnHorzLevel_{
+		bm::vc::vcNavHorzLvl_location,
+			0.01,
+			bm::pnl::pnlNavHorzLvl_RC,
+			NAVMODE_HLEVEL
+	};
+
+	bco::on_off_display		lightHorzLevel_{
+		bm::vc::vcNavHorzLvl_id,
+			bm::vc::vcNavHorzLvl_verts,
+			bm::pnl::pnlNavHorzLvl_id,
+			bm::pnl::pnlNavHorzLvl_verts,
+			0.0352
+	};
+
+	bco::simple_event<int>	btnPrograde_{
+		bm::vc::vcNavProGrade_location,
+			0.01,
+			bm::pnl::pnlNavPrograde_RC,
+			NAVMODE_PROGRADE
+	};
+
+	bco::on_off_display		lightPrograde_{
+		bm::vc::vcNavProGrade_id,
+			bm::vc::vcNavProGrade_verts,
+			bm::pnl::pnlNavPrograde_id,
+			bm::pnl::pnlNavPrograde_verts,
+			0.0352
+	};
+
+	bco::simple_event<int>	btnRetrograde_{
+		bm::vc::vcNavRetro_location,
+			0.01,
+			bm::pnl::pnlNavRetro_RC,
+			NAVMODE_RETROGRADE
+	};
+
+	bco::on_off_display		lightRetrograde_{
+		bm::vc::vcNavRetro_id,
+			bm::vc::vcNavRetro_verts,
+			bm::pnl::pnlNavRetro_id,
+			bm::pnl::pnlNavRetro_verts,
+			0.0352
+	};
+
+	bco::simple_event<int>	btnNormal_{
+		bm::vc::vcNavNorm_location,
+			0.01,
+			bm::pnl::pnlNavNorm_RC,
+			NAVMODE_NORMAL
+	};
+
+	bco::on_off_display		lightNormal_{
+		bm::vc::vcNavNorm_id,
+			bm::vc::vcNavNorm_verts,
+			bm::pnl::pnlNavNorm_id,
+			bm::pnl::pnlNavNorm_verts,
+			0.0352
+	};
+
+	bco::simple_event<int>	btnAntiNorm_{
+		bm::vc::vcNavAntiNorm_location,
+			0.01,
+			bm::pnl::pnlNavAntiNorm_RC,
+			NAVMODE_ANTINORMAL
+	};
+
+	bco::on_off_display		lightAntiNorm_{
+		bm::vc::vcNavAntiNorm_id,
+			bm::vc::vcNavAntiNorm_verts,
+			bm::pnl::pnlNavAntiNorm_id,
+			bm::pnl::pnlNavAntiNorm_verts,
+			0.0352
+	};
+
 };

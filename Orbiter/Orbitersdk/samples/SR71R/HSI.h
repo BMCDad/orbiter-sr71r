@@ -16,9 +16,12 @@
 
 #pragma once
 
-#include "bc_orbiter\control.h"
-#include "bc_orbiter\signals.h"
-#include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/signals.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/rotary_display.h"
+#include "bc_orbiter/transform_display.h"
+#include "bc_orbiter/flat_roll.h"
 
 #include "AvionBase.h"
 
@@ -30,7 +33,27 @@ class HSI :
 
 public:
 
-	HSI() {}
+	HSI(bco::BaseVessel& vessel) {
+		vessel.AddControl(&hsiBearing_);
+		vessel.AddControl(&hsiCourseError_);
+		vessel.AddControl(&hsiCourse_);
+		vessel.AddControl(&hsiHeadingBug_);
+		vessel.AddControl(&hsiRoseCompass_);
+
+		vessel.AddControl(&CRSOnes_);
+		vessel.AddControl(&CRSTens_);
+		vessel.AddControl(&CRSHunds_);
+
+		vessel.AddControl(&MilesOnes_);
+		vessel.AddControl(&MilesTens_);
+		vessel.AddControl(&MilesHunds_);
+
+		vessel.AddControl(&hsiOffFlag_);
+		vessel.AddControl(&hsiExoFlag_);
+
+		vessel.AddControl(&comStatusFlag_);
+	}
+
 	~HSI() {}
 
 	// post_step
@@ -64,71 +87,41 @@ public:
 
 		// sprintf(oapiDebugString(), "CRS %+4f %+4f %+4f %+4f", deg, parts.Thousands, parts.Hundreds, parts.Tens );
 
-		signalCrsOnes_.fire(parts.Tens);
-		signalCrsTens_.fire(parts.Hundreds);
-		signalCrsHunds_.fire(parts.Thousands);
+		CRSOnes_.SlotTransform().notify(parts.Tens);
+		CRSOnes_.SlotTransform().notify(parts.Hundreds);
+		CRSOnes_.SlotTransform().notify(parts.Thousands);
 
-		signalYaw_.fire(yaw);
-		signalSetHeading_.fire(rotHdg);
-		signalSetCourse_.fire(rotCrs);
-		signalBearing_.fire(bearing);
 		signalGlideScope_.fire(glideSlope);
-		signalNavError_.fire(navError);
-		signalComStatus_.fire(comStatus);
+		
+		hsiRoseCompass_	.set_state(yaw);
+		hsiHeadingBug_	.set_state(rotHdg);
+		hsiCourse_		.set_state(rotCrs);
+		
+		hsiCourseError_.SlotAngle()		.notify(rotCrs);
+		hsiCourseError_.SlotTransform()	.notify(navError);
+
+		comStatusFlag_.set_state(comStatus);
 
 		// Miles barrels
 		bco::GetDigits(milesBeacon, parts);
-		signalMilesOnes_.fire(parts.Tens);
-		signalMilesTens_.fire(parts.Hundreds);
-		signalMilesHunds_.fire(parts.Thousands);
+		MilesOnes_.SlotTransform().notify(parts.Tens);
+		MilesTens_.SlotTransform().notify(parts.Hundreds);
+		MilesHunds_.SlotTransform().notify(parts.Thousands);
 
-		signalShowOffFlag_.fire(!EnabledSlot().value());
-		signalShowExoFlag_.fire(EnabledSlot().value() && AvionicsModeSlot().value());
+		hsiOffFlag_.set_state(!EnabledSlot().value());
+		hsiExoFlag_.set_state(EnabledSlot().value() && AvionicsModeSlot().value());
 	}
 
-	bco::signal<double>&	YawSignal()			{ return signalYaw_; }
-	bco::signal<double>&	SetHeadingSignal()	{ return signalSetHeading_; }
-	bco::signal<double>&	SetCourseSignal()	{ return signalSetCourse_; }
-	bco::signal<double>&	BearingSignal()		{ return signalBearing_; }
 	bco::signal<double>&	GlideScopeSignal()	{ return signalGlideScope_; }
-	bco::signal<double>&	NavErrorSignal()	{ return signalNavError_; }
-	bco::signal<bool>&		ComStatusSignal()	{ return signalComStatus_; }
 
 	bco::slot<double>&		SetCourseSlot()		{ return slotSetCourse_; }
 	bco::slot<double>&		SetHeadingSlot()	{ return slotSetHeading_; }
 
-	bco::signal<double>&	CrsOnesSignal()		{ return signalCrsOnes_; }
-	bco::signal<double>&	CrsTensSignal()		{ return signalCrsTens_; }
-	bco::signal<double>&	CrsHundsSignal()	{ return signalCrsHunds_; }
-
-	bco::signal<double>&	MilesOnesSignal()	{ return signalMilesOnes_; }
-	bco::signal<double>&	MilesTensSignal()	{ return signalMilesTens_; }
-	bco::signal<double>&	MilesHundsSignal()	{ return signalMilesHunds_; }
-
 	bco::slot<bool>&		NavModeSignal()		{ return slotNavMode_; }
-
-	bco::signal<bool>&		ShowOffFlagSignal() { return signalShowOffFlag_; }			// Off flag
-	bco::signal<bool>&		ShowExoFlagSignal() { return signalShowExoFlag_; }
 
 private:
 
-	bco::signal<double>		signalYaw_;
-	bco::signal<double>		signalSetHeading_;
-	bco::signal<double>		signalSetCourse_;
-	bco::signal<double>		signalBearing_;
 	bco::signal<double>		signalGlideScope_;
-	bco::signal<double>		signalNavError_;		// Course error transform, rotation matches course.
-	bco::signal<bool>		signalComStatus_;
-	bco::signal<bool>		signalShowOffFlag_;			// Off flag
-	bco::signal<bool>		signalShowExoFlag_;
-
-	bco::signal<double>		signalCrsOnes_;
-	bco::signal<double>		signalCrsTens_;
-	bco::signal<double>		signalCrsHunds_;
-
-	bco::signal<double>		signalMilesOnes_;
-	bco::signal<double>		signalMilesTens_;
-	bco::signal<double>		signalMilesHunds_;
 
 	bco::slot<double>		slotSetCourse_;
 	bco::slot<double>		slotSetHeading_;
@@ -193,4 +186,129 @@ private:
 
 		return result;
 	}
+
+	bco::rotary_display<bco::AnimationWrap>	hsiRoseCompass_{
+		{ bm::vc::RoseCompass_id },
+			bm::vc::RoseCompass_location, bm::vc::HSIAxis_location,
+			bm::pnl::pnlRoseCompass_id,
+			bm::pnl::pnlRoseCompass_verts,
+			(360 * RAD),	// Clockwise
+			1.0,
+			[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap>	hsiHeadingBug_{
+		{ bm::vc::HSICompassHeading_id },
+			bm::vc::HSICompassHeading_location, bm::vc::HSIAxis_location,
+			bm::pnl::pnlHSICompassHeading_id,
+			bm::pnl::pnlHSICompassHeading_verts,
+			(360 * RAD),	// Clockwise
+			1.0,
+			[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap> hsiCourse_{
+		{ bm::vc::HSICourse_id },
+			bm::vc::HSICourse_location, bm::vc::HSIAxis_location,
+			bm::pnl::pnlHSICourse_id,
+			bm::pnl::pnlHSICourse_verts,
+			(360 * RAD),
+			1.0,
+			[](double d) {return bco::AngleToState(-d); }
+	};
+
+	bco::rotary_display<bco::AnimationWrap> hsiBearing_{
+		{ bm::vc::HSIBearingArrow_id },
+			bm::vc::HSIBearingArrow_location, bm::vc::HSIAxis_location,
+			bm::pnl::pnlHSIBearingArrow_id,
+			bm::pnl::pnlHSIBearingArrow_verts,
+			(360 * RAD),
+			1.0,
+			[](double d) {return bco::AngleToState(-d); }
+	};
+
+	bco::transform_display	hsiCourseError_{
+		bm::vc::HSICourseNeedle_id,
+			bm::vc::HSICourseNeedle_verts,
+			bm::pnl::pnlHSICourseNeedle_id,
+			bm::pnl::pnlHSICourseNeedle_verts
+	};
+
+	bco::flat_roll			CRSOnes_{
+		bm::vc::vcCrsOnes_id,
+			bm::vc::vcCrsOnes_verts,
+			bm::pnl::pnlHSICRSOnes_id,
+			bm::pnl::pnlHSICRSOnes_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			CRSTens_{
+		bm::vc::vcCrsTens_id,
+			bm::vc::vcCrsTens_verts,
+			bm::pnl::pnlHSICRSTens_id,
+			bm::pnl::pnlHSICRSTens_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			CRSHunds_{
+		bm::vc::vcCrsHunds_id,
+			bm::vc::vcCrsHunds_verts,
+			bm::pnl::pnlHSICRSHunds_id,
+			bm::pnl::pnlHSICRSHunds_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			MilesOnes_{
+		bm::vc::vcMilesOnes_id,
+			bm::vc::vcMilesOnes_verts,
+			bm::pnl::pnlHSIMilesOnes_id,
+			bm::pnl::pnlHSIMilesOnes_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			MilesTens_{
+		bm::vc::vcMilesTens_id,
+			bm::vc::vcMilesTens_verts,
+			bm::pnl::pnlHSIMilesTens_id,
+			bm::pnl::pnlHSIMilesTens_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			MilesHunds_{
+		bm::vc::vcMilesHunds_id,
+			bm::vc::vcMilesHunds_verts,
+			bm::pnl::pnlHSIMilesHunds_id,
+			bm::pnl::pnlHSIMilesHunds_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::on_off_display		hsiOffFlag_{
+		bm::vc::HSIOffFlag_id,
+			bm::vc::HSIOffFlag_verts,
+			bm::pnl::pnlHSIOffFlag_id,
+			bm::pnl::pnlHSIOffFlag_verts,
+			0.0244
+	};
+
+	bco::on_off_display		hsiExoFlag_{
+		bm::vc::HSIExoFlag_id,
+			bm::vc::HSIExoFlag_verts,
+			bm::pnl::pnlHSIExoFlag_id,
+			bm::pnl::pnlHSIExoFlag_verts,
+			0.0244
+	};
+
+	bco::on_off_display		comStatusFlag_{
+		bm::vc::COMStatusPanel_id,
+			bm::vc::COMStatusPanel_verts,
+			bm::pnl::pnlCOMStatusPanel_id,
+			bm::pnl::pnlCOMStatusPanel_verts,
+			0.0244
+	};
 };

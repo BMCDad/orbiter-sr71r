@@ -64,20 +64,14 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	SetPMI(PMI);
 	SetCrossSections(CROSSSECTIONS);
 	SetRotDrag(ROTDRAG);
-
 	SetDockParams(bm::main::DockingPort_location, _V(0, 1, 0), _V(0, 0, 1));
-	
     SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
     SetNosewheelSteering(true);
-
-
 	SetNosewheelSteering(true);
 
 	// Setups:
 	SetupVesselComponents();
-
 	SetupAerodynamics();
-
 	SetCameraOffset(bm::main::PilotPOV_location);
 
     // Propellent, move to setup method:
@@ -87,6 +81,8 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	bco::BaseVessel::clbkSetClassCaps(cfg);
 
 	SetMaxWheelbrakeForce(4e5);
+
+	SetupSurfaces();
 }
 
 int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
@@ -100,7 +96,7 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 		switch (key)
 		{
 		case OAPI_KEY_B:
-			btnDecreaseAirbrake_.Signal().fire(true);
+			// TODO btnDecreaseAirbrake_.Signal().fire(true);
 			return 1;
 		}
 	}
@@ -110,12 +106,12 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 			return 1;
 		
 		case OAPI_KEY_B:
-			btnIncreaseAirbrake_.Signal().fire(true);
+			// TODO btnIncreaseAirbrake_.Signal().fire(true);
 			return 1;
 
 		case OAPI_KEY_1:
 			//propulsionController_.ThrustLimitSwitch().Toggle();
-			switchThrustLimit_.Signal().fire(!switchThrustLimit_.GetState());
+//			switchThrustLimit_.Signal().fire(!switchThrustLimit_.GetState());
 			return 1;
 		}
 	}
@@ -171,7 +167,7 @@ void SR71Vessel::clbkHUDMode(int mode)
 
 void SR71Vessel::clbkRCSMode(int mode)
 {
-	rcsSystem_.OnRCSMode(mode);
+	rcs_.OnRCSMode(mode);
 }
 
 void SR71Vessel::clbkNavMode(int mode, bool active)
@@ -193,11 +189,11 @@ void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 //    canopy_.Step(simt, simdt, mjd);
 //	fuelCell_.Step(simt, simdt, mjd);
 //	hydrogenTank_.Step(simt, simdt, mjd);
-	landingGear_.Step(simt, simdt, mjd);
+//	landingGear_.Step(simt, simdt, mjd);
 //	oxygenTank_.Step(simt, simdt, mjd);
 //	powerSystem_.Step(simt, simdt, mjd);
-	propulsionController_.Step(simt, simdt, mjd);
-	surfaceControl_.Step(simt, simdt, mjd);
+//	propulsionController_.Step(simt, simdt, mjd);
+//	surfaceControl_.Step(simt, simdt, mjd);
 	statusBoard_.Step(simt, simdt, mjd);
 //	airBrake_.Step(simt, simdt, mjd);
 //	lights_.Step(simt, simdt, mjd);
@@ -211,12 +207,12 @@ void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 
 bool SR71Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
-	headsUpDisplay_.DrawHUD(mode, hps, skp);
-    landingGear_.DrawHUD(mode, hps, skp);
+//	headsUpDisplay_.DrawHUD(mode, hps, skp);
+//    landingGear_.DrawHUD(mode, hps, skp);
 //    autoPilot_.DrawHUD(mode, hps, skp);
 //	computer_.DrawHUD(mode, hps, skp);
-    navModes_.DrawHUD(mode, hps, skp);
-    propulsionController_.DrawHUD(mode, hps, skp);
+//    navModes_.DrawHUD(mode, hps, skp);
+//    propulsionController_.DrawHUD(mode, hps, skp);
 //    hoverEngines_.DrawHUD(mode, hps, skp);
 //    retroEngines_.DrawHUD(mode, hps, skp);
 

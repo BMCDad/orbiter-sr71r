@@ -25,27 +25,25 @@
 #include "SR71r_mesh.h"
 
 
-RCSSystem::RCSSystem(bco::BaseVessel* vessel, double amps) :
-PoweredComponent(vessel, amps, 20.0),
-slotToggleLinear_([&](bool v) {OnChanged(RCS_LIN); slotToggleLinear_.set(); }),
-slotToggleRotate_([&](bool v) {OnChanged(RCS_ROT); slotToggleRotate_.set(); })
-{
+RCSSystem::RCSSystem(bco::BaseVessel& vessel) :
+	vessel_(vessel),
+	slotIsAeroActive_([&](bool v) { ActiveChanged(v); })
+{ 
+	vessel_.AddControl(&btnLinear_);
+	vessel_.AddControl(&btnRotate_);
+	vessel_.AddControl(&lightLinear_);
+	vessel_.AddControl(&lightRotate_);
+
+	btnLinear_.attach([&]() { OnChanged(RCS_LIN); });
+	btnRotate_.attach([&]() { OnChanged(RCS_ROT); });
 }
 
-double RCSSystem::CurrentDraw()
+void RCSSystem::ActiveChanged(bool isActive)
 {
-    return (GetBaseVessel()->GetAttitudeMode() == RCS_NONE) ? 0.0 : PoweredComponent::CurrentDraw();
-}
-
-
-void RCSSystem::ChangePowerLevel(double newLevel)
-{
-	PoweredComponent::ChangePowerLevel(newLevel);
-	if (!HasPower())
-	{
-		if (GetBaseVessel()->IsCreated())
+	if (!isActive) {
+		if (vessel_.IsCreated())
 		{
-			GetBaseVessel()->SetAttitudeMode(RCS_NONE);
+			vessel_.SetAttitudeMode(RCS_NONE);
 		}
 	}
 }
@@ -54,25 +52,25 @@ void RCSSystem::ChangePowerLevel(double newLevel)
 // Callback:
 void RCSSystem::OnRCSMode(int mode)
 {
-	if ((RCS_NONE != mode) && (!HasPower()))
+	if ((RCS_NONE != mode) && (!slotIsAeroActive_.value()))
 	{
-		GetBaseVessel()->SetAttitudeMode(RCS_NONE);
-		sigIsLinear_.fire(false);
-		sigIsRotate_.fire(false);
+		vessel_.SetAttitudeMode(RCS_NONE);
+		lightLinear_.set_state(false);
+		lightRotate_.set_state(false);
 	}
 	else {
-		sigIsLinear_.fire(mode == RCS_LIN);
-		sigIsRotate_.fire(mode == RCS_ROT);
+		lightLinear_.set_state(mode == RCS_LIN);
+		lightRotate_.set_state(mode == RCS_ROT);
 	}
 }
 
 void RCSSystem::OnChanged(int mode)
 {
-	auto currentMode = GetBaseVessel()->GetAttitudeMode();
+	auto currentMode = vessel_.GetAttitudeMode();
 
-	if (GetBaseVessel()->IsCreated())
+	if (vessel_.IsCreated())
 	{
-		auto newMode = ((mode == currentMode) || !HasPower()) ? RCS_NONE : mode;
-		GetBaseVessel()->SetAttitudeMode(newMode);
+		auto newMode = ((mode == currentMode) || !slotIsAeroActive_.value()) ? RCS_NONE : mode;
+		vessel_.SetAttitudeMode(newMode);
 	}
 }

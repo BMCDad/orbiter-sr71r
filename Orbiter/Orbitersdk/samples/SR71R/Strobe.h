@@ -16,26 +16,34 @@
 
 #pragma once
 
-#include "bc_orbiter\PoweredComponent.h"
 #include "bc_orbiter\signals.h"
 #include "bc_orbiter\control.h"
+#include "bc_orbiter\electrical_component.h"
+
 #include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 #include <map>
 
 namespace bco = bc_orbiter;
 
 class Strobe :
-	public bco::vessel_component,
-	public bco::set_class_caps,
-	public bco::power_consumer {
+  	  public bco::vessel_component
+	, public bco::power_consumer
+	, public bco::set_class_caps {
 
 public:
-	Strobe()
+	Strobe(bco::power_provider& pwr)
 		:
-		enabledSlot_([&](bool v) { SetActive(); })
+		power_(pwr)
 	{
+		switchStrobeLights_.attach_on_change([&]() { update(); });
+		power_.attach_consumer(this);
 	}
+
+	// power_consumer
+	void on_change(double v) override { update(); }
+	double amp_draw() const override { return switchStrobeLights_.is_on() ? 4.0 : 0.0; }
 
 	// set_class_caps
 	void handle_set_class_caps(bco::BaseVessel& vessel) {
@@ -43,29 +51,17 @@ public:
 		vessel.AddBeacon(&specStrobeRight_);
 	}
 
-	// power_consumer
-	double amp_load() override {
-		return
-			enabledSlot_.value() && (voltsInputSlot_.value() > MIN_VOLTS)
-			? AMPS
-			: 0.0;
-	}
-
-	bco::slot<bool>& Slot() { return enabledSlot_; }			// Switch: is beacon on
-	bco::slot<double>& VoltsInputSlot() { return voltsInputSlot_; }			// Volts input from power
-
 private:
 
-	const double AMPS = 2.0;
-	const double MIN_VOLTS = 24.0;
+	bco::power_provider& power_;
 
-	bco::slot<bool>			enabledSlot_;
-	bco::slot<double>		voltsInputSlot_;
+	void update() {
+		auto isActive =
+			switchStrobeLights_.is_on() &&
+			(power_.volts_available() > 25.0);
 
-	void SetActive() {
-		auto state = ((voltsInputSlot_.value() > MIN_VOLTS) && enabledSlot_.value());
-		specStrobeLeft_.active = state;
-		specStrobeRight_.active = state;
+		specStrobeLeft_.active = isActive;
+		specStrobeRight_.active = isActive;
 	}
 
 	// Set light specs:
@@ -96,6 +92,16 @@ private:
 		0.5,			// tofs
 		false,			// active
 	};
+
+	bco::on_off_input		switchStrobeLights_{		// On off switch for external strobe lights.
+		{ bm::vc::SwitchStrobeLights_id },
+			bm::vc::SwitchStrobeLights_location, bm::vc::LightsRightAxis_location,
+			toggleOnOff,
+			bm::pnl::pnlLightStrobe_id,
+			bm::pnl::pnlLightStrobe_verts,
+			bm::pnl::pnlLightStrobe_RC
+	};
+
 };
 
 

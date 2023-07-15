@@ -30,16 +30,32 @@ class Airspeed :
 
 public:
 
-	Airspeed() {}
+	Airspeed(bco::BaseVessel& vessel) {
+		vessel.AddControl(&kiesHand_);
+		vessel.AddControl(&speedHand_);
+		vessel.AddControl(&maxMachHand_);
+
+		vessel.AddControl(&airspeedKeasOnes_);
+		vessel.AddControl(&airspeedKeasTens_);
+		vessel.AddControl(&airspeedKeasHunds_);
+
+		vessel.AddControl(&airspeedMACHOnes_);
+		vessel.AddControl(&airspeedMACHTens_);
+		vessel.AddControl(&airspeedMACHHunds_);
+
+		vessel.AddControl(&speedIsEnabledFlag_);
+		vessel.AddControl(&speedIsVelocityFlag_);
+	}
+
 	~Airspeed() {}
 
 	void OnEnabledChanged() override {
-		signalIsEnabled_.fire(EnabledSlot().value());
+		speedIsEnabledFlag_.set_state(EnabledSlot().value());
 		OnAvionModeChanged();
 	}
 
 	void OnAvionModeChanged() override {
-		signalIsVelocityFlag_.fire(EnabledSlot().value() && AvionicsModeSlot().value());
+		speedIsVelocityFlag_.set_state(EnabledSlot().value() && AvionicsModeSlot().value());
 	}
 
 	// post_step
@@ -94,34 +110,21 @@ public:
 
 		bco::TensParts parts;
 		bco::GetDigits(keas, parts);
-		signalKeas_.fire(keas);
-		signalKeasOnes_.fire(parts.Tens);
-		signalKeasTens_.fire(parts.Hundreds);
-		signalKeasHunds_.fire(parts.Thousands);
-		signalMachMax_.fire(maxMachRatio);			// Set based on ratio
-		signalSpeed_.fire(speedRatio);
-		signalKiasSpeed_.fire(kiasSpeed);
+		airspeedKeasOnes_.SlotTransform().notify(parts.Tens);
+		airspeedKeasTens_.SlotTransform().notify(parts.Hundreds);
+		airspeedKeasHunds_.SlotTransform().notify(parts.Thousands);
+
+		maxMachHand_.set_state(maxMachRatio);
+		speedHand_.set_state(speedRatio);
+		kiesHand_.set_state(kiasSpeed);
 
 		bco::GetDigits(mach, parts);
-		signalMACHOnes_.fire(parts.Tens);
-		signalMACHTens_.fire(parts.Hundreds);
-		signalMACHHunds_.fire(parts.Thousands);
+		airspeedMACHOnes_.SlotTransform().notify(parts.Tens);
+		airspeedMACHTens_.SlotTransform().notify(parts.Hundreds);
+		airspeedMACHHunds_.SlotTransform().notify(parts.Thousands);
 	}
 
-	bco::signal<double>&	AirspeedKeasSignal()	{ return signalKeas_; }
-	bco::signal<double>&	KeasOnesSignal()		{ return signalKeasOnes_; }
-	bco::signal<double>&	KeasTensSignal()		{ return signalKeasTens_; }
-	bco::signal<double>&	KeasHundsSignal()		{ return signalKeasHunds_; }
 	bco::signal<bool>&		IsOverspeedSignal()		{ return signalIsOverspeed_; }
-	bco::signal<double>&	MACHMaxSignal()			{ return signalMachMax_; }
-	bco::signal<double>&	SpeedSignal()			{ return signalSpeed_; }
-	bco::signal<double>&	KiasSpeedSignal()		{ return signalKiasSpeed_; }
-	bco::signal<bool>&		IsEnabledSignal()		{ return signalIsEnabled_; }
-	bco::signal<bool>&		IsVelocityFlagSignal()	{ return signalIsVelocityFlag_; }
-	bco::signal<double>&	MACHOnesSignal()		{ return signalMACHOnes_; }
-	bco::signal<double>&	MACHTensSignal()		{ return signalMACHTens_; }
-	bco::signal<double>&	MACHHundsSignal()		{ return signalMACHHunds_; }
-
 
 private:
 	const double MaxPress = 60000.0; // 30.0 * 1000 * 2 = 60000 --> a guess at the dynamic values of SR71r.
@@ -131,19 +134,107 @@ private:
 	const double MAX_MACH = 22.0;
 	double l22 = log(23);
 
-	bco::signal<double>	signalKeas_;
-	bco::signal<double>	signalKeasOnes_;
-	bco::signal<double>	signalKeasTens_;
-	bco::signal<double>	signalKeasHunds_;
 	bco::signal<bool>	signalIsOverspeed_;
-	bco::signal<double> signalMachMax_;
-	bco::signal<double> signalSpeed_;
-	bco::signal<double> signalKiasSpeed_;
-	bco::signal<bool>	signalIsEnabled_;
-	bco::signal<bool>	signalIsVelocityFlag_;
-	bco::signal<double>	signalMACHOnes_;
-	bco::signal<double>	signalMACHTens_;
-	bco::signal<double>	signalMACHHunds_;
+
+	bco::rotary_display<bco::AnimationWrap>	speedHand_{
+		{ bm::vc::SpeedNeedle_id },
+			bm::vc::SpeedNeedle_location, bm::vc::SpeedAxisBack_location,
+			bm::pnl::pnlSpeedNeedle_id,
+			bm::pnl::pnlSpeedNeedle_verts,
+			(300 * RAD),	// Clockwise
+			2.0,
+			[](double d) {return d; }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap>	kiesHand_{
+		{ bm::vc::SpeedIndicatorKies_id },
+			bm::vc::SpeedIndicatorKies_location, bm::vc::SpeedAxisBack_location,
+			bm::pnl::pnlSpeedIndicatorKies_id,
+			bm::pnl::pnlSpeedIndicatorKies_verts,
+			(300 * RAD),	// Clockwise
+			2.0,
+			[](double d) { return d; }	// Transform to anim range.
+	};
+
+	bco::rotary_display<bco::AnimationWrap>	maxMachHand_{
+		{ bm::vc::SpeedNeedleMax_id },
+			bm::vc::SpeedNeedleMax_location, bm::vc::SpeedAxisBack_location,
+			bm::pnl::pnlSpeedNeedleMax_id,
+			bm::pnl::pnlSpeedNeedleMax_verts,
+			(300 * RAD),	// Clockwise
+			2.0,
+			[](double d) {return d; }	// Transform to anim range.
+	};
+
+	bco::flat_roll			airspeedKeasOnes_{
+		bm::vc::vcTDIKeasOnes_id,
+			bm::vc::vcTDIKeasOnes_verts,
+			bm::pnl::pnlTDIKEASOnes_id,
+			bm::pnl::pnlTDIKEASOnes_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			airspeedKeasTens_{
+		bm::vc::vcTDIKeasTens_id,
+			bm::vc::vcTDIKeasTens_verts,
+			bm::pnl::pnlTDIKEASTens_id,
+			bm::pnl::pnlTDIKEASTens_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			airspeedKeasHunds_{
+		bm::vc::vcTDIKeasHunds_id,
+			bm::vc::vcTDIKeasHunds_verts,
+			bm::pnl::pnlTDIKEASHunds_id,
+			bm::pnl::pnlTDIKEASHunds_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			airspeedMACHOnes_{
+		bm::vc::vcTDIMachOne_id,
+			bm::vc::vcTDIMachOne_verts,
+			bm::pnl::pnlTDIMACHOne_id,
+			bm::pnl::pnlTDIMACHOne_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			airspeedMACHTens_{
+		bm::vc::vcTDIMachTens_id,
+			bm::vc::vcTDIMachTens_verts,
+			bm::pnl::pnlTDIMACHTens_id,
+			bm::pnl::pnlTDIMACHTens_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::flat_roll			airspeedMACHHunds_{
+		bm::vc::vcTDIMachHunds_id,
+			bm::vc::vcTDIMachHunds_verts,
+			bm::pnl::pnlTDIMACHHunds_id,
+			bm::pnl::pnlTDIMACHHunds_verts,
+			0.1084,
+			[](double v) {return floor(v) / 10; }
+	};
+
+	bco::on_off_display		speedIsEnabledFlag_{
+		bm::vc::SpeedFlagOff_id,
+			bm::vc::SpeedFlagOff_verts,
+			bm::pnl::pnlSpeedFlagOff_id,
+			bm::pnl::pnlSpeedFlagOff_verts,
+			0.0244
+	};
+
+	bco::on_off_display		speedIsVelocityFlag_{
+		bm::vc::SpeedVelocityFlag_id,
+			bm::vc::SpeedVelocityFlag_verts,
+			bm::pnl::pnlSpeedVelocityFlag_id,
+			bm::pnl::pnlSpeedVelocityFlag_verts,
+			0.0244
+	};
 };
 
 

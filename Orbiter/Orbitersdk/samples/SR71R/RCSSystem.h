@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "bc_orbiter\PoweredComponent.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/on_off_display.h"
 
 #include "SR71r_mesh.h"
 
@@ -27,29 +29,50 @@ class VESSEL3;
 /** RCSMode
 */
 
-class RCSSystem : public bco::PoweredComponent
+class RCSSystem : 
+	public bco::vessel_component
 {
 public:
-	RCSSystem(bco::BaseVessel* vessel, double amps);
+	RCSSystem(bco::BaseVessel& vessel);
 
-	virtual void ChangePowerLevel(double newLevel) override;
-	virtual double CurrentDraw() override;
-	
 	// Callback:
 	void OnRCSMode(int mode);
 
-	bco::slot<bool>&	ToggleLinearSlot()	{ return slotToggleLinear_; }
-	bco::slot<bool>&	ToggleRotateSlot()	{ return slotToggleRotate_; }
-
-	bco::signal<bool>&	IsLinearSignal()	{ return sigIsLinear_; }
-	bco::signal<bool>&	IsRotateSignal()	{ return sigIsRotate_; }
+	bco::slot<bool>&	IsAeroActiveSlot()	{ return slotIsAeroActive_; }
 
 private:
+	bco::BaseVessel&	vessel_;
+
     void OnChanged(int mode);
+	void ActiveChanged(bool isActive);
 
-	bco::slot<bool>		slotToggleLinear_;
-	bco::slot<bool>		slotToggleRotate_;
+	bco::slot<bool>		slotIsAeroActive_;
 
-	bco::signal<bool>	sigIsLinear_;
-	bco::signal<bool>	sigIsRotate_;
+	bco::simple_event<>		btnLinear_{
+		bm::vc::vcRCSLin_location,
+			0.01,
+			bm::pnl::pnlRCSLin_RC
+	};
+
+	bco::on_off_display		lightLinear_{
+		bm::vc::vcRCSLin_id,
+			bm::vc::vcRCSLin_verts,
+			bm::pnl::pnlRCSLin_id,
+			bm::pnl::pnlRCSLin_verts,
+			0.0352
+	};
+
+	bco::simple_event<>		btnRotate_{
+		bm::vc::vcRCSRot_location,
+			0.01,
+			bm::pnl::pnlRCSRot_RC
+	};
+
+	bco::on_off_display		lightRotate_{
+		bm::vc::vcRCSRot_id,
+			bm::vc::vcRCSRot_verts,
+			bm::pnl::pnlRCSRot_id,
+			bm::pnl::pnlRCSRot_verts,
+			0.0352
+	};
 };

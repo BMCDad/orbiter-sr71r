@@ -17,56 +17,72 @@
 #pragma once
 
 #include "Orbitersdk.h"
-
-#include "bc_orbiter\Animation.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/on_off_input.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
-class RetroEngines : 
+class RetroEngines :
     public bco::vessel_component,
-    public bco::set_class_caps,
     public bco::power_consumer,
     public bco::post_step,
+    public bco::set_class_caps,
     public bco::draw_hud
 {
 public:
-    RetroEngines();
+    RetroEngines(bco::power_provider& pwr, bco::BaseVessel& vessel);
 
     // set_class_caps
     void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
     // power_consumer
-    double amp_load() override { return (slotVoltsInput_.value() > MIN_VOLTS) && IsMoving() ? RETRO_AMPS : 0.0; }
+    double amp_draw() const override { return IsMoving() ? 4.0 : 0.0; }
 
     // post_step
     void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
     void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-
-    bco::slot<bool>&    RetroDoorsSlot() { return retroDoorsSlot_; }
-    bco::slot<double>& VoltsInputSlot() { return slotVoltsInput_; }
-
 private:
     const double MIN_VOLTS = 20.0;
 
-    bool IsMoving() { return (animRetroDoors_.GetState() > 0.0) && (animRetroDoors_.GetState() < 1.0); }
+    bco::power_provider& power_;
+    bco::BaseVessel& vessel_;
 
-    bco::slot<bool>     retroDoorsSlot_;
-    bco::slot<double>   slotVoltsInput_;
+    bool IsPowered() const {
+        return
+            power_.volts_available() > MIN_VOLTS;
+    }
+
+    bool IsMoving() const {
+        return 
+            IsPowered() &&
+            (animRetroDoors_.GetState() > 0.0) && 
+            (animRetroDoors_.GetState() < 1.0); 
+    }
 
     void EnableRetros(bool isEnabled);
 
-    THRUSTER_HANDLE     retroThrustHandles_[2];
+    THRUSTER_HANDLE         retroThrustHandles_[2];
 
-    bco::Animation      animRetroDoors_ {   0.2};
+    bco::Animation          animRetroDoors_ {   0.2};
 
-    bco::AnimationGroup gpDoors_        {   {bm::main::EngineCone_id },
-                                            _V(0, 0, -1.2), 
-                                            0.0, 1.0 
-                                        };
+    bco::AnimationGroup     gpDoors_        {   {bm::main::EngineCone_id },
+                                                _V(0, 0, -1.2), 
+                                                0.0, 1.0 
+                                            };
+
+    bco::on_off_input		switchDoors_    { { bm::vc::swRetroDoors_id },
+                                                bm::vc::swRetroDoors_location, bm::vc::DoorsRightAxis_location,
+                                                toggleOnOff,
+                                                bm::pnl::pnlDoorRetro_id,
+                                                bm::pnl::pnlDoorRetro_verts,
+                                                bm::pnl::pnlDoorRetro_RC
+                                            };
 };

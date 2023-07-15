@@ -24,11 +24,7 @@
 
 PowerSystem::PowerSystem() :
 	batteryLevel_(1.0),			// Always available for now.
-	slotIsEnabled_([&](bool v) { }),
-	slotConnectExternal_([&](bool v) { }),
-	slotConnectFuelCell_([&](bool v) { }),
-	slotFuelCellAvailablePower_([&](double v) { }),
-	slotAmpDraw_([&](double v) { ampDraw_ += v; })
+	slotFuelCellAvailablePower_([&](double v) { })
 {
 }
 
@@ -56,23 +52,26 @@ void PowerSystem::Update(bco::BaseVessel& vessel)
 	*	Check the current amp total and determine if we have an overload.
 	*	Report the voltage available signal so components know what they have to work with.
 	*/
-	signalExternalAvailable_.fire(vessel.IsStoppedOrDocked());
-	
+	auto externalConnected = vessel.IsStoppedOrDocked();
+	lightExternalAvail_.set_state(externalConnected);
+
 	// handle connected power
 	auto availExternal = 
-		slotConnectExternal_.value() && signalExternalAvailable_.current()		// External available, and the connect switch is on
-		? FULL_POWER 
-		: 0.0;
+		externalConnected &&				// External power is available
+		switchConnectExternal_.is_on() 		// External power is connected to the bus
+		? FULL_POWER : 0.0;
+
+	lightExternalConnected_.set_state(availExternal > USEABLE_POWER);
 
 	// handle fuelcell power
-	auto availFuelCell = slotConnectFuelCell_.value() ? slotFuelCellAvailablePower_.value() : 0.0;
-	signalFuelCellConnected_.fire((slotFuelCellAvailablePower_.value() > USEABLE_POWER) && slotConnectFuelCell_.value());
+	auto availFuelCell = switchConnectFuelCell_.is_on() ? slotFuelCellAvailablePower_.value() : 0.0;
+	lightFuelCellConnected_.set_state(availFuelCell > USEABLE_POWER);
 
 	// handle battery power
 	auto availBattery = batteryLevel_ * FULL_POWER;
 
 	auto availPower = 0.0;
-	if (slotIsEnabled_.value())
+	if (switchEnabled.is_on())
 	{
 		availPower = fmax(availExternal, availFuelCell);
 		if (availPower < USEABLE_POWER) {
@@ -87,17 +86,5 @@ void PowerSystem::Update(bco::BaseVessel& vessel)
 		signalIsDrawingBattery_.fire(false);
 	}
 
-	signalVoltLevel_.fire(availPower);
-
-	auto ampTotal = 0.0;
-
-	for (auto& a : power_users_) {
-		ampTotal += a->amp_load();
-	}
-
-	if (ampTotal > AMP_OVERLOAD) {
-		// Signal overload
-	}
-
-	signalAmpLoad_.fire(ampTotal);
+	gaugePowerVolts_.set_state(availPower);
 }

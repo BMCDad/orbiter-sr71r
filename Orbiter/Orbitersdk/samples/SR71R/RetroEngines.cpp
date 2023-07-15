@@ -22,17 +22,19 @@
 #include "SR71r_mesh.h"
 
 
-RetroEngines::RetroEngines() : 
-    retroDoorsSlot_([&](bool v) { if (!v) { EnableRetros(false); } })
+RetroEngines::RetroEngines(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+    power_(pwr),
+    vessel_(vessel)
 {
+    power_.attach_consumer(this);
     animRetroDoors_.SetTargetFunction([this] {EnableRetros(true); });
 }
 
 
 void RetroEngines::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
 {
-    if (slotVoltsInput_.value() > MIN_VOLTS) {
-        animRetroDoors_.Step(retroDoorsSlot_.value() ? 1.0 : 0.0, simdt);
+    if (IsPowered()) {
+        animRetroDoors_.Step(switchDoors_.is_on() ? 1.0 : 0.0, simdt);
     }
 }
 
@@ -84,16 +86,15 @@ void RetroEngines::EnableRetros(bool isEnabled)
         // Enable retros if doors are open.
         if (animRetroDoors_.GetState() == 1.0)
         {
-            // TODO
-            //GetBaseVessel()->SetThrusterResource(retroThrustHandles_[0], GetBaseVessel()->MainPropellant());
-            //GetBaseVessel()->SetThrusterResource(retroThrustHandles_[1], GetBaseVessel()->MainPropellant());
+            vessel_.SetThrusterResource(retroThrustHandles_[0], vessel_.MainPropellant());
+            vessel_.SetThrusterResource(retroThrustHandles_[1], vessel_.MainPropellant());
         }
     }
     else
     {
         // Disable retros, regardless of door position.
-        //GetBaseVessel()->SetThrusterResource(retroThrustHandles_[0], nullptr);
-        //GetBaseVessel()->SetThrusterResource(retroThrustHandles_[1], nullptr);
+        vessel_.SetThrusterResource(retroThrustHandles_[0], nullptr);
+        vessel_.SetThrusterResource(retroThrustHandles_[1], nullptr);
     }
 }
 

@@ -33,20 +33,23 @@ namespace bc_orbiter
 
 namespace bc_orbiter {
 	/**
-	* vc_animation
-	* Implemented by a control that needs to take part in the VC cockpit animation step.
+	vc_animation
+	Implemented by a control that needs to take part in the VC cockpit animation step.
+	The implementing class will provide the group to animate, as well as the speed.  It
+	will also implement the actual step that will update the animation.  The presence of 
+	this base class instructs BaseVessel to add it to a collection that will be called during
+	the VC step.
 	*/
 	struct vc_animation {
 		virtual AnimationGroup*		vc_animation_group() = 0;
-		virtual IAnimationState*	vc_animation_state() = 0;
 		virtual double				vc_animation_speed() const = 0;
 		virtual double				vc_step(double simdt) { return 0.0; }
 	};
 
 	/**
-	* panel_animation
-	* Implemented by a control that needs to animate as part of the panel animation step.
-	* Remember:  Panel animations are just mesh transforms, and are not part of Orbiter animations.
+	panel_animation
+	Implemented by a control that needs to animate as part of the panel animation step.
+	Remember:  Panel animations are just mesh transforms, and are not part of Orbiter animations.
 	*/
 	struct panel_animation {
 		virtual void panel_step(MESHHANDLE mesh, double simdt) = 0;
@@ -91,10 +94,10 @@ namespace bc_orbiter {
 	For redraw events, override vc_redraw_flags.
 	*/
 	struct panel_event_target : public event_target {
-		virtual RECT&		panel_rect()							{ return _R(0, 0, 0, 0); }
-		virtual int			panel_mouse_flags()						{ return PANEL_MOUSE_IGNORE; }
-		virtual int			panel_redraw_flags()					{ return PANEL_REDRAW_NEVER; }
-		virtual void		on_panel_redraw(MESHHANDLE meshPanel)	{}
+		virtual RECT&		panel_rect()						{ return _R(0, 0, 0, 0); }
+		virtual int			panel_mouse_flags()					{ return PANEL_MOUSE_IGNORE; }
+		virtual int			panel_redraw_flags()				{ return PANEL_REDRAW_NEVER; }
+		virtual void		on_panel_redraw(MESHHANDLE meshPanel) {}
 	};
 
 	struct vessel_component
@@ -144,7 +147,7 @@ namespace bc_orbiter {
 		return true if the state was succesfully restored.
 		*/
 		virtual bool handle_load_state(const std::string& line) = 0;
-		
+
 		/**
 		handle_save
 		Return a single string that represents the internal state of the component.
@@ -153,25 +156,36 @@ namespace bc_orbiter {
 	};
 
 	/**
-	Indicates the class uses electrical power from the main power system.
-	The consumer must be added to the power supply as a 'power_consumer*'.
+	load_vc
+	Indicates the class has special handling when loading a virtual cockpit.
 	*/
-	struct power_consumer {
+	struct load_vc {
 		/**
-		amp_load
-		Called from a power provider to determine the amp load of the component.
+		handle_load_vc
+		Do work required to setup vc components.
 		*/
-		virtual double amp_load() = 0;
+		virtual bool handle_load_vc(BaseVessel& vessel, int vcid) = 0;
 	};
 
-	/**
-	Indicates the class manages a consumable of some sort that consumers will draw.
-	*/
+
+	struct power_consumer {
+		virtual void on_change(double v) { };  // A class that has a time step may not need change notification.
+		virtual double amp_draw() const = 0;
+	};
+
+	struct power_provider {
+		virtual void attach_consumer(power_consumer* consumer) = 0;
+		virtual double volts_available() const = 0;
+		virtual double amp_load() const = 0;
+	};
+
+	struct one_way_switch {
+		virtual bool is_on() const = 0;
+		virtual void attach_on_change(const std::function<void()>& func) = 0;
+	};
+
 	struct consumable {
-		/**
-		draw
-		Called by a consumer to draw the consumable.
-		*/
+		virtual double level() const = 0;
 		virtual double draw(double amount) = 0;
 	};
 
@@ -181,10 +195,13 @@ namespace bc_orbiter {
 	class control {// : public IControl {
 	public:
 		control(int ctrlId) : ctrlId_(ctrlId) {}
+		control() : ctrlId_(-1) {}
+
+		virtual void set_id(int id) { ctrlId_ = id; }
 		virtual int get_id() const { return ctrlId_; }
 
 	private:
-		const int ctrlId_;
+		int ctrlId_;
 	};
 
 }
