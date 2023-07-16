@@ -83,8 +83,8 @@ private:
 
 	void OnChanged() {
 		// Logic for flags and stuff here.
-		altimeterEnabledFlag_.set_state(!EnabledSlot().value());
-		altimeterExoModeFlag_.set_state(EnabledSlot().value() && AvionicsModeSlot().value());
+		altimeterEnabledFlag_.set_state(EnabledSlot().value());
+		altimeterExoModeFlag_.set_state(!EnabledSlot().value() ? true : AvionicsModeSlot().value());
 	}
 
 	bco::rotary_display<bco::AnimationWrap>	altimeter1Hand_{

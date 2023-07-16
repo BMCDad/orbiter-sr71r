@@ -16,22 +16,40 @@
 
 #pragma once
 
-#include "PoweredComponent.h"
+#include "Component.h"
 #include "BaseVessel.h"
+#include "Control.h"
 #include <map>
 
 namespace bc_orbiter
 {
 	class MFDBase : 
-		public PoweredComponent
+		public Component,
+		public vessel_component,
+		public power_consumer
 	{
 	public:
-		MFDBase(BaseVessel* vessel, int mfdId, double amps) :
-			PoweredComponent(vessel, amps, 24.0),
-			mfdId_(mfdId)
-		{}
+		MFDBase(power_provider& pwr, BaseVessel* vessel, int mfdId, double amps) :
+			Component(vessel),
+			power_(pwr),
+			mfdId_(mfdId),
+			vessel_(*vessel)
+		{
+			power_.attach_consumer(this);
+		}
 
-		virtual void ChangePowerLevel(double newLevel) override;
+		// power_consumer
+		double amp_draw() const { 
+			return 
+				(IsPowered() && (oapiGetMFDMode(mfdId_) != MFD_NONE)) 
+				? 4.0 : 0.0; 
+		}
+
+		void on_change(double v) {
+			if (!IsPowered()) { oapiOpenMFD(MFD_NONE, mfdId_); }
+		}
+
+//		virtual void ChangePowerLevel(double newLevel) override;
 
 		/**
 		Notification when the MFD mode changes.
@@ -48,9 +66,16 @@ namespace bc_orbiter
 		*/
 		bool OnMouseEvent(int id, int event);
 
-		virtual double CurrentDraw() override;
+//		virtual double CurrentDraw() override;
 
 	protected:
+		power_provider& power_;
+		BaseVessel& vessel_;
+
+		bool IsPowered() const { 
+			return (power_.volts_available() > 24.0);
+		} // power_.volts_available() > 24.0; }
+
 		void Update();
 		void Redraw();
 		void AssignKey(int areaId, int mfdKey);
@@ -70,11 +95,11 @@ namespace bc_orbiter
 		int						idMenu_{ 0 };
 	};
 
-	inline void MFDBase::ChangePowerLevel(double newLevel)
-	{
-		PoweredComponent::ChangePowerLevel(newLevel);
-		Update();
-	}
+	//inline void MFDBase::ChangePowerLevel(double newLevel)
+	//{
+	//	PoweredComponent::ChangePowerLevel(newLevel);
+	//	Update();
+	//}
 
 	inline void MFDBase::OnMfdMode(int mfdId, int mode)
 	{
@@ -101,10 +126,7 @@ namespace bc_orbiter
 	{
 		bool result = false;
 
-		if (!HasPower())
-		{
-			return false;
-		}
+		if (!IsPowered()) return false;
 
 		auto key = mfdButtonIds_.find(id);
 		if (key != mfdButtonIds_.end())
@@ -136,37 +158,24 @@ namespace bc_orbiter
 
 	inline void MFDBase::Update()
 	{
-		if (!HasPower())
-		{
-			auto mode = oapiGetMFDMode(mfdId_);
-			// Turn off MFD
-			if (mode != MFD_NONE)
-			{
-				oapiOpenMFD(MFD_NONE, mfdId_);
-			}
-		}
-		else
-		{
-			auto mode = oapiGetMFDMode(mfdId_);
+		auto mode = oapiGetMFDMode(mfdId_);
 
-			if (mode != MFD_NONE)
-			{
-				oapiRefreshMFDButtons(mfdId_);
-			}
+		if (mode != MFD_NONE)
+		{
+			oapiRefreshMFDButtons(mfdId_);
 		}
 	}
 
 	inline void MFDBase::Redraw()
 	{
-        auto vessel = GetBaseVessel();
 		for (auto &p : mfdButtonIds_)
 		{
-            vessel->TriggerRedrawArea(0, 0, p.first);
+            vessel_.TriggerRedrawArea(0, 0, p.first);
 		}
 
-        vessel->TriggerRedrawArea(0, 0, idPower_);
-        vessel->TriggerRedrawArea(0, 0, idSelect_);
-        vessel->TriggerRedrawArea(0, 0, idMenu_);
+        vessel_.TriggerRedrawArea(0, 0, idPower_);
+        vessel_.TriggerRedrawArea(0, 0, idSelect_);
+        vessel_.TriggerRedrawArea(0, 0, idMenu_);
 	}
 
 	inline void MFDBase::AssignKey(int areaId, int mfdKey)
@@ -174,8 +183,8 @@ namespace bc_orbiter
 		mfdButtonIds_[areaId] = mfdKey;
 	}
 
-	inline double MFDBase::CurrentDraw()
-	{
-		return (HasPower() && (MFD_NONE != oapiGetMFDMode(mfdId_))) ? PoweredComponent::CurrentDraw() : 0.0;
-	}
+	//inline double MFDBase::CurrentDraw()
+	//{
+	//	return (HasPower() && (MFD_NONE != oapiGetMFDMode(mfdId_))) ? PoweredComponent::CurrentDraw() : 0.0;
+	//}
 }

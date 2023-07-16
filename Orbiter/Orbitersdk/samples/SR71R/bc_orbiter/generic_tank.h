@@ -54,8 +54,7 @@ namespace bc_orbiter {
 		// consumable
 		double level() const override { return level_; }
 		double draw(double amount) override {
-			level_ = max(0.0, level_ - amount);
-			sigLevel_.fire(level_);
+			SetLevel(max(0.0, level_ - amount));
 			return level_;
 		}
 
@@ -125,14 +124,14 @@ namespace bc_orbiter {
 		}
 
 		void FillTank(double amount) {
-			level_ = min(level_ + amount, capacity_);
+			SetLevel(min(level_ + amount, capacity_));
 
 			if (level_ == capacity_) {
 				isFilling_ = false;
 				sigIsFilling_.fire(isFilling_);
 			}
 
-			sigLevel_.fire(level_);
+			sigLevel_.fire(level_ / capacity_);		// 0 to 1 range
 		}
 
 		void ToggleFilling() {
@@ -147,7 +146,13 @@ namespace bc_orbiter {
 			sigIsFilling_.fire(isFilling_);
 		}
 
-		double Level() { return level_; }
+		void SetLevel(double l) {
+			level_ = l;
+			sigLevel_.fire(level_ / capacity_);
+		}
+
+		// Reports the tank level from 0 to capacity. (the signal is 0 to 1)
+		//double Level() { return level_; }
 
 	private:
 		power_provider&			power_;

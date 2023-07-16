@@ -44,14 +44,14 @@ public:
 
 		btnFill_.attach([&]() { ToggleFilling(); });
 
-		LevelSignal().attach(gaugeLevel_.Slot());
-		IsFillingSignal().attach(btnLightFill_.Slot());
-		IsAvailableSignal().attach(lightAvailable_.Slot());
+		LevelSignal().attach(		gaugeLevel_.Slot());
+		IsFillingSignal().attach(	btnLightFill_.Slot());
+		IsAvailableSignal().attach(	lightAvailable_.Slot());
 	}
 
 
 	double amp_draw() const override {
-		return generic_tank::amp_draw() + IsPowered() ? 5.0 : 0.0;	// Cryo cooling.
+		return generic_tank::amp_draw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
 	}
 
 private:

@@ -21,12 +21,14 @@
 #include "SR71r_mesh.h"
 
 
-FuelCell::FuelCell(bco::power_provider& pwr, bco::consumable& lox, bco::consumable& hydro) :
+FuelCell::FuelCell(bco::power_provider& pwr, bco::BaseVessel& vessel, bco::consumable& lox, bco::consumable& hydro) :
 	power_(pwr),
 	lox_(lox),
 	hydro_(hydro),
 	isFuelCellAvailable_(false)
 {
+	vessel.AddControl(&switchEnabled_);
+	vessel.AddControl(&lightAvailable_);
 }
 
 void FuelCell::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
@@ -37,19 +39,17 @@ void FuelCell::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	}
 	else
 	{
-		/*	The burn rate is figured at lbs per hour at 100 amps.
-			*/
-		auto ampFac = (power_.amp_load() / 100) * simdt;
+		auto ampFac = power_.amp_load();
 
 		auto isLOX = lox_.level() > 0.0;
 		auto isHYD = hydro_.level() > 0.0;
 
 		if (isLOX) {
-			lox_.draw(OXYGEN_BURN_RATE_PER_SEC * ampFac);
+			lox_.draw(OXYGEN_BURN_RATE_PER_SEC_100A * ampFac);
 		}
 
 		if (isHYD) {
-			hydro_.draw(HYDROGEN_BURN_RATE_PER_SEC * ampFac);
+			hydro_.draw(HYDROGEN_BURN_RATE_PER_SEC_100A * ampFac);
 		}
 
 		SetIsFuelCellPowerAvailable(isLOX && isHYD);

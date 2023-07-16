@@ -22,10 +22,18 @@
 
 #include <assert.h>
 
-PowerSystem::PowerSystem() :
+PowerSystem::PowerSystem(bco::BaseVessel& vessel) :
 	batteryLevel_(1.0),			// Always available for now.
 	slotFuelCellAvailablePower_([&](double v) { })
 {
+	vessel.AddControl(&switchEnabled);
+	vessel.AddControl(&switchConnectExternal_);
+	vessel.AddControl(&switchConnectFuelCell_);
+	vessel.AddControl(&lightFuelCellConnected_);
+	vessel.AddControl(&lightExternalAvail_);
+	vessel.AddControl(&lightExternalConnected_);
+	vessel.AddControl(&gaugePowerAmps_);
+	vessel.AddControl(&gaugePowerVolts_);
 }
 
 bool PowerSystem::handle_load_state(const std::string& line)
@@ -84,6 +92,14 @@ void PowerSystem::Update(bco::BaseVessel& vessel)
 	}
 	else {
 		signalIsDrawingBattery_.fire(false);
+	}
+
+	if (availPower != prevVolts_) {
+		prevVolts_ = availPower;
+
+		for each (auto & c in consumers_) {
+			c->on_change(prevVolts_);
+		}
 	}
 
 	gaugePowerVolts_.set_state(availPower);

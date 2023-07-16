@@ -57,6 +57,7 @@ public:
 
 	// Slots:
 	bco::signal<bool>&		IsAeroActiveSignal()	{ return isAeroDataActive_; }		// Is aero available (switch is on, power is adequate)
+	bco::signal<bool>&		IsAeroModeAtmoSignal()	{ return avionicsModeSignal_; }
 
 	// Signals:
 	bco::signal<double>&	SetCourseSignal()		{ return setCourseSignal_; }
@@ -72,7 +73,7 @@ private:
 	bool IsPowered() const { return switchAvionPower_.is_on() && (power_.volts_available() > 24.0); }
 
 	// Signals:
-//	bco::signal<AvionMode>	avionicsModeSignal_;
+	bco::signal<bool>		avionicsModeSignal_;
 	bco::signal<bool>		isAeroDataActive_;
 	bco::signal<double>		setCourseSignal_;
 	bco::signal<double>		setHeadingSignal_;

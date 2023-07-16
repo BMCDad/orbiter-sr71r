@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Sun Jul  2 11:18:38 2023
+// Date: Sun Jul 16 15:56:06 2023
 
 
 #include "orbitersdk.h"
@@ -348,30 +348,30 @@ namespace bm
     {2222.4790f, 785.4366f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
     {2255.0085f, 785.4366f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
     const NTVERTEX pnlPwrFC_verts[4] = {
-    {2302.5981f, 806.4562f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
-    {2335.1277f, 806.4562f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
-    {2302.5981f, 718.5665f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
-    {2335.1277f, 718.5665f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    {2302.5981f, 775.0973f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {2335.1277f, 775.0973f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {2302.5981f, 687.2076f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {2335.1277f, 687.2076f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
     const NTVERTEX pnlLgtExtPwrAvail_verts[4] = {
-    {1976.1337f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
-    {2021.4833f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
-    {1976.1337f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
-    {2021.4833f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
+    {1976.1337f, 854.2889f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
+    {2021.4833f, 854.2889f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
+    {1976.1337f, 808.9393f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
+    {2021.4833f, 808.9393f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
     const NTVERTEX pnlLgtFCPwrAvail_verts[4] = {
-    {2296.7805f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
-    {2342.1299f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
-    {2296.7805f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
-    {2342.1299f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
+    {2295.8164f, 854.4539f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
+    {2341.1658f, 854.4539f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
+    {2295.8164f, 809.1043f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
+    {2341.1658f, 809.1043f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
     const NTVERTEX pnlLgtFCPwrOn_verts[4] = {
-    {2167.0547f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0253f},
-    {2212.4041f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0253f},
-    {2167.0547f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0040f},
-    {2212.4041f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0040f}    };
+    {2167.0547f, 853.8729f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0253f},
+    {2212.4041f, 853.8729f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0253f},
+    {2167.0547f, 808.5234f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0040f},
+    {2212.4041f, 808.5234f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0040f}    };
     const NTVERTEX pnlLgtExtPwrOn_verts[4] = {
-    {2104.4646f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0253f},
-    {2149.8140f, 852.4731f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0253f},
-    {2104.4646f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0040f},
-    {2149.8140f, 807.1235f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0040f}    };
+    {2104.4646f, 853.7614f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0253f},
+    {2149.8140f, 853.7614f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0253f},
+    {2104.4646f, 808.4118f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5030f, 0.0040f},
+    {2149.8140f, 808.4118f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5243f, 0.0040f}    };
     const NTVERTEX pnlAPMain_verts[4] = {
     {846.0000f, 793.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4255f, 0.1685f},
     {916.0000f, 793.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4604f, 0.1685f},
@@ -398,25 +398,25 @@ namespace bm
     {990.0000f, 794.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1975f},
     {1060.0000f, 794.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1975f}    };
     const NTVERTEX pnlLH2Switch_verts[4] = {
-    {2124.8247f, 998.5946f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1686f},
-    {2194.8247f, 998.5946f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1686f},
-    {2124.8247f, 942.5946f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1399f},
-    {2194.8247f, 942.5946f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1399f}    };
+    {2211.0000f, 937.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1686f},
+    {2281.0000f, 937.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1686f},
+    {2211.0000f, 881.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1399f},
+    {2281.0000f, 881.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1399f}    };
     const NTVERTEX pnlLH2Avail_verts[4] = {
-    {2139.5842f, 933.0343f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
-    {2184.9336f, 933.0343f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
-    {2139.5842f, 887.6848f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
-    {2184.9336f, 887.6848f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
+    {2223.6775f, 992.0269f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
+    {2269.0269f, 992.0269f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
+    {2223.6775f, 946.6774f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
+    {2269.0269f, 946.6774f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
     const NTVERTEX pnlO2Switch_verts[4] = {
-    {2052.0713f, 997.8095f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1398f},
-    {2122.0713f, 997.8095f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1398f},
-    {2052.0713f, 941.8095f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1111f},
-    {2122.0713f, 941.8095f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1111f}    };
+    {2131.0000f, 937.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1398f},
+    {2201.0000f, 937.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1398f},
+    {2131.0000f, 881.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1111f},
+    {2201.0000f, 881.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1111f}    };
     const NTVERTEX pnlO2Avail_verts[4] = {
-    {2066.3076f, 931.7258f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
-    {2111.6570f, 931.7258f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
-    {2066.3076f, 886.3762f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
-    {2111.6570f, 886.3762f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
+    {2143.6775f, 992.0269f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
+    {2189.0269f, 992.0269f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
+    {2143.6775f, 946.6774f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
+    {2189.0269f, 946.6774f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
     const NTVERTEX pnlLandingGear_verts[4] = {
     {153.2238f, 855.0703f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0075f, 0.1129f},
     {223.2238f, 855.0703f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0416f, 0.1129f},
@@ -428,30 +428,20 @@ namespace bm
     {2433.8789f, 12.8741f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
     {2466.4084f, 12.8741f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
     const NTVERTEX pnlFuelDump_verts[4] = {
-    {2491.6292f, 997.4446f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
-    {2524.1587f, 997.4446f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
-    {2491.6292f, 909.5549f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
-    {2524.1587f, 909.5549f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
-    const NTVERTEX pnlFuelTransferSelect_verts[4] = {
-    {2332.2751f, 997.4446f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
-    {2364.8047f, 997.4446f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
-    {2332.2751f, 909.5549f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
-    {2364.8047f, 909.5549f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    {2311.4902f, 990.4332f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
+    {2344.0198f, 990.4332f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
+    {2311.4902f, 902.5435f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
+    {2344.0198f, 902.5435f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
     const NTVERTEX pnlFuelAvail_verts[4] = {
-    {1988.8022f, 930.4173f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
-    {2034.1519f, 930.4173f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
-    {1988.8022f, 885.0677f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
-    {2034.1519f, 885.0677f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
+    {1983.6774f, 992.0269f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
+    {2029.0270f, 992.0269f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
+    {1983.6774f, 946.6774f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
+    {2029.0270f, 946.6774f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
     const NTVERTEX pnlFuelValveSwitch_verts[4] = {
-    {1978.5037f, 996.5010f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4251f, 0.1398f},
-    {2048.5037f, 996.5010f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4599f, 0.1398f},
-    {1978.5037f, 940.5010f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4251f, 0.1111f},
-    {2048.5037f, 940.5010f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4599f, 0.1111f}    };
-    const NTVERTEX pnlFuelTransfer_verts[4] = {
-    {2206.8088f, 982.7538f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1109f},
-    {2276.8088f, 982.7538f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1109f},
-    {2206.8088f, 926.7538f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.0822f},
-    {2276.8088f, 926.7538f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.0822f}    };
+    {1971.0000f, 937.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4251f, 0.1398f},
+    {2041.0000f, 937.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4599f, 0.1398f},
+    {1971.0000f, 881.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4251f, 0.1111f},
+    {2041.0000f, 881.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4599f, 0.1111f}    };
     const NTVERTEX pnlAvionMode_verts[4] = {
     {1522.8691f, 720.5186f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0623f},
     {1555.3986f, 720.5186f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
@@ -567,6 +557,16 @@ namespace bm
     {1635.4492f, 721.7938f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0623f},
     {1602.9198f, 633.9041f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0486f, 0.0208f},
     {1635.4492f, 633.9041f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0646f, 0.0208f}    };
+    const NTVERTEX pnlRCSValveSwitch_verts[4] = {
+    {2051.0000f, 937.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.1110f},
+    {2121.0000f, 937.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.1110f},
+    {2051.0000f, 881.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3474f, 0.0823f},
+    {2121.0000f, 881.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.0823f}    };
+    const NTVERTEX pnlRCSAvail_verts[4] = {
+    {2063.6775f, 992.0269f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0253f},
+    {2109.0269f, 992.0269f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0253f},
+    {2063.6775f, 946.6774f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5518f, 0.0040f},
+    {2109.0269f, 946.6774f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5731f, 0.0040f}    };
     const NTVERTEX pnlAttitudeIndicator_verts[4] = {
     {1126.7605f, 143.4485f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3711f, 0.1478f},
     {1424.9993f, 143.4370f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5171f, 0.1478f},
@@ -578,20 +578,20 @@ namespace bm
     {1698.4760f, 477.4825f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.3722f, 0.4090f},
     {1513.8053f, 445.4035f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.4648f, 0.4090f}    };
     const NTVERTEX pnlVSIOffFlag_verts[4] = {
-    {1494.9253f, 400.1494f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3456f, 0.6081f},
-    {1548.4519f, 400.1494f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6081f},
-    {1494.9253f, 453.6760f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3456f, 0.6320f},
-    {1548.4519f, 453.6760f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6320f}    };
+    {1494.8492f, 399.6929f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3456f, 0.6081f},
+    {1548.3759f, 399.6929f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6081f},
+    {1494.8492f, 453.2195f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3456f, 0.6320f},
+    {1548.3759f, 453.2195f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6320f}    };
     const NTVERTEX pnlAltimeterOffFlag_verts[4] = {
-    {1492.2141f, 158.8583f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6081f},
-    {1543.6421f, 158.8583f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6081f},
-    {1492.2141f, 210.2864f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6320f},
-    {1543.6421f, 210.2864f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6320f}    };
+    {1492.3236f, 157.1420f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6081f},
+    {1543.7516f, 157.1420f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6081f},
+    {1492.3236f, 208.5701f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6320f},
+    {1543.7516f, 208.5701f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6320f}    };
     const NTVERTEX pnlAltimeterGround_verts[4] = {
-    {1664.5291f, 157.4688f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3947f, 0.6081f},
-    {1715.9570f, 157.4688f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4188f, 0.6081f},
-    {1664.5291f, 208.8969f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3947f, 0.6321f},
-    {1715.9570f, 208.8969f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4188f, 0.6321f}    };
+    {1663.6331f, 155.2963f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3947f, 0.6081f},
+    {1715.0610f, 155.2963f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4188f, 0.6081f},
+    {1663.6331f, 206.7244f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3947f, 0.6321f},
+    {1715.0610f, 206.7244f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4188f, 0.6321f}    };
     const NTVERTEX pnlSpeedNeedleMax_verts[4] = {
     {933.4097f, 118.0333f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6555f, 0.3942f},
     {969.3336f, 118.0333f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6727f, 0.3942f},
@@ -703,10 +703,10 @@ namespace bm
     {1131.6149f, 257.2035f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6320f},
     {1185.0245f, 257.2035f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6320f}    };
     const NTVERTEX pnlHSIOffFlag_verts[4] = {
-    {1094.6604f, 526.2068f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3448f, 0.6333f},
-    {1143.7590f, 526.2068f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3692f, 0.6333f},
-    {1094.6604f, 575.3054f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3448f, 0.6576f},
-    {1143.7590f, 575.3054f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3692f, 0.6576f}    };
+    {1095.6055f, 526.2831f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3448f, 0.6333f},
+    {1144.7041f, 526.2831f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3692f, 0.6333f},
+    {1095.6055f, 575.3817f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3448f, 0.6576f},
+    {1144.7041f, 575.3817f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3692f, 0.6576f}    };
     const NTVERTEX pnlCOMStatusPanel_verts[4] = {
     {1451.7054f, 186.4930f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5261f, 0.0268f},
     {1400.6417f, 186.4930f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5014f, 0.0268f},
@@ -796,73 +796,97 @@ namespace bm
     const UINT pnlLandingGearUp_id = 51;
     const UINT pnlThrottleLimit_id = 52;
     const UINT pnlFuelDump_id = 53;
-    const UINT pnlFuelTransferSelect_id = 54;
-    const UINT pnlFuelAvail_id = 55;
-    const UINT pnlFuelValveSwitch_id = 56;
-    const UINT pnlFuelTransfer_id = 57;
-    const UINT pnlAvionMode_id = 58;
-    const UINT pnlTDIAltOnes_id = 59;
-    const UINT pnlTDIAltTens_id = 60;
-    const UINT pnlTDIAltHund_id = 61;
-    const UINT pnlTDIAltThous_id = 62;
-    const UINT pnlTDIAltTenThou_id = 63;
-    const UINT pnlTDIKEASOnes_id = 64;
-    const UINT pnlTDIKEASTens_id = 65;
-    const UINT pnlTDIKEASHunds_id = 66;
-    const UINT pnlTDIMACHOne_id = 67;
-    const UINT pnlTDIMACHTens_id = 68;
-    const UINT pnlTDIMACHHunds_id = 69;
-    const UINT pnlHSIMilesOnes_id = 70;
-    const UINT pnlHSIMilesTens_id = 71;
-    const UINT pnlHSIMilesHunds_id = 72;
-    const UINT pnlHSICRSOnes_id = 73;
-    const UINT pnlHSICRSTens_id = 74;
-    const UINT pnlHSICRSHunds_id = 75;
-    const UINT pnlHSIMilesWindow_id = 76;
-    const UINT pnlHSICRSWindow_id = 77;
-    const UINT pnlTDIAltWindow_id = 78;
-    const UINT pnlTDIKEASWindow_id = 79;
-    const UINT pnlSetCourseInc_id = 80;
-    const UINT pnlSetCourseDec_id = 81;
-    const UINT pnlSetHeadingInc_id = 82;
-    const UINT pnlSetHeadingDec_id = 83;
-    const UINT pnlNavMode_id = 84;
-    const UINT pnlAttitudeIndicator_id = 85;
-    const UINT pnlVSINeedle_id = 86;
-    const UINT pnlVSIOffFlag_id = 87;
-    const UINT pnlAltimeterOffFlag_id = 88;
-    const UINT pnlAltimeterGround_id = 89;
-    const UINT pnlSpeedNeedleMax_id = 90;
-    const UINT pnlClockTimerMinute_id = 91;
-    const UINT pnlRoseCompass_id = 92;
-    const UINT pnlSpeedIndicatorKies_id = 93;
-    const UINT pnlClockHour_id = 94;
-    const UINT pnlHSIBearingArrow_id = 95;
-    const UINT pnlSpeedNeedle_id = 96;
-    const UINT pnlClockMinute_id = 97;
-    const UINT pnlHSICourse_id = 98;
-    const UINT pnlClockSecond_id = 99;
-    const UINT pnlHydPress_id = 100;
-    const UINT pnlLOXPress_id = 101;
-    const UINT pnlLH2Press_id = 102;
-    const UINT pnlAmpMeter_id = 103;
-    const UINT pnlVoltMeter_id = 104;
-    const UINT pnlGaFuelFlow_id = 105;
-    const UINT pnlGaFuelMain_id = 106;
-    const UINT pnlGaFuelRCS_id = 107;
-    const UINT pnlHorizonFace_id = 108;
-    const UINT pnlHSICourseNeedle_id = 109;
-    const UINT pnlAlt100Needle_id = 110;
-    const UINT pnlHSICompassHeading_id = 111;
-    const UINT pnlAttitudeFlagOff_id = 112;
-    const UINT pnlHSIOffFlag_id = 113;
-    const UINT pnlCOMStatusPanel_id = 114;
-    const UINT pnlSpeedVelocityFlag_id = 115;
-    const UINT pnlAlt10Needle_id = 116;
-    const UINT pnlHSIExoFlag_id = 117;
-    const UINT pnlSpeedFlagOff_id = 118;
-    const UINT pnlAlt1Needle_id = 119;
-    const UINT pnlCompassFaceTop_id = 120;
+    const UINT pnlFuelAvail_id = 54;
+    const UINT pnlFuelValveSwitch_id = 55;
+    const UINT pnlAvionMode_id = 56;
+    const UINT pnlTDIAltOnes_id = 57;
+    const UINT pnlTDIAltTens_id = 58;
+    const UINT pnlTDIAltHund_id = 59;
+    const UINT pnlTDIAltThous_id = 60;
+    const UINT pnlTDIAltTenThou_id = 61;
+    const UINT pnlTDIKEASOnes_id = 62;
+    const UINT pnlTDIKEASTens_id = 63;
+    const UINT pnlTDIKEASHunds_id = 64;
+    const UINT pnlTDIMACHOne_id = 65;
+    const UINT pnlTDIMACHTens_id = 66;
+    const UINT pnlTDIMACHHunds_id = 67;
+    const UINT pnlHSIMilesOnes_id = 68;
+    const UINT pnlHSIMilesTens_id = 69;
+    const UINT pnlHSIMilesHunds_id = 70;
+    const UINT pnlHSICRSOnes_id = 71;
+    const UINT pnlHSICRSTens_id = 72;
+    const UINT pnlHSICRSHunds_id = 73;
+    const UINT pnlHSIMilesWindow_id = 74;
+    const UINT pnlHSICRSWindow_id = 75;
+    const UINT pnlTDIAltWindow_id = 76;
+    const UINT pnlTDIKEASWindow_id = 77;
+    const UINT pnlSetCourseInc_id = 78;
+    const UINT pnlSetCourseDec_id = 79;
+    const UINT pnlSetHeadingInc_id = 80;
+    const UINT pnlSetHeadingDec_id = 81;
+    const UINT pnlNavMode_id = 82;
+    const UINT pnlLeftMDFL1_id = 83;
+    const UINT pnlLeftMDFL2_id = 84;
+    const UINT pnlLeftMDFL3_id = 85;
+    const UINT pnlLeftMDFL4_id = 86;
+    const UINT pnlLeftMDFL5_id = 87;
+    const UINT pnlLeftMDFL6_id = 88;
+    const UINT pnlLeftMDFR1_id = 89;
+    const UINT pnlLeftMDFR2_id = 90;
+    const UINT pnlLeftMDFR3_id = 91;
+    const UINT pnlLeftMDFR4_id = 92;
+    const UINT pnlLeftMDFR5_id = 93;
+    const UINT pnlLeftMDFR6_id = 94;
+    const UINT pnlRightMDFL1_id = 95;
+    const UINT pnlRightMDFL2_id = 96;
+    const UINT pnlRightMDFL3_id = 97;
+    const UINT pnlRightMDFL4_id = 98;
+    const UINT pnlRightMDFL5_id = 99;
+    const UINT pnlRightMDFL6_id = 100;
+    const UINT pnlRightMDFR1_id = 101;
+    const UINT pnlRightMDFR2_id = 102;
+    const UINT pnlRightMDFR3_id = 103;
+    const UINT pnlRightMDFR4_id = 104;
+    const UINT pnlRightMDFR5_id = 105;
+    const UINT pnlRightMDFR6_id = 106;
+    const UINT pnlRCSValveSwitch_id = 107;
+    const UINT pnlRCSAvail_id = 108;
+    const UINT pnlAttitudeIndicator_id = 109;
+    const UINT pnlVSINeedle_id = 110;
+    const UINT pnlVSIOffFlag_id = 111;
+    const UINT pnlAltimeterOffFlag_id = 112;
+    const UINT pnlAltimeterGround_id = 113;
+    const UINT pnlSpeedNeedleMax_id = 114;
+    const UINT pnlClockTimerMinute_id = 115;
+    const UINT pnlRoseCompass_id = 116;
+    const UINT pnlSpeedIndicatorKies_id = 117;
+    const UINT pnlClockHour_id = 118;
+    const UINT pnlHSIBearingArrow_id = 119;
+    const UINT pnlSpeedNeedle_id = 120;
+    const UINT pnlClockMinute_id = 121;
+    const UINT pnlHSICourse_id = 122;
+    const UINT pnlClockSecond_id = 123;
+    const UINT pnlHydPress_id = 124;
+    const UINT pnlLOXPress_id = 125;
+    const UINT pnlLH2Press_id = 126;
+    const UINT pnlAmpMeter_id = 127;
+    const UINT pnlVoltMeter_id = 128;
+    const UINT pnlGaFuelFlow_id = 129;
+    const UINT pnlGaFuelMain_id = 130;
+    const UINT pnlGaFuelRCS_id = 131;
+    const UINT pnlHorizonFace_id = 132;
+    const UINT pnlHSICourseNeedle_id = 133;
+    const UINT pnlAlt100Needle_id = 134;
+    const UINT pnlHSICompassHeading_id = 135;
+    const UINT pnlAttitudeFlagOff_id = 136;
+    const UINT pnlHSIOffFlag_id = 137;
+    const UINT pnlCOMStatusPanel_id = 138;
+    const UINT pnlSpeedVelocityFlag_id = 139;
+    const UINT pnlAlt10Needle_id = 140;
+    const UINT pnlHSIExoFlag_id = 141;
+    const UINT pnlSpeedFlagOff_id = 142;
+    const UINT pnlAlt1Needle_id = 143;
+    const UINT pnlCompassFaceTop_id = 144;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {847, 617, 917, 673};
@@ -907,11 +931,11 @@ namespace bm
     constexpr RECT pnlPwrCargo_RC = {2221, 688, 2254, 776};
     constexpr RECT pnlPwrExtBus_RC = {2063, 786, 2095, 874};
     constexpr RECT pnlPwrFCBus_RC = {2222, 786, 2255, 874};
-    constexpr RECT pnlPwrFC_RC = {2303, 719, 2335, 807};
-    constexpr RECT pnlLgtExtPwrAvail_RC = {1976, 807, 2022, 853};
-    constexpr RECT pnlLgtFCPwrAvail_RC = {2297, 807, 2342, 853};
-    constexpr RECT pnlLgtFCPwrOn_RC = {2167, 807, 2213, 853};
-    constexpr RECT pnlLgtExtPwrOn_RC = {2105, 807, 2150, 853};
+    constexpr RECT pnlPwrFC_RC = {2303, 688, 2335, 776};
+    constexpr RECT pnlLgtExtPwrAvail_RC = {1976, 809, 2022, 854};
+    constexpr RECT pnlLgtFCPwrAvail_RC = {2296, 809, 2341, 855};
+    constexpr RECT pnlLgtFCPwrOn_RC = {2167, 809, 2213, 854};
+    constexpr RECT pnlLgtExtPwrOn_RC = {2105, 809, 2150, 854};
     constexpr VECTOR3 pnlAmpMeter_location =     {2466.1423, 740.5164, -0.0039};
     constexpr VECTOR3 pnlVoltMeter_location =     {2466.1423, 740.5164, -0.0039};
     constexpr RECT pnlAPMain_RC = {847, 738, 917, 794};
@@ -919,10 +943,10 @@ namespace bm
     constexpr RECT pnlAPAltitude_RC = {847, 795, 917, 851};
     constexpr RECT pnlAPKEAS_RC = {919, 795, 989, 851};
     constexpr RECT pnlAPMACH_RC = {991, 795, 1061, 851};
-    constexpr RECT pnlLH2Switch_RC = {2125, 943, 2195, 999};
-    constexpr RECT pnlLH2Avail_RC = {2140, 888, 2185, 933};
-    constexpr RECT pnlO2Switch_RC = {2053, 942, 2123, 998};
-    constexpr RECT pnlO2Avail_RC = {2066, 887, 2112, 932};
+    constexpr RECT pnlLH2Switch_RC = {2212, 882, 2282, 938};
+    constexpr RECT pnlLH2Avail_RC = {2224, 947, 2269, 992};
+    constexpr RECT pnlO2Switch_RC = {2132, 882, 2202, 938};
+    constexpr RECT pnlO2Avail_RC = {2144, 947, 2189, 992};
     constexpr RECT pnlLandingGearDown_RC = {159, 852, 219, 973};
     constexpr RECT pnlLandingGearUp_RC = {158, 718, 218, 839};
     constexpr VECTOR3 pnlLandingGearKnobUp_location =     {188.0139, 779.2891, -0.0003};
@@ -931,11 +955,9 @@ namespace bm
     constexpr VECTOR3 pnlGaFuelMain_location =     {2462.1790, 386.4586, -0.0040};
     constexpr VECTOR3 pnlGaFuelRCS_location =     {2462.1790, 561.5330, -0.0040};
     constexpr RECT pnlThrottleLimit_RC = {2434, 14, 2466, 102};
-    constexpr RECT pnlFuelDump_RC = {2492, 910, 2524, 998};
-    constexpr RECT pnlFuelTransferSelect_RC = {2332, 910, 2365, 998};
-    constexpr RECT pnlFuelAvail_RC = {1989, 885, 2034, 931};
-    constexpr RECT pnlFuelValveSwitch_RC = {1979, 941, 2049, 997};
-    constexpr RECT pnlFuelTransfer_RC = {2207, 927, 2277, 983};
+    constexpr RECT pnlFuelDump_RC = {2311, 903, 2344, 991};
+    constexpr RECT pnlFuelAvail_RC = {1984, 947, 2029, 992};
+    constexpr RECT pnlFuelValveSwitch_RC = {1972, 882, 2042, 938};
     constexpr RECT pnlAvionMode_RC = {1523, 633, 1555, 721};
     constexpr VECTOR3 pnlAlt1Needle_location =     {1603.7352, 230.7396, -12.7778};
     constexpr VECTOR3 pnlAlt10Needle_location =     {1603.4437, 230.7816, -7.3062};
@@ -975,6 +997,32 @@ namespace bm
     constexpr VECTOR3 pnlSpeedNeedleMax_location =     {951.3716, 229.7966, -5.7053};
     constexpr VECTOR3 pnlSpeedIndicatorKies_location =     {951.4131, 229.8050, -6.3048};
     constexpr VECTOR3 pnlSpeedNeedle_location =     {951.7325, 230.1765, -13.7245};
+    constexpr RECT pnlLeftMDFL1_RC = {210, 197, 268, 234};
+    constexpr RECT pnlLeftMDFL2_RC = {210, 252, 268, 289};
+    constexpr RECT pnlLeftMDFL3_RC = {210, 308, 268, 345};
+    constexpr RECT pnlLeftMDFL4_RC = {210, 365, 268, 402};
+    constexpr RECT pnlLeftMDFL5_RC = {210, 420, 268, 457};
+    constexpr RECT pnlLeftMDFL6_RC = {210, 476, 268, 513};
+    constexpr RECT pnlLeftMDFR1_RC = {749, 197, 807, 234};
+    constexpr RECT pnlLeftMDFR2_RC = {749, 252, 807, 289};
+    constexpr RECT pnlLeftMDFR3_RC = {749, 308, 807, 345};
+    constexpr RECT pnlLeftMDFR4_RC = {749, 365, 807, 402};
+    constexpr RECT pnlLeftMDFR5_RC = {749, 420, 807, 457};
+    constexpr RECT pnlLeftMDFR6_RC = {749, 476, 807, 513};
+    constexpr RECT pnlRightMDFL1_RC = {1751, 197, 1809, 234};
+    constexpr RECT pnlRightMDFL2_RC = {1751, 252, 1809, 289};
+    constexpr RECT pnlRightMDFL3_RC = {1751, 308, 1809, 345};
+    constexpr RECT pnlRightMDFL4_RC = {1751, 365, 1809, 402};
+    constexpr RECT pnlRightMDFL5_RC = {1751, 420, 1809, 457};
+    constexpr RECT pnlRightMDFL6_RC = {1751, 476, 1809, 513};
+    constexpr RECT pnlRightMDFR1_RC = {2290, 197, 2348, 234};
+    constexpr RECT pnlRightMDFR2_RC = {2290, 252, 2348, 289};
+    constexpr RECT pnlRightMDFR3_RC = {2290, 308, 2348, 345};
+    constexpr RECT pnlRightMDFR4_RC = {2290, 365, 2348, 402};
+    constexpr RECT pnlRightMDFR5_RC = {2290, 420, 2348, 457};
+    constexpr RECT pnlRightMDFR6_RC = {2290, 476, 2348, 513};
+    constexpr RECT pnlRCSValveSwitch_RC = {2052, 882, 2122, 938};
+    constexpr RECT pnlRCSAvail_RC = {2064, 947, 2109, 992};
 
   }
 
@@ -1178,35 +1226,35 @@ namespace bm
     {0.2643f, 0.4736f, 15.2575f, -0.3428f, 0.0000f, -0.9394f, 0.5004f, 0.0017f},
     {0.2763f, 0.4736f, 15.2531f, -0.3428f, 0.0000f, -0.9394f, 0.5261f, 0.0017f}    };
     const NTVERTEX LH2SupplyOnLight_verts[4] = {
-    {0.3653f, 0.4101f, 15.2212f, -0.3428f, 0.0000f, -0.9394f, 0.5494f, 0.0273f},
-    {0.3773f, 0.4101f, 15.2168f, -0.3428f, 0.0000f, -0.9394f, 0.5751f, 0.0273f},
-    {0.3653f, 0.4228f, 15.2212f, -0.3428f, 0.0000f, -0.9394f, 0.5494f, 0.0017f},
-    {0.3773f, 0.4228f, 15.2168f, -0.3428f, 0.0000f, -0.9394f, 0.5751f, 0.0017f}    };
+    {0.3628f, 0.4101f, 15.2212f, -0.3428f, 0.0000f, -0.9394f, 0.5494f, 0.0273f},
+    {0.3748f, 0.4101f, 15.2168f, -0.3428f, 0.0000f, -0.9394f, 0.5751f, 0.0273f},
+    {0.3628f, 0.4228f, 15.2212f, -0.3428f, 0.0000f, -0.9394f, 0.5494f, 0.0017f},
+    {0.3748f, 0.4228f, 15.2168f, -0.3428f, 0.0000f, -0.9394f, 0.5751f, 0.0017f}    };
     const NTVERTEX FuelSupplyOnLight_verts[4] = {
-    {0.3248f, 0.4101f, 15.2357f, -0.3428f, 0.0000f, -0.9394f, 0.5490f, 0.0273f},
-    {0.3367f, 0.4101f, 15.2314f, -0.3428f, 0.0000f, -0.9394f, 0.5746f, 0.0273f},
-    {0.3248f, 0.4228f, 15.2357f, -0.3428f, 0.0000f, -0.9394f, 0.5490f, 0.0017f},
-    {0.3367f, 0.4228f, 15.2314f, -0.3428f, 0.0000f, -0.9394f, 0.5746f, 0.0017f}    };
+    {0.3062f, 0.4101f, 15.2425f, -0.3428f, 0.0000f, -0.9394f, 0.5490f, 0.0273f},
+    {0.3181f, 0.4101f, 15.2381f, -0.3428f, 0.0000f, -0.9394f, 0.5746f, 0.0273f},
+    {0.3062f, 0.4228f, 15.2425f, -0.3428f, 0.0000f, -0.9394f, 0.5490f, 0.0017f},
+    {0.3181f, 0.4228f, 15.2381f, -0.3428f, 0.0000f, -0.9394f, 0.5746f, 0.0017f}    };
     const NTVERTEX LOXSupplyOnLight_verts[4] = {
-    {0.3451f, 0.4101f, 15.2285f, -0.3428f, 0.0000f, -0.9394f, 0.5493f, 0.0275f},
-    {0.3570f, 0.4101f, 15.2241f, -0.3428f, 0.0000f, -0.9394f, 0.5750f, 0.0275f},
-    {0.3451f, 0.4228f, 15.2285f, -0.3428f, 0.0000f, -0.9394f, 0.5493f, 0.0018f},
-    {0.3570f, 0.4228f, 15.2241f, -0.3428f, 0.0000f, -0.9394f, 0.5750f, 0.0018f}    };
+    {0.3439f, 0.4101f, 15.2285f, -0.3428f, 0.0000f, -0.9394f, 0.5493f, 0.0275f},
+    {0.3559f, 0.4101f, 15.2241f, -0.3428f, 0.0000f, -0.9394f, 0.5750f, 0.0275f},
+    {0.3439f, 0.4228f, 15.2285f, -0.3428f, 0.0000f, -0.9394f, 0.5493f, 0.0018f},
+    {0.3559f, 0.4228f, 15.2241f, -0.3428f, 0.0000f, -0.9394f, 0.5750f, 0.0018f}    };
     const NTVERTEX LH2ValveOpenSwitch_verts[4] = {
-    {0.3622f, 0.4226f, 15.2217f, -0.3487f, 0.0000f, -0.9372f, 0.3473f, 0.1560f},
-    {0.3794f, 0.4226f, 15.2153f, -0.3487f, 0.0000f, -0.9372f, 0.3824f, 0.1560f},
-    {0.3622f, 0.4408f, 15.2217f, -0.3487f, 0.0000f, -0.9372f, 0.3473f, 0.1210f},
-    {0.3794f, 0.4408f, 15.2153f, -0.3487f, 0.0000f, -0.9372f, 0.3824f, 0.1210f}    };
+    {0.3602f, 0.4243f, 15.2226f, -0.3487f, 0.0000f, -0.9372f, 0.3473f, 0.1685f},
+    {0.3774f, 0.4243f, 15.2162f, -0.3487f, 0.0000f, -0.9372f, 0.3824f, 0.1685f},
+    {0.3602f, 0.4389f, 15.2226f, -0.3487f, 0.0000f, -0.9372f, 0.3473f, 0.1397f},
+    {0.3774f, 0.4389f, 15.2162f, -0.3487f, 0.0000f, -0.9372f, 0.3824f, 0.1397f}    };
     const NTVERTEX LOXValveOpenSwitch_verts[4] = {
-    {0.3423f, 0.4226f, 15.2290f, -0.3487f, 0.0000f, -0.9372f, 0.3469f, 0.1169f},
-    {0.3594f, 0.4226f, 15.2226f, -0.3487f, 0.0000f, -0.9372f, 0.3819f, 0.1169f},
-    {0.3423f, 0.4408f, 15.2290f, -0.3487f, 0.0000f, -0.9372f, 0.3469f, 0.0819f},
-    {0.3594f, 0.4408f, 15.2226f, -0.3487f, 0.0000f, -0.9372f, 0.3819f, 0.0819f}    };
+    {0.3413f, 0.4243f, 15.2296f, -0.3487f, 0.0000f, -0.9372f, 0.3472f, 0.1397f},
+    {0.3585f, 0.4243f, 15.2232f, -0.3487f, 0.0000f, -0.9372f, 0.3823f, 0.1397f},
+    {0.3413f, 0.4389f, 15.2296f, -0.3487f, 0.0000f, -0.9372f, 0.3472f, 0.1111f},
+    {0.3585f, 0.4389f, 15.2232f, -0.3487f, 0.0000f, -0.9372f, 0.3823f, 0.1111f}    };
     const NTVERTEX FuelValveOpenSwitch_verts[4] = {
-    {0.3221f, 0.4226f, 15.2368f, -0.3487f, 0.0000f, -0.9372f, 0.3468f, 0.0780f},
-    {0.3392f, 0.4226f, 15.2304f, -0.3487f, 0.0000f, -0.9372f, 0.3819f, 0.0780f},
-    {0.3221f, 0.4408f, 15.2368f, -0.3487f, 0.0000f, -0.9372f, 0.3468f, 0.0429f},
-    {0.3392f, 0.4408f, 15.2304f, -0.3487f, 0.0000f, -0.9372f, 0.3819f, 0.0429f}    };
+    {0.3035f, 0.4243f, 15.2436f, -0.3487f, 0.0000f, -0.9372f, 0.4250f, 0.1397f},
+    {0.3207f, 0.4243f, 15.2372f, -0.3487f, 0.0000f, -0.9372f, 0.4600f, 0.1397f},
+    {0.3035f, 0.4389f, 15.2436f, -0.3487f, 0.0000f, -0.9372f, 0.4250f, 0.1111f},
+    {0.3207f, 0.4389f, 15.2372f, -0.3487f, 0.0000f, -0.9372f, 0.4600f, 0.1111f}    };
     const NTVERTEX FuelTransferSwitch_verts[4] = {
     {0.2215f, 0.4176f, 15.2732f, -0.3487f, 0.0000f, -0.9372f, 0.3468f, 0.0388f},
     {0.2387f, 0.4176f, 15.2668f, -0.3487f, 0.0000f, -0.9372f, 0.3819f, 0.0388f},
@@ -1337,6 +1385,16 @@ namespace bm
     {-0.1405f, 0.6561f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5386f, 0.3126f},
     {-0.1588f, 0.6414f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5032f, 0.3417f},
     {-0.1405f, 0.6414f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5386f, 0.3417f}    };
+    const NTVERTEX RCSSupplyOnLight_verts[4] = {
+    {0.3250f, 0.4101f, 15.2357f, -0.3428f, 0.0000f, -0.9394f, 0.5490f, 0.0273f},
+    {0.3370f, 0.4101f, 15.2314f, -0.3428f, 0.0000f, -0.9394f, 0.5746f, 0.0273f},
+    {0.3250f, 0.4228f, 15.2357f, -0.3428f, 0.0000f, -0.9394f, 0.5490f, 0.0017f},
+    {0.3370f, 0.4228f, 15.2314f, -0.3428f, 0.0000f, -0.9394f, 0.5746f, 0.0017f}    };
+    const NTVERTEX RCSValveOpenSwitch_verts[4] = {
+    {0.3224f, 0.4243f, 15.2366f, -0.3487f, 0.0000f, -0.9372f, 0.3472f, 0.1111f},
+    {0.3396f, 0.4243f, 15.2302f, -0.3487f, 0.0000f, -0.9372f, 0.3823f, 0.1111f},
+    {0.3224f, 0.4389f, 15.2366f, -0.3487f, 0.0000f, -0.9372f, 0.3472f, 0.0823f},
+    {0.3396f, 0.4389f, 15.2302f, -0.3487f, 0.0000f, -0.9372f, 0.3823f, 0.0823f}    };
     const NTVERTEX ForwardWindowInsideLeft_verts[3] = {
     {-0.3303f, 0.5991f, 15.2599f, 0.6322f, -0.6280f, -0.4539f, 0.8423f, 0.0694f},
     {-0.0241f, 0.8939f, 15.2785f, 0.6322f, -0.6280f, -0.4539f, 0.8719f, 0.0692f},
@@ -1429,155 +1487,156 @@ namespace bm
     const UINT SwitchBeaconLights_id = 6;
     const UINT SwitchNavLights_id = 7;
     const UINT swDumpFuel_id = 8;
-    const UINT swTransferSelect_id = 9;
-    const UINT AirBrakeLever_id = 10;
-    const UINT swFuelCellPower_id = 11;
-    const UINT SwAPUPower_id = 12;
-    const UINT SwCargoOpen_id = 13;
-    const UINT SwCanopyOpen_id = 14;
-    const UINT SwCargoPower_id = 15;
-    const UINT swConnectFuelCell_id = 16;
-    const UINT swConnectExternalPower_id = 17;
-    const UINT swThrottleLimit_id = 18;
-    const UINT SwCanopyPower_id = 19;
-    const UINT SwAvionics_id = 20;
-    const UINT swMainPower_id = 21;
-    const UINT MessagesBae_id = 22;
-    const UINT CockPitPanel_id = 23;
-    const UINT VCMfdRight_id = 24;
-    const UINT VCMfdRightFrame_id = 25;
-    const UINT VCMfdLeftFrame_id = 26;
-    const UINT LGHandle_id = 27;
-    const UINT CanopyFI_id = 28;
-    const UINT VCMfdLeft_id = 29;
-    const UINT CanopyFO_id = 30;
-    const UINT vcAvionMode_id = 31;
-    const UINT vcNavMode_id = 32;
-    const UINT HUDBracketRight_id = 33;
-    const UINT HUDBracketLeft_id = 34;
-    const UINT ForwardCockpit_id = 35;
-    const UINT vcTDIAltOnes_id = 36;
-    const UINT vcTDIAltTens_id = 37;
-    const UINT vcTDIAltHunds_id = 38;
-    const UINT vcTDIAltThous_id = 39;
-    const UINT vcTDIAltTenThous_id = 40;
-    const UINT vcTDIKeasOnes_id = 41;
-    const UINT vcTDIKeasTens_id = 42;
-    const UINT vcTDIKeasHunds_id = 43;
-    const UINT vcTDIMachOne_id = 44;
-    const UINT vcTDIMachTens_id = 45;
-    const UINT vcTDIMachHunds_id = 46;
-    const UINT vcMilesOnes_id = 47;
-    const UINT vcMilesTens_id = 48;
-    const UINT vcMilesHunds_id = 49;
-    const UINT vcCrsOnes_id = 50;
-    const UINT vcCrsTens_id = 51;
-    const UINT vcCrsHunds_id = 52;
-    const UINT vcTDIKEASWindow_id = 53;
-    const UINT vcTDIAltWindow_id = 54;
-    const UINT vcTDIMachWindowLeft_id = 55;
-    const UINT vcTDIMachWindowRight_id = 56;
-    const UINT vcMilesWindow_id = 57;
-    const UINT vcCRSWindow_id = 58;
-    const UINT LeftPanel_id = 59;
-    const UINT PowerPanel_id = 60;
-    const UINT HUDPanel_id = 61;
-    const UINT LeftPanelControls_id = 62;
-    const UINT FuelPanel_id = 63;
-    const UINT CompassFace_id = 64;
-    const UINT AttitudeIndicator_id = 65;
-    const UINT CockpitPanelHoodTop_id = 66;
-    const UINT vcNavAntiNorm_id = 67;
-    const UINT vcNavRetro_id = 68;
-    const UINT vcNavHorzLvl_id = 69;
-    const UINT vcNavNorm_id = 70;
-    const UINT vcNavProGrade_id = 71;
-    const UINT AccelNeedle_id = 72;
-    const UINT SwAPMACH_id = 73;
-    const UINT SwAPKEAS_id = 74;
-    const UINT SwAPAltitude_id = 75;
-    const UINT SwAPHeading_id = 76;
-    const UINT SwAPMain_id = 77;
-    const UINT gaugeVoltMeter_id = 78;
-    const UINT FuelCellAvailableLight_id = 79;
-    const UINT ExtAvailableLight_id = 80;
-    const UINT FuelCellConnectedLight_id = 81;
-    const UINT ExtConnectedLight_id = 82;
-    const UINT LH2SupplyOnLight_id = 83;
-    const UINT FuelSupplyOnLight_id = 84;
-    const UINT LOXSupplyOnLight_id = 85;
-    const UINT LH2ValveOpenSwitch_id = 86;
-    const UINT LOXValveOpenSwitch_id = 87;
-    const UINT FuelValveOpenSwitch_id = 88;
-    const UINT FuelTransferSwitch_id = 89;
-    const UINT VSIOffFlag_id = 90;
-    const UINT AltimeterGround_id = 91;
-    const UINT AltimeterOffFlag_id = 92;
-    const UINT HudDockOn_id = 93;
-    const UINT HudOrbOn_id = 94;
-    const UINT HudSurfOn_id = 95;
-    const UINT GuidanceComp_id = 96;
-    const UINT MsgLightSpeedBrake_id = 97;
-    const UINT MsgLightAPU_id = 98;
-    const UINT SpeedNeedleMax_id = 99;
-    const UINT GlideSlopeNeedle_id = 100;
-    const UINT MsgLightC2_id = 101;
-    const UINT MsgLightRetro_id = 102;
-    const UINT MsgLightThrustLimit_id = 103;
-    const UINT MsgLightBattery_id = 104;
-    const UINT gaHydrogenLevel_id = 105;
-    const UINT gaugeOxygenLevel_id = 106;
-    const UINT gaHydPress_id = 107;
-    const UINT MsgLightDock_id = 108;
-    const UINT MsgLightCanopy_id = 109;
-    const UINT MsgLightFuelWarn_id = 110;
-    const UINT MsgLightKeasWarn_id = 111;
-    const UINT MsgLightBay_id = 112;
-    const UINT MsgLightHover_id = 113;
-    const UINT TrimNeedle_id = 114;
-    const UINT gaVSINeedle_id = 115;
-    const UINT vcNavKillRot_id = 116;
-    const UINT vcRCSRot_id = 117;
-    const UINT vcRCSLin_id = 118;
-    const UINT vcHUDDock_id = 119;
-    const UINT vcHUDSURF_id = 120;
-    const UINT vcHUDOrbit_id = 121;
-    const UINT ForwardWindowInsideLeft_id = 122;
-    const UINT WindowSFI_id = 123;
-    const UINT gaFuelFlow_id = 124;
-    const UINT gaMainFuel_id = 125;
-    const UINT gaRCSFuel_id = 126;
-    const UINT gaugeAmpMeter_id = 127;
-    const UINT ClockTimerMinute_id = 128;
-    const UINT SpeedIndicatorKies_id = 129;
-    const UINT MessagesLabels_id = 130;
-    const UINT RoseCompass_id = 131;
-    const UINT HSIBearingArrow_id = 132;
-    const UINT ClockHour_id = 133;
-    const UINT SpeedNeedle_id = 134;
-    const UINT ClockMinute_id = 135;
-    const UINT HSICourse_id = 136;
-    const UINT ClockSecond_id = 137;
-    const UINT HSICourseNeedle_id = 138;
-    const UINT PanelHorizonFace_id = 139;
-    const UINT HSIOffFlag_id = 140;
-    const UINT SpeedVelocityFlag_id = 141;
-    const UINT AttitudeFlagOff_id = 142;
-    const UINT COMStatusPanel_id = 143;
-    const UINT HSICompassHeading_id = 144;
-    const UINT AOANeedle_id = 145;
-    const UINT gaAlt100Needle_id = 146;
-    const UINT HSIExoFlag_id = 147;
-    const UINT SpeedFlagOff_id = 148;
-    const UINT CanopyWindowInsideLeft_id = 149;
-    const UINT CanopyWindowSI_id = 150;
-    const UINT gaAlt10Needle_id = 151;
-    const UINT HUD_id = 152;
-    const UINT gaAlt1Needle_id = 153;
-    const UINT HUDGlass_id = 154;
-    const UINT CompassFaceTop_id = 155;
-    const UINT CylinderHeading_id = 156;
-    const UINT Cylinder_id = 157;
+    const UINT AirBrakeLever_id = 9;
+    const UINT swFuelCellPower_id = 10;
+    const UINT SwAPUPower_id = 11;
+    const UINT SwCargoOpen_id = 12;
+    const UINT SwCanopyOpen_id = 13;
+    const UINT SwCargoPower_id = 14;
+    const UINT swConnectFuelCell_id = 15;
+    const UINT swConnectExternalPower_id = 16;
+    const UINT swThrottleLimit_id = 17;
+    const UINT SwCanopyPower_id = 18;
+    const UINT SwAvionics_id = 19;
+    const UINT swMainPower_id = 20;
+    const UINT MessagesBae_id = 21;
+    const UINT CockPitPanel_id = 22;
+    const UINT VCMfdRight_id = 23;
+    const UINT VCMfdRightFrame_id = 24;
+    const UINT VCMfdLeftFrame_id = 25;
+    const UINT LGHandle_id = 26;
+    const UINT CanopyFI_id = 27;
+    const UINT VCMfdLeft_id = 28;
+    const UINT CanopyFO_id = 29;
+    const UINT vcAvionMode_id = 30;
+    const UINT vcNavMode_id = 31;
+    const UINT HUDBracketRight_id = 32;
+    const UINT HUDBracketLeft_id = 33;
+    const UINT ForwardCockpit_id = 34;
+    const UINT vcTDIAltOnes_id = 35;
+    const UINT vcTDIAltTens_id = 36;
+    const UINT vcTDIAltHunds_id = 37;
+    const UINT vcTDIAltThous_id = 38;
+    const UINT vcTDIAltTenThous_id = 39;
+    const UINT vcTDIKeasOnes_id = 40;
+    const UINT vcTDIKeasTens_id = 41;
+    const UINT vcTDIKeasHunds_id = 42;
+    const UINT vcTDIMachOne_id = 43;
+    const UINT vcTDIMachTens_id = 44;
+    const UINT vcTDIMachHunds_id = 45;
+    const UINT vcMilesOnes_id = 46;
+    const UINT vcMilesTens_id = 47;
+    const UINT vcMilesHunds_id = 48;
+    const UINT vcCrsOnes_id = 49;
+    const UINT vcCrsTens_id = 50;
+    const UINT vcCrsHunds_id = 51;
+    const UINT vcTDIKEASWindow_id = 52;
+    const UINT vcTDIAltWindow_id = 53;
+    const UINT vcTDIMachWindowLeft_id = 54;
+    const UINT vcTDIMachWindowRight_id = 55;
+    const UINT vcMilesWindow_id = 56;
+    const UINT vcCRSWindow_id = 57;
+    const UINT LeftPanel_id = 58;
+    const UINT PowerPanel_id = 59;
+    const UINT HUDPanel_id = 60;
+    const UINT LeftPanelControls_id = 61;
+    const UINT FuelPanel_id = 62;
+    const UINT CompassFace_id = 63;
+    const UINT AttitudeIndicator_id = 64;
+    const UINT CockpitPanelHoodTop_id = 65;
+    const UINT vcNavAntiNorm_id = 66;
+    const UINT vcNavRetro_id = 67;
+    const UINT vcNavHorzLvl_id = 68;
+    const UINT vcNavNorm_id = 69;
+    const UINT vcNavProGrade_id = 70;
+    const UINT AccelNeedle_id = 71;
+    const UINT SwAPMACH_id = 72;
+    const UINT SwAPKEAS_id = 73;
+    const UINT SwAPAltitude_id = 74;
+    const UINT SwAPHeading_id = 75;
+    const UINT SwAPMain_id = 76;
+    const UINT gaugeVoltMeter_id = 77;
+    const UINT FuelCellAvailableLight_id = 78;
+    const UINT ExtAvailableLight_id = 79;
+    const UINT FuelCellConnectedLight_id = 80;
+    const UINT ExtConnectedLight_id = 81;
+    const UINT LH2SupplyOnLight_id = 82;
+    const UINT FuelSupplyOnLight_id = 83;
+    const UINT LOXSupplyOnLight_id = 84;
+    const UINT LH2ValveOpenSwitch_id = 85;
+    const UINT LOXValveOpenSwitch_id = 86;
+    const UINT FuelValveOpenSwitch_id = 87;
+    const UINT FuelTransferSwitch_id = 88;
+    const UINT VSIOffFlag_id = 89;
+    const UINT AltimeterGround_id = 90;
+    const UINT AltimeterOffFlag_id = 91;
+    const UINT HudDockOn_id = 92;
+    const UINT HudOrbOn_id = 93;
+    const UINT HudSurfOn_id = 94;
+    const UINT GuidanceComp_id = 95;
+    const UINT MsgLightSpeedBrake_id = 96;
+    const UINT MsgLightAPU_id = 97;
+    const UINT SpeedNeedleMax_id = 98;
+    const UINT GlideSlopeNeedle_id = 99;
+    const UINT MsgLightC2_id = 100;
+    const UINT MsgLightRetro_id = 101;
+    const UINT MsgLightThrustLimit_id = 102;
+    const UINT MsgLightBattery_id = 103;
+    const UINT gaHydrogenLevel_id = 104;
+    const UINT gaugeOxygenLevel_id = 105;
+    const UINT gaHydPress_id = 106;
+    const UINT MsgLightDock_id = 107;
+    const UINT MsgLightCanopy_id = 108;
+    const UINT MsgLightFuelWarn_id = 109;
+    const UINT MsgLightKeasWarn_id = 110;
+    const UINT MsgLightBay_id = 111;
+    const UINT MsgLightHover_id = 112;
+    const UINT TrimNeedle_id = 113;
+    const UINT gaVSINeedle_id = 114;
+    const UINT vcNavKillRot_id = 115;
+    const UINT vcRCSRot_id = 116;
+    const UINT vcRCSLin_id = 117;
+    const UINT vcHUDDock_id = 118;
+    const UINT vcHUDSURF_id = 119;
+    const UINT vcHUDOrbit_id = 120;
+    const UINT RCSSupplyOnLight_id = 121;
+    const UINT RCSValveOpenSwitch_id = 122;
+    const UINT ForwardWindowInsideLeft_id = 123;
+    const UINT WindowSFI_id = 124;
+    const UINT gaFuelFlow_id = 125;
+    const UINT gaMainFuel_id = 126;
+    const UINT gaRCSFuel_id = 127;
+    const UINT gaugeAmpMeter_id = 128;
+    const UINT ClockTimerMinute_id = 129;
+    const UINT SpeedIndicatorKies_id = 130;
+    const UINT MessagesLabels_id = 131;
+    const UINT RoseCompass_id = 132;
+    const UINT HSIBearingArrow_id = 133;
+    const UINT ClockHour_id = 134;
+    const UINT SpeedNeedle_id = 135;
+    const UINT ClockMinute_id = 136;
+    const UINT HSICourse_id = 137;
+    const UINT ClockSecond_id = 138;
+    const UINT HSICourseNeedle_id = 139;
+    const UINT PanelHorizonFace_id = 140;
+    const UINT HSIOffFlag_id = 141;
+    const UINT SpeedVelocityFlag_id = 142;
+    const UINT AttitudeFlagOff_id = 143;
+    const UINT COMStatusPanel_id = 144;
+    const UINT HSICompassHeading_id = 145;
+    const UINT AOANeedle_id = 146;
+    const UINT gaAlt100Needle_id = 147;
+    const UINT HSIExoFlag_id = 148;
+    const UINT SpeedFlagOff_id = 149;
+    const UINT CanopyWindowInsideLeft_id = 150;
+    const UINT CanopyWindowSI_id = 151;
+    const UINT gaAlt10Needle_id = 152;
+    const UINT HUD_id = 153;
+    const UINT gaAlt1Needle_id = 154;
+    const UINT HUDGlass_id = 155;
+    const UINT CompassFaceTop_id = 156;
+    const UINT CylinderHeading_id = 157;
+    const UINT Cylinder_id = 158;
     constexpr VECTOR3 MFCRightL1_location =     {0.0633, 0.5328, 15.2751};
     constexpr VECTOR3 MFCRightL2_location =     {0.0633, 0.5185, 15.2751};
     constexpr VECTOR3 MFCRightL3_location =     {0.0633, 0.5042, 15.2751};
@@ -1625,9 +1684,9 @@ namespace bm
     constexpr VECTOR3 GCKeyHome_location =     {0.0242, 0.4570, 15.2751};
     constexpr VECTOR3 SwAPMain_location =     {0.2303, 0.5429, 15.2702};
     constexpr VECTOR3 gaugeVoltMeter_location =     {0.3653, 0.4774, 15.2200};
-    constexpr VECTOR3 LH2ValveOpenSwitch_location =     {0.3708, 0.4317, 15.2185};
-    constexpr VECTOR3 LOXValveOpenSwitch_location =     {0.3509, 0.4317, 15.2258};
-    constexpr VECTOR3 FuelValveOpenSwitch_location =     {0.3307, 0.4317, 15.2336};
+    constexpr VECTOR3 LH2ValveOpenSwitch_location =     {0.3688, 0.4316, 15.2194};
+    constexpr VECTOR3 LOXValveOpenSwitch_location =     {0.3499, 0.4316, 15.2264};
+    constexpr VECTOR3 FuelValveOpenSwitch_location =     {0.3121, 0.4316, 15.2404};
     constexpr VECTOR3 FuelTransferSwitch_location =     {0.2301, 0.4267, 15.2700};
     constexpr VECTOR3 SpeedAxisBack_location =     {-0.0883, 0.6591, 15.2829};
     constexpr VECTOR3 swRetroDoors_location =     {-0.2927, 0.4209, 15.2482};
@@ -1694,7 +1753,6 @@ namespace bm
     constexpr VECTOR3 SwitchNavLights_location =     {-0.3687, 0.4618, 15.2200};
     constexpr VECTOR3 FuelTransferRightAxis_location =     {0.3145, 0.4261, 15.2372};
     constexpr VECTOR3 swDumpFuel_location =     {0.2907, 0.4261, 15.2487};
-    constexpr VECTOR3 swTransferSelect_location =     {0.2504, 0.4261, 15.2635};
     constexpr VECTOR3 SpBrakeAxisRight_location =     {-0.2540, 0.4418, 15.3152};
     constexpr VECTOR3 SpBrakeAxisLeft_location =     {-0.2600, 0.4418, 15.3130};
     constexpr VECTOR3 ABTargetDecrease_location =     {-0.2396, 0.4599, 15.2645};
@@ -1751,6 +1809,7 @@ namespace bm
     constexpr VECTOR3 vcHUDOrbit_location =     {-0.1497, 0.6492, 15.2752};
     constexpr VECTOR3 vcAvionMode_location =     {-0.0383, 0.6532, 15.2749};
     constexpr VECTOR3 vcNavMode_location =     {0.0376, 0.6532, 15.2749};
+    constexpr VECTOR3 RCSValveOpenSwitch_location =     {0.3310, 0.4316, 15.2334};
     constexpr VECTOR3 PilotPOVRight_location =     {0.0758, 0.8204, 14.7813};
     constexpr VECTOR3 PilotPOVLeft_location =     {-0.0743, 0.8204, 14.7813};
     constexpr VECTOR3 PilotPOV_location =     {0.0000, 0.8204, 14.7813};

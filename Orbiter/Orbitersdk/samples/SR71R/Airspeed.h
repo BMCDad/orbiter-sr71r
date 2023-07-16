@@ -55,7 +55,7 @@ public:
 	}
 
 	void OnAvionModeChanged() override {
-		speedIsVelocityFlag_.set_state(EnabledSlot().value() && AvionicsModeSlot().value());
+		speedIsVelocityFlag_.set_state(!EnabledSlot().value() ? true : AvionicsModeSlot().value());
 	}
 
 	// post_step

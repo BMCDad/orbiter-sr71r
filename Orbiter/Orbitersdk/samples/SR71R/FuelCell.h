@@ -31,8 +31,8 @@
 
 class PowerSystem;
 
-const double OXYGEN_BURN_RATE_PER_SEC   = 0.00025;		// 2 lbs per hour @ 100 amps.  lbs->liter 0.453, so 0.906 per hour or 0.00025 per second.
-const double HYDROGEN_BURN_RATE_PER_SEC = 0.00004;		// 0.3 lbs per hour @ 100 amps.  
+const double OXYGEN_BURN_RATE_PER_SEC_100A = (20.0 / 3600) / 100;		// 2 lbs per hour per at 100 amps.
+const double HYDROGEN_BURN_RATE_PER_SEC_100A = (3.0 / 3600) / 100;			// 0.3 lbs per hour @ 100 amps.  
 
 namespace bco = bc_orbiter;
 
@@ -68,7 +68,7 @@ class FuelCell :
 	const double AMP_DRAW =	  4.0;
 
 public:
-	FuelCell(bco::power_provider& pwr, bco::consumable& lox, bco::consumable& hydro);
+	FuelCell(bco::power_provider& pwr, bco::BaseVessel& vessel, bco::consumable& lox, bco::consumable& hydro);
 
 	/**
 		Draw down the oxygen and hydrogen levels based on the current amp load.
@@ -81,8 +81,8 @@ public:
 
 	// Outputs
 	bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
-	bco::signal<double>&	LOXDrawSignal()			{ return signalLOXDraw_; }			// Reports LOX draw adjusted for step.
-	bco::signal<double>&	HYDDrawSignal()			{ return signalHYDDraw_; }			// Reports HYD draw adjusted for step.
+	//bco::signal<double>&	LOXDrawSignal()			{ return signalLOXDraw_; }			// Reports LOX draw adjusted for step.
+	//bco::signal<double>&	HYDDrawSignal()			{ return signalHYDDraw_; }			// Reports HYD draw adjusted for step.
 
 private:
 	bco::power_provider&	power_;
@@ -98,8 +98,8 @@ private:
 	void SetIsFuelCellPowerAvailable(bool newValue);
 
 	bco::signal<double>	sigAvailPower_;
-	bco::signal<double>	signalLOXDraw_;
-	bco::signal<double>	signalHYDDraw_;
+	//bco::signal<double>	signalLOXDraw_;
+	//bco::signal<double>	signalHYDDraw_;
 
 	bool				isFuelCellAvailable_;
 	double				ampDrawFactor_{ 0.0 };

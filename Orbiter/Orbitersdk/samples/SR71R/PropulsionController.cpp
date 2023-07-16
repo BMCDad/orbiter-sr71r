@@ -34,6 +34,8 @@ PropulsionController::PropulsionController(bco::power_provider& pwr, bco::BaseVe
 	//slotTransferSel_(	[&](bool v) { }),
 	//slotFuelValveOpen_(	[&](bool b) { ToggleFill(); slotFuelValveOpen_.set(); })
 {
+	power_.attach_consumer(this);
+
 	maxMainFlow_ = (ENGINE_THRUST / THRUST_ISP) * 2;
 
 	vessel.AddControl(&switchFuelDump_);
@@ -44,25 +46,45 @@ PropulsionController::PropulsionController(bco::power_provider& pwr, bco::BaseVe
 	vessel.AddControl(&btnFuelValveOpen_);
 	vessel.AddControl(&lightFuelValveOpen_);
 	vessel.AddControl(&lightFuelAvail_);
+	vessel.AddControl(&lightRCSAvail_);
+
+	vessel.AddControl(&btnRCSValveOpen_);
+	vessel.AddControl(&lightRCSValveOpen_);
 
 	switchThrustLimit_.attach([&]() { 
 		SetThrustLevel(switchThrustLimit_.is_on() ? ENGINE_THRUST : ENGINE_THRUST_AB); 
 		});
 
 	btnFuelValveOpen_.attach([&]() { ToggleFill(); });
+	btnRCSValveOpen_.attach([&]() { ToggleRCSFill(); });
 }
 
 void PropulsionController::ToggleFill()
 {
-	if (sigIsFuelValveOpen_.current())
+	if (isFilling_)
 	{
-		sigIsFuelValveOpen_.fire(false);
+		isFilling_ = false;
 	}
 	else
 	{
-		if (IsPowered() && sigIsFuelAvail_.current())
+		if (IsPowered() && isExternAvail_)
 		{
-			sigIsFuelValveOpen_.fire(true);
+			isFilling_ = true;
+		}
+	}
+}
+
+void PropulsionController::ToggleRCSFill()
+{
+	if (isRCSFilling_)
+	{
+		isRCSFilling_ = false;
+	}
+	else
+	{
+		if (IsPowered() && isExternAvail_)
+		{
+			isRCSFilling_ = true;
 		}
 	}
 }
@@ -79,12 +101,18 @@ void PropulsionController::handle_post_step(bco::BaseVessel& vessel, double simt
 
 void PropulsionController::Update(double deltaUpdate)
 {
-	sigIsFuelAvail_.fire(IsPowered() && vessel_.IsStoppedOrDocked());
+	isExternAvail_ = (IsPowered() && vessel_.IsStoppedOrDocked());
+	lightFuelAvail_.set_state(isExternAvail_);
+	lightRCSAvail_.set_state(isExternAvail_);
 
-	if (!sigIsFuelAvail_.current())
+	if (!isExternAvail_)
 	{
-		sigIsFuelValveOpen_.fire(false);
+		isFilling_ = false;
+		isRCSFilling_ = false;
 	}
+
+	lightFuelValveOpen_.set_state(isFilling_);
+	lightRCSValveOpen_.set_state(isRCSFilling_);
 
 	HandleTransfer(deltaUpdate); // <- this sets the current levels.
 
@@ -92,35 +120,45 @@ void PropulsionController::Update(double deltaUpdate)
     auto flow = vessel_.GetPropellantFlowrate(vessel_.MainPropellant());
 //    auto trFlow = (flow / maxMainFlow_) * (PI2 * 0.75);	// 90.718 = 200lbs per hour : 270 deg.
 	if ((flow < 0.0) || switchFuelDump_.is_on()) flow = 0.0;	 // Don't report flow if dumping.
-	sigFuelFlowRate_.fire(flow / maxMainFlow_);	 // Converted to 0-1 range.
+//	sigFuelFlowRate_.fire(flow / maxMainFlow_);	 // Converted to 0-1 range.
+	gaugeFuelFlow_.set_state(flow / maxMainFlow_);
 
     // Main level
 //    auto trMain = GetMainFuelLevel() * (PI2 * 0.71111);	// 256 deg.
-	sigMainFuelLevel_.fire(mainFuelLevel_);
+//	sigMainFuelLevel_.fire(mainFuelLevel_);
 
     // RCS
 //    auto trRCS = GetRcsFuelLevel() * (PI2 * 0.733);	// 264 deg.
-	sigRCSFuelLevel_.fire(rcsFuelLevel_);
+//	sigRCSFuelLevel_.fire(rcsFuelLevel_);
 }
 
 void PropulsionController::HandleTransfer(double deltaUpdate)
 {
 	// Determine fuel levels:
-	auto mainFuelLevel  = vessel_.GetPropellantMass(vessel_.MainPropellant());
+	mainFuelLevel_  = vessel_.GetPropellantMass(vessel_.MainPropellant()) / 
+					  vessel_.GetPropellantMaxMass(vessel_.MainPropellant());
 
-	mainFuelLevel_  = mainFuelLevel / vessel_.GetPropellantMaxMass(vessel_.MainPropellant());
+	rcsFuelLevel_   = vessel_.GetPropellantMass(vessel_.RcsPropellant()) / 
+					  vessel_.GetPropellantMaxMass(vessel_.RcsPropellant());
 
-	rcsFuelLevel_   = vessel_.GetPropellantMass(vessel_.RcsPropellant()) / vessel_.GetPropellantMaxMass(vessel_.RcsPropellant());
-
+	gaugeFuelMain_.set_state(mainFuelLevel_);
+	gaugeFuelRCS_.set_state(rcsFuelLevel_);
 
 	// Dumping and filling of the main tank will happen regardless of the transfer switch position.
-	if (sigIsFuelValveOpen_.current()) // cannot be enabled if external fuel is unavailable.
+	if (isFilling_) // cannot be enabled if external fuel is unavailable.
 	{
 		// Add to main.
 		auto actualFill = FillMainFuel(FUEL_FILL_RATE * deltaUpdate);
 		if (actualFill <= 0.0)
 		{
-			sigIsFuelValveOpen_.fire(false);
+			isFilling_ = false;
+		}
+	}
+
+	if (isRCSFilling_) {
+		auto actualFill = FillRCSFuel(FUEL_FILL_RATE * deltaUpdate);
+		if (actualFill <= 0.0) {
+			isRCSFilling_ = false;
 		}
 	}
 

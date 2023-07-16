@@ -165,6 +165,14 @@ namespace bc_orbiter {
 		Do work required to setup vc components.
 		*/
 		virtual bool handle_load_vc(BaseVessel& vessel, int vcid) = 0;
+		virtual bool handle_redraw_vc(BaseVessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
+		virtual bool handle_mouse_vc(BaseVessel& vessel, int id, int event) { return false; }
+	};
+
+	struct load_panel {
+		virtual bool handle_load_panel(BaseVessel& vessel, int id, PANELHANDLE hPanel) = 0;
+		virtual bool handle_redraw_panel(BaseVessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
+		virtual bool handle_mouse_panel(BaseVessel& vessel, int id, int event) { return false; }
 	};
 
 

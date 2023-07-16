@@ -21,7 +21,7 @@
 #include "NavModes.h"
 #include "PowerSystem.h"
 #include "LeftMFD.h"
-#include "RightMfd.h"
+//#include "RightMfd.h"
 #include "CargoBayController.h"
 #include "Canopy.h"
 #include "APU.h"
@@ -90,8 +90,8 @@ private:
 
 
 	// OLD Components:
-	LeftMFD					mfdLeft_;
-	RightMFD				mfdRight_;
+//	LeftMFD					mfdLeft_;
+//	RightMFD				mfdRight_;
 	StatusBoard				statusBoard_;
 
 	// DRAG
@@ -112,7 +112,7 @@ private:
 
 	// ***  Airspeed  *** //
 
-	PowerSystem				powerSystem_;
+	PowerSystem				powerSystem_	{ *this };
 
 	AirBrake				airBrake_		{ *this };
 	Airspeed				airspeed_		{ *this };
@@ -133,13 +133,14 @@ private:
 	RetroEngines			retroEngines_	{ powerSystem_,	*this };
 	HydrogenTank			hydrogenTank_	{ powerSystem_, *this };
 	OxygenTank				oxygenTank_		{ powerSystem_, *this };
-	FuelCell				fuelCell_		{ powerSystem_, oxygenTank_,	hydrogenTank_ };
+	FuelCell				fuelCell_		{ powerSystem_, *this, oxygenTank_,	hydrogenTank_ };
 	bco::generic_tank		mainFuelTank_	{ powerSystem_, MAX_FUEL,		FUEL_TRANFER_RATE };
 	bco::generic_tank		rcsFuelTank_	{ powerSystem_, MAX_RCS_FUEL,	FUEL_TRANFER_RATE };
 	APU						apu_			{ powerSystem_, mainFuelTank_ };
 	HUD						headsUpDisplay_	{ powerSystem_, *this };
 	PropulsionController	propulsion_		{ powerSystem_, *this };
 
+	LeftMFD					mfdLeft_		{ powerSystem_, this };
 
 	//// ** TEST ** //
 	//bco::flat_roll<int>  numtest{

@@ -74,7 +74,7 @@ namespace bc_orbiter
         /**	RegisterComponent
         Adds a component to the base class component list.
         */
-        virtual void RegisterComponent(Component* comp);
+//        virtual void RegisterComponent(Component* comp);
 
 		// clbk overrides:
 		virtual bool clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
@@ -213,6 +213,8 @@ namespace bc_orbiter
 				if (auto* ac = dynamic_cast<draw_hud*>(cc)) comp_draw_hud_.push_back(ac);
 
 				if (auto* ac = dynamic_cast<load_vc*>(cc)) comp_load_vc_.push_back(ac);
+
+				if (auto* ac = dynamic_cast<load_panel*>(cc)) comp_load_panel_.push_back(ac);
 			}
 
 			for each (auto & sc in comp_set_class_caps_) {
@@ -295,18 +297,19 @@ namespace bc_orbiter
 		std::vector<set_class_caps*>					comp_set_class_caps_;
 		std::vector<draw_hud*>							comp_draw_hud_;
 		std::vector<load_vc*>							comp_load_vc_;
+		std::vector<load_panel*>						comp_load_panel_;
 
 		//**** END NEW STYLE
 
 		std::vector<control*>			controls_;
 
 	private:
-		std::vector<Component*>		vesselComponents_;
+//		std::vector<Component*>		vesselComponents_;
 
 		// Manage components registering for redraw events.  We maintain a separate
 		// map for VC and Panels.
-		std::map<int, Component*>	vcRedrawMap_;
-		std::map<int, Component*>	panelRedrawMap_;
+//		std::map<int, Component*>	vcRedrawMap_;
+//		std::map<int, Component*>	panelRedrawMap_;
 
 		std::map<int, Component*>	vcMouseEventMap_;
 
@@ -346,14 +349,14 @@ namespace bc_orbiter
 		vesselStatus_.version = 2;
 	}
 
-	inline void BaseVessel::RegisterComponent(Component* comp)
-	{
-		vesselComponents_.push_back(comp);
-		auto redrawId = ++nextEventId_;
-		vcRedrawMap_[redrawId] = comp;
-		panelRedrawMap_[redrawId] = comp;
-		comp->SetRedrawId(redrawId);
-	}
+//	inline void BaseVessel::RegisterComponent(Component* comp)
+//	{
+////		vesselComponents_.push_back(comp);
+//		auto redrawId = ++nextEventId_;
+//		vcRedrawMap_[redrawId] = comp;
+//		panelRedrawMap_[redrawId] = comp;
+//		comp->SetRedrawId(redrawId);
+//	}
 
 	inline bool BaseVessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 	{
@@ -389,7 +392,7 @@ namespace bc_orbiter
 
 	inline bool BaseVessel::clbkLoadVC(int id)
 	{
-		for (auto& p : vesselComponents_)	p->OnLoadVC(id);
+//		for (auto& p : vesselComponents_)	p->OnLoadVC(id);
 
 //        for (auto& et : vcEventTargetMap_)	et.second->RegisterMouseEvents();
 
@@ -419,7 +422,7 @@ namespace bc_orbiter
 
 	inline void BaseVessel::clbkSetClassCaps(FILEHANDLE cfg)
 	{
-		for (auto &p : vesselComponents_)	p->OnSetClassCaps();
+//		for (auto &p : vesselComponents_)	p->OnSetClassCaps();
 
 		// ** New stuff:
 		HandleClassCaps();
@@ -453,20 +456,20 @@ namespace bc_orbiter
 	{
 		if (nullptr == meshVirtualCockpit0_)	return false;
 
-		auto eh = vcRedrawMap_.find(id);
-		if (eh != vcRedrawMap_.end())
-		{
-			return eh->second->OnVCRedrawEvent(id, event, surf);
-		}
-		else
-		{
+		//auto eh = vcRedrawMap_.find(id);
+		//if (eh != vcRedrawMap_.end())
+		//{
+		//	return eh->second->OnVCRedrawEvent(id, event, surf);
+		//}
+		//else
+		//{
 			// New mode...
 			auto c = idComponentMap_.find(id);
 			if (c != idComponentMap_.end())
 			{
 				return c->second->OnVCRedrawEvent(id, event, surf);
 			}
-		}
+//		}
 
 		// NEW mode
 		auto pe = mapVCTargets_.find(id);
@@ -545,10 +548,14 @@ namespace bc_orbiter
 		//	et.second->RegisterMouseEvents();
 		//}
 
-		for (auto& p : vesselComponents_)	p->OnLoadPanel2D(id, hPanel);
+		// for (auto& p : vesselComponents_)	p->OnLoadPanel2D(id, hPanel);
 
 		//*** NEW
 		HandleLoadPanel(hPanel);
+
+		for each (auto & vc in comp_load_panel_) {
+			vc->handle_load_panel(*this, id, hPanel);
+		}
 
 		return true;
 	}
@@ -561,8 +568,8 @@ namespace bc_orbiter
 		//	eh->second->Draw(GetpanelMeshHandle0());
 		//	return true;
 		//}
-		auto eh = panelRedrawMap_.find(id);
-		if (eh != panelRedrawMap_.end())		return eh->second->OnPanelRedrawEvent(id, event, surf);
+		//auto eh = panelRedrawMap_.find(id);
+		//if (eh != panelRedrawMap_.end())		return eh->second->OnPanelRedrawEvent(id, event, surf);
 
 		// OLD New mode...
 		auto c = idComponentMap_.find(id);

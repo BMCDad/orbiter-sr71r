@@ -45,37 +45,25 @@ class FuelCell;
 */
 class PowerSystem :	
 	  public bco::vessel_component
-	, public bco::set_class_caps
 	, public bco::power_provider
 	, public bco::post_step
 	, public bco::manage_state
 {
 public:
-	PowerSystem();
+	PowerSystem(bco::BaseVessel& vessel);
 
 	// post_step
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override
 	{
-		double ampDraw_ = 0.0;
+		double draw = 0.0;
 
 		for each (auto & c in consumers_) {
-			ampDraw_ += c->amp_draw();
+			draw += c->amp_draw();
 		}
 
+		ampDraw_ = draw;
 		gaugePowerAmps_.set_state(ampDraw_);
 		Update(vessel);
-	}
-
-	// set_class_caps
-	void handle_set_class_caps(bco::BaseVessel& vessel) override {
-		vessel.AddControl(&switchEnabled);
-		vessel.AddControl(&switchConnectExternal_);
-		vessel.AddControl(&switchConnectFuelCell_);
-		vessel.AddControl(&lightFuelCellConnected_);
-		vessel.AddControl(&lightExternalAvail_);
-		vessel.AddControl(&lightExternalConnected_);
-		vessel.AddControl(&gaugePowerAmps_);
-		vessel.AddControl(&gaugePowerVolts_);
 	}
 
 	// manage_state
@@ -98,7 +86,7 @@ public:
 		consumers_.push_back(consumer);
 	}
 
-	double volts_available() const override { return 28.0; }
+	double volts_available() const override { return prevVolts_; }
 	double amp_load() const override { return ampDraw_; }
 
 private:
@@ -120,6 +108,7 @@ private:
 	double					ampDraw_{ 0.0 };			// Collects the total amps drawn during a step.
 	double					batteryLevel_;
 	double					prevStep_{ 0.0 };	
+	double					prevVolts_{ -1.0 };
 
 	bco::on_off_input		switchEnabled	{ { bm::vc::swMainPower_id },
 												bm::vc::swMainPower_location, bm::vc::PowerTopRightAxis_location,

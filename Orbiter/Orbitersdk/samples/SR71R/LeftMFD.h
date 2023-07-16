@@ -18,28 +18,38 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter\MFDBase.h"
-#include "bc_orbiter\Tools.h"
+#include "bc_orbiter/MFDBase.h"
+#include "bc_orbiter/Tools.h"
+#include "bc_orbiter/Control.h"
 
 #include "SR71r_mesh.h"
 
 namespace bco = bc_orbiter;
 
-class LeftMFD : public bco::MFDBase
+class LeftMFD : 
+	public bco::MFDBase,
+	public bco::set_class_caps,
+	public bco::load_vc,
+	public bco::load_panel
 {
 public:
-	LeftMFD(bco::BaseVessel* vessel, double amps);
+	LeftMFD(bco::power_provider& pwr, bco::BaseVessel* vessel);
 
-	virtual void OnSetClassCaps() override;
+	virtual void handle_set_class_caps(bco::BaseVessel& vessel) override;
 
-	bool OnVCMouseEvent(int id, int event) override;
-	bool OnLoadVC(int id) override;
-	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+	// load_vc
+	bool handle_load_vc(bco::BaseVessel& vessel, int vcid) override;
+	//bool handle_mouse_vc(bco::BaseVessel& vessel, int id, int event) override;
+	//bool handle_redraw_vc(bco::BaseVessel& vessel, int id, int event, SURFHANDLE surf) override;
+	bool OnVCMouseEvent(int id, int event);
+	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf);
 
-	bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
-	bool OnPanelMouseEvent(int id, int event) override;
-	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) override;
-
+	//bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
+	bool handle_load_panel(bco::BaseVessel& vessel, int id, PANELHANDLE hPanel) override;
+	//bool handle_mouse_panel(bco::BaseVessel& vessel, int id, int event) override;
+	//bool handle_redraw_panel(bco::BaseVessel& vessel, int id, int event, SURFHANDLE surf) override;
+	bool OnPanelMouseEvent(int id, int event);
+	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf);
 private:
 	bco::FontInfo	vcFont_;
 
@@ -59,17 +69,17 @@ private:
 
 	std::vector<MFDData> data_
 	{
-		{ GetBaseVessel()->GetIdForComponent(this), 0,  0, 0, bm::vc::MFCLeftL1_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 1,  1, 0, bm::vc::MFCLeftL2_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 2,  2, 0, bm::vc::MFCLeftL3_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 3,  3, 0, bm::vc::MFCLeftL4_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 4,  4, 0, bm::vc::MFCLeftL5_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 5,  5, 0, bm::vc::MFCLeftL6_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 6,  0, 1, bm::vc::MFCLeftR1_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 7,  1, 1, bm::vc::MFCLeftR2_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 8,  2, 1, bm::vc::MFCLeftR3_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 9,  3, 1, bm::vc::MFCLeftR4_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 10, 4, 1, bm::vc::MFCLeftR5_location },
-		{ GetBaseVessel()->GetIdForComponent(this), 11, 5, 1, bm::vc::MFCLeftR6_location }
+		{ vessel_.GetIdForComponent(this), 0,  0, 0, bm::vc::MFCLeftL1_location },
+		{ vessel_.GetIdForComponent(this), 1,  1, 0, bm::vc::MFCLeftL2_location },
+		{ vessel_.GetIdForComponent(this), 2,  2, 0, bm::vc::MFCLeftL3_location },
+		{ vessel_.GetIdForComponent(this), 3,  3, 0, bm::vc::MFCLeftL4_location },
+		{ vessel_.GetIdForComponent(this), 4,  4, 0, bm::vc::MFCLeftL5_location },
+		{ vessel_.GetIdForComponent(this), 5,  5, 0, bm::vc::MFCLeftL6_location },
+		{ vessel_.GetIdForComponent(this), 6,  0, 1, bm::vc::MFCLeftR1_location },
+		{ vessel_.GetIdForComponent(this), 7,  1, 1, bm::vc::MFCLeftR2_location },
+		{ vessel_.GetIdForComponent(this), 8,  2, 1, bm::vc::MFCLeftR3_location },
+		{ vessel_.GetIdForComponent(this), 9,  3, 1, bm::vc::MFCLeftR4_location },
+		{ vessel_.GetIdForComponent(this), 10, 4, 1, bm::vc::MFCLeftR5_location },
+		{ vessel_.GetIdForComponent(this), 11, 5, 1, bm::vc::MFCLeftR6_location }
 	};
 };

@@ -96,7 +96,7 @@ public:
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
 	// power_consumer
-	double amp_draw() const { return 4.0; }
+	double amp_draw() const { return (isFilling_ ? 4.0 : 0.0) + (isRCSFilling_ ? 4.0 : 0.0); }
 
 	// set_class_caps
 	void handle_set_class_caps(bco::BaseVessel& vessel) override;
@@ -113,24 +113,6 @@ public:
     void SetAttitudeRotLevel(Axis axis, double level);
 	double CurrentMaxThrust() { return maxThrustLevel_; }
 
-	double DrawMainFuel(double amount);
-	double FillMainFuel(double amount);
-
-	double DrawRCSFuel(double amount);
-	double FillRCSFuel(double amount);
-
-	//bco::slot<bool>&		ThrottleLimitSlot()		{ return slotThrottleLimit_; }		// State of limit switch
-	//bco::slot<bool>&		FuelDumpSlot()			{ return slotFuelDump_; }			// State of fuel dump switch
-	//bco::slot<bool>&		FuelTransferSelSlot()	{ return slotTransferSel_; }		// State of transfer select switch
-	//bco::slot<bool>&		TransferPumpSlot()		{ return slotTransferPump_; }		// Pump toggle request
-	//bco::slot<bool>&		FuelValveOpenSlot()		{ return slotFuelValveOpen_; }		// Fuel valve toggle request
-
-//	bco::signal<double>&	FuelFlowSignal()		{ return sigFuelFlowRate_; }		// Report flow rate. clamped 0-1
-//	bco::signal<double>&	MainFuelLevelSignal()	{ return sigMainFuelLevel_; }		// Report fuel level full value
-//	bco::signal<double>&	RCSFuelLevelSignal()	{ return sigRCSFuelLevel_; }		// Report RCS level full value
-//	bco::signal<bool>&		IsFuelAvailSignal()		{ return sigIsFuelAvail_; }			// Report is external fuel available
-////	bco::signal<bool>&		IsTransferPumpOn()		{ return sigIsTransferOn_; }		// Report is transfer pump on
-//	bco::signal<bool>&		IsFuelValveOpen()		{ return sigIsFuelValveOpen_; }		// Report is fuel valve open
 
 	// TODO:
 	// signal to report current ThrottleLimit state
@@ -140,25 +122,19 @@ private:
 
 	bool IsPowered() { return power_.volts_available() > 24.0; }
 
+	double DrawMainFuel(double amount);
+	double FillMainFuel(double amount);
+
+	double DrawRCSFuel(double amount);
+	double FillRCSFuel(double amount);
+
 	void SetThrustLevel(double newLevel);
 	void Update(double deltaUpdate);
 
 	void ToggleFill();
+	void ToggleRCSFill();
 
 	void HandleTransfer(double deltaUpdate);
-
-	//bco::slot<bool>		slotThrottleLimit_;
-	//bco::slot<bool>		slotFuelDump_;
-	//bco::slot<bool>		slotTransferSel_;
-	//bco::slot<bool>		slotTransferPump_;
-	//bco::slot<bool>		slotFuelValveOpen_;
-
-	bco::signal<double>	sigFuelFlowRate_;
-	bco::signal<double>	sigMainFuelLevel_;
-	bco::signal<double>	sigRCSFuelLevel_;
-	bco::signal<bool>	sigIsFuelAvail_;
-//	bco::signal<bool>	sigIsTransferOn_;
-	bco::signal<bool>	sigIsFuelValveOpen_;
 
 	THRUSTER_HANDLE		mainThrustHandles_[2];
     THRUSTER_HANDLE     retroThrustHandles_[2];
@@ -171,6 +147,10 @@ private:
 	double		maxThrustLevel_;
 	int			areaId_;
 	double		prevTime_;
+	bool		isFilling_			{ false };
+	bool		isExternAvail_		{ false };
+
+	bool		isRCSFilling_		{ false };
 
 	// Switches
 	bco::on_off_input		switchThrustLimit_{		// Thrust Limit
@@ -231,6 +211,14 @@ private:
 			0.0244
 	};
 
+	bco::on_off_display		lightRCSAvail_{
+		bm::vc::RCSSupplyOnLight_id,
+			bm::vc::RCSSupplyOnLight_verts,
+			bm::pnl::pnlRCSAvail_id,
+			bm::pnl::pnlRCSAvail_verts,
+			0.0244
+	};
+
 	// Load FUEL pump
 	bco::simple_event<>		btnFuelValveOpen_{
 		bm::vc::FuelValveOpenSwitch_location,
@@ -243,6 +231,21 @@ private:
 			bm::vc::FuelValveOpenSwitch_verts,
 			bm::pnl::pnlFuelValveSwitch_id,
 			bm::pnl::pnlFuelValveSwitch_verts,
+			0.0352
+	};
+
+	// Load RCS pump
+	bco::simple_event<>		btnRCSValveOpen_{
+		bm::vc::RCSValveOpenSwitch_location,
+			0.01,
+			bm::pnl::pnlRCSValveSwitch_RC
+	};
+
+	bco::on_off_display		lightRCSValveOpen_{
+		bm::vc::RCSValveOpenSwitch_id,
+			bm::vc::RCSValveOpenSwitch_verts,
+			bm::pnl::pnlRCSValveSwitch_id,
+			bm::pnl::pnlRCSValveSwitch_verts,
 			0.0352
 	};
 };

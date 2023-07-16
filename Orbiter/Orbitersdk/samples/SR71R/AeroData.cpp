@@ -58,8 +58,10 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 
 	isAeroDataActive_.fire(IsPowered());
 
+	avionicsModeSignal_.fire(switchAvionMode_.is_on());
+
 	if (isAeroDataActive_.current()) {
-		gforce		= bco::GetVesselGs(&vessel);
+		gforce		= bco::GetVesselGs(vessel);
 		trim		= vessel.GetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM);
 		aoa			= vessel.GetAOA();
 		vertSpeed	= bco::GetVerticalSpeedFPM(&vessel);
@@ -82,12 +84,12 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 
 	// vsi
 	vsiHand_.set_state(0.5 + (isPos * spRot));
-	vsiActiveFlag_.set_state(!IsPowered());
+	vsiActiveFlag_.set_state(IsPowered());
 
 	// attitude
 	attitudeDisplay_.SlotAngle().notify(bank);
 	attitudeDisplay_.SlotTransform().notify(0.100093 * pitch);
-	attitudeFlag_.set_state(!IsPowered());
+	attitudeFlag_.set_state(IsPowered());
 }
 
 // manage_state

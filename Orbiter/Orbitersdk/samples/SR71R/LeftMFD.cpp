@@ -22,12 +22,12 @@
 
 #include <assert.h>
 
-LeftMFD::LeftMFD(bco::BaseVessel* vessel, double amps) :
-bco::MFDBase(vessel, MFD_LEFT, amps)
+LeftMFD::LeftMFD(bco::power_provider& pwr, bco::BaseVessel* vessel) :
+bco::MFDBase(pwr, vessel, MFD_LEFT, 4.0)
 {
 }
 
-void LeftMFD::OnSetClassCaps()
+void LeftMFD::handle_set_class_caps(bco::BaseVessel& vessel)
 {
 	for (auto& a : data_)
 	{
@@ -44,9 +44,9 @@ bool LeftMFD::OnVCMouseEvent(int id, int event)
 	return OnMouseEvent(id, event);
 }
 
-bool LeftMFD::OnLoadVC(int id)
+bool LeftMFD::handle_load_vc(bco::BaseVessel& vessel, int vcid)
 {
-	auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
+	auto vcMeshHandle = vessel.GetVCMeshHandle0();
 	assert(vcMeshHandle != nullptr);
 
 	SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
@@ -62,6 +62,8 @@ bool LeftMFD::OnLoadVC(int id)
 
 	static VCMFDSPEC mfds_left = { 1, bm::vc::VCMfdLeft_id };
 	oapiVCRegisterMFD(MFD_LEFT, &mfds_left);   // left MFD
+
+	// These are texture metrics, not mesh, so they don't live in the mesh file.
 
 	int rc_left			= MFDLLTEXL;						// Left side of left buttons;
 	int rc_col2_offset	= MFDLRTEXL - MFDLLTEXL;			// Diff between right col and left
@@ -121,10 +123,9 @@ bool LeftMFD::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 	return true;
 }
 
-bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
+bool LeftMFD::handle_load_panel(bco::BaseVessel& vessel, int id, PANELHANDLE hPanel)
 {
-	auto vessel = GetBaseVessel();
-	auto panelMesh = vessel->GetpanelMeshHandle0();
+	auto panelMesh = vessel.GetpanelMeshHandle0();
 
 	// Orbiter bug with panel MFDs, it expects a specific vertex sequence, so we need to re-arrange.
 	static NTVERTEX VTX_MFD[1][4] = {
@@ -144,7 +145,7 @@ bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 	auto lmfd_grp = oapiAddMeshGroup(panelMesh, &grp_lmfd);   // left MFD
 
 
-	vessel->RegisterPanelMFDGeometry(hPanel, MFD_LEFT, 0, lmfd_grp);
+	vessel.RegisterPanelMFDGeometry(hPanel, MFD_LEFT, 0, lmfd_grp);
 
 	SURFHANDLE surfHandle = oapiGetTextureHandle(panelMesh, bm::pnl::TXIDX_SR71R_100_2DPanel_dds);
 
@@ -173,7 +174,7 @@ bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 		int rc_b = rc_t + btn_height;
 
 //		oapiRegisterPanelArea(a.Id, _R(rc_l, rc_t, rc_r, rc_b), PANEL_REDRAW_USER);
-		vessel->RegisterPanelArea(
+		vessel.RegisterPanelArea(
 			hPanel, 
 			a.id, 
 			_R(rc_l, rc_t, rc_r, rc_b), 
@@ -185,7 +186,7 @@ bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 	// PWR
 	int fixedYTop = 585;
 
-	vessel->RegisterPanelArea(
+	vessel.RegisterPanelArea(
 		hPanel,
 		GetPwrKey(),
 		_R(305, fixedYTop, 305 + btn_width, fixedYTop + btn_height),
@@ -193,7 +194,7 @@ bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 
 	// SEL
-	vessel->RegisterPanelArea(
+	vessel.RegisterPanelArea(
 		hPanel,
 		GetSelectKey(),
 		_R(578, fixedYTop, 578 + btn_width, fixedYTop + btn_height),
@@ -201,7 +202,7 @@ bool LeftMFD::OnLoadPanel2D(int id, PANELHANDLE hPanel)
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 
 	// MNU
-	vessel->RegisterPanelArea(
+	vessel.RegisterPanelArea(
 		hPanel,
 		GetSelectKey(),
 		_R(655, fixedYTop, 655 + btn_width, fixedYTop + btn_height),
