@@ -20,6 +20,7 @@
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/on_off_display.h"
 #include "bc_orbiter/rotary_display.h"
+#include "bc_orbiter/status_display.h"
 
 #include "FuelCell.h"
 #include "SR71r_mesh.h"
@@ -70,18 +71,9 @@ public:
 	bool handle_load_state(const std::string& line) override;
 	std::string handle_save_state() override;
 
-	// Main:
-//	bco::signal<double>&	VoltLevelSignal()				{ return signalVoltLevel_; }			// Current volts available
-//	bco::signal<double>&	AmpLoadSignal()					{ return signalAmpLoad_; }				// Current amp usage
-	bco::signal<bool>&		IsDrawingBatterySignal()		{ return signalIsDrawingBattery_; }		// Is the battery being used.
-	
 	// Fuelcell:
 	bco::slot<double>&		FuelCellAvailablePowerSlot()	{ return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
 
-	// Todo:
-	// Battery level signal
-
-	// TODO:
 	void attach_consumer(bco::power_consumer* consumer) override {
 		consumers_.push_back(consumer);
 	}
@@ -98,15 +90,12 @@ private:
 
 	std::vector<bco::power_consumer*>  consumers_;
 
-
-	//bco::signal<double>		signalVoltLevel_;
-	//bco::signal<double>		signalAmpLoad_;
 	bco::signal<bool>		signalIsDrawingBattery_;
-
 	bco::slot<double>		slotFuelCellAvailablePower_;
 
 	double					ampDraw_{ 0.0 };			// Collects the total amps drawn during a step.
 	double					batteryLevel_;
+	bool					isDrawingBattery_{ false };
 	double					prevStep_{ 0.0 };	
 	double					prevVolts_{ -1.0 };
 
@@ -180,4 +169,11 @@ private:
 												[](double d) {return (d / 90); }	// Transform to amps.
 											};
 
+	bco::status_display     statusBattery_     {
+		bm::vc::MsgLightBattery_id,
+		bm::vc::MsgLightBattery_verts,
+		bm::pnl::pnlMsgLightBattery_id,
+		bm::pnl::pnlMsgLightBattery_verts,
+		0.0361
+	};
 };

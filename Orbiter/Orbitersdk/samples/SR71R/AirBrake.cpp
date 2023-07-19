@@ -24,6 +24,7 @@ AirBrake::AirBrake(bco::BaseVessel& vessel) :
 {
 	vessel.AddControl(&btnDecreaseAirbrake_);
 	vessel.AddControl(&btnIncreaseAirbrake_);
+	vessel.AddControl(&status_);
 
 	btnIncreaseAirbrake_.attach([&]() { position_ = min(1.0, position_ + 0.33); });
 	btnDecreaseAirbrake_.attach([&]() { position_ = max(0.0, position_ - 0.33); });
@@ -49,6 +50,11 @@ void AirBrake::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 
 	// This needs to be put into a switch statement eventually
 	bco::RotateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_verts, sTrans * animBrakeSwitch_.GetState());
+
+	status_.set_state(
+		dragFactor_ > 0.05 
+		?	bco::status_display::status::warn 
+		:	bco::status_display::status::off);
 }
 
 bool AirBrake::handle_load_state(const std::string& line)

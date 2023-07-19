@@ -34,6 +34,7 @@ PowerSystem::PowerSystem(bco::BaseVessel& vessel) :
 	vessel.AddControl(&lightExternalConnected_);
 	vessel.AddControl(&gaugePowerAmps_);
 	vessel.AddControl(&gaugePowerVolts_);
+	vessel.AddControl(&statusBattery_);
 }
 
 bool PowerSystem::handle_load_state(const std::string& line)
@@ -77,21 +78,16 @@ void PowerSystem::Update(bco::BaseVessel& vessel)
 
 	// handle battery power
 	auto availBattery = batteryLevel_ * FULL_POWER;
-
 	auto availPower = 0.0;
+	isDrawingBattery_ = false;
+
 	if (switchEnabled.is_on())
 	{
 		availPower = fmax(availExternal, availFuelCell);
 		if (availPower < USEABLE_POWER) {
-			signalIsDrawingBattery_.fire(true);
+			isDrawingBattery_ = true;
 			availPower = availBattery;
 		}
-		else {
-			signalIsDrawingBattery_.fire(false);
-		}
-	}
-	else {
-		signalIsDrawingBattery_.fire(false);
 	}
 
 	if (availPower != prevVolts_) {
@@ -103,4 +99,10 @@ void PowerSystem::Update(bco::BaseVessel& vessel)
 	}
 
 	gaugePowerVolts_.set_state(availPower);
+
+	statusBattery_.set_state(
+		(switchEnabled.is_on() && isDrawingBattery_)
+		?	bco::status_display::status::warn
+		:	bco::status_display::status::off
+	);
 }

@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Sun Jul 16 15:56:06 2023
+// Date: Tue Jul 18 15:56:39 2023
 
 
 #include "orbitersdk.h"
@@ -228,30 +228,30 @@ namespace bm
     {990.0000f, 673.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4255f, 0.2262f},
     {1060.0000f, 673.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4604f, 0.2262f}    };
     const NTVERTEX pnlRCSRot_verts[4] = {
-    {123.4692f, 81.1468f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.3412f},
-    {193.4692f, 81.1468f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.3412f},
-    {123.4692f, 25.1468f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.3132f},
-    {193.4692f, 25.1468f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.3132f}    };
+    {119.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.3412f},
+    {189.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.3412f},
+    {119.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.3132f},
+    {189.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.3132f}    };
     const NTVERTEX pnlRCSLin_verts[4] = {
-    {43.0741f, 80.3027f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4255f, 0.3413f},
-    {113.0741f, 80.3027f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4604f, 0.3413f},
-    {43.0741f, 24.3027f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4255f, 0.3131f},
-    {113.0741f, 24.3027f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4604f, 0.3131f}    };
+    {44.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4255f, 0.3413f},
+    {114.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4604f, 0.3413f},
+    {44.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4255f, 0.3131f},
+    {114.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4604f, 0.3131f}    };
     const NTVERTEX pnlHUDDock_verts[4] = {
-    {235.2687f, 84.0573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.3699f},
-    {305.2687f, 84.0573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.3699f},
-    {235.2687f, 28.0573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.3418f},
-    {305.2687f, 28.0573f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.3418f}    };
+    {254.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.3699f},
+    {324.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.3699f},
+    {254.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.3418f},
+    {324.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3822f, 0.3418f}    };
     const NTVERTEX pnlHUDSurf_verts[4] = {
-    {316.2920f, 88.0418f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4254f, 0.3699f},
-    {386.2920f, 88.0418f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4603f, 0.3699f},
-    {316.2920f, 32.0418f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4254f, 0.3418f},
-    {386.2920f, 32.0418f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4603f, 0.3418f}    };
+    {329.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4254f, 0.3699f},
+    {399.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4603f, 0.3699f},
+    {329.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4254f, 0.3418f},
+    {399.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4603f, 0.3418f}    };
     const NTVERTEX pnlHUDOrbit_verts[4] = {
-    {409.8770f, 82.6050f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5036f, 0.3412f},
-    {479.8770f, 82.6050f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5384f, 0.3412f},
-    {409.8770f, 26.6050f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5036f, 0.3132f},
-    {479.8770f, 26.6050f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5384f, 0.3132f}    };
+    {404.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5036f, 0.3412f},
+    {474.0000f, 82.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5384f, 0.3412f},
+    {404.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5036f, 0.3132f},
+    {474.0000f, 26.2000f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5384f, 0.3132f}    };
     const NTVERTEX pnlMFDLeft_verts[4] = {
     {304.1738f, 557.3519f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0000f, 1.0000f},
     {712.1738f, 557.3519f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 1.0000f, 1.0000f},
@@ -597,6 +597,66 @@ namespace bm
     {969.3336f, 118.0333f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6727f, 0.3942f},
     {933.4097f, 341.5598f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6555f, 0.5032f},
     {969.3336f, 341.5598f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.6727f, 0.5032f}    };
+    const NTVERTEX pnlMsgLightThrustLimit_verts[4] = {
+    {2302.5278f, 69.3459f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4950f, 0.6901f},
+    {2373.8901f, 69.3451f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5291f, 0.6901f},
+    {2302.5164f, 91.7777f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4950f, 0.7007f},
+    {2373.8931f, 91.7776f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5291f, 0.7007f}    };
+    const NTVERTEX pnlMsgLightSpeedBrake_verts[4] = {
+    {2228.1611f, 69.3459f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4956f, 0.6899f},
+    {2299.5234f, 69.3451f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5297f, 0.6899f},
+    {2228.1497f, 91.7777f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4956f, 0.7005f},
+    {2299.5264f, 91.7776f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5297f, 0.7005f}    };
+    const NTVERTEX pnlMsgLightRetro_verts[4] = {
+    {2077.6221f, 69.3505f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4956f, 0.6898f},
+    {2148.9844f, 69.3496f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5297f, 0.6898f},
+    {2077.6106f, 91.7823f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4956f, 0.7004f},
+    {2148.9873f, 91.7822f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5297f, 0.7005f}    };
+    const NTVERTEX pnlMsgLightKeasWarn_verts[4] = {
+    {2227.7395f, 17.7093f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4958f, 0.6899f},
+    {2299.1018f, 17.7084f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5299f, 0.6899f},
+    {2227.7280f, 40.1411f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4958f, 0.7005f},
+    {2299.1047f, 40.1410f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5299f, 0.7005f}    };
+    const NTVERTEX pnlMsgLightHover_verts[4] = {
+    {2077.6360f, 17.7093f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4952f, 0.6899f},
+    {2148.9983f, 17.7084f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5293f, 0.6899f},
+    {2077.6245f, 40.1411f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4952f, 0.7005f},
+    {2149.0012f, 40.1410f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5293f, 0.7005f}    };
+    const NTVERTEX pnlMsgLightFuelWarn_verts[4] = {
+    {2302.5278f, 17.7093f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4960f, 0.6900f},
+    {2373.8901f, 17.7084f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5301f, 0.6900f},
+    {2302.5164f, 40.1411f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4960f, 0.7006f},
+    {2373.8931f, 40.1410f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5301f, 0.7007f}    };
+    const NTVERTEX pnlMsgLightDock_verts[4] = {
+    {2152.8823f, 43.4670f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4958f, 0.6900f},
+    {2224.2446f, 43.4661f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5299f, 0.6900f},
+    {2152.8708f, 65.8988f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4957f, 0.7006f},
+    {2224.2476f, 65.8987f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5299f, 0.7006f}    };
+    const NTVERTEX pnlMsgLightCanopy_verts[4] = {
+    {2077.6360f, 43.6851f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4961f, 0.6898f},
+    {2148.9983f, 43.6843f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5302f, 0.6899f},
+    {2077.6245f, 66.1169f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4961f, 0.7005f},
+    {2149.0012f, 66.1168f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5302f, 0.7005f}    };
+    const NTVERTEX pnlMsgLightC2_verts[4] = {
+    {2152.9070f, 69.3505f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5324f, 0.6900f},
+    {2224.2693f, 69.3496f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5666f, 0.6900f},
+    {2152.8955f, 91.7823f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5324f, 0.7006f},
+    {2224.2722f, 91.7822f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5666f, 0.7006f}    };
+    const NTVERTEX pnlMsgLightBay_verts[4] = {
+    {2152.5564f, 17.7093f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4954f, 0.6900f},
+    {2223.9187f, 17.7084f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5296f, 0.6900f},
+    {2152.5449f, 40.1411f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4954f, 0.7006f},
+    {2223.9216f, 40.1410f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5296f, 0.7006f}    };
+    const NTVERTEX pnlMsgLightBattery_verts[4] = {
+    {2302.5278f, 43.4670f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4958f, 0.6899f},
+    {2373.8901f, 43.4661f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5299f, 0.6899f},
+    {2302.5164f, 65.8988f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4958f, 0.7005f},
+    {2373.8931f, 65.8987f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5299f, 0.7005f}    };
+    const NTVERTEX pnlMsgLightAPU_verts[4] = {
+    {2228.1611f, 43.4670f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4954f, 0.6898f},
+    {2299.5234f, 43.4661f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5296f, 0.6898f},
+    {2228.1497f, 65.8988f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4954f, 0.7004f},
+    {2299.5264f, 65.8987f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5296f, 0.7004f}    };
     const NTVERTEX pnlClockTimerMinute_verts[4] = {
     {726.3527f, 664.4812f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3656f, 0.5392f},
     {766.0398f, 664.4812f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3846f, 0.5392f},
@@ -857,36 +917,49 @@ namespace bm
     const UINT pnlAltimeterOffFlag_id = 112;
     const UINT pnlAltimeterGround_id = 113;
     const UINT pnlSpeedNeedleMax_id = 114;
-    const UINT pnlClockTimerMinute_id = 115;
-    const UINT pnlRoseCompass_id = 116;
-    const UINT pnlSpeedIndicatorKies_id = 117;
-    const UINT pnlClockHour_id = 118;
-    const UINT pnlHSIBearingArrow_id = 119;
-    const UINT pnlSpeedNeedle_id = 120;
-    const UINT pnlClockMinute_id = 121;
-    const UINT pnlHSICourse_id = 122;
-    const UINT pnlClockSecond_id = 123;
-    const UINT pnlHydPress_id = 124;
-    const UINT pnlLOXPress_id = 125;
-    const UINT pnlLH2Press_id = 126;
-    const UINT pnlAmpMeter_id = 127;
-    const UINT pnlVoltMeter_id = 128;
-    const UINT pnlGaFuelFlow_id = 129;
-    const UINT pnlGaFuelMain_id = 130;
-    const UINT pnlGaFuelRCS_id = 131;
-    const UINT pnlHorizonFace_id = 132;
-    const UINT pnlHSICourseNeedle_id = 133;
-    const UINT pnlAlt100Needle_id = 134;
-    const UINT pnlHSICompassHeading_id = 135;
-    const UINT pnlAttitudeFlagOff_id = 136;
-    const UINT pnlHSIOffFlag_id = 137;
-    const UINT pnlCOMStatusPanel_id = 138;
-    const UINT pnlSpeedVelocityFlag_id = 139;
-    const UINT pnlAlt10Needle_id = 140;
-    const UINT pnlHSIExoFlag_id = 141;
-    const UINT pnlSpeedFlagOff_id = 142;
-    const UINT pnlAlt1Needle_id = 143;
-    const UINT pnlCompassFaceTop_id = 144;
+    const UINT pnlMsgLightThrustLimit_id = 115;
+    const UINT pnlMsgLightSpeedBrake_id = 116;
+    const UINT pnlMsgLightRetro_id = 117;
+    const UINT pnlMsgLightKeasWarn_id = 118;
+    const UINT pnlMsgLightHover_id = 119;
+    const UINT pnlMsgLightFuelWarn_id = 120;
+    const UINT pnlMsgLightDock_id = 121;
+    const UINT pnlMsgLightCanopy_id = 122;
+    const UINT pnlMsgLightC2_id = 123;
+    const UINT pnlMsgLightBay_id = 124;
+    const UINT pnlMsgLightBattery_id = 125;
+    const UINT pnlMsgLightAPU_id = 126;
+    const UINT pnlClockTimerMinute_id = 127;
+    const UINT pnlRoseCompass_id = 128;
+    const UINT pnlSpeedIndicatorKies_id = 129;
+    const UINT pnlMessagesLabels_id = 130;
+    const UINT pnlClockHour_id = 131;
+    const UINT pnlHSIBearingArrow_id = 132;
+    const UINT pnlSpeedNeedle_id = 133;
+    const UINT pnlClockMinute_id = 134;
+    const UINT pnlHSICourse_id = 135;
+    const UINT pnlClockSecond_id = 136;
+    const UINT pnlHydPress_id = 137;
+    const UINT pnlLOXPress_id = 138;
+    const UINT pnlLH2Press_id = 139;
+    const UINT pnlAmpMeter_id = 140;
+    const UINT pnlVoltMeter_id = 141;
+    const UINT pnlGaFuelFlow_id = 142;
+    const UINT pnlGaFuelMain_id = 143;
+    const UINT pnlGaFuelRCS_id = 144;
+    const UINT pnlHorizonFace_id = 145;
+    const UINT pnlHSICourseNeedle_id = 146;
+    const UINT pnlAlt100Needle_id = 147;
+    const UINT pnlHSICompassHeading_id = 148;
+    const UINT pnlAttitudeFlagOff_id = 149;
+    const UINT pnlHSIOffFlag_id = 150;
+    const UINT pnlCOMStatusPanel_id = 151;
+    const UINT pnlSpeedVelocityFlag_id = 152;
+    const UINT pnlAlt10Needle_id = 153;
+    const UINT pnlHSIExoFlag_id = 154;
+    const UINT pnlSpeedFlagOff_id = 155;
+    const UINT pnlAlt1Needle_id = 156;
+    const UINT pnlCompassFaceTop_id = 157;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {847, 617, 917, 673};
@@ -895,11 +968,11 @@ namespace bm
     constexpr RECT pnlNavRetro_RC = {919, 674, 989, 730};
     constexpr RECT pnlNavNorm_RC = {991, 617, 1061, 673};
     constexpr RECT pnlNavAntiNorm_RC = {991, 674, 1061, 730};
-    constexpr RECT pnlRCSRot_RC = {124, 25, 194, 81};
-    constexpr RECT pnlRCSLin_RC = {44, 25, 114, 81};
-    constexpr RECT pnlHUDDock_RC = {236, 28, 306, 84};
-    constexpr RECT pnlHUDSurf_RC = {317, 32, 387, 88};
-    constexpr RECT pnlHUDOrbit_RC = {410, 27, 480, 83};
+    constexpr RECT pnlRCSRot_RC = {120, 27, 190, 83};
+    constexpr RECT pnlRCSLin_RC = {45, 27, 115, 83};
+    constexpr RECT pnlHUDDock_RC = {255, 27, 325, 83};
+    constexpr RECT pnlHUDSurf_RC = {330, 27, 400, 83};
+    constexpr RECT pnlHUDOrbit_RC = {405, 27, 475, 83};
     const double pnlMFDLeft_Width = 408.0;
     const double pnlMFDLeft_Height = 408.0000305175781;
     constexpr VECTOR3 pnlMFDRowTwoTop_location =     {596.2580, 584.7822, -1.0000};
@@ -1291,10 +1364,10 @@ namespace bm
     {-0.1579f, 0.6344f, 15.2760f, 0.0000f, 0.0000f, -1.0000f, 0.7021f, 0.0133f},
     {-0.1457f, 0.6344f, 15.2760f, 0.0000f, 0.0000f, -1.0000f, 0.7258f, 0.0133f}    };
     const NTVERTEX MsgLightSpeedBrake_verts[4] = {
-    {0.0005f, 0.7462f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6034f, 0.6899f},
-    {0.0183f, 0.7462f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6376f, 0.6899f},
-    {0.0005f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6034f, 0.7005f},
-    {0.0183f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6376f, 0.7005f}    };
+    {0.0005f, 0.7462f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4954f, 0.6899f},
+    {0.0183f, 0.7462f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5295f, 0.6899f},
+    {0.0005f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4954f, 0.7005f},
+    {0.0183f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5295f, 0.7005f}    };
     const NTVERTEX MsgLightAPU_verts[4] = {
     {0.0005f, 0.7527f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4954f, 0.6898f},
     {0.0183f, 0.7527f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5296f, 0.6898f},
@@ -1316,10 +1389,10 @@ namespace bm
     {-0.0370f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4956f, 0.7004f},
     {-0.0192f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5297f, 0.7005f}    };
     const NTVERTEX MsgLightThrustLimit_verts[4] = {
-    {0.0191f, 0.7462f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6038f, 0.6901f},
-    {0.0368f, 0.7462f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6379f, 0.6901f},
-    {0.0191f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6038f, 0.7007f},
-    {0.0368f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6379f, 0.7007f}    };
+    {0.0191f, 0.7462f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4953f, 0.6901f},
+    {0.0368f, 0.7462f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5294f, 0.6901f},
+    {0.0191f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4953f, 0.7007f},
+    {0.0368f, 0.7406f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5294f, 0.7007f}    };
     const NTVERTEX MsgLightBattery_verts[4] = {
     {0.0191f, 0.7527f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4958f, 0.6899f},
     {0.0368f, 0.7527f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5299f, 0.6899f},
@@ -1336,15 +1409,15 @@ namespace bm
     {-0.0370f, 0.7471f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4961f, 0.7005f},
     {-0.0192f, 0.7471f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5302f, 0.7005f}    };
     const NTVERTEX MsgLightFuelWarn_verts[4] = {
-    {0.0191f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6038f, 0.6900f},
-    {0.0368f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6379f, 0.6900f},
-    {0.0191f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6038f, 0.7006f},
-    {0.0368f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6379f, 0.7007f}    };
+    {0.0191f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4950f, 0.6900f},
+    {0.0368f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5291f, 0.6900f},
+    {0.0191f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4950f, 0.7006f},
+    {0.0368f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5291f, 0.7007f}    };
     const NTVERTEX MsgLightKeasWarn_verts[4] = {
-    {0.0004f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6037f, 0.6899f},
-    {0.0182f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6379f, 0.6899f},
-    {0.0004f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6037f, 0.7005f},
-    {0.0182f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.6379f, 0.7005f}    };
+    {0.0004f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4947f, 0.6899f},
+    {0.0182f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5289f, 0.6899f},
+    {0.0004f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4947f, 0.7005f},
+    {0.0182f, 0.7535f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5289f, 0.7005f}    };
     const NTVERTEX MsgLightBay_verts[4] = {
     {-0.0183f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.4954f, 0.6900f},
     {-0.0005f, 0.7591f, 15.2629f, 0.0000f, 0.0000f, -1.0000f, 0.5296f, 0.6900f},

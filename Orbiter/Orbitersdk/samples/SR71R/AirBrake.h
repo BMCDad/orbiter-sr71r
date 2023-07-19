@@ -21,6 +21,7 @@
 #include "bc_orbiter/Animation.h"
 #include "bc_orbiter/Control.h"
 #include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
 
@@ -114,5 +115,12 @@ private:
     bco::simple_event<>		btnIncreaseAirbrake_ {  bm::vc::ABTargetIncrease_location,
                                                     0.01,
                                                     bm::pnl::pnlAirBrakeIncrease_RC
+                                                };
+
+    bco::status_display     status_     {           bm::vc::MsgLightSpeedBrake_id,
+                                                    bm::vc::MsgLightSpeedBrake_verts,
+                                                    bm::pnl::pnlMsgLightSpeedBrake_id,
+                                                    bm::pnl::pnlMsgLightSpeedBrake_verts,
+                                                    0.0361
                                                 };
 };

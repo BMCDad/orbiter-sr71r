@@ -36,10 +36,22 @@ void RetroEngines::handle_post_step(bco::BaseVessel& vessel, double simt, double
     if (IsPowered()) {
         animRetroDoors_.Step(switchDoors_.is_on() ? 1.0 : 0.0, simdt);
     }
+
+    status_.set_state(
+        IsPowered()
+        ?   IsMoving()
+            ?   bco::status_display::status::warn
+            :   switchDoors_.is_on()
+                ?   bco::status_display::status::on
+                :   bco::status_display::status::off
+        : bco::status_display::status::off);
 }
 
 void RetroEngines::handle_set_class_caps(bco::BaseVessel& vessel)
 {
+    vessel.AddControl(&switchDoors_);
+    vessel.AddControl(&status_);
+
     auto main = vessel.GetMainMeshIndex();
 
     auto aid = vessel.CreateVesselAnimation(&animRetroDoors_, 0.2);

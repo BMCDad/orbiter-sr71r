@@ -61,7 +61,6 @@ namespace bc_orbiter {
             anim_.Step(targetState_, simdt);
             vecTrans_.y = texOffset_ * anim_.GetState();
             TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, 0.0, vecTrans_);
-
             //            sprintf(oapiDebugString(), "T: %+4.4f  Anim: %+4.4f  Slot: %+4.4f", targetState_, anim_.GetState(), (double)slotTransform_.value());
         }
 

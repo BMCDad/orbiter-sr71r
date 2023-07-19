@@ -33,6 +33,16 @@ void CargoBayController::handle_post_step(bco::BaseVessel& vessel, double simt, 
 	if (IsPowered()) {
         animCargoBayDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
 	}
+
+    status_.set_state(
+        IsPowered()
+        ?   IsMoving()
+            ?   bco::status_display::status::warn
+            :   switchOpen_.is_on()
+                ?   bco::status_display::status::on
+                :   bco::status_display::status::off
+        :   bco::status_display::status::off);
+
 }
 
 bool CargoBayController::handle_load_state(const std::string& line)
@@ -62,6 +72,10 @@ std::string CargoBayController::handle_save_state()
 
 void CargoBayController::handle_set_class_caps(bco::BaseVessel& vessel)
 {
+    vessel.AddControl(&switchOpen_);
+    vessel.AddControl(&switchPower_);
+    vessel.AddControl(&status_);
+
     auto mIdx = vessel.GetMainMeshIndex();
 
     auto id = vessel.CreateVesselAnimation(&animCargoBayDoors_, 0.01);

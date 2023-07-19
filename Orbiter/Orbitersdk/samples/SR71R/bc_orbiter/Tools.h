@@ -579,4 +579,33 @@ namespace bc_orbiter
 		grp->Vtx[2].tu = verts[2].tu + trans;
 		grp->Vtx[3].tu = verts[3].tu + trans;
 	}
+
+	inline void DrawPanelOffset(MESHHANDLE mesh, UINT group, const NTVERTEX* verts, double offset)
+	{
+		auto grp = oapiMeshGroup(mesh, group);
+
+		float trans = offset;
+		grp->Vtx[0].tu = verts[0].tu + trans;
+		grp->Vtx[1].tu = verts[1].tu + trans;
+		grp->Vtx[2].tu = verts[2].tu + trans;
+		grp->Vtx[3].tu = verts[3].tu + trans;
+	}
+
+	template <typename T>
+	inline void UVTranslate(T mesh, UINT group, const NTVERTEX* verts, double offset_u, double offset_v)
+	{
+		if (mesh == nullptr) return;
+
+		auto grp = oapiMeshGroup(mesh, group);
+
+		grp->Vtx[0].tu = verts[0].tu + offset_u;
+		grp->Vtx[1].tu = verts[1].tu + offset_u;
+		grp->Vtx[2].tu = verts[2].tu + offset_u;
+		grp->Vtx[3].tu = verts[3].tu + offset_u;
+
+		grp->Vtx[0].tv = verts[0].tv + offset_v;
+		grp->Vtx[1].tv = verts[1].tv + offset_v;
+		grp->Vtx[2].tv = verts[2].tv + offset_v;
+		grp->Vtx[3].tv = verts[3].tv + offset_v;
+	}
 }

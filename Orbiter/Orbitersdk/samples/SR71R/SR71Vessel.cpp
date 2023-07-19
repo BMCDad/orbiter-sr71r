@@ -26,7 +26,6 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 //	mfdLeft_(               this,   MFD_AMPS),
 //	mfdRight_(              this,   MFD_AMPS),
 	navModes_(              *this),
-	statusBoard_(           this,   STATUS_AMPS),
 	slotHydraulicLevel_([&](double v) { UpdateHydraulicLevel(v); }),
 	ctrlSurfLeftAileron_(nullptr),
 	ctrlSurfRightAileron_(nullptr),
@@ -82,6 +81,8 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	// Landing Gear
 	bco::connect( apu_.HydroPressSignal(),					landingGear_.HydraulicPressSlot());	// still need this
 
+	bco::connect( propulsion_.MainFuelLevelSignal(),		apu_.FuelLevelSlot());
+
 	// RCS
 	bco::connect( aeroData_.IsAeroActiveSignal(),			rcs_.IsAeroActiveSlot());
 
@@ -97,30 +98,6 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 
 SR71Vessel::~SR71Vessel()
 {
-}
-
-void SR71Vessel::SetupVesselComponents()
-{
-	// Setup surface controller:
-//	surfaceControl_.SetAPU(&apu_);
-
-	// APU
-//	apu_.SetPropulsionControl(&propulsionController_);
-
-	// Fuelcell
-	//fuelCell_.SetHydrogenSytem(&hydrogenTank_);
-	//fuelCell_.SetOxygenSystem(&oxygenTank_);
-
-	// Status board
-//	statusBoard_.SetCargoBay(&cargoBayController_);
-//	statusBoard_.SetAvionics(&avionics_);
-	statusBoard_.SetPower(&powerSystem_);
-	statusBoard_.SetPropulsion(&propulsion_);
-	statusBoard_.SetAPU(&apu_);
-	statusBoard_.SetAirBrake(&airBrake_);
-    statusBoard_.SetHover(&hoverEngines_);
-    statusBoard_.SetRetro(&retroEngines_);
-    statusBoard_.SetCanopy(&canopy_);
 }
 
 void SR71Vessel::SetupAerodynamics()

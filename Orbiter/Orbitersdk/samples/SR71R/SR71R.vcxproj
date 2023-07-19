@@ -136,6 +136,7 @@
     <ClInclude Include="bc_orbiter\rotary_display.h" />
     <ClInclude Include="bc_orbiter\signals.h" />
     <ClInclude Include="bc_orbiter\simple_event.h" />
+    <ClInclude Include="bc_orbiter\status_display.h" />
     <ClInclude Include="bc_orbiter\Tools.h" />
     <ClInclude Include="Beacon.h" />
     <ClInclude Include="Canopy.h" />

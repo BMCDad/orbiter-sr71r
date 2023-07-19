@@ -16,9 +16,10 @@
 
 #pragma once
 
-#include "bc_orbiter\control.h"
-#include "bc_orbiter\signals.h"
-#include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/signals.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/status_display.h"
 
 #include "AvionBase.h"
 
@@ -45,6 +46,8 @@ public:
 
 		vessel.AddControl(&speedIsEnabledFlag_);
 		vessel.AddControl(&speedIsVelocityFlag_);
+
+		vessel.AddControl(&status_);
 	}
 
 	~Airspeed() {}
@@ -67,6 +70,7 @@ public:
 		double speedRatio = 0.0;
 		double maxMachRatio = 0.0;
 		double kiasSpeed = 0.0;
+		bool isOverSpeed = false;
 
 		if (EnabledSlot().value()) {
 			keas = bco::GetVesselKeas(&vessel);
@@ -77,7 +81,7 @@ public:
 			if (atmDens > 0.0)
 			{
 				maxMach = sqrt(MaxPress / atmDens) / 331.34;
-				signalIsOverspeed_.fire(mach > maxMach);
+				isOverSpeed = mach > maxMach;
 			}
 
 			auto spGauge = (mach > MAX_MACH) ? MAX_MACH : mach;
@@ -122,9 +126,9 @@ public:
 		airspeedMACHOnes_.SlotTransform().notify(parts.Tens);
 		airspeedMACHTens_.SlotTransform().notify(parts.Hundreds);
 		airspeedMACHHunds_.SlotTransform().notify(parts.Thousands);
-	}
 
-	bco::signal<bool>&		IsOverspeedSignal()		{ return signalIsOverspeed_; }
+		status_.set_state(isOverSpeed ? bco::status_display::status::error : bco::status_display::status::off);
+	}
 
 private:
 	const double MaxPress = 60000.0; // 30.0 * 1000 * 2 = 60000 --> a guess at the dynamic values of SR71r.
@@ -133,8 +137,6 @@ private:
 	const double MAX_PIN = 300.0;
 	const double MAX_MACH = 22.0;
 	double l22 = log(23);
-
-	bco::signal<bool>	signalIsOverspeed_;
 
 	bco::rotary_display<bco::AnimationWrap>	speedHand_{
 		{ bm::vc::SpeedNeedle_id },
@@ -234,6 +236,14 @@ private:
 			bm::pnl::pnlSpeedVelocityFlag_id,
 			bm::pnl::pnlSpeedVelocityFlag_verts,
 			0.0244
+	};
+
+	bco::status_display     status_{
+		bm::vc::MsgLightKeasWarn_id,
+		bm::vc::MsgLightKeasWarn_verts,
+		bm::pnl::pnlMsgLightKeasWarn_id,
+		bm::pnl::pnlMsgLightKeasWarn_verts,
+		0.0361
 	};
 };
 

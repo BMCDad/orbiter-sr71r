@@ -27,6 +27,7 @@
 #include "bc_orbiter/on_off_display.h"
 #include "bc_orbiter/simple_event.h"
 #include "bc_orbiter/rotary_display.h"
+#include "bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
@@ -113,6 +114,7 @@ public:
     void SetAttitudeRotLevel(Axis axis, double level);
 	double CurrentMaxThrust() { return maxThrustLevel_; }
 
+	bco::signal<double>&	MainFuelLevelSignal() { return signalMainFuelLevel_; }
 
 	// TODO:
 	// signal to report current ThrottleLimit state
@@ -121,6 +123,8 @@ private:
 	bco::power_provider&	power_;
 
 	bool IsPowered() { return power_.volts_available() > 24.0; }
+
+	bco::signal<double>		signalMainFuelLevel_;
 
 	double DrawMainFuel(double amount);
 	double FillMainFuel(double amount);
@@ -247,5 +251,21 @@ private:
 			bm::pnl::pnlRCSValveSwitch_id,
 			bm::pnl::pnlRCSValveSwitch_verts,
 			0.0352
+	};
+
+	bco::status_display     statusFuel_     {           
+		bm::vc::MsgLightFuelWarn_id,
+		bm::vc::MsgLightFuelWarn_verts,
+		bm::pnl::pnlMsgLightFuelWarn_id,
+		bm::pnl::pnlMsgLightFuelWarn_verts,
+		0.0361
+	};
+
+	bco::status_display     statusLimiter_     {           
+		bm::vc::MsgLightThrustLimit_id,
+		bm::vc::MsgLightThrustLimit_verts,
+		bm::pnl::pnlMsgLightThrustLimit_id,
+		bm::pnl::pnlMsgLightThrustLimit_verts,
+		0.0361
 	};
 };

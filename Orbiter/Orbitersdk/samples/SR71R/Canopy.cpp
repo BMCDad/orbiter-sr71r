@@ -17,6 +17,8 @@
 #include "StdAfx.h"
 
 #include "bc_orbiter/Tools.h"
+#include "bc_orbiter/status_display.h"
+
 #include "Orbitersdk.h"
 #include "Canopy.h"
 #include "SR71r_mesh.h"
@@ -32,6 +34,15 @@ void Canopy::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt
     if (IsPowered()) {
         animCanopy_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
     }
+
+    status_.set_state(
+        IsPowered() 
+        ?   CanopyIsMoving() 
+            ?   bco::status_display::status::warn 
+            :   switchOpen_.is_on() 
+                ?   bco::status_display::status::on 
+                :   bco::status_display::status::off 
+        : bco::status_display::status::off);
 }
 
 bool Canopy::handle_load_state(const std::string& line)
@@ -71,4 +82,5 @@ void Canopy::handle_set_class_caps(bco::BaseVessel& vessel)
 
     vessel.AddControl(&switchOpen_);
     vessel.AddControl(&switchPower_);
+    vessel.AddControl(&status_);
 }

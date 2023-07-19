@@ -240,6 +240,9 @@
     <ClInclude Include="OxygenTank.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="bc_orbiter\status_display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">

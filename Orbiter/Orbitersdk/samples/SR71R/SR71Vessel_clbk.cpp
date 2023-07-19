@@ -70,7 +70,6 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	SetNosewheelSteering(true);
 
 	// Setups:
-	SetupVesselComponents();
 	SetupAerodynamics();
 	SetCameraOffset(bm::main::PilotPOV_location);
 
@@ -78,11 +77,14 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
     CreateMainPropellant(MAX_FUEL);
     CreateRcsPropellant(MAX_RCS_FUEL);
 
+	// Controls that live in vessel : must come before the baseVessel call.
+	AddControl(&statusDock_);
+
 	bco::BaseVessel::clbkSetClassCaps(cfg);
 
 	SetMaxWheelbrakeForce(4e5);
-
 	SetupSurfaces();
+
 }
 
 int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
@@ -183,26 +185,9 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
-//	apu_.Step(simt, simdt, mjd);
-//	avionics_.Step(simt, simdt, mjd);
-//	cargoBayController_.Step(simt, simdt, mjd);
-//    canopy_.Step(simt, simdt, mjd);
-//	fuelCell_.Step(simt, simdt, mjd);
-//	hydrogenTank_.Step(simt, simdt, mjd);
-//	landingGear_.Step(simt, simdt, mjd);
-//	oxygenTank_.Step(simt, simdt, mjd);
-//	powerSystem_.Step(simt, simdt, mjd);
-//	propulsionController_.Step(simt, simdt, mjd);
-//	surfaceControl_.Step(simt, simdt, mjd);
-	statusBoard_.Step(simt, simdt, mjd);
-//	airBrake_.Step(simt, simdt, mjd);
-//	lights_.Step(simt, simdt, mjd);
-//	clock_.Step(simt, simdt, mjd);
-//	computer_.Step(simt, simdt, mjd);
-//    hoverEngines_.Step(simt, simdt, mjd);
-//    retroEngines_.Step(simt, simdt, mjd);
-
     BaseVessel::clbkPostStep(simt, simdt, mjd);
+
+	statusDock_.set_state( DockingStatus(0) == 1 ? bco::status_display::status::on : bco::status_display::status::off);
 }
 
 bool SR71Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)

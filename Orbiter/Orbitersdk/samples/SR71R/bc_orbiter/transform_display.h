@@ -17,6 +17,8 @@
 #pragma once
 
 #include "control.h"
+#include "Tools.h"
+
 namespace bc_orbiter {
 
     class transform_display :

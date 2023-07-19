@@ -2,15 +2,16 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter\BaseVessel.h"
-#include "bc_orbiter\on_off_display.h"
-#include "bc_orbiter\on_off_input.h"
-#include "bc_orbiter\rotary_display.h"
-#include "bc_orbiter\simple_event.h"
-#include "bc_orbiter\transform_display.h"
-#include "bc_orbiter\flat_roll.h"
-#include "bc_orbiter\cryogenic_tank.h"
-#include "bc_orbiter\generic_tank.h"
+#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/on_off_display.h"
+#include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/rotary_display.h"
+#include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/transform_display.h"
+#include "bc_orbiter/flat_roll.h"
+#include "bc_orbiter/cryogenic_tank.h"
+#include "bc_orbiter/generic_tank.h"
+#include "bc_orbiter/status_display.h"
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
@@ -74,7 +75,6 @@ public:
 	void					clbkSaveState(FILEHANDLE scn) override;
 
 	// Setup
-	void					SetupVesselComponents();
 	void					SetupAerodynamics();
 
 	MESHHANDLE				VCMeshHandle() { return vcMeshHandle_; }
@@ -92,7 +92,7 @@ private:
 	// OLD Components:
 //	LeftMFD					mfdLeft_;
 //	RightMFD				mfdRight_;
-	StatusBoard				statusBoard_;
+//	StatusBoard				statusBoard_;
 
 	// DRAG
 	double					bDrag{ 0.0 };
@@ -123,6 +123,7 @@ private:
 	NavModes				navModes_		{ *this };
 	RCSSystem				rcs_			{ *this };
 	Shutters				shutters_		{ *this };
+	APU						apu_			{ powerSystem_ };
 	Beacon					beacon_			{ powerSystem_ };
 	Strobe					strobe_			{ powerSystem_ };
 	NavLight				navLight_		{ powerSystem_ };
@@ -136,7 +137,6 @@ private:
 	FuelCell				fuelCell_		{ powerSystem_, *this, oxygenTank_,	hydrogenTank_ };
 	bco::generic_tank		mainFuelTank_	{ powerSystem_, MAX_FUEL,		FUEL_TRANFER_RATE };
 	bco::generic_tank		rcsFuelTank_	{ powerSystem_, MAX_RCS_FUEL,	FUEL_TRANFER_RATE };
-	APU						apu_			{ powerSystem_, mainFuelTank_ };
 	HUD						headsUpDisplay_	{ powerSystem_, *this };
 	PropulsionController	propulsion_		{ powerSystem_, *this };
 
@@ -226,6 +226,14 @@ private:
 		this->DelControlSurface(ctrlSurfLeftTrim_);
 		this->DelControlSurface(ctrlSurfRightTrim_);
 	}
+
+	// Put status here that does not go anywhere else.
+	bco::status_display     statusDock_	{	bm::vc::MsgLightDock_id,
+											bm::vc::MsgLightDock_verts,
+											bm::pnl::pnlMsgLightDock_id,
+											bm::pnl::pnlMsgLightDock_verts,
+											0.0361
+										};
 
 };
 

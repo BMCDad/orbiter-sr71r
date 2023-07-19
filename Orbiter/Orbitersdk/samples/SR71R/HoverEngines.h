@@ -20,6 +20,7 @@
 #include "bc_orbiter/Animation.h"
 #include "bc_orbiter/BaseVessel.h"
 #include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/status_display.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
@@ -104,4 +105,11 @@ private:
                                                 bm::pnl::pnlDoorHover_verts,
                                                 bm::pnl::pnlDoorHover_RC
                                         };
+
+    bco::status_display     status_ {           bm::vc::MsgLightHover_id,
+                                                bm::vc::MsgLightHover_verts,
+                                                bm::pnl::pnlMsgLightHover_id,
+                                                bm::pnl::pnlMsgLightHover_verts,
+                                                0.0361
+                                            };
 };

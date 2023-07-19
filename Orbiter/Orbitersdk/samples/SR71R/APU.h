@@ -20,6 +20,7 @@
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/rotary_display.h"
+#include "bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
@@ -56,9 +57,8 @@ class APU :
 	public bco::power_consumer
 {
 public:
-	APU(bco::power_provider& pwr, bco::consumable& main_tank) : 
-		power_(pwr),
-		main_tank_(main_tank)
+	APU(bco::power_provider& pwr) : 
+		power_(pwr)
 	{
 		power_.attach_consumer(this);
 
@@ -69,6 +69,7 @@ public:
 	void handle_set_class_caps(bco::BaseVessel& vessel) override {
 		vessel.AddControl(&switchEnabled_);
 		vessel.AddControl(&gaugeAPULevel_);
+		vessel.AddControl(&status_);
 	}
 	// *** PoweredComponent ***
 	/**
@@ -80,28 +81,37 @@ public:
 
 	// post_step
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override {
+		bool hasFuel = false;
+
 		if (!IsPowered()) {
 			signalHydPressure_.fire(0.0);
 		}
 		else {
-			auto hasFuel = main_tank_.level() > 0.0;
+			hasFuel = slotFuelLevel_.value() > 0.0;
 
 			if (hasFuel) {
-				main_tank_.draw(APU_BURN_RATE * simdt);
+// TODO				main_tank_.draw(APU_BURN_RATE * simdt);
 				signalHydPressure_.fire(1.0);
 			}
 			else {
 				signalHydPressure_.fire(0.0);
 			}
 		}
+
+		status_.set_state(
+			IsPowered() 
+			?	hasFuel		
+				?	bco::status_display::status::on
+				:	bco::status_display::status::warn
+			:	bco::status_display::status::off
+		);
 	}
 
-	// Inputs:
 	bco::signal<double>&	HydroPressSignal()		{ return signalHydPressure_; }		// Drives the hydraulic pressure gauge
+	bco::slot<double>&		FuelLevelSlot()			{ return slotFuelLevel_; }
 
 private:
 	bco::power_provider&	power_;
-	bco::consumable&		main_tank_;
 
 	bool IsPowered() const {
 		return 
@@ -110,6 +120,8 @@ private:
 	}
 
 	bco::signal<double>		signalHydPressure_;
+	bco::slot<double>		slotFuelLevel_;
+
 
 	bco::on_off_input		switchEnabled_ {			// APU Power
 												{ bm::vc::SwAPUPower_id },
@@ -128,5 +140,12 @@ private:
 												(300 * RAD),	// Clockwise
 												0.2,
 												[](double d) {return (d); }	// Transform to amps.
+											};
+
+	bco::status_display     status_     {       bm::vc::MsgLightAPU_id,
+												bm::vc::MsgLightAPU_verts,
+												bm::pnl::pnlMsgLightAPU_id,
+												bm::pnl::pnlMsgLightAPU_verts,
+												0.0361
 											};
 };

@@ -22,6 +22,7 @@
 #include "bc_orbiter/BaseVessel.h"
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
@@ -131,5 +132,12 @@ private:
                                                     bm::pnl::pnlDoorCargo_id,
                                                     bm::pnl::pnlDoorCargo_verts,
                                                     bm::pnl::pnlDoorCargo_RC
+                                                };
+
+    bco::status_display     status_     {           bm::vc::MsgLightBay_id,
+                                                    bm::vc::MsgLightBay_verts,
+                                                    bm::pnl::pnlMsgLightBay_id,
+                                                    bm::pnl::pnlMsgLightBay_verts,
+                                                    0.0361
                                                 };
 };

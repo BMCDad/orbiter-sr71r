@@ -51,6 +51,9 @@ PropulsionController::PropulsionController(bco::power_provider& pwr, bco::BaseVe
 	vessel.AddControl(&btnRCSValveOpen_);
 	vessel.AddControl(&lightRCSValveOpen_);
 
+	vessel.AddControl(&statusFuel_);
+	vessel.AddControl(&statusLimiter_);
+
 	switchThrustLimit_.attach([&]() { 
 		SetThrustLevel(switchThrustLimit_.is_on() ? ENGINE_THRUST : ENGINE_THRUST_AB); 
 		});
@@ -123,6 +126,13 @@ void PropulsionController::Update(double deltaUpdate)
 //	sigFuelFlowRate_.fire(flow / maxMainFlow_);	 // Converted to 0-1 range.
 	gaugeFuelFlow_.set_state(flow / maxMainFlow_);
 
+	statusLimiter_.set_state(
+		(!IsPowered() || !switchThrustLimit_.is_on())
+		?	bco::status_display::status::off
+		:	bco::status_display::status::on
+	);
+
+
     // Main level
 //    auto trMain = GetMainFuelLevel() * (PI2 * 0.71111);	// 256 deg.
 //	sigMainFuelLevel_.fire(mainFuelLevel_);
@@ -166,6 +176,15 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
 	{
 		auto actualDump = DrawMainFuel(FUEL_DUMP_RATE * deltaUpdate);
 	}
+
+	signalMainFuelLevel_.fire(mainFuelLevel_);
+
+	statusFuel_.set_state(
+		(mainFuelLevel_ > 0.2) || !IsPowered()
+		?	bco::status_display::status::off
+		:	mainFuelLevel_ == 0.0
+			?	bco::status_display::status::error
+			:	bco::status_display::status::warn);
 }
 
 double PropulsionController::GetVesselMainThrustLevel()

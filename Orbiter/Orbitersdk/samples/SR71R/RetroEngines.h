@@ -20,6 +20,7 @@
 #include "bc_orbiter/Animation.h"
 #include "bc_orbiter/BaseVessel.h"
 #include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/status_display.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
@@ -85,4 +86,12 @@ private:
                                                 bm::pnl::pnlDoorRetro_verts,
                                                 bm::pnl::pnlDoorRetro_RC
                                             };
+
+    bco::status_display     status_ {           bm::vc::MsgLightRetro_id,
+                                                bm::vc::MsgLightRetro_verts,
+                                                bm::pnl::pnlMsgLightRetro_id,
+                                                bm::pnl::pnlMsgLightRetro_verts,
+                                                0.0361
+                                            };
+
 };

@@ -34,10 +34,22 @@ void HoverEngines::handle_post_step(bco::BaseVessel& vessel, double simt, double
     if (IsPowered()) {
         animHoverDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
     }
+
+    status_.set_state(
+        IsPowered()
+        ?   IsMoving()
+            ?   bco::status_display::status::warn
+            :   switchOpen_.is_on()
+                ?   bco::status_display::status::on
+                :   bco::status_display::status::off
+        :   bco::status_display::status::off);
 }
 
 void HoverEngines::handle_set_class_caps(bco::BaseVessel& vessel)
 {
+    vessel.AddControl(&switchOpen_);
+    vessel.AddControl(&status_);
+
     auto vcIdx = vessel.GetVCMeshIndex();
     auto mIdx = vessel.GetMainMeshIndex();
 
