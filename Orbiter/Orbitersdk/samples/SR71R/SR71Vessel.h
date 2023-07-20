@@ -101,15 +101,6 @@ private:
 	// ** COMPONENTS **
 
 
-	// Map components that handle config state with a key for that component.
-	std::map <std::string, bco::manage_state*>		mapStateManagement_{
-		  {"CLOCK",		&clock_			}
-		, {"POWER",		&powerSystem_	}
-		, {"AERODATA",	&aeroData_		}
-		, {"CANOPY",	&canopy_		}
-		, {"CARGO",		&cargobay_		}
-	};
-
 	// ***  Airspeed  *** //
 
 	PowerSystem				powerSystem_	{ *this };
@@ -141,6 +132,29 @@ private:
 	PropulsionController	propulsion_		{ powerSystem_, *this };
 
 	LeftMFD					mfdLeft_		{ powerSystem_, this };
+
+
+	// Map components that handle config state with a key for that component.
+	std::map <std::string, bco::manage_state*>		mapStateManagement_{
+		  { "CLOCK",		&clock_			}
+		, { "POWER",		&powerSystem_	}
+		, { "AERODATA",		&aeroData_		}
+		, { "CANOPY",		&canopy_		}
+		, { "CARGO",		&cargobay_		}
+		, { "APU",			&apu_			}
+		, { "FUELCELL",		&fuelCell_		}
+		, { "LH2",			&hydrogenTank_	}
+		, { "LOX",			&oxygenTank_	}
+		, { "GEAR",			&landingGear_	}
+		, { "PROPULSION",	&propulsion_	}
+		, { "AIRBRAKE",		&airBrake_		}
+		, { "NAVLIGHTS",	&navLight_		}
+		, { "BEACON",		&beacon_		}
+		, { "STROBE",		&strobe_		}
+		, { "HOVER",		&hoverEngines_	}
+		, { "RETRO",		&retroEngines_	}
+	};
+
 
 	//// ** TEST ** //
 	//bco::flat_roll<int>  numtest{

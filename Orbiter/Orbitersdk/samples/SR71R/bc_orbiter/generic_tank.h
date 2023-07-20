@@ -34,20 +34,18 @@ namespace bc_orbiter {
 
 	*/
 	class generic_tank :
-		public vessel_component,
-		public post_step,
-		public power_consumer,
-		public manage_state,
-		public consumable
+		  public vessel_component
+		, public post_step
+		, public power_consumer
+		, public manage_state
+		, public consumable
 	{
 	public:
 		generic_tank(power_provider& pwr, double capacity, double fillRate) :
-			power_(pwr),
-			capacity_(capacity),
-			fillRate_(fillRate),
-			level_(0.0),
-			isFilling_(false),
-			prevTime_(0.0) {
+			  power_(pwr)
+			, capacity_(capacity)
+			, fillRate_(fillRate) 
+		{
 			power_.attach_consumer(this);
 		}
 
@@ -89,26 +87,20 @@ namespace bc_orbiter {
 		bool handle_load_state(const std::string& line) override {
 			// [a b]  :  [level fillPumpOn]
 
-			double level = 0.0;
-			int isPumpOn = 1;
-
 			std::istringstream in(line);
 
-			if (in >> level >> isPumpOn) {
-				auto lv = fmax(0.0, fmin(1.0, level));
-				level_ = lv * capacity_;
+			in >> level_ >> isFilling_;
+			level_ = fmax(0.0, level_);
+			level_ = fmin(capacity_, level_);
 
-				sigIsFilling_.fire((isPumpOn == 1) ? true : false);
-				return true;
-			}
-			else {
-				return false;
-			}
+			sigIsFilling_.fire((isFilling_ == 1) ? true : false);
+				
+			return true;
 		}
 
 		std::string handle_save_state() override {
 			std::ostringstream os;
-			os << (level_ / capacity_) << " " << sigIsFilling_.current() ? 1 : 0;
+			os << level_ << " " << isFilling_;
 			return os.str();
 		}
 
@@ -164,12 +156,12 @@ namespace bc_orbiter {
 		signal<bool>			sigIsFilling_;
 		signal<bool>			sigIsAvailable_;
 
-		bool					isFilling_;
-		bool					isExternal_;
-		double					prevTime_;
+		bool					isFilling_	{ false };
+		bool					isExternal_	{ false };
+		double					prevTime_	{ 0.0 };
 
 		double					capacity_;
-		double					level_;
+		double					level_		{ 0.0 };
 		double					fillRate_;
 	};
 }

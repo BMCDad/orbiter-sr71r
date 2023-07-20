@@ -30,11 +30,12 @@
 namespace bco = bc_orbiter;
 
 class HoverEngines : 
-    public bco::vessel_component,
-    public bco::power_consumer,
-    public bco::post_step,
-    public bco::set_class_caps,
-    public bco::draw_hud
+      public bco::vessel_component
+    , public bco::power_consumer
+    , public bco::post_step
+    , public bco::set_class_caps
+    , public bco::draw_hud
+    , public bco::manage_state
 {
 public:
     HoverEngines(bco::power_provider& pwr, bco::BaseVessel& vessel);
@@ -49,6 +50,10 @@ public:
     void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
     void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+
+    // manage_state
+    bool handle_load_state(const std::string& line) override;
+    std::string handle_save_state() override;
 
 private:
     const double MIN_VOLTS = 20.0;

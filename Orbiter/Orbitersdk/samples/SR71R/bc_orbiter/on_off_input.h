@@ -114,6 +114,23 @@ namespace bc_orbiter {
 		void attach_on_change(const std::function<void()>& func) override {
 			attach(func);
 		}
+
+		friend std::istream& operator>>(std::istream& input, on_off_input& obj) {
+			bool isEnabled;
+
+			input >> isEnabled;
+			obj.state_ = isEnabled;
+			obj.animVC_.SetState(isEnabled ? 1.0 : 0.0);
+			obj.fire();
+
+			return input;
+		}
+
+		friend std::ostream& operator<<(std::ostream& output, on_off_input& obj) {
+			output << obj.state_ ? "1" : "0";
+			return output;
+		}
+
 	private:
 		AnimationGroup		vcAnimGroup_;
 		bool				state_{ false };

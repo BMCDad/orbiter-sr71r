@@ -95,24 +95,15 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 // manage_state
 bool AeroData::handle_load_state(const std::string& line) {
 	// [a b]  :  [course heading]
-	int course = 0.0;
-	int heading = 0.0;
-
 	std::istringstream in(line);
 
-	if (in >> course >> heading) {
-		setCourseSignal_.fire(course);
-		setHeadingSignal_.fire(heading);
-		return true;
-	}
-	else {
-		return false;
-	}
+	in >> setCourseSignal_ >> setHeadingSignal_ >> switchAvionPower_ >> switchAvionMode_ >> switchNavMode_;
+	return false;
 }
 
 std::string AeroData::handle_save_state() {
 	std::ostringstream os;
-	os << setCourseSignal_.current() << " " << setHeadingSignal_.current();
+	os << setCourseSignal_ << " " << setHeadingSignal_ << " " << switchAvionPower_ << " " << switchAvionMode_ << " " << switchNavMode_;
 	return os.str();
 }
 

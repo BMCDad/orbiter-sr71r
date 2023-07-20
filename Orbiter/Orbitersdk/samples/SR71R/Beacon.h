@@ -30,7 +30,9 @@ namespace bco = bc_orbiter;
 class Beacon : 
 	  public bco::vessel_component
 	, public bco::power_consumer
-	, public bco::set_class_caps {
+	, public bco::set_class_caps 
+	, public bco::manage_state
+{
 
 public:
 	Beacon(bco::power_provider& pwr) 
@@ -49,8 +51,22 @@ public:
 	void handle_set_class_caps(bco::BaseVessel& vessel) override {
 		vessel.AddBeacon(&specBeaconTop_);
 		vessel.AddBeacon(&specBeaconBottom_);
-		
+	
 		vessel.AddControl(&switchBeaconLights_);
+	}
+
+	// manage_state
+	bool handle_load_state(const std::string& line) override {
+
+		std::istringstream in(line);
+		in >> switchBeaconLights_;
+		return true;
+	}
+
+	std::string handle_save_state() override {
+		std::ostringstream os;
+		os << switchBeaconLights_;
+		return os.str();
 	}
 
 private:

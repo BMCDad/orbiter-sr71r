@@ -47,25 +47,20 @@ void LandingGear::handle_post_step(bco::BaseVessel& vessel, double simt, double 
 
 bool LandingGear::handle_load_state(const std::string& line)
 {
-    // [a] : a: air brake actual position (they can differ)
+    // [a b] : a: position, 1 (down) 0 (up)   b: anim state
     double lgPos = 0.0;
 
     std::istringstream in(line);
 
-    if (in >> lgPos) {
-        animLandingGear_.SetState(lgPos);
-        return true;
-    }
-    else {
-        return false;
-    }
+    in >> position_ >> animLandingGear_;
+    return true;
 }
 
 std::string LandingGear::handle_save_state()
 {
     std::ostringstream os;
 
-    os << position_ << " " << animLandingGear_.GetState();
+    os << position_ << " " << animLandingGear_;
     return os.str();
 }
 

@@ -357,42 +357,16 @@ void PropulsionController::handle_set_class_caps(bco::BaseVessel& vessel)
 
 bool PropulsionController::handle_load_state(const std::string& line)
 {
-	int limit;
-	int transMode_ = 0; // TODO
-	int fill = 0;
-	int transfer = 0;
-	int dump = 0;
-
-//	sscanf_s(configLine + 10, "%i%i%i%i%i", &limit, &transMode_, &fill, &transfer, &dump);
-
-	// Thrust limit.
-	// TODO swThrustLimit_.SetState((limit == 0) ? 0.0 : 1.0);
-
-	// Transfer switch.
-	// TODO transMode_ = (transMode_ == 0) ? TransMode::RCS : TransMode::Main;
-	// TODO swSelectTransfer_.SetState((transMode_ == TransMode::RCS) ? 0 : 1);
-
-	// Pumps
-	// TODO isFilling_ = (fill != 0);   <--fuel valve open
-	// TODO isTransfering_ = (transfer != 0);
-	// TODO isDumping_ = (dump != 0);
-
-    return true;
+	std::istringstream in(line);
+	in >> switchThrustLimit_;
+	return true;
 }
 
 std::string PropulsionController::handle_save_state()
 {
-	//char cbuf[256];
-	//auto val = 0; // TODO (swThrustLimit_.GetState() == 0.0) ? 0 : 1;
-
-	//auto step = 0; // TODO (swSelectTransfer_.GetState() == 0.0) ? 0 : 1;
-	//auto iFill = 0; // TODO (isFilling_) ? 1 : 0;
-	//auto iTrans = 0; // TODO (isTransfering_) ? 1 : 0;
-	//auto iDump = 0; // TODO (isDumping_) ? 1 : 0;
- //   
-	//sprintf_s(cbuf, "%i %i %i %i %i", val, step, iFill, iTrans, iDump);
-	//oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
-	return std::string();
+	std::ostringstream os;
+	os << switchThrustLimit_;
+	return os.str();
 }
 
 void PropulsionController::SetVesselMainThrustLevel(double level)

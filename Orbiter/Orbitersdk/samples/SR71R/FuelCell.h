@@ -59,9 +59,10 @@ namespace bco = bc_orbiter;
 		
 */
 class FuelCell : 
-	public bco::vessel_component,
-	public bco::post_step,
-	public bco::power_consumer
+	  public bco::vessel_component
+	, public bco::post_step
+	, public bco::power_consumer
+	, public bco::manage_state
 {
 	const double MAX_VOLTS = 28.0;
 	const double MIN_VOLTS = 20.0;
@@ -79,10 +80,12 @@ public:
 	// power_consumer
 	double amp_draw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
 
+	// manage_state
+	bool handle_load_state(const std::string& line) override;
+	std::string handle_save_state() override;
+
 	// Outputs
 	bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
-	//bco::signal<double>&	LOXDrawSignal()			{ return signalLOXDraw_; }			// Reports LOX draw adjusted for step.
-	//bco::signal<double>&	HYDDrawSignal()			{ return signalHYDDraw_; }			// Reports HYD draw adjusted for step.
 
 private:
 	bco::power_provider&	power_;
@@ -98,8 +101,6 @@ private:
 	void SetIsFuelCellPowerAvailable(bool newValue);
 
 	bco::signal<double>	sigAvailPower_;
-	//bco::signal<double>	signalLOXDraw_;
-	//bco::signal<double>	signalHYDDraw_;
 
 	bool				isFuelCellAvailable_;
 	double				ampDrawFactor_{ 0.0 };

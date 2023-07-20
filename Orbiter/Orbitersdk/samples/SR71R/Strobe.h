@@ -30,7 +30,9 @@ namespace bco = bc_orbiter;
 class Strobe :
   	  public bco::vessel_component
 	, public bco::power_consumer
-	, public bco::set_class_caps {
+	, public bco::set_class_caps 
+	, public bco::manage_state
+{
 
 public:
 	Strobe(bco::power_provider& pwr)
@@ -49,6 +51,20 @@ public:
 	void handle_set_class_caps(bco::BaseVessel& vessel) {
 		vessel.AddBeacon(&specStrobeLeft_);
 		vessel.AddBeacon(&specStrobeRight_);
+	}
+
+	// manage_state
+	bool handle_load_state(const std::string& line) override {
+
+		std::istringstream in(line);
+		in >> switchStrobeLights_;
+		return true;
+	}
+
+	std::string handle_save_state() override {
+		std::ostringstream os;
+		os << switchStrobeLights_;
+		return os.str();
 	}
 
 private:

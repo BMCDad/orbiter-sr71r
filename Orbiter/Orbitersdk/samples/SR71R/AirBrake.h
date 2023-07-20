@@ -40,10 +40,10 @@ AIRBRAKE a
 a = 0.0 position, 0.0 closed, 1.0 fully open
 */
 class AirBrake :
-	public bco::vessel_component,
-    public bco::set_class_caps,
-    public bco::post_step,
-    public bco::manage_state
+	  public bco::vessel_component
+    , public bco::set_class_caps 
+    , public bco::post_step
+    , public bco::manage_state
 {
 public:
 	AirBrake(bco::BaseVessel& vessel);

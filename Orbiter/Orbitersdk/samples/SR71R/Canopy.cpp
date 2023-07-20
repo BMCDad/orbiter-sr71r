@@ -47,14 +47,9 @@ void Canopy::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt
 
 bool Canopy::handle_load_state(const std::string& line)
 {
-    // [a]  a = animation position
-
-    int animPosition = 0;
-
     std::istringstream in(line);
 
-    if (in >> animPosition) {
-        animCanopy_.SetState(animPosition);
+    if (in >> switchPower_ >> switchOpen_ >> animCanopy_) {
         return true;
     }
     else {
@@ -65,8 +60,7 @@ bool Canopy::handle_load_state(const std::string& line)
 std::string Canopy::handle_save_state()
 {
     std::ostringstream os;
-
-    os << animCanopy_.GetState();
+    os << switchPower_ << " " << switchOpen_ << " " << animCanopy_;
     return os.str();
 }
 

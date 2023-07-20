@@ -60,28 +60,16 @@ void AirBrake::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 bool AirBrake::handle_load_state(const std::string& line)
 {
 	// [a b] : a: air brake switch position.   b: air brake actual position (they can differ)
-	double switchPos = 0.0;
-	double brakePos = 0.0;
 
 	std::istringstream in(line);
-
-	if (in >> switchPos >> brakePos) {
-		position_ = switchPos;
-		animAirBrake_.SetState(brakePos);
-		animBrakeSwitch_.SetState(position_);
-
-		return true;
-	}
-	else {
-		return false;
-	}
+	in >> position_ >> animAirBrake_;
+	return true;
 }
 
 std::string AirBrake::handle_save_state()
 {
 	std::ostringstream os;
-
-	os << position_ << " " << animAirBrake_.GetState();
+	os << position_ << " " << animAirBrake_;
 	return os.str();
 }
 

@@ -39,14 +39,20 @@ PowerSystem::PowerSystem(bco::BaseVessel& vessel) :
 
 bool PowerSystem::handle_load_state(const std::string& line)
 {
-	// Only thing to persist right now is batt level, and that is not currently modelled.
-	batteryLevel_ = 1.0;
+	std::stringstream ss(line);
+	ss >> switchEnabled;
+	ss >> switchConnectExternal_;
+	ss >> switchConnectFuelCell_;
+
 	return true;
 }
 
 std::string PowerSystem::handle_save_state()
 {
-	return "1.0";
+	std::stringstream ss;
+
+	ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_;
+	return ss.str();
 }
 
 //void PowerSystem::AddMainCircuitDevice(bco::PoweredComponent* device)

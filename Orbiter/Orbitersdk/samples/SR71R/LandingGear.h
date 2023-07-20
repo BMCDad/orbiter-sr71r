@@ -39,11 +39,11 @@ class VESSEL;
 	b = 0.0 position
 */
 class LandingGear : 
-    public bco::vessel_component,
-    public bco::set_class_caps,
-    public bco::post_step,
-    public bco::manage_state,
-    public bco::draw_hud
+    public bco::vessel_component
+    , public bco::set_class_caps
+    , public bco::post_step
+    , public bco::manage_state
+    , public bco::draw_hud
 {
 public:
 	LandingGear(bco::BaseVessel& vessel);
@@ -67,8 +67,6 @@ private:
     bco::slot<double>       hydraulicPressSlot_;
 
     double                  position_{ 0.0 };
-
-	const char*				ConfigKey = "GEAR";
 
                                                 /*  animLandingGear_ has no visual.  We use it
                                                     as a target provider for the main landing gear

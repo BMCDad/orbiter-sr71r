@@ -91,6 +91,20 @@ void RetroEngines::handle_set_class_caps(bco::BaseVessel& vessel)
     vessel.AddExhaustStream(retroThrustHandles_[1], _V(4.38, 0, 3), &exhaust_retro);
 }
 
+bool RetroEngines::handle_load_state(const std::string& line)
+{
+    std::istringstream in(line);
+    in >> switchDoors_ >> animRetroDoors_;
+    return true;
+}
+
+std::string RetroEngines::handle_save_state()
+{
+    std::ostringstream os;
+    os << switchDoors_ << " " << animRetroDoors_;
+    return os.str();
+}
+
 void RetroEngines::EnableRetros(bool isEnabled)
 {
     if (isEnabled)

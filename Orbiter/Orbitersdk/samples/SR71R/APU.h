@@ -54,7 +54,8 @@ class APU :
 	public bco::vessel_component,
 	public bco::set_class_caps,
 	public bco::post_step,
-	public bco::power_consumer
+	public bco::power_consumer,
+	public bco::manage_state
 {
 public:
 	APU(bco::power_provider& pwr) : 
@@ -71,13 +72,29 @@ public:
 		vessel.AddControl(&gaugeAPULevel_);
 		vessel.AddControl(&status_);
 	}
-	// *** PoweredComponent ***
-	/**
-		Draws a fixed amp load when the main circuit is powered and
-		the APU switch is on.
-	*/
 
 	double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
+
+	// manage_state
+	bool handle_load_state(const std::string& line) override {
+		std::stringstream in(line);
+
+		if (in >> switchEnabled_) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	std::string handle_save_state() override 
+	{
+		std::ostringstream os;
+		os << switchEnabled_;
+		return os.str();
+	}
+
+
 
 	// post_step
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override {

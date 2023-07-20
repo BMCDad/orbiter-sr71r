@@ -47,26 +47,15 @@ void CargoBayController::handle_post_step(bco::BaseVessel& vessel, double simt, 
 
 bool CargoBayController::handle_load_state(const std::string& line)
 {
-    // [a]  a = animation position
-
-    int animPosition = 0;
-
     std::istringstream in(line);
-
-    if (in >> animPosition) {
-        animCargoBayDoors_.SetState(animPosition);
-        return true;
-    }
-    else {
-        return false;
-    }
+    in >> switchPower_ >> switchOpen_ >> animCargoBayDoors_;
+    return true;
 }
 
 std::string CargoBayController::handle_save_state()
 {
     std::ostringstream os;
-
-    os << animCargoBayDoors_.GetState();
+    os << switchPower_ << " " << switchOpen_ << " " << animCargoBayDoors_;
     return os.str();
 }
 

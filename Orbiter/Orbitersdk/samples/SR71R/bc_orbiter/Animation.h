@@ -298,6 +298,21 @@ namespace bc_orbiter
 
         const double* GetStatePtr() const { return &updateState_.state_; }
 
+        friend std::istream& operator>>(std::istream& input, AnimationBase& obj) {
+            double state;
+
+            input >> state;
+            obj.SetState(state);
+
+            return input;
+        }
+
+        friend std::ostream& operator<<(std::ostream& output, AnimationBase& obj) {
+            output.precision(4);
+            output << obj.GetState();
+            return output;
+        }
+
     private:
 
         StateUpdate			updateState_;

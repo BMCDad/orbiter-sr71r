@@ -81,12 +81,12 @@ e = 0/1 Dump pump is active.
 */
 
 class PropulsionController : 
-	public bco::vessel_component,
-	public bco::set_class_caps,
-	public bco::power_consumer,
-	public bco::post_step,
-	public bco::manage_state,
-	public bco::draw_hud
+	  public bco::vessel_component
+	, public bco::set_class_caps
+	, public bco::power_consumer
+	, public bco::post_step
+	, public bco::manage_state
+	, public bco::draw_hud
 {
 public:
 	PropulsionController(bco::power_provider& pwr, bco::BaseVessel& vessel);

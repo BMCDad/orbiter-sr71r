@@ -31,7 +31,9 @@ namespace bco = bc_orbiter;
 class NavLight : 
 	  public bco::vessel_component
 	, public bco::power_consumer
-	, public bco::set_class_caps {
+	, public bco::set_class_caps
+	, public bco::manage_state
+{
 
 public:
 	NavLight (bco::power_provider& pwr)
@@ -53,6 +55,20 @@ public:
 		vessel.AddBeacon(&specNavRear_);
 
 		vessel.AddControl(&switchNavigationLights_);
+	}
+
+	// manage_state
+	bool handle_load_state(const std::string& line) override {
+
+		std::istringstream in(line);
+		in >> switchNavigationLights_;
+		return true;
+	}
+
+	std::string handle_save_state() override {
+		std::ostringstream os;
+		os << switchNavigationLights_;
+		return os.str();
 	}
 
 private:

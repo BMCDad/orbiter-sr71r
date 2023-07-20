@@ -81,6 +81,20 @@ namespace bc_orbiter {
 		void update(T val) {	// Update value without firing event (config)
 			value_ = val;
 		}
+
+		friend std::istream& operator>>(std::istream& input, signal<T>& obj) {
+			T value;
+			input >> value;
+			obj.fire(value);
+
+			return input;
+		}
+
+		friend std::ostream& operator<<(std::ostream& output, signal<T>& obj) {
+			output << obj.value_;
+			return output;
+		}
+
 	private:
 		std::vector<slot<T>*> slots_;
 		T value_{};
