@@ -23,8 +23,6 @@
 SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) : 
 	bco::BaseVessel(hvessel, flightmodel),
 	meshVirtualCockpit_(nullptr),
-//	mfdLeft_(               this,   MFD_AMPS),
-//	mfdRight_(              this,   MFD_AMPS),
 	navModes_(              *this),
 	slotHydraulicLevel_([&](double v) { UpdateHydraulicLevel(v); }),
 	ctrlSurfLeftAileron_(nullptr),
@@ -34,10 +32,6 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	ctrlSurfLeftRudder_(nullptr),
 	ctrlSurfRightRudder_(nullptr)
 {
-//	RegisterComponent(&statusBoard_);
-//	RegisterComponent(&mfdLeft_);
-
-	//
 	AddComponent(&aeroData_);
 	AddComponent(&airBrake_);
 	AddComponent(&airspeed_);
@@ -61,6 +55,7 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	AddComponent(&strobe_);
 
 	AddComponent(&mfdLeft_);
+	AddComponent(&mfdRight_);
 
 
 	bco::connect(aeroData_.IsAeroActiveSignal(), altimeter_.EnabledSlot());

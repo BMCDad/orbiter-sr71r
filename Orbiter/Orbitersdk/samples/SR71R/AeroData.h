@@ -30,10 +30,10 @@
 namespace bco = bc_orbiter;
 
 class AeroData :
-	public bco::vessel_component,
-	public bco::post_step,
-	public bco::manage_state,
-	public bco::power_consumer
+	  public bco::vessel_component
+	, public bco::post_step
+	, public bco::manage_state
+	, public bco::power_consumer
 {
 
 public:

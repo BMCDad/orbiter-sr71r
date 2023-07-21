@@ -27,10 +27,10 @@
 namespace bco = bc_orbiter;
 
 class LeftMFD : 
-	public bco::MFDBase,
-	public bco::set_class_caps,
-	public bco::load_vc,
-	public bco::load_panel
+	  public bco::MFDBase
+	, public bco::set_class_caps
+	, public bco::load_vc
+	, public bco::load_panel
 {
 public:
 	LeftMFD(bco::power_provider& pwr, bco::BaseVessel* vessel);
@@ -39,17 +39,13 @@ public:
 
 	// load_vc
 	bool handle_load_vc(bco::BaseVessel& vessel, int vcid) override;
-	//bool handle_mouse_vc(bco::BaseVessel& vessel, int id, int event) override;
-	//bool handle_redraw_vc(bco::BaseVessel& vessel, int id, int event, SURFHANDLE surf) override;
 	bool OnVCMouseEvent(int id, int event);
 	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf);
 
-	//bool OnLoadPanel2D(int id, PANELHANDLE hPanel) override;
 	bool handle_load_panel(bco::BaseVessel& vessel, int id, PANELHANDLE hPanel) override;
-	//bool handle_mouse_panel(bco::BaseVessel& vessel, int id, int event) override;
-	//bool handle_redraw_panel(bco::BaseVessel& vessel, int id, int event, SURFHANDLE surf) override;
 	bool OnPanelMouseEvent(int id, int event);
 	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf);
+
 private:
 	bco::FontInfo	vcFont_;
 

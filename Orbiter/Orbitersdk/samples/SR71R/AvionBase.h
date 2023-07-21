@@ -36,6 +36,7 @@ public:
 
 	// Slots:
 	bco::slot<bool>& EnabledSlot() { return enabledSlot_; }
+	// True = atmosphere mode, False = exo mode
 	bco::slot<bool>& AvionicsModeSlot() { return avionicsModeSlot_; }
 
 private:

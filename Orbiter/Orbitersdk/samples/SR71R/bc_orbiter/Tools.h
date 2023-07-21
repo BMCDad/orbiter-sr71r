@@ -329,12 +329,12 @@ namespace bc_orbiter
 
 	/**
 	Calculate the KEAS for the given vessel.
+	Knots Equivalent Air Speed -- adjusted for atmospheric air pressure.
 	@param vessel Vessel to get KEAS for.
 	*/
 	inline double GetVesselKeas(const VESSEL3* vessel)
 	{
-		double speedOfSound = 340.29;   // m/s
-
+		const double speedOfSound = 340.29;   // m/s
 		return (vessel->GetMachNumber() * speedOfSound * sqrt(vessel->GetAtmPressure() / ATMP)) * 1.94384;
 	}
 

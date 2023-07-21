@@ -22,7 +22,7 @@
 #include "NavModes.h"
 #include "PowerSystem.h"
 #include "LeftMFD.h"
-//#include "RightMfd.h"
+#include "RightMfd.h"
 #include "CargoBayController.h"
 #include "Canopy.h"
 #include "APU.h"
@@ -132,6 +132,7 @@ private:
 	PropulsionController	propulsion_		{ powerSystem_, *this };
 
 	LeftMFD					mfdLeft_		{ powerSystem_, this };
+	RightMFD				mfdRight_		{ powerSystem_, this };
 
 
 	// Map components that handle config state with a key for that component.

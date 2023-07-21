@@ -26,9 +26,9 @@
 namespace bco = bc_orbiter;
 
 class Airspeed :
-	public AvionBase,
-	public bco::post_step {
-
+	  public AvionBase
+	, public bco::post_step 
+{
 public:
 
 	Airspeed(bco::BaseVessel& vessel) {
@@ -63,14 +63,14 @@ public:
 
 	// post_step
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override {
-		auto keas = 0.0;
-		auto kias = 0.0;
-		double mach = 0.0;
-		double maxMach = 0.0;
-		double speedRatio = 0.0;
-		double maxMachRatio = 0.0;
-		double kiasSpeed = 0.0;
-		bool isOverSpeed = false;
+		double  keas			= 0.0;		// equivalent airspeed, shows in TDI
+		double  kias			= 0.0;		// indicated, shows as dial.
+		double  mach			= 0.0;		// shows in TDI and as a dial
+		double  maxMach			= 0.0;		// Error bar on dial
+		double  speedRatio		= 0.0;		// 
+		double  maxMachRatio	= 0.0;
+		double  kiasSpeed		= 0.0;
+		bool	isOverSpeed		= false;
 
 		if (EnabledSlot().value()) {
 			keas = bco::GetVesselKeas(&vessel);
@@ -230,6 +230,7 @@ private:
 			0.0244
 	};
 
+	// Flags: true is off (not showing)
 	bco::on_off_display		speedIsVelocityFlag_{
 		bm::vc::SpeedVelocityFlag_id,
 			bm::vc::SpeedVelocityFlag_verts,

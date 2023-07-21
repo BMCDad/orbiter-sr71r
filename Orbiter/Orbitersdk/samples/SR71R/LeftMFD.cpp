@@ -91,20 +91,14 @@ bool LeftMFD::handle_load_vc(bco::BaseVessel& vessel, int vcid)
 
 
 	// PWR
-	//eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
-	//AssignPwrKey(eventId);
 	oapiVCRegisterArea(GetPwrKey(), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 	oapiVCSetAreaClickmode_Spherical(GetPwrKey(), bm::vc::MFCLeftPWR_location, MFDBRAD);
 
 	// SEL
-	//eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
-	//AssignSelect(eventId);
 	oapiVCRegisterArea(GetSelectKey(), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 	oapiVCSetAreaClickmode_Spherical(GetSelectKey(), bm::vc::MFCLeftSEL_location, MFDBRAD);
 
 	// MNU
-	//eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
-	//AssignMenu(eventId);
 	oapiVCRegisterArea(GetMenuKey(), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 	oapiVCSetAreaClickmode_Spherical(GetMenuKey(), bm::vc::MFCLeftMNU_location, MFDBRAD);
 	return true;

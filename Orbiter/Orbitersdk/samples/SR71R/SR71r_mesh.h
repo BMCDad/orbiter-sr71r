@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Tue Jul 18 15:56:39 2023
+// Date: Thu Jul 20 20:22:09 2023
 
 
 #include "orbitersdk.h"
@@ -929,37 +929,40 @@ namespace bm
     const UINT pnlMsgLightBay_id = 124;
     const UINT pnlMsgLightBattery_id = 125;
     const UINT pnlMsgLightAPU_id = 126;
-    const UINT pnlClockTimerMinute_id = 127;
-    const UINT pnlRoseCompass_id = 128;
-    const UINT pnlSpeedIndicatorKies_id = 129;
-    const UINT pnlMessagesLabels_id = 130;
-    const UINT pnlClockHour_id = 131;
-    const UINT pnlHSIBearingArrow_id = 132;
-    const UINT pnlSpeedNeedle_id = 133;
-    const UINT pnlClockMinute_id = 134;
-    const UINT pnlHSICourse_id = 135;
-    const UINT pnlClockSecond_id = 136;
-    const UINT pnlHydPress_id = 137;
-    const UINT pnlLOXPress_id = 138;
-    const UINT pnlLH2Press_id = 139;
-    const UINT pnlAmpMeter_id = 140;
-    const UINT pnlVoltMeter_id = 141;
-    const UINT pnlGaFuelFlow_id = 142;
-    const UINT pnlGaFuelMain_id = 143;
-    const UINT pnlGaFuelRCS_id = 144;
-    const UINT pnlHorizonFace_id = 145;
-    const UINT pnlHSICourseNeedle_id = 146;
-    const UINT pnlAlt100Needle_id = 147;
-    const UINT pnlHSICompassHeading_id = 148;
-    const UINT pnlAttitudeFlagOff_id = 149;
-    const UINT pnlHSIOffFlag_id = 150;
-    const UINT pnlCOMStatusPanel_id = 151;
-    const UINT pnlSpeedVelocityFlag_id = 152;
-    const UINT pnlAlt10Needle_id = 153;
-    const UINT pnlHSIExoFlag_id = 154;
-    const UINT pnlSpeedFlagOff_id = 155;
-    const UINT pnlAlt1Needle_id = 156;
-    const UINT pnlCompassFaceTop_id = 157;
+    const UINT pnlTrimNeedle_id = 127;
+    const UINT pnlAccelNeedle_id = 128;
+    const UINT pnlClockTimerMinute_id = 129;
+    const UINT pnlRoseCompass_id = 130;
+    const UINT pnlSpeedIndicatorKies_id = 131;
+    const UINT pnlMessagesLabels_id = 132;
+    const UINT pnlClockHour_id = 133;
+    const UINT pnlHSIBearingArrow_id = 134;
+    const UINT pnlSpeedNeedle_id = 135;
+    const UINT pnlClockMinute_id = 136;
+    const UINT pnlHSICourse_id = 137;
+    const UINT pnlClockSecond_id = 138;
+    const UINT pnlHydPress_id = 139;
+    const UINT pnlLOXPress_id = 140;
+    const UINT pnlLH2Press_id = 141;
+    const UINT pnlAmpMeter_id = 142;
+    const UINT pnlVoltMeter_id = 143;
+    const UINT pnlGaFuelFlow_id = 144;
+    const UINT pnlGaFuelMain_id = 145;
+    const UINT pnlGaFuelRCS_id = 146;
+    const UINT pnlHorizonFace_id = 147;
+    const UINT pnlHSICourseNeedle_id = 148;
+    const UINT pnlAlt100Needle_id = 149;
+    const UINT pnlHSICompassHeading_id = 150;
+    const UINT pnlAttitudeFlagOff_id = 151;
+    const UINT pnlHSIOffFlag_id = 152;
+    const UINT pnlCOMStatusPanel_id = 153;
+    const UINT pnlSpeedVelocityFlag_id = 154;
+    const UINT pnlAOANeedle_id = 155;
+    const UINT pnlAlt10Needle_id = 156;
+    const UINT pnlHSIExoFlag_id = 157;
+    const UINT pnlSpeedFlagOff_id = 158;
+    const UINT pnlAlt1Needle_id = 159;
+    const UINT pnlCompassFaceTop_id = 160;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {847, 617, 917, 673};
@@ -1096,6 +1099,9 @@ namespace bm
     constexpr RECT pnlRightMDFR6_RC = {2290, 476, 2348, 513};
     constexpr RECT pnlRCSValveSwitch_RC = {2052, 882, 2122, 938};
     constexpr RECT pnlRCSAvail_RC = {2064, 947, 2109, 992};
+    constexpr VECTOR3 pnlTrimNeedle_location =     {439.7480, 734.9781, -6.0149};
+    constexpr VECTOR3 pnlAOANeedle_location =     {622.0732, 754.8837, -4.2177};
+    constexpr VECTOR3 pnlAccelNeedle_location =     {299.1662, 734.3121, -9.4503};
 
   }
 

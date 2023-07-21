@@ -39,10 +39,10 @@ namespace bco = bc_orbiter;
 	The HUD mode is managed by Orbiter.
 */
 class HUD : 
-	public bco::vessel_component,
-	public bco::power_consumer,
-	public bco::load_vc,
-	public bco::draw_hud
+	  public bco::vessel_component
+	, public bco::power_consumer
+	, public bco::load_vc
+	, public bco::draw_hud
 {
 public:
 	HUD(bco::power_provider& pwr, bco::BaseVessel& vessel);
@@ -66,7 +66,7 @@ public:
 private:
 	bco::power_provider& power_;
 
-	bool IsPowered() const {	return (HUD_NONE != oapiGetHUDMode()) && power_.volts_available() > 24.0; }
+	bool IsPowered() const {	return power_.volts_available() > 24.0; }
 
 	void OnChanged(int mode);
 
