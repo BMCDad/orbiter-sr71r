@@ -90,6 +90,36 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	attitudeDisplay_.SlotAngle().notify(bank);
 	attitudeDisplay_.SlotTransform().notify(0.100093 * pitch);
 	attitudeFlag_.set_state(IsPowered());
+
+
+
+/////
+	//// ** ACCEL **
+	//gaAccel_.SetState((gforce + 2) / 6);
+
+	//// ** TRIM **
+	//gaTrim_.SetState((trimLevel + 1) / 2);
+
+	//// ** AOA **
+	//// AOA gauge works from -5 to 20 degrees AOA (-.0873 to .3491)
+	//// AOA guage has a throw of 75 degrees (1.3090).
+	//// Guage ratio is 3 AOA -> guage position.  The gauge sits at -5 deg
+	//// which must be accounted for.
+	//auto aoaR = 0.0;
+
+	//// Only worry about AOA if in the atmosphere.
+	//if (dynPressure > 200)
+	//{
+	//	aoaR = angleOfAttack;
+	//	if (aoaR < -0.0873) aoaR = -0.0873;
+	//	if (aoaR > 0.3491) aoaR = 0.3491;
+
+	//	aoaR = aoaR * 3; // Translate to guage angle.
+	//}
+
+	//// gauge bottom = 0.0872 (rad), top = 0.5232
+	//gaAOA_.SetState((aoaR + 0.2619) / 1.136);
+
 }
 
 // manage_state
