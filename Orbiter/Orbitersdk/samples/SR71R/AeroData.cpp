@@ -44,6 +44,10 @@ AeroData::AeroData(bco::power_provider& pwr, bco::BaseVessel& vessel) :
 	
 	vessel.AddControl(&attitudeDisplay_);
 	vessel.AddControl(&attitudeFlag_);
+
+	vessel.AddControl(&aoaHand_);
+	vessel.AddControl(&trimHand_);
+	vessel.AddControl(&accelHand_);
 }
 
 
@@ -55,6 +59,8 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	auto   vertSpeed = 0.0;
 	double bank		 = 0.0;
 	double pitch	 = 0.0;
+	double dynPress  = 0.0;
+	
 
 	isAeroDataActive_.fire(IsPowered());
 
@@ -67,6 +73,7 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 		vertSpeed	= bco::GetVerticalSpeedFPM(&vessel);
 		pitch		= vessel.GetPitch();
 		bank		= vessel.GetBank();
+		dynPress	= vessel.GetDynPressure();
 	}
 
 	// Vertical speed:
@@ -75,13 +82,6 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	if (absSpd > 6000) absSpd = 6000;
 	double spRot = (1 - pow((6000 - absSpd) / 6000, 2)) / 2;
 	
-//	signalBank_		 .fire(bank);
-//	signalPitch_	 .fire(0.100093 * pitch);
-//	vsiNeedleSignal_ .fire(0.5 + (isPos * spRot));
-	gforceSignal_	 .fire(gforce);
-	trimSignal_		 .fire(trim);
-	aoaSignal_		 .fire(aoa);
-
 	// vsi
 	vsiHand_.set_state(0.5 + (isPos * spRot));
 	vsiActiveFlag_.set_state(IsPowered());
@@ -91,35 +91,31 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	attitudeDisplay_.SlotTransform().notify(0.100093 * pitch);
 	attitudeFlag_.set_state(IsPowered());
 
+	// accel
+	accelHand_.set_state((gforce + 2) / 6);
 
+	// trim
+	trimHand_.set_state((trim + 1) / 2);
 
-/////
-	//// ** ACCEL **
-	//gaAccel_.SetState((gforce + 2) / 6);
+	// aoa
+	// ** AOA **
+	// AOA gauge works from -5 to 20 degrees AOA (-.0873 to .3491)
+	// AOA guage has a throw of 75 degrees (1.3090).
+	// Guage ratio is 3 AOA -> guage position.  The gauge sits at -5 deg
+	// which must be accounted for.
+	auto aoaR = 0.0;
 
-	//// ** TRIM **
-	//gaTrim_.SetState((trimLevel + 1) / 2);
+	// Only worry about AOA if in the atmosphere.
+	if (dynPress > 200)
+	{
+		aoaR = aoa;
+		if (aoaR < -0.0873) aoaR = -0.0873;
+		if (aoaR > 0.3491) aoaR = 0.3491;
 
-	//// ** AOA **
-	//// AOA gauge works from -5 to 20 degrees AOA (-.0873 to .3491)
-	//// AOA guage has a throw of 75 degrees (1.3090).
-	//// Guage ratio is 3 AOA -> guage position.  The gauge sits at -5 deg
-	//// which must be accounted for.
-	//auto aoaR = 0.0;
+		aoaR = aoaR * 3; // Translate to guage angle.
+	}
 
-	//// Only worry about AOA if in the atmosphere.
-	//if (dynPressure > 200)
-	//{
-	//	aoaR = angleOfAttack;
-	//	if (aoaR < -0.0873) aoaR = -0.0873;
-	//	if (aoaR > 0.3491) aoaR = 0.3491;
-
-	//	aoaR = aoaR * 3; // Translate to guage angle.
-	//}
-
-	//// gauge bottom = 0.0872 (rad), top = 0.5232
-	//gaAOA_.SetState((aoaR + 0.2619) / 1.136);
-
+	aoaHand_.set_state((aoaR + 0.2619) / 1.136);
 }
 
 // manage_state

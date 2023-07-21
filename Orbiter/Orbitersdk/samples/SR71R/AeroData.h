@@ -172,7 +172,7 @@ private:
 	};
 
 	// ***  AOA  TRIM  GFORCE  ***  //
-	bco::rotary_display<bco::Animation>		aoa_ {	  { bm::vc::AOANeedle_id }
+	bco::rotary_display<bco::Animation>	aoaHand_ {	  { bm::vc::AOANeedle_id }
 													, bm::vc::AOANeedle_location, bm::vc::AOAAxis_location
 													, bm::pnl::pnlAOANeedle_id
 													, bm::pnl::pnlAOANeedle_verts
@@ -181,7 +181,7 @@ private:
 													, [](double d) {return (d); }
 												};
 
-	bco::rotary_display<bco::Animation>		trim_ {	  { bm::vc::TrimNeedle_id }
+	bco::rotary_display<bco::Animation>	trimHand_ {	  { bm::vc::TrimNeedle_id }
 													, bm::vc::TrimNeedle_location, bm::vc::TrimAxis_location
 													, bm::pnl::pnlTrimNeedle_id
 													, bm::pnl::pnlTrimNeedle_verts
@@ -190,13 +190,13 @@ private:
 													, [](double d) {return (d); }
 												};
 
-	bco::rotary_display<bco::Animation>		gForce_ {	  { bm::vc::AccelNeedle_id }
-	, bm::vc::AccelNeedle_location, bm::vc::AccelAxis_location
-		, bm::pnl::pnlAccelNeedle_id
-		, bm::pnl::pnlAccelNeedle_verts
-		, (180 * RAD)
-		, 2.0
-		, [](double d) {return (d); }
-	};
+	bco::rotary_display<bco::Animation>	accelHand_ {  { bm::vc::AccelNeedle_id }
+													, bm::vc::AccelNeedle_location, bm::vc::AccelAxis_location
+													, bm::pnl::pnlAccelNeedle_id
+													, bm::pnl::pnlAccelNeedle_verts
+													, (295 * RAD)
+													, 2.0
+													, [](double d) {return (d); }
+												};
 
 };
