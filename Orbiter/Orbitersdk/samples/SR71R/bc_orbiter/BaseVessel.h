@@ -173,10 +173,10 @@ namespace bc_orbiter
 		@param id The animation id to set.
 		@param state The state to set the animation to.
 		*/
-        void SetAnimationState(UINT id, double state)
+        void SetAnimationState(const Animation& anim)
         {
-            auto eh = animations_.find(id);
-            if (eh != animations_.end())	eh->second->SetState(state);
+            auto eh = animations_.find(anim.VesselId());
+            if (eh != animations_.end())	eh->second->SetState(anim.GetState());
         }
 
 		int GetIdForComponent(Component* comp)

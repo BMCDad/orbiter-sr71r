@@ -35,8 +35,8 @@ public:
 	Shutters(bco::BaseVessel& vessel);
 
 	// manage_state
-	bool handle_load_state(const std::string& line) override;
-	std::string handle_save_state() override;
+	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::BaseVessel& vessel) override;
 
 	bco::slot<bool>& ShuttersSlot() { return shuttersSlot_; }
 

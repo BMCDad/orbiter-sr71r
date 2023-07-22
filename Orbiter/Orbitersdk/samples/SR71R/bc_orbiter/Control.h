@@ -146,13 +146,13 @@ namespace bc_orbiter {
 		param line A single line of text representing the state.
 		return true if the state was succesfully restored.
 		*/
-		virtual bool handle_load_state(const std::string& line) = 0;
+		virtual bool handle_load_state(BaseVessel& vessel, const std::string& line) = 0;
 
 		/**
 		handle_save
 		Return a single string that represents the internal state of the component.
 				*/
-		virtual std::string handle_save_state() = 0;
+		virtual std::string handle_save_state(BaseVessel& vessel) = 0;
 	};
 
 	/**

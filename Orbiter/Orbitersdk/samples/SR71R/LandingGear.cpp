@@ -45,7 +45,7 @@ void LandingGear::handle_post_step(bco::BaseVessel& vessel, double simt, double 
     bco::RotateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_verts, sTrans * animLandingSwitch_.GetState());
 }
 
-bool LandingGear::handle_load_state(const std::string& line)
+bool LandingGear::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
 {
     // [a b] : a: position, 1 (down) 0 (up)   b: anim state
     double lgPos = 0.0;
@@ -53,10 +53,11 @@ bool LandingGear::handle_load_state(const std::string& line)
     std::istringstream in(line);
 
     in >> position_ >> animLandingGear_;
+    vessel.SetAnimationState(animLandingGear_);
     return true;
 }
 
-std::string LandingGear::handle_save_state()
+std::string LandingGear::handle_save_state(bco::BaseVessel& vessel)
 {
     std::ostringstream os;
 
@@ -71,10 +72,12 @@ void LandingGear::handle_set_class_caps(bco::BaseVessel& vessel)
 
     // VC
     auto aid = vessel.CreateVesselAnimation(&animLandingSwitch_, 2.0);
+    animLandingGear_.VesselId(aid);
     vessel.AddVesselAnimationComponent(aid, vcMeshIdx, &lgHandle_);
 
     // External
     idAnim_ = vessel.CreateVesselAnimation(&animLandingGear_, 0.15);
+    animLandingGear_.VesselId(idAnim_);
 
     // Front gear
     vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightFrontDoor_);

@@ -58,7 +58,7 @@ void FuelCell::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	sigAvailPower_.fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
 }
 
-bool FuelCell::handle_load_state(const std::string& line)
+bool FuelCell::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
 {
 	std::istringstream in(line);
 
@@ -66,7 +66,7 @@ bool FuelCell::handle_load_state(const std::string& line)
 	return true;
 }
 
-std::string FuelCell::handle_save_state()
+std::string FuelCell::handle_save_state(bco::BaseVessel& vessel)
 {
 	std::ostringstream os;
 	os << switchEnabled_;

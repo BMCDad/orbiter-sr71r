@@ -45,14 +45,15 @@ void CargoBayController::handle_post_step(bco::BaseVessel& vessel, double simt, 
 
 }
 
-bool CargoBayController::handle_load_state(const std::string& line)
+bool CargoBayController::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchPower_ >> switchOpen_ >> animCargoBayDoors_;
+    vessel.SetAnimationState(animCargoBayDoors_);
     return true;
 }
 
-std::string CargoBayController::handle_save_state()
+std::string CargoBayController::handle_save_state(bco::BaseVessel& vessel)
 {
     std::ostringstream os;
     os << switchPower_ << " " << switchOpen_ << " " << animCargoBayDoors_;
@@ -68,6 +69,7 @@ void CargoBayController::handle_set_class_caps(bco::BaseVessel& vessel)
     auto mIdx = vessel.GetMainMeshIndex();
 
     auto id = vessel.CreateVesselAnimation(&animCargoBayDoors_, 0.01);
+    animCargoBayDoors_.VesselId(id);
     vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftFront_);
     vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightFront_);
     vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftMain_);

@@ -262,7 +262,7 @@ void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
 
 		auto eh = mapStateManagement_.find(key);
 		if (eh != mapStateManagement_.end()) {
-			eh->second->handle_load_state(configLine);
+			eh->second->handle_load_state(*this, configLine);
 			handled = true;
 		}
 
@@ -280,6 +280,6 @@ void SR71Vessel::clbkSaveState(FILEHANDLE scn)
 		oapiWriteScenario_string(
 			scn, 
 			(char*)p.first.c_str(), 
-			(char*)p.second->handle_save_state().c_str());
+			(char*)p.second->handle_save_state(*this).c_str());
 	}
 }

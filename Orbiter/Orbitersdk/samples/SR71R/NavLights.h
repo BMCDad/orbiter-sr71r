@@ -58,14 +58,14 @@ public:
 	}
 
 	// manage_state
-	bool handle_load_state(const std::string& line) override {
+	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override {
 
 		std::istringstream in(line);
 		in >> switchNavigationLights_;
 		return true;
 	}
 
-	std::string handle_save_state() override {
+	std::string handle_save_state(bco::BaseVessel& vessel) override {
 		std::ostringstream os;
 		os << switchNavigationLights_;
 		return os.str();

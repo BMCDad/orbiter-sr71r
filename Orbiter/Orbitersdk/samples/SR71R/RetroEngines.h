@@ -52,8 +52,8 @@ public:
     void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
     // manage_state
-    bool handle_load_state(const std::string& line) override;
-    std::string handle_save_state() override;
+    bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::BaseVessel& vessel) override;
 
 private:
     const double MIN_VOLTS = 20.0;

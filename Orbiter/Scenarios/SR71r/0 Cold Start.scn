@@ -16,13 +16,7 @@ BEGIN_HYPERDESC
     light should be illuminated underneath the FUEL pump switch.  Press the pump switch to start filling the
     main fuel tank.  Monitor this process from the MAIN fuel gauge on right instrument panel.
 </p>
-<p>The RCS tank is filled by transferring fuel from the MAIN tank to the RCS tank.  Do this by putting
-    the MAIN/RCS transfer switch (bottom of right panel next to XFER button) in the RCS [DOWN] position.
-    Press the XFER button to begin transfer.  You can only transfer from MAIN to RCS when there is about
-    13,000 lbs of fuel in MAIN.
-</p>
-<p>You can also transfer from RCS to MAIN.  This is handy when you are in an atmosphere and will not be
-    using the RCS system, but could use a bit more fuel.
+<p>The RCS uses its own fuel system, and is filled the same way as the main tank.
 </p>
 
 <u>Cryogenic Tanks</u>
@@ -73,23 +67,22 @@ SR-01:SR71r
   AFCMODE 7
   PRPLEVEL 0:0.000000 1:0.000000
   NAVFREQ 94 524
+  AIRBRAKE 0 0
   APU 0
-  AUTOPILOT 0 0 0 0 0
-  AVIONICS 0 90 0 1 0
-  CARGOBAY 0 1 1.000000
-  CANOPY 0 1 1.000000
+  AVIONICS 0.0 0.0 0 1 0
+  BEACON 0
+  CANOPY 0 1 1.0
+  CARGO 0 1 1.0
+  CLOCK 0.0 0 0.0
   FUELCELL 0
-  HYDROGEN 0.000000
-  GEAR 1 1.000000
-  OXYGEN 0.0000
+  GEAR 1 1.0
+  HOVER 0 0.0
+  LH2 0.0 0
+  LOX 0.0 0
+  NAVLIGHTS 0
   POWER 0 0 0
   PROPULSION 0
-  RCSMODE 0
-  AIRBRAKE 0
-  LIGHTS 0 0 0 0
-  CLOCK 0 0 0
-  SHUTTERS 0
-  HOVER 0 0.000
-  RETRO 0 0.000
+  RETRO 0 0.0
+  STROBE 0
 END
 END_SHIPS

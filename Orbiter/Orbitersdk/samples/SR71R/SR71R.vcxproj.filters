@@ -198,7 +198,7 @@
     <ClInclude Include="Strobe.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="AeroData.h">
+    <ClInclude Include="Avionics.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Altimeter.h">
@@ -317,7 +317,7 @@
     <ClCompile Include="Canopy.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="AeroData.cpp">
+    <ClCompile Include="Avionics.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
   </ItemGroup>

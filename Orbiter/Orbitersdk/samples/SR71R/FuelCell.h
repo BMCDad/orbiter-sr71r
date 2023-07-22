@@ -31,8 +31,8 @@
 
 class PowerSystem;
 
-const double OXYGEN_BURN_RATE_PER_SEC_100A = (20.0 / 3600) / 100;		// 2 lbs per hour per at 100 amps.
-const double HYDROGEN_BURN_RATE_PER_SEC_100A = (3.0 / 3600) / 100;			// 0.3 lbs per hour @ 100 amps.  
+const double OXYGEN_BURN_RATE_PER_SEC_100A = (2.0 / 3600) / 100;		// 2 lbs per hour per at 100 amps.
+const double HYDROGEN_BURN_RATE_PER_SEC_100A = (1.0 / 3600) / 100;			// 0.3 lbs per hour @ 100 amps.  
 
 namespace bco = bc_orbiter;
 
@@ -81,8 +81,8 @@ public:
 	double amp_draw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
 
 	// manage_state
-	bool handle_load_state(const std::string& line) override;
-	std::string handle_save_state() override;
+	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::BaseVessel& vessel) override;
 
 	// Outputs
 	bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.

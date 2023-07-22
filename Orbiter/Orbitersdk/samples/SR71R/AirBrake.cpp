@@ -57,16 +57,18 @@ void AirBrake::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 		:	bco::status_display::status::off);
 }
 
-bool AirBrake::handle_load_state(const std::string& line)
+bool AirBrake::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
 {
 	// [a b] : a: air brake switch position.   b: air brake actual position (they can differ)
 
 	std::istringstream in(line);
 	in >> position_ >> animAirBrake_;
+	
+	vessel.SetAnimationState(animAirBrake_);
 	return true;
 }
 
-std::string AirBrake::handle_save_state()
+std::string AirBrake::handle_save_state(bco::BaseVessel& vessel)
 {
 	std::ostringstream os;
 	os << position_ << " " << animAirBrake_;
@@ -78,6 +80,7 @@ void AirBrake::handle_set_class_caps(bco::BaseVessel& vessel)
 	// Setup VC animation
 	auto vcIdx = vessel.GetVCMeshIndex();
 	auto aid = vessel.CreateVesselAnimation(&animBrakeSwitch_, 2.0);
+	animBrakeSurface_.VesselId(aid);
     vessel.AddVesselAnimationComponent(aid, vcIdx, &gpBrakeHandle_);
 
 	// Setup external animation   
@@ -87,6 +90,7 @@ void AirBrake::handle_set_class_caps(bco::BaseVessel& vessel)
     vessel.AddVesselAnimationComponent(aid, exIdx, &gpLeftBottom_);
     vessel.AddVesselAnimationComponent(aid, exIdx, &gpRightTop_);
     vessel.AddVesselAnimationComponent(aid, exIdx, &gpRightBottom_);
+	animAirBrake_.VesselId(aid);
 
 	// Setup drag.
 	vessel.CreateVariableDragElement(animAirBrake_.GetStatePtr(), 10.0, bm::main::BrakeDragPoint_location);

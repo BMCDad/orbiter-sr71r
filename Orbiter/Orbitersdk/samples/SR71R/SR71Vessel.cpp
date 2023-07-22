@@ -32,7 +32,7 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	ctrlSurfLeftRudder_(nullptr),
 	ctrlSurfRightRudder_(nullptr)
 {
-	AddComponent(&aeroData_);
+	AddComponent(&avionics_);
 	AddComponent(&airBrake_);
 	AddComponent(&airspeed_);
 	AddComponent(&altimeter_);
@@ -58,14 +58,12 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	AddComponent(&mfdRight_);
 
 
-	bco::connect(aeroData_.IsAeroActiveSignal(), altimeter_.EnabledSlot());
-	bco::connect(aeroData_.IsAeroModeAtmoSignal(), altimeter_.AvionicsModeSlot());
-
-	bco::connect(aeroData_.IsAeroActiveSignal(), airspeed_.EnabledSlot());
-	bco::connect(aeroData_.IsAeroModeAtmoSignal(), airspeed_.AvionicsModeSlot());
-
-	bco::connect(aeroData_.IsAeroActiveSignal(), hsi_.EnabledSlot());
-	bco::connect(aeroData_.IsAeroModeAtmoSignal(), hsi_.AvionicsModeSlot());
+	bco::connect(avionics_.IsAeroActiveSignal(), altimeter_.EnabledSlot());
+	bco::connect(avionics_.IsAeroModeAtmoSignal(), altimeter_.AvionicsModeSlot());
+	bco::connect(avionics_.IsAeroActiveSignal(), airspeed_.EnabledSlot());
+	bco::connect(avionics_.IsAeroModeAtmoSignal(), airspeed_.AvionicsModeSlot());
+	bco::connect(avionics_.IsAeroActiveSignal(), hsi_.EnabledSlot());
+	bco::connect(avionics_.IsAeroModeAtmoSignal(), hsi_.AvionicsModeSlot());
 
 	// Fuel cell					// A signal can drive more then one slot
 	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
@@ -79,11 +77,11 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	bco::connect( propulsion_.MainFuelLevelSignal(),		apu_.FuelLevelSlot());
 
 	// RCS
-	bco::connect( aeroData_.IsAeroActiveSignal(),			rcs_.IsAeroActiveSlot());
+	bco::connect( avionics_.IsAeroActiveSignal(),			rcs_.IsAeroActiveSlot());
 
 	// ...which in turn drive the HSI course and heading
-	bco::connect( aeroData_.SetCourseSignal(),				hsi_.SetCourseSlot());
-	bco::connect( aeroData_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
+	bco::connect( avionics_.SetCourseSignal(),				hsi_.SetCourseSlot());
+	bco::connect( avionics_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
 			// ...which drives the course and heading needle and wheels.
 
 	// Internal vessel stuff:

@@ -18,9 +18,9 @@
 
 #include "bc_orbiter\BaseVessel.h"
 
-#include "AeroData.h"
+#include "Avionics.h"
 
-AeroData::AeroData(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+Avionics::Avionics(bco::power_provider& pwr, bco::BaseVessel& vessel) :
 	power_(pwr)
 {
 	power_.attach_consumer(this);
@@ -52,7 +52,7 @@ AeroData::AeroData(bco::power_provider& pwr, bco::BaseVessel& vessel) :
 
 
 // post_step
-void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) {
+void Avionics::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) {
 	double gforce	 = 0.0;
 	double trim		 = 0.0;
 	double aoa		 = 0.0;
@@ -119,27 +119,26 @@ void AeroData::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 }
 
 // manage_state
-bool AeroData::handle_load_state(const std::string& line) {
-	// [a b]  :  [course heading]
+bool Avionics::handle_load_state(bco::BaseVessel& vessel, const std::string& line) {
 	std::istringstream in(line);
 
 	in >> setCourseSignal_ >> setHeadingSignal_ >> switchAvionPower_ >> switchAvionMode_ >> switchNavMode_;
 	return false;
 }
 
-std::string AeroData::handle_save_state() {
+std::string Avionics::handle_save_state(bco::BaseVessel& vessel) {
 	std::ostringstream os;
 	os << setCourseSignal_ << " " << setHeadingSignal_ << " " << switchAvionPower_ << " " << switchAvionMode_ << " " << switchNavMode_;
 	return os.str();
 }
 
-void AeroData::SetCourse(double s)
+void Avionics::SetCourse(double s)
 {
 	setCourseSignal_.update(s * RAD);
 	UpdateSetCourse(0.0);	 // force the signal to fire.
 }
 
-void AeroData::UpdateSetCourse(double i)
+void Avionics::UpdateSetCourse(double i)
 {
 	auto inc = setCourseSignal_.current() + i;
 	if (inc > PI2) inc -= PI2;
@@ -149,13 +148,13 @@ void AeroData::UpdateSetCourse(double i)
 //	sprintf(oapiDebugString(), "Set Course: %+4.2f", setCourseSignal_.current());
 }
 
-void AeroData::SetHeading(double s)
+void Avionics::SetHeading(double s)
 {
 	setHeadingSignal_.update(s * RAD);
 	UpdateSetHeading(0.0);	 // force the signal to fire.
 }
 
-void AeroData::UpdateSetHeading(double i)
+void Avionics::UpdateSetHeading(double i)
 {
 	auto inc = setHeadingSignal_.current() + i;
 	if (inc > PI2) inc -= PI2;

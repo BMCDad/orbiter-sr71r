@@ -298,6 +298,9 @@ namespace bc_orbiter
 
         const double* GetStatePtr() const { return &updateState_.state_; }
 
+        void VesselId(UINT id) { vesselId_ = id; }
+        UINT VesselId() const { return vesselId_; }
+
         friend std::istream& operator>>(std::istream& input, AnimationBase& obj) {
             double state;
 
@@ -318,6 +321,7 @@ namespace bc_orbiter
         StateUpdate			updateState_;
         TargetAchievedFunc  funcTarget_;
         IAnimationState*    stateProvider_{ nullptr };
+        UINT                vesselId_{ 0 };
     };
 
     /* Animation

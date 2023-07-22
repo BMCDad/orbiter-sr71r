@@ -84,7 +84,7 @@ namespace bc_orbiter {
 		}
 
 		// manage_state
-		bool handle_load_state(const std::string& line) override {
+		bool handle_load_state(BaseVessel& vessel, const std::string& line) override {
 			// [a b]  :  [level fillPumpOn]
 
 			std::istringstream in(line);
@@ -98,7 +98,7 @@ namespace bc_orbiter {
 			return true;
 		}
 
-		std::string handle_save_state() override {
+		std::string handle_save_state(BaseVessel& vessel) override {
 			std::ostringstream os;
 			os << level_ << " " << isFilling_;
 			return os.str();

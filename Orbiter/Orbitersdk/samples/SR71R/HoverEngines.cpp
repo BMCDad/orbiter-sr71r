@@ -105,14 +105,15 @@ void HoverEngines::handle_set_class_caps(bco::BaseVessel& vessel)
     vessel.AddVesselAnimationComponent(aid, mIdx, &gpRight_);
 }
 
-bool HoverEngines::handle_load_state(const std::string& line)
+bool HoverEngines::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchOpen_ >> animHoverDoors_;
+    vessel.SetAnimationState(animHoverDoors_);
     return true;
 }
 
-std::string HoverEngines::handle_save_state()
+std::string HoverEngines::handle_save_state(bco::BaseVessel& vessel)
 {
     std::ostringstream os;
     os << switchOpen_ << " " << animHoverDoors_;

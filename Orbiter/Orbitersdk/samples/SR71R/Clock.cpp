@@ -94,7 +94,7 @@ void Clock::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt,
 }
 
 // [elapsedMissionTime] [isTimerRunning] [elapsedTimer]
-bool Clock::handle_load_state(const std::string& line)
+bool Clock::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
 {
 	int elapsedMission = 0;
 	int isTimerRunning = 0;
@@ -123,7 +123,7 @@ bool Clock::handle_load_state(const std::string& line)
 	}
 }
 
-std::string Clock::handle_save_state()
+std::string Clock::handle_save_state(bco::BaseVessel& vessel)
 {
 	std::ostringstream os;
 

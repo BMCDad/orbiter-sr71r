@@ -112,7 +112,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AeroData.h" />
+    <ClInclude Include="Avionics.h" />
     <ClInclude Include="AirBrake.h" />
     <ClInclude Include="Airspeed.h" />
     <ClInclude Include="Altimeter.h" />
@@ -177,7 +177,7 @@
     <ClInclude Include="VesselControl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AeroData.cpp" />
+    <ClCompile Include="Avionics.cpp" />
     <ClCompile Include="AirBrake.cpp" />
     <ClCompile Include="Canopy.cpp" />
     <ClCompile Include="CargoBayController.cpp" />

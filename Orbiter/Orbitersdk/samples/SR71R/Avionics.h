@@ -29,7 +29,7 @@
 
 namespace bco = bc_orbiter;
 
-class AeroData :
+class Avionics :
 	  public bco::vessel_component
 	, public bco::post_step
 	, public bco::manage_state
@@ -39,15 +39,15 @@ class AeroData :
 public:
 	enum AvionMode { AvionAtmo, AvionExo };
 
-	AeroData(bco::power_provider& pwr, bco::BaseVessel& vessel);
-	~AeroData() {}
+	Avionics(bco::power_provider& pwr, bco::BaseVessel& vessel);
+	~Avionics() {}
 
 	// post_step
 	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
 
 	// manage_state
-	bool handle_load_state(const std::string& line) override;
-	std::string handle_save_state() override;
+	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::BaseVessel& vessel) override;
 
 	// power_consumer
 	double amp_draw() const { return IsPowered() ? 6.0 : 0.0; }

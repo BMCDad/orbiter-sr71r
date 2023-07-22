@@ -38,7 +38,7 @@
 #include "NavLights.h"
 #include "Beacon.h"
 #include "Strobe.h"
-#include "AeroData.h"
+#include "Avionics.h"
 #include "Altimeter.h"
 #include "HSI.h"
 #include "Airspeed.h"
@@ -120,7 +120,7 @@ private:
 	NavLight				navLight_		{ powerSystem_ };
 	Canopy					canopy_			{ powerSystem_ };
 	CargoBayController		cargobay_		{ powerSystem_ };
-	AeroData				aeroData_		{ powerSystem_, *this };
+	Avionics				avionics_		{ powerSystem_, *this };
 	HoverEngines			hoverEngines_	{ powerSystem_,	*this };
 	RetroEngines			retroEngines_	{ powerSystem_,	*this };
 	HydrogenTank			hydrogenTank_	{ powerSystem_, *this };
@@ -137,23 +137,23 @@ private:
 
 	// Map components that handle config state with a key for that component.
 	std::map <std::string, bco::manage_state*>		mapStateManagement_{
-		  { "CLOCK",		&clock_			}
-		, { "POWER",		&powerSystem_	}
-		, { "AERODATA",		&aeroData_		}
-		, { "CANOPY",		&canopy_		}
-		, { "CARGO",		&cargobay_		}
-		, { "APU",			&apu_			}
-		, { "FUELCELL",		&fuelCell_		}
-		, { "LH2",			&hydrogenTank_	}
-		, { "LOX",			&oxygenTank_	}
-		, { "GEAR",			&landingGear_	}
-		, { "PROPULSION",	&propulsion_	}
-		, { "AIRBRAKE",		&airBrake_		}
-		, { "NAVLIGHTS",	&navLight_		}
-		, { "BEACON",		&beacon_		}
-		, { "STROBE",		&strobe_		}
-		, { "HOVER",		&hoverEngines_	}
-		, { "RETRO",		&retroEngines_	}
+		  { "AIRBRAKE",		&airBrake_		}		// [a b]		: (a)Switch position,  (b)Brake position
+		, { "APU",			&apu_			}		// [a]			: (a)Enabled switch
+		, { "AVIONICS",		&avionics_		}		// [a b c d e]	: (a)Set course, (b)Set heading, (c)power, (d)Mode switch[1=atmo], (c)Nav select
+		, { "BEACON",		&beacon_		}		// [a]			: (a)Power
+		, { "CANOPY",		&canopy_		}		// [a b c]		: (a)Power, (b)Switch, (c)canopy position
+		, { "CARGO",		&cargobay_		}		// [a b c]		: (a)Power, (b)Switch, (c)Cargo doors position
+		, { "CLOCK",		&clock_			}		// [a b c]		: (a)Elapsed mission, (b)Is timer running, (c)Elapsed timer.
+		, { "FUELCELL",		&fuelCell_		}		// [a]			: (a)Power
+		, { "GEAR",			&landingGear_	}		// [a b]		: (a)Switch position, (b)Landing gear position.
+		, { "HOVER",		&hoverEngines_	}		// [a b]		: (a)Switch position, (b)Door position
+		, { "LH2",			&hydrogenTank_	}		// [a b]		: (a)Level, (b)Is filling
+		, { "LOX",			&oxygenTank_	}		// [a b]		: (a)Level, (b)Is filling
+		, { "NAVLIGHTS",	&navLight_		}		// [a]			: (a)Power
+		, { "POWER",		&powerSystem_	}		// [a b c]		: (a)Main power switch, (b)External connected, (c)Fuelcell connected.
+		, { "PROPULSION",	&propulsion_	}		// [a]			: (a)Thrust limit switch
+		, { "RETRO",		&retroEngines_	}		// [a b]		: (a)Switch position, (b)Door position
+		, { "STROBE",		&strobe_		}		// [a]			: (a)Power
 	};
 
 

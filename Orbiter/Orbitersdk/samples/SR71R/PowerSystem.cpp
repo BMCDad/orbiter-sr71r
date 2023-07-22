@@ -37,7 +37,7 @@ PowerSystem::PowerSystem(bco::BaseVessel& vessel) :
 	vessel.AddControl(&statusBattery_);
 }
 
-bool PowerSystem::handle_load_state(const std::string& line)
+bool PowerSystem::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
 {
 	std::stringstream ss(line);
 	ss >> switchEnabled;
@@ -47,7 +47,7 @@ bool PowerSystem::handle_load_state(const std::string& line)
 	return true;
 }
 
-std::string PowerSystem::handle_save_state()
+std::string PowerSystem::handle_save_state(bco::BaseVessel& vessel)
 {
 	std::stringstream ss;
 

@@ -45,11 +45,12 @@ void Canopy::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt
         : bco::status_display::status::off);
 }
 
-bool Canopy::handle_load_state(const std::string& line)
+bool Canopy::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
 
     if (in >> switchPower_ >> switchOpen_ >> animCanopy_) {
+        vessel.SetAnimationState(animCanopy_);
         return true;
     }
     else {
@@ -57,7 +58,7 @@ bool Canopy::handle_load_state(const std::string& line)
     }
 }
 
-std::string Canopy::handle_save_state()
+std::string Canopy::handle_save_state(bco::BaseVessel& vessel)
 {
     std::ostringstream os;
     os << switchPower_ << " " << switchOpen_ << " " << animCanopy_;
@@ -71,6 +72,7 @@ void Canopy::handle_set_class_caps(bco::BaseVessel& vessel)
     auto mIdx = vessel.GetMainMeshIndex();
 
     auto idAnim = vessel.CreateVesselAnimation(&animCanopy_, 0.2);
+    animCanopy_.VesselId(idAnim);
     vessel.AddVesselAnimationComponent(idAnim, vcIdx, &gpCanopyVC_);
     vessel.AddVesselAnimationComponent(idAnim, mIdx, &gpCanopy_);
 

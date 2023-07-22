@@ -355,14 +355,14 @@ void PropulsionController::handle_set_class_caps(bco::BaseVessel& vessel)
 //	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
-bool PropulsionController::handle_load_state(const std::string& line)
+bool PropulsionController::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
 {
 	std::istringstream in(line);
 	in >> switchThrustLimit_;
 	return true;
 }
 
-std::string PropulsionController::handle_save_state()
+std::string PropulsionController::handle_save_state(bco::BaseVessel& vessel)
 {
 	std::ostringstream os;
 	os << switchThrustLimit_;
