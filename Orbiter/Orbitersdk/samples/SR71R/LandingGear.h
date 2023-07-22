@@ -46,19 +46,19 @@ class LandingGear :
     , public bco::draw_hud
 {
 public:
-	LandingGear(bco::BaseVessel& vessel);
+	LandingGear(bco::vessel& vessel);
 
     // set_class_caps
-    void handle_set_class_caps(bco::BaseVessel& vessel) override;
+    void handle_set_class_caps(bco::vessel& vessel) override;
 
     // post_step
-    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
     // manage_state
-    bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::BaseVessel& vessel) override;
+    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
 
-    void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
     bco::slot<double>&  HydraulicPressSlot()    { return hydraulicPressSlot_; }
 

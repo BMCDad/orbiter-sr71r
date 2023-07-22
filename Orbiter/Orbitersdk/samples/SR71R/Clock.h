@@ -32,14 +32,14 @@ class Clock :
     public bco::manage_state
 {
 public:
-	Clock(bco::BaseVessel& vessel);
+	Clock(bco::vessel& vessel);
 
     // post_step
-    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
 	// manage_state
-	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::BaseVessel& vessel) override;
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
 
 private:
     void ResetElapsed();

@@ -18,7 +18,6 @@
 
 #include "bc_orbiter/BaseVessel.h"
 #include "bc_orbiter/control.h"
-#include "bc_orbiter/cryogenic_tank.h"
 #include "bc_orbiter/rotary_display.h"
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/on_off_display.h"
@@ -34,7 +33,7 @@ class OxygenTank :
 	public bco::generic_tank
 {
 public:
-	OxygenTank(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+	OxygenTank(bco::power_provider& pwr, bco::vessel& vessel) :
 		bco::generic_tank(pwr, HYDRO_SUPPLY, HYDROGEN_FILL_RATE)
 	{
 		vessel.AddControl(&gaugeLevel_);

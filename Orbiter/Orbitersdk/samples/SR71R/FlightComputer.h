@@ -144,7 +144,7 @@
 //        const static int DISPLAY_COLS = 20;
 //        const static int DISPLAY_ROWS = 11;
 //
-//        FlightComputer(bco::BaseVessel* vessel, double amps);
+//        FlightComputer(bco::vessel* vessel, double amps);
 //
 //		void Step(double simt, double simdt, double mjd);
 //

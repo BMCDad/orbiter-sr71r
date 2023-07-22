@@ -32,7 +32,7 @@ class Altimeter :
 
 public:
 
-	Altimeter(bco::BaseVessel& vessel) {
+	Altimeter(bco::vessel& vessel) {
 		vessel.AddControl(&altimeter1Hand_);
 		vessel.AddControl(&altimeter10Hand_);
 		vessel.AddControl(&altimeter100Hand_);
@@ -54,7 +54,7 @@ public:
 
 
 	// post_step
-	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override {
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		double altFeet = 0.0;
 		if (EnabledSlot().value()) {
 			auto altMode = AvionicsModeSlot().value() ? AltitudeMode::ALTMODE_GROUND : AltitudeMode::ALTMODE_MEANRAD;

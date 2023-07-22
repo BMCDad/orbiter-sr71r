@@ -22,13 +22,13 @@
 
 #include <assert.h>
 
-Shutters::Shutters(bco::BaseVessel& vessel)
+Shutters::Shutters(bco::vessel& vessel)
 {
 	vessel.AddControl(&switchShutters_);
 	switchShutters_.attach([&]() { Update(); });
 }
 
-bool Shutters::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
+bool Shutters::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
 	//if (_strnicmp(key, ConfigKey, 8) != 0)
 	//{
@@ -44,7 +44,7 @@ bool Shutters::handle_load_state(bco::BaseVessel& vessel, const std::string& lin
 	return true;
 }
 
-std::string Shutters::handle_save_state(bco::BaseVessel& vessel)
+std::string Shutters::handle_save_state(bco::vessel& vessel)
 {
 	//char cbuf[256];
 

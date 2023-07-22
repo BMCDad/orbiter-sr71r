@@ -38,28 +38,28 @@ class RetroEngines :
     , public bco::manage_state
 {
 public:
-    RetroEngines(bco::power_provider& pwr, bco::BaseVessel& vessel);
+    RetroEngines(bco::power_provider& pwr, bco::vessel& vessel);
 
     // set_class_caps
-    void handle_set_class_caps(bco::BaseVessel& vessel) override;
+    void handle_set_class_caps(bco::vessel& vessel) override;
 
     // power_consumer
     double amp_draw() const override { return IsMoving() ? 4.0 : 0.0; }
 
     // post_step
-    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
-    void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
     // manage_state
-    bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::BaseVessel& vessel) override;
+    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
 
 private:
     const double MIN_VOLTS = 20.0;
 
     bco::power_provider& power_;
-    bco::BaseVessel& vessel_;
+    bco::vessel& vessel_;
 
     bool IsPowered() const {
         return

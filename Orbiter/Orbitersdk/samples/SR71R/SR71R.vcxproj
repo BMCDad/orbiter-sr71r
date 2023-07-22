@@ -121,10 +121,8 @@
     <ClInclude Include="bc_orbiter\Animation.h" />
     <ClInclude Include="bc_orbiter\BaseVessel.h" />
     <ClInclude Include="bc_orbiter\bco.h" />
-    <ClInclude Include="bc_orbiter\Circuit.h" />
     <ClInclude Include="bc_orbiter\Component.h" />
     <ClInclude Include="bc_orbiter\control.h" />
-    <ClInclude Include="bc_orbiter\electrical_component.h" />
     <ClInclude Include="bc_orbiter\flat_roll.h" />
     <ClInclude Include="bc_orbiter\generic_tank.h" />
     <ClInclude Include="bc_orbiter\IAnimationState.h" />
@@ -132,7 +130,6 @@
     <ClInclude Include="bc_orbiter\on_off_display_event.h" />
     <ClInclude Include="bc_orbiter\on_off_input.h" />
     <ClInclude Include="bc_orbiter\on_off_display.h" />
-    <ClInclude Include="bc_orbiter\PoweredComponent.h" />
     <ClInclude Include="bc_orbiter\rotary_display.h" />
     <ClInclude Include="bc_orbiter\signals.h" />
     <ClInclude Include="bc_orbiter\simple_event.h" />
@@ -142,8 +139,8 @@
     <ClInclude Include="Canopy.h" />
     <ClInclude Include="CargoBayController.h" />
     <ClInclude Include="Clock.h" />
-    <ClInclude Include="bc_orbiter\cryogenic_tank.h" />
     <ClInclude Include="FlightComputer.h" />
+    <ClInclude Include="bc_orbiter\handler_interfaces.h" />
     <ClInclude Include="HoverEngines.h" />
     <ClInclude Include="HSI.h" />
     <ClInclude Include="HydrogenTank.h" />
@@ -157,7 +154,6 @@
     <ClInclude Include="RetroEngines.h" />
     <ClInclude Include="Shutters.h" />
     <ClInclude Include="SR71r_common.h" />
-    <ClInclude Include="StatusBoard.h" />
     <ClInclude Include="LeftMFD.h" />
     <ClInclude Include="MfdMets.h" />
     <ClInclude Include="NavModes.h" />
@@ -199,7 +195,6 @@
     <ClCompile Include="SR71r.cpp" />
     <ClCompile Include="SR71Vessel.cpp" />
     <ClCompile Include="SR71Vessel_clbk.cpp" />
-    <ClCompile Include="StatusBoard.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

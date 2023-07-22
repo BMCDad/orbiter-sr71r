@@ -20,14 +20,14 @@
 
 namespace bc_orbiter
 {
-	class BaseVessel;
+	class vessel;
 }
 
 #include <vector>
 
 namespace bc_orbiter
 {
-	class BaseVessel;
+	class vessel;
 
 	/**
 	Base class for modeling the behavior of a vessel's component parts.
@@ -35,7 +35,7 @@ namespace bc_orbiter
 	class Component
 	{
 	public:
-		Component(BaseVessel* baseVessel) : baseVessel_(baseVessel)
+		Component(vessel* baseVessel) : baseVessel_(baseVessel)
 		{}
 
 		/**
@@ -89,10 +89,10 @@ namespace bc_orbiter
 		void SetRedrawId(int id) { redrawId_ = id; }
 		int GetRedrawId() const { return redrawId_; }
 
-		BaseVessel*	GetBaseVessel() const { return baseVessel_; }
+		vessel*	GetBaseVessel() const { return baseVessel_; }
 
 	private:
-		BaseVessel*		baseVessel_;
+		vessel*		baseVessel_;
 
 		int redrawId_	{ 0 };
 	};

@@ -9,7 +9,6 @@
 #include "bc_orbiter/simple_event.h"
 #include "bc_orbiter/transform_display.h"
 #include "bc_orbiter/flat_roll.h"
-#include "bc_orbiter/cryogenic_tank.h"
 #include "bc_orbiter/generic_tank.h"
 #include "bc_orbiter/status_display.h"
 
@@ -28,7 +27,6 @@
 #include "APU.h"
 #include "LandingGear.h"
 #include "FuelCell.h"
-#include "StatusBoard.h"
 #include "AirBrake.h"
 #include "Clock.h"
 #include "Shutters.h"
@@ -49,7 +47,7 @@
 #include <map>
 
 
-class SR71Vessel : public bco::BaseVessel
+class SR71Vessel : public bco::vessel
 {
 public:
 	SR71Vessel(OBJHANDLE hvessel, int flightmodel);

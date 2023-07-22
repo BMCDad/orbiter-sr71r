@@ -69,20 +69,20 @@ class FuelCell :
 	const double AMP_DRAW =	  4.0;
 
 public:
-	FuelCell(bco::power_provider& pwr, bco::BaseVessel& vessel, bco::consumable& lox, bco::consumable& hydro);
+	FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumable& lox, bco::consumable& hydro);
 
 	/**
 		Draw down the oxygen and hydrogen levels based on the current amp load.
 	*/
 
-	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
 	// power_consumer
 	double amp_draw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
 
 	// manage_state
-	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::BaseVessel& vessel) override;
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::vessel& vessel) override;
 
 	// Outputs
 	bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.

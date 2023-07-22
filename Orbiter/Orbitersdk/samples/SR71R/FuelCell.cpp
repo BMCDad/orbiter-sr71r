@@ -21,7 +21,7 @@
 #include "SR71r_mesh.h"
 
 
-FuelCell::FuelCell(bco::power_provider& pwr, bco::BaseVessel& vessel, bco::consumable& lox, bco::consumable& hydro) :
+FuelCell::FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumable& lox, bco::consumable& hydro) :
 	power_(pwr),
 	lox_(lox),
 	hydro_(hydro),
@@ -31,7 +31,7 @@ FuelCell::FuelCell(bco::power_provider& pwr, bco::BaseVessel& vessel, bco::consu
 	vessel.AddControl(&lightAvailable_);
 }
 
-void FuelCell::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
+void FuelCell::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	if (!IsPowered())
 	{
@@ -58,7 +58,7 @@ void FuelCell::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 	sigAvailPower_.fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
 }
 
-bool FuelCell::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
+bool FuelCell::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
 	std::istringstream in(line);
 
@@ -66,7 +66,7 @@ bool FuelCell::handle_load_state(bco::BaseVessel& vessel, const std::string& lin
 	return true;
 }
 
-std::string FuelCell::handle_save_state(bco::BaseVessel& vessel)
+std::string FuelCell::handle_save_state(bco::vessel& vessel)
 {
 	std::ostringstream os;
 	os << switchEnabled_;

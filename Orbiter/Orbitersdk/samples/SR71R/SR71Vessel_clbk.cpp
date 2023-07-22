@@ -80,7 +80,7 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	// Controls that live in vessel : must come before the baseVessel call.
 	AddControl(&statusDock_);
 
-	bco::BaseVessel::clbkSetClassCaps(cfg);
+	bco::vessel::clbkSetClassCaps(cfg);
 
 	SetMaxWheelbrakeForce(4e5);
 	SetupSurfaces();
@@ -159,7 +159,7 @@ bool SR71Vessel::clbkLoadVC(int id)
 		_V(-0.1, 0.0, 0.0), 0.0, 0.0,
 		_V(0.1, 0.0, 0.0), 0.0, 0.0);
 
-	return BaseVessel::clbkLoadVC(id);
+	return vessel::clbkLoadVC(id);
 }
 
 void SR71Vessel::clbkHUDMode(int mode)
@@ -185,7 +185,7 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
-    BaseVessel::clbkPostStep(simt, simdt, mjd);
+    vessel::clbkPostStep(simt, simdt, mjd);
 
 	statusDock_.set_state( DockingStatus(0) == 1 ? bco::status_display::status::on : bco::status_display::status::off);
 }
@@ -206,7 +206,7 @@ bool SR71Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad*
 
 void SR71Vessel::clbkPostCreation()
 {
-	BaseVessel::clbkPostCreation();
+	vessel::clbkPostCreation();
 }
 
 bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
@@ -244,7 +244,7 @@ bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD 
 	double extscale = max(defscale, 1.0);
 	SetPanelScaling(hPanel, defscale, extscale);
 
-	return BaseVessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
+	return vessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
 }
 
 void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)

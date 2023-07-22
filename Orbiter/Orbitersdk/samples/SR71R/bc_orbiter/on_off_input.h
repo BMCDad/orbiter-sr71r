@@ -90,13 +90,13 @@ namespace bc_orbiter {
 		}
 
 		// vc_event_target
-		VECTOR3&			vc_event_location()			override { return vcAnimGroup_.location_; }
+		VECTOR3				vc_event_location()			override { return vcAnimGroup_.location_; }
 		double				vc_event_radius()			override { return vcData_.hitRadius; }
 		int					vc_mouse_flags()			override { return vcData_.vcMouseFlags; }
 		int					vc_redraw_flags()			override { return vcData_.vcRedrawFlags; }
 
 		// panel_event_target
-		RECT&				panel_rect()				override { return pnlRect_; }
+		RECT				panel_rect()				override { return pnlRect_; }
 		int					panel_mouse_flags()			override { return vcData_.pnlMouseFlags; }
 		int					panel_redraw_flags()		override { return vcData_.pnlRedrawFlags; }
 

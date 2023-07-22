@@ -33,7 +33,7 @@ class RCSSystem :
 	public bco::vessel_component
 {
 public:
-	RCSSystem(bco::BaseVessel& vessel);
+	RCSSystem(bco::vessel& vessel);
 
 	// Callback:
 	void OnRCSMode(int mode);
@@ -41,7 +41,7 @@ public:
 	bco::slot<bool>&	IsAeroActiveSlot()	{ return slotIsAeroActive_; }
 
 private:
-	bco::BaseVessel&	vessel_;
+	bco::vessel&	vessel_;
 
     void OnChanged(int mode);
 	void ActiveChanged(bool isActive);

@@ -29,7 +29,7 @@ namespace bc_orbiter
 		public power_consumer
 	{
 	public:
-		MFDBase(power_provider& pwr, BaseVessel* vessel, int mfdId, double amps) :
+		MFDBase(power_provider& pwr, vessel* vessel, int mfdId, double amps) :
 			Component(vessel),
 			power_(pwr),
 			mfdId_(mfdId),
@@ -70,7 +70,7 @@ namespace bc_orbiter
 
 	protected:
 		power_provider& power_;
-		BaseVessel& vessel_;
+		vessel& vessel_;
 
 		bool IsPowered() const { 
 			return (power_.volts_available() > 24.0);
@@ -182,9 +182,4 @@ namespace bc_orbiter
 	{
 		mfdButtonIds_[areaId] = mfdKey;
 	}
-
-	//inline double MFDBase::CurrentDraw()
-	//{
-	//	return (HasPower() && (MFD_NONE != oapiGetMFDMode(mfdId_))) ? PoweredComponent::CurrentDraw() : 0.0;
-	//}
 }

@@ -584,7 +584,7 @@ namespace bc_orbiter
 	{
 		auto grp = oapiMeshGroup(mesh, group);
 
-		float trans = offset;
+		float trans = (float)offset;
 		grp->Vtx[0].tu = verts[0].tu + trans;
 		grp->Vtx[1].tu = verts[1].tu + trans;
 		grp->Vtx[2].tu = verts[2].tu + trans;

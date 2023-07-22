@@ -62,7 +62,7 @@ namespace bc_orbiter {
 		}
 
 		// post_step
-		void handle_post_step(BaseVessel& vessel, double simt, double simdt, double mjd) override {
+		void handle_post_step(vessel& vessel, double simt, double simdt, double mjd) override {
 			auto tD = simt - prevTime_;
 
 			if (fabs(tD) > 0.2)
@@ -84,7 +84,7 @@ namespace bc_orbiter {
 		}
 
 		// manage_state
-		bool handle_load_state(BaseVessel& vessel, const std::string& line) override {
+		bool handle_load_state(vessel& vessel, const std::string& line) override {
 			// [a b]  :  [level fillPumpOn]
 
 			std::istringstream in(line);
@@ -98,7 +98,7 @@ namespace bc_orbiter {
 			return true;
 		}
 
-		std::string handle_save_state(BaseVessel& vessel) override {
+		std::string handle_save_state(vessel& vessel) override {
 			std::ostringstream os;
 			os << level_ << " " << isFilling_;
 			return os.str();

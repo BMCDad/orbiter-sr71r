@@ -39,15 +39,15 @@ class Avionics :
 public:
 	enum AvionMode { AvionAtmo, AvionExo };
 
-	Avionics(bco::power_provider& pwr, bco::BaseVessel& vessel);
+	Avionics(bco::power_provider& pwr, bco::vessel& vessel);
 	~Avionics() {}
 
 	// post_step
-	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
 	// manage_state
-	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::BaseVessel& vessel) override;
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::vessel& vessel) override;
 
 	// power_consumer
 	double amp_draw() const { return IsPowered() ? 6.0 : 0.0; }

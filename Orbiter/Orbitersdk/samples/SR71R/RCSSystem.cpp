@@ -25,7 +25,7 @@
 #include "SR71r_mesh.h"
 
 
-RCSSystem::RCSSystem(bco::BaseVessel& vessel) :
+RCSSystem::RCSSystem(bco::vessel& vessel) :
 	vessel_(vessel),
 	slotIsAeroActive_([&](bool v) { ActiveChanged(v); })
 { 

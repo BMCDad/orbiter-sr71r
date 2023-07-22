@@ -19,7 +19,7 @@
 #include "LandingGear.h"
 #include "SR71r_mesh.h"
 
-LandingGear::LandingGear(bco::BaseVessel& vessel)
+LandingGear::LandingGear(bco::vessel& vessel)
 {
     vessel.AddControl(&btnLowerGear_);
     vessel.AddControl(&btnRaiseGear_);
@@ -28,7 +28,7 @@ LandingGear::LandingGear(bco::BaseVessel& vessel)
     btnRaiseGear_.attach([&]() { position_ = 0.0; });
 }
 
-void LandingGear::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
+void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Note:  The animLandingGear can only move if there is hydraulic power, that
 	// is the actual landing gear animation.  The animLGHandle_ is the landing gear
@@ -45,7 +45,7 @@ void LandingGear::handle_post_step(bco::BaseVessel& vessel, double simt, double 
     bco::RotateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_verts, sTrans * animLandingSwitch_.GetState());
 }
 
-bool LandingGear::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
+bool LandingGear::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
     // [a b] : a: position, 1 (down) 0 (up)   b: anim state
     double lgPos = 0.0;
@@ -57,7 +57,7 @@ bool LandingGear::handle_load_state(bco::BaseVessel& vessel, const std::string& 
     return true;
 }
 
-std::string LandingGear::handle_save_state(bco::BaseVessel& vessel)
+std::string LandingGear::handle_save_state(bco::vessel& vessel)
 {
     std::ostringstream os;
 
@@ -65,7 +65,7 @@ std::string LandingGear::handle_save_state(bco::BaseVessel& vessel)
     return os.str();
 }
 
-void LandingGear::handle_set_class_caps(bco::BaseVessel& vessel)
+void LandingGear::handle_set_class_caps(bco::vessel& vessel)
 {
     auto vcMeshIdx = vessel.GetVCMeshIndex();
     auto meshIdx = vessel.GetMainMeshIndex();
@@ -97,7 +97,7 @@ void LandingGear::handle_set_class_caps(bco::BaseVessel& vessel)
     vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightGearLower_, parent);
 }
 
-void LandingGear::handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void LandingGear::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
     

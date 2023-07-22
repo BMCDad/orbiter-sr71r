@@ -46,17 +46,17 @@ class AirBrake :
     , public bco::manage_state
 {
 public:
-	AirBrake(bco::BaseVessel& vessel);
+	AirBrake(bco::vessel& vessel);
 
     // set_class_caps
-    void handle_set_class_caps(bco::BaseVessel& vessel) override;
+    void handle_set_class_caps(bco::vessel& vessel) override;
 
     // post_step
-    void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
     // manage_state
-    bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::BaseVessel& vessel) override;
+    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
 
     bco::slot<double>&  HydraulicPressSlot()    { return hydraulicPressSlot_; }
 

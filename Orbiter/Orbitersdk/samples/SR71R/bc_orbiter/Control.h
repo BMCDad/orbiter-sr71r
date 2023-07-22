@@ -18,7 +18,7 @@
 
 namespace bc_orbiter
 {
-	class BaseVessel;
+	class vessel;
 }
 
 
@@ -37,7 +37,7 @@ namespace bc_orbiter {
 	Implemented by a control that needs to take part in the VC cockpit animation step.
 	The implementing class will provide the group to animate, as well as the speed.  It
 	will also implement the actual step that will update the animation.  The presence of 
-	this base class instructs BaseVessel to add it to a collection that will be called during
+	this base class instructs vessel to add it to a collection that will be called during
 	the VC step.
 	*/
 	struct vc_animation {
@@ -80,7 +80,7 @@ namespace bc_orbiter {
 	For redraw events, override vc_redraw_flags.
 	*/
 	struct vc_event_target : public event_target {
-		virtual VECTOR3&	vc_event_location()					{ return _V(0.0, 0.0, 0.0); }
+		virtual VECTOR3		vc_event_location()					{ return _V(0.0, 0.0, 0.0); }
 		virtual double		vc_event_radius()					{ return 0.0; }
 		virtual int			vc_mouse_flags()					{ return PANEL_MOUSE_IGNORE; }
 		virtual int			vc_redraw_flags()					{ return PANEL_REDRAW_NEVER; }
@@ -94,86 +94,12 @@ namespace bc_orbiter {
 	For redraw events, override vc_redraw_flags.
 	*/
 	struct panel_event_target : public event_target {
-		virtual RECT&		panel_rect()						{ return _R(0, 0, 0, 0); }
+		virtual RECT		panel_rect()						{ return _R(0, 0, 0, 0); }
 		virtual int			panel_mouse_flags()					{ return PANEL_MOUSE_IGNORE; }
 		virtual int			panel_redraw_flags()				{ return PANEL_REDRAW_NEVER; }
 		virtual void		on_panel_redraw(MESHHANDLE meshPanel) {}
 	};
 
-	struct vessel_component
-	{
-	public:
-		virtual ~vessel_component() = default;
-	};
-
-	/**
-	set_class_caps
-	Indicates the class participates in setClassCaps.  The class must implement the
-	call void handle_set_class_caps(BaseVessel&).
-	*/
-	struct set_class_caps {
-		virtual void handle_set_class_caps(BaseVessel& vessel) = 0;
-		virtual ~set_class_caps() {};
-	};
-
-	/**
-	post_step
-	Indicates the class participates in postStep callbacks.  The class must implement
-	the post step handler.
-	*/
-	struct post_step {
-		virtual void handle_post_step(BaseVessel& vessel, double simt, double simdt, double mjd) = 0;
-	};
-
-	/**
-	draw_hud
-	Indicates the class participates in clbkDrawHud.  The class must implement the call
-	handle_draw_hud(BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp).
-	*/
-	struct draw_hud {
-		virtual void handle_draw_hud(BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) = 0;
-	};
-
-	/**
-	manage_state
-	Indicates the class can provide its internal state as a string, and that it can take that string back
-	in order to set the internal state.  The string provided should be appropriate for use in an Orbiter
-	config file, but does not provide the key, which will be provided by whatever is actually managing the config.
-	*/
-	struct manage_state {
-		/**
-		handle_load_state
-		param line A single line of text representing the state.
-		return true if the state was succesfully restored.
-		*/
-		virtual bool handle_load_state(BaseVessel& vessel, const std::string& line) = 0;
-
-		/**
-		handle_save
-		Return a single string that represents the internal state of the component.
-				*/
-		virtual std::string handle_save_state(BaseVessel& vessel) = 0;
-	};
-
-	/**
-	load_vc
-	Indicates the class has special handling when loading a virtual cockpit.
-	*/
-	struct load_vc {
-		/**
-		handle_load_vc
-		Do work required to setup vc components.
-		*/
-		virtual bool handle_load_vc(BaseVessel& vessel, int vcid) = 0;
-		virtual bool handle_redraw_vc(BaseVessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
-		virtual bool handle_mouse_vc(BaseVessel& vessel, int id, int event) { return false; }
-	};
-
-	struct load_panel {
-		virtual bool handle_load_panel(BaseVessel& vessel, int id, PANELHANDLE hPanel) = 0;
-		virtual bool handle_redraw_panel(BaseVessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
-		virtual bool handle_mouse_panel(BaseVessel& vessel, int id, int event) { return false; }
-	};
 
 
 	struct power_consumer {

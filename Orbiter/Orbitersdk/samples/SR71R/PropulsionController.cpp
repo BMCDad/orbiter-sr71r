@@ -24,7 +24,7 @@
 
 #include <assert.h>
 
-PropulsionController::PropulsionController(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+PropulsionController::PropulsionController(bco::power_provider& pwr, bco::vessel& vessel) :
 	power_(pwr),
 	vessel_(vessel),
 	mainFuelLevel_(0.0),
@@ -92,7 +92,7 @@ void PropulsionController::ToggleRCSFill()
 	}
 }
 
-void PropulsionController::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
+void PropulsionController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Limit how often we run
 	if (fabs(simt - prevTime_) > 0.1)
@@ -247,7 +247,7 @@ double PropulsionController::FillRCSFuel(double amount)
 	return result;
 }
 
-void PropulsionController::handle_set_class_caps(bco::BaseVessel& vessel)
+void PropulsionController::handle_set_class_caps(bco::vessel& vessel)
 {
 	//	Start with max thrust (ENGINE_THRUST) this will change base on the max thrust selector.
 	mainThrustHandles_[0] = vessel.CreateThruster(
@@ -355,14 +355,14 @@ void PropulsionController::handle_set_class_caps(bco::BaseVessel& vessel)
 //	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
-bool PropulsionController::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
+bool PropulsionController::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
 	std::istringstream in(line);
 	in >> switchThrustLimit_;
 	return true;
 }
 
-std::string PropulsionController::handle_save_state(bco::BaseVessel& vessel)
+std::string PropulsionController::handle_save_state(bco::vessel& vessel)
 {
 	std::ostringstream os;
 	os << switchThrustLimit_;
@@ -386,7 +386,7 @@ void PropulsionController::SetThrustLevel(double newLevel)
 	vessel_.SetThrusterMax0(mainThrustHandles_[1], maxThrustLevel_);
 }
 
-void PropulsionController::handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void PropulsionController::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 

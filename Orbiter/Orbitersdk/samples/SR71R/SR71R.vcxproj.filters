@@ -102,9 +102,6 @@
     <ClInclude Include="IConsumable.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="StatusBoard.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="MfdMets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -150,9 +147,6 @@
     <ClInclude Include="bc_orbiter\bco.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\Circuit.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\Component.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
@@ -160,9 +154,6 @@
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\MFDBase.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\PoweredComponent.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\Tools.h">
@@ -222,13 +213,7 @@
     <ClInclude Include="Airspeed.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\cryogenic_tank.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\generic_tank.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\electrical_component.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="SR71r_common.h">
@@ -242,6 +227,9 @@
     </ClInclude>
     <ClInclude Include="bc_orbiter\status_display.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\handler_interfaces.h">
+      <Filter>bc_orbiter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -285,9 +273,6 @@
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="RightMfd.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="StatusBoard.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">

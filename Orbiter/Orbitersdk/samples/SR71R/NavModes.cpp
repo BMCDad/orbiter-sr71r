@@ -24,7 +24,7 @@
 
 #include <assert.h>
 
-NavModes::NavModes(bco::BaseVessel& baseVessel) :
+NavModes::NavModes(bco::vessel& baseVessel) :
     baseVessel_(baseVessel)
 {
     baseVessel_.AddControl(&btnKillRot_);
@@ -97,7 +97,7 @@ void NavModes::Update()
 	}
 }
 
-void NavModes::handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void NavModes::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
     int xLeft = 2;

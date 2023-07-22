@@ -18,7 +18,6 @@
 
 #include "bc_orbiter\signals.h"
 #include "bc_orbiter\control.h"
-#include "bc_orbiter\electrical_component.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
@@ -48,7 +47,7 @@ public:
 	double amp_draw() const override { return switchBeaconLights_.is_on() ? 4.0 : 0.0; }
 
 	// set_class_caps
-	void handle_set_class_caps(bco::BaseVessel& vessel) override {
+	void handle_set_class_caps(bco::vessel& vessel) override {
 		vessel.AddBeacon(&specBeaconTop_);
 		vessel.AddBeacon(&specBeaconBottom_);
 	
@@ -56,14 +55,14 @@ public:
 	}
 
 	// manage_state
-	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override {
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override {
 
 		std::istringstream in(line);
 		in >> switchBeaconLights_;
 		return true;
 	}
 
-	std::string handle_save_state(bco::BaseVessel& vessel) override {
+	std::string handle_save_state(bco::vessel& vessel) override {
 		std::ostringstream os;
 		os << switchBeaconLights_;
 		return os.str();

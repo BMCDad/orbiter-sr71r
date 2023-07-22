@@ -36,11 +36,11 @@ class NavModes :
 	bco::draw_hud
 {
 public:
-	NavModes(bco::BaseVessel& baseVessel);
+	NavModes(bco::vessel& baseVessel);
 
 	// These overrides come directly from SR71Vessel callbacks.
 	void OnNavMode(int mode, bool active);
-	void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+	void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
 	bco::slot<bool>&					IsEnabledSlot()			{ return slotIsEnabled_; }		// Will come from aerodata (avion enabled)
 
@@ -48,7 +48,7 @@ protected:
 	void Update();
 
 private:
-	bco::BaseVessel&					baseVessel_;
+	bco::vessel&					baseVessel_;
 	void ToggleMode(int mode);
 
 	bco::slot<bool>						slotIsEnabled_;

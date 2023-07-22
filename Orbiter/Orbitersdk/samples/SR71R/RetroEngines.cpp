@@ -22,7 +22,7 @@
 #include "SR71r_mesh.h"
 
 
-RetroEngines::RetroEngines(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+RetroEngines::RetroEngines(bco::power_provider& pwr, bco::vessel& vessel) :
     power_(pwr),
     vessel_(vessel)
 {
@@ -31,7 +31,7 @@ RetroEngines::RetroEngines(bco::power_provider& pwr, bco::BaseVessel& vessel) :
 }
 
 
-void RetroEngines::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
+void RetroEngines::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
         animRetroDoors_.Step(switchDoors_.is_on() ? 1.0 : 0.0, simdt);
@@ -47,7 +47,7 @@ void RetroEngines::handle_post_step(bco::BaseVessel& vessel, double simt, double
         : bco::status_display::status::off);
 }
 
-void RetroEngines::handle_set_class_caps(bco::BaseVessel& vessel)
+void RetroEngines::handle_set_class_caps(bco::vessel& vessel)
 {
     vessel.AddControl(&switchDoors_);
     vessel.AddControl(&status_);
@@ -91,7 +91,7 @@ void RetroEngines::handle_set_class_caps(bco::BaseVessel& vessel)
     vessel.AddExhaustStream(retroThrustHandles_[1], _V(4.38, 0, 3), &exhaust_retro);
 }
 
-bool RetroEngines::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
+bool RetroEngines::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchDoors_ >> animRetroDoors_;
@@ -99,7 +99,7 @@ bool RetroEngines::handle_load_state(bco::BaseVessel& vessel, const std::string&
     return true;
 }
 
-std::string RetroEngines::handle_save_state(bco::BaseVessel& vessel)
+std::string RetroEngines::handle_save_state(bco::vessel& vessel)
 {
     std::ostringstream os;
     os << switchDoors_ << " " << animRetroDoors_;
@@ -125,7 +125,7 @@ void RetroEngines::EnableRetros(bool isEnabled)
     }
 }
 
-void RetroEngines::handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void RetroEngines::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 

@@ -20,7 +20,7 @@
 
 #include "Avionics.h"
 
-Avionics::Avionics(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+Avionics::Avionics(bco::power_provider& pwr, bco::vessel& vessel) :
 	power_(pwr)
 {
 	power_.attach_consumer(this);
@@ -52,7 +52,7 @@ Avionics::Avionics(bco::power_provider& pwr, bco::BaseVessel& vessel) :
 
 
 // post_step
-void Avionics::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) {
+void Avionics::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) {
 	double gforce	 = 0.0;
 	double trim		 = 0.0;
 	double aoa		 = 0.0;
@@ -119,14 +119,14 @@ void Avionics::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 }
 
 // manage_state
-bool Avionics::handle_load_state(bco::BaseVessel& vessel, const std::string& line) {
+bool Avionics::handle_load_state(bco::vessel& vessel, const std::string& line) {
 	std::istringstream in(line);
 
 	in >> setCourseSignal_ >> setHeadingSignal_ >> switchAvionPower_ >> switchAvionMode_ >> switchNavMode_;
 	return false;
 }
 
-std::string Avionics::handle_save_state(bco::BaseVessel& vessel) {
+std::string Avionics::handle_save_state(bco::vessel& vessel) {
 	std::ostringstream os;
 	os << setCourseSignal_ << " " << setHeadingSignal_ << " " << switchAvionPower_ << " " << switchAvionMode_ << " " << switchNavMode_;
 	return os.str();

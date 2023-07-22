@@ -21,7 +21,7 @@
 #include "ShipMets.h"
 
 SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) : 
-	bco::BaseVessel(hvessel, flightmodel),
+	bco::vessel(hvessel, flightmodel),
 	meshVirtualCockpit_(nullptr),
 	navModes_(              *this),
 	slotHydraulicLevel_([&](double v) { UpdateHydraulicLevel(v); }),

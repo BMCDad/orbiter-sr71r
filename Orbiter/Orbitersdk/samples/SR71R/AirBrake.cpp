@@ -19,7 +19,7 @@
 #include "AirBrake.h"
 #include "SR71r_mesh.h"
 
-AirBrake::AirBrake(bco::BaseVessel& vessel) :
+AirBrake::AirBrake(bco::vessel& vessel) :
 	dragFactor_(0.0)
 {
 	vessel.AddControl(&btnDecreaseAirbrake_);
@@ -30,7 +30,7 @@ AirBrake::AirBrake(bco::BaseVessel& vessel) :
 	btnDecreaseAirbrake_.attach([&]() { position_ = max(0.0, position_ - 0.33); });
 }
 
-void AirBrake::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
+void AirBrake::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Note:  The animAirBrake can only move if there is hydraulic power, that
 	// is the actual air brake animation.  The animAirBrakeHandle_ is the air brake
@@ -57,7 +57,7 @@ void AirBrake::handle_post_step(bco::BaseVessel& vessel, double simt, double sim
 		:	bco::status_display::status::off);
 }
 
-bool AirBrake::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
+bool AirBrake::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
 	// [a b] : a: air brake switch position.   b: air brake actual position (they can differ)
 
@@ -68,14 +68,14 @@ bool AirBrake::handle_load_state(bco::BaseVessel& vessel, const std::string& lin
 	return true;
 }
 
-std::string AirBrake::handle_save_state(bco::BaseVessel& vessel)
+std::string AirBrake::handle_save_state(bco::vessel& vessel)
 {
 	std::ostringstream os;
 	os << position_ << " " << animAirBrake_;
 	return os.str();
 }
 
-void AirBrake::handle_set_class_caps(bco::BaseVessel& vessel)
+void AirBrake::handle_set_class_caps(bco::vessel& vessel)
 {
 	// Setup VC animation
 	auto vcIdx = vessel.GetVCMeshIndex();

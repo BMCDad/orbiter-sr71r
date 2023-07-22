@@ -67,7 +67,7 @@ public:
 	}
 
 	// set_class_caps
-	void handle_set_class_caps(bco::BaseVessel& vessel) override {
+	void handle_set_class_caps(bco::vessel& vessel) override {
 		vessel.AddControl(&switchEnabled_);
 		vessel.AddControl(&gaugeAPULevel_);
 		vessel.AddControl(&status_);
@@ -76,7 +76,7 @@ public:
 	double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
 
 	// manage_state
-	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override {
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override {
 		std::stringstream in(line);
 
 		if (in >> switchEnabled_) {
@@ -87,7 +87,7 @@ public:
 		}
 	}
 
-	std::string handle_save_state(bco::BaseVessel& vessel) override
+	std::string handle_save_state(bco::vessel& vessel) override
 	{
 		std::ostringstream os;
 		os << switchEnabled_;
@@ -97,7 +97,7 @@ public:
 
 
 	// post_step
-	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override {
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		bool hasFuel = false;
 
 		if (!IsPowered()) {

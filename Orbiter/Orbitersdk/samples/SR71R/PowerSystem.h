@@ -51,10 +51,10 @@ class PowerSystem :
 	, public bco::manage_state
 {
 public:
-	PowerSystem(bco::BaseVessel& vessel);
+	PowerSystem(bco::vessel& vessel);
 
 	// post_step
-	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override
 	{
 		double draw = 0.0;
 
@@ -68,8 +68,8 @@ public:
 	}
 
 	// manage_state
-	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::BaseVessel& vessel) override;
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::vessel& vessel) override;
 
 	// Fuelcell:
 	bco::slot<double>&		FuelCellAvailablePowerSlot()	{ return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
@@ -82,7 +82,7 @@ public:
 	double amp_load() const override { return ampDraw_; }
 
 private:
-	void Update(bco::BaseVessel& vessel);
+	void Update(bco::vessel& vessel);
 
 	const double			FULL_POWER		=  28.0;
 	const double			USEABLE_POWER	=  24.0;

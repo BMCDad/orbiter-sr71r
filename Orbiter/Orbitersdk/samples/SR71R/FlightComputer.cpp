@@ -22,7 +22,7 @@
 //
 //namespace mvc = bm::vc;
 //
-//FC::FlightComputer::FlightComputer(bco::BaseVessel * vessel, double amps) :
+//FC::FlightComputer::FlightComputer(bco::vessel * vessel, double amps) :
 //	bco::PoweredComponent(vessel, 10.0, 25.0),
 //	//visAPMainOn_(		bm::vc::SwAPMain_verts,		bm::vc::SwAPMain_id),
 //	//visAPHeadingOn_(	bm::vc::SwAPHeading_verts,	bm::vc::SwAPHeading_id),

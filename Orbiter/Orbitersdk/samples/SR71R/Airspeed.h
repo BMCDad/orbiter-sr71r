@@ -31,7 +31,7 @@ class Airspeed :
 {
 public:
 
-	Airspeed(bco::BaseVessel& vessel) {
+	Airspeed(bco::vessel& vessel) {
 		vessel.AddControl(&kiesHand_);
 		vessel.AddControl(&speedHand_);
 		vessel.AddControl(&maxMachHand_);
@@ -62,7 +62,7 @@ public:
 	}
 
 	// post_step
-	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override {
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		double  keas			= 0.0;		// equivalent airspeed, shows in TDI
 		double  kias			= 0.0;		// indicated, shows as dial.
 		double  mach			= 0.0;		// shows in TDI and as a dial

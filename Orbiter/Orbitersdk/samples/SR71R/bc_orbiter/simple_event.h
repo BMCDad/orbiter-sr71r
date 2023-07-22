@@ -49,13 +49,13 @@ namespace bc_orbiter {
 		{ }
 
 		// vc_event_target
-		VECTOR3&			vc_event_location()			override { return vcLocation_; }
+		VECTOR3				vc_event_location()			override { return vcLocation_; }
 		double				vc_event_radius()			override { return vcRadius_; }
 		int					vc_mouse_flags()			override { return PANEL_MOUSE_LBDOWN; }
 		int					vc_redraw_flags()			override { return PANEL_REDRAW_NEVER; }
 
 		// panel_event_target
-		RECT&				panel_rect()				override { return pnlRect_; }
+		RECT				panel_rect()				override { return pnlRect_; }
 		int					panel_mouse_flags()			override { return PANEL_MOUSE_LBDOWN; }
 		int					panel_redraw_flags()		override { return PANEL_REDRAW_NEVER; }
 

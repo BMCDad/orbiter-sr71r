@@ -28,7 +28,7 @@ CargoBayController::CargoBayController(bco::power_provider& pwr) :
     power_.attach_consumer(this);
 }
 
-void CargoBayController::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
+void CargoBayController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	if (IsPowered()) {
         animCargoBayDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
@@ -45,7 +45,7 @@ void CargoBayController::handle_post_step(bco::BaseVessel& vessel, double simt, 
 
 }
 
-bool CargoBayController::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
+bool CargoBayController::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchPower_ >> switchOpen_ >> animCargoBayDoors_;
@@ -53,14 +53,14 @@ bool CargoBayController::handle_load_state(bco::BaseVessel& vessel, const std::s
     return true;
 }
 
-std::string CargoBayController::handle_save_state(bco::BaseVessel& vessel)
+std::string CargoBayController::handle_save_state(bco::vessel& vessel)
 {
     std::ostringstream os;
     os << switchPower_ << " " << switchOpen_ << " " << animCargoBayDoors_;
     return os.str();
 }
 
-void CargoBayController::handle_set_class_caps(bco::BaseVessel& vessel)
+void CargoBayController::handle_set_class_caps(bco::vessel& vessel)
 {
     vessel.AddControl(&switchOpen_);
     vessel.AddControl(&switchPower_);

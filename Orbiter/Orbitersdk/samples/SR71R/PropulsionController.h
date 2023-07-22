@@ -20,7 +20,6 @@
 
 #include <string>
 
-#include "bc_orbiter/PoweredComponent.h"
 #include "bc_orbiter/Animation.h"
 #include "bc_orbiter/BaseVessel.h"
 #include "bc_orbiter/on_off_input.h"
@@ -89,25 +88,25 @@ class PropulsionController :
 	, public bco::draw_hud
 {
 public:
-	PropulsionController(bco::power_provider& pwr, bco::BaseVessel& vessel);
+	PropulsionController(bco::power_provider& pwr, bco::vessel& vessel);
 
     enum class Axis { Pitch = 0, Yaw = 1, Roll = 2 };
 
 	// post_step
-	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override;
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
 	// power_consumer
 	double amp_draw() const { return (isFilling_ ? 4.0 : 0.0) + (isRCSFilling_ ? 4.0 : 0.0); }
 
 	// set_class_caps
-	void handle_set_class_caps(bco::BaseVessel& vessel) override;
+	void handle_set_class_caps(bco::vessel& vessel) override;
 
 	// manage_state
-	bool handle_load_state(bco::BaseVessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::BaseVessel& vessel) override;
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::vessel& vessel) override;
 
 	// draw_hud
-    void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
 	double GetVesselMainThrustLevel();
 	void SetVesselMainThrustLevel(double level);
@@ -119,7 +118,7 @@ public:
 	// TODO:
 	// signal to report current ThrottleLimit state
 private:
-	bco::BaseVessel&		vessel_;
+	bco::vessel&		vessel_;
 	bco::power_provider&	power_;
 
 	bool IsPowered() { return power_.volts_available() > 24.0; }

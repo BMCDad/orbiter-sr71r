@@ -22,7 +22,7 @@
 
 #include <assert.h>
 
-PowerSystem::PowerSystem(bco::BaseVessel& vessel) :
+PowerSystem::PowerSystem(bco::vessel& vessel) :
 	batteryLevel_(1.0),			// Always available for now.
 	slotFuelCellAvailablePower_([&](double v) { })
 {
@@ -37,7 +37,7 @@ PowerSystem::PowerSystem(bco::BaseVessel& vessel) :
 	vessel.AddControl(&statusBattery_);
 }
 
-bool PowerSystem::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
+bool PowerSystem::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
 	std::stringstream ss(line);
 	ss >> switchEnabled;
@@ -47,7 +47,7 @@ bool PowerSystem::handle_load_state(bco::BaseVessel& vessel, const std::string& 
 	return true;
 }
 
-std::string PowerSystem::handle_save_state(bco::BaseVessel& vessel)
+std::string PowerSystem::handle_save_state(bco::vessel& vessel)
 {
 	std::stringstream ss;
 
@@ -60,7 +60,7 @@ std::string PowerSystem::handle_save_state(bco::BaseVessel& vessel)
 //	mainCircuit_.AddDevice(device);
 //}
 
-void PowerSystem::Update(bco::BaseVessel& vessel)
+void PowerSystem::Update(bco::vessel& vessel)
 {
 	/* Power system update:
 	*	Determine if we have a power source available and how much it provides.

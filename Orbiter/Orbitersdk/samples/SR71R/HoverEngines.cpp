@@ -21,7 +21,7 @@
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
 
-HoverEngines::HoverEngines(bco::power_provider& pwr, bco::BaseVessel& vessel) :
+HoverEngines::HoverEngines(bco::power_provider& pwr, bco::vessel& vessel) :
     power_(pwr),
     vessel_(vessel)
 {
@@ -29,7 +29,7 @@ HoverEngines::HoverEngines(bco::power_provider& pwr, bco::BaseVessel& vessel) :
     animHoverDoors_.SetTargetFunction([this] { EnableHover(true); });
 }
 
-void HoverEngines::handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd)
+void HoverEngines::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
         animHoverDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
@@ -45,7 +45,7 @@ void HoverEngines::handle_post_step(bco::BaseVessel& vessel, double simt, double
         :   bco::status_display::status::off);
 }
 
-void HoverEngines::handle_set_class_caps(bco::BaseVessel& vessel)
+void HoverEngines::handle_set_class_caps(bco::vessel& vessel)
 {
     vessel.AddControl(&switchOpen_);
     vessel.AddControl(&status_);
@@ -105,7 +105,7 @@ void HoverEngines::handle_set_class_caps(bco::BaseVessel& vessel)
     vessel.AddVesselAnimationComponent(aid, mIdx, &gpRight_);
 }
 
-bool HoverEngines::handle_load_state(bco::BaseVessel& vessel, const std::string& line)
+bool HoverEngines::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchOpen_ >> animHoverDoors_;
@@ -113,7 +113,7 @@ bool HoverEngines::handle_load_state(bco::BaseVessel& vessel, const std::string&
     return true;
 }
 
-std::string HoverEngines::handle_save_state(bco::BaseVessel& vessel)
+std::string HoverEngines::handle_save_state(bco::vessel& vessel)
 {
     std::ostringstream os;
     os << switchOpen_ << " " << animHoverDoors_;
@@ -139,7 +139,7 @@ void HoverEngines::EnableHover(bool isEnabled)
     }
 }
 
-void HoverEngines::handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void HoverEngines::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 

@@ -33,7 +33,7 @@ class HSI :
 
 public:
 
-	HSI(bco::BaseVessel& vessel) {
+	HSI(bco::vessel& vessel) {
 		vessel.AddControl(&hsiBearing_);
 		vessel.AddControl(&hsiCourseError_);
 		vessel.AddControl(&hsiCourse_);
@@ -66,7 +66,7 @@ public:
 	}
 
 	// post_step
-	void handle_post_step(bco::BaseVessel& vessel, double simt, double simdt, double mjd) override {
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		double		yaw			= 0.0;
 		double		rotHdg		= 0.0;
 		double		rotCrs		= 0.0;
@@ -136,7 +136,7 @@ private:
 	bco::slot<double>		slotSetHeading_;
 	bco::slot<bool>			slotNavMode_;
 
-	bool CalcNavMetrics(bco::BaseVessel& vessel, NAVHANDLE handle, double& bearing, double& glideSlope, double& navError, double& milesBeacon) {
+	bool CalcNavMetrics(bco::vessel& vessel, NAVHANDLE handle, double& bearing, double& glideSlope, double& navError, double& milesBeacon) {
 		bool result = false;  //comstatus
 
 		auto navType = oapiGetNavType(handle);

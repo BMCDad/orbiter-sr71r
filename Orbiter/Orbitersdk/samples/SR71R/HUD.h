@@ -45,11 +45,11 @@ class HUD :
 	, public bco::draw_hud
 {
 public:
-	HUD(bco::power_provider& pwr, bco::BaseVessel& vessel);
+	HUD(bco::power_provider& pwr, bco::vessel& vessel);
 
-	bool handle_load_vc(bco::BaseVessel& vessel, int vcid) override;
+	bool handle_load_vc(bco::vessel& vessel, int vcid) override;
 
-	void handle_draw_hud(bco::BaseVessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+	void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
 	double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
 
