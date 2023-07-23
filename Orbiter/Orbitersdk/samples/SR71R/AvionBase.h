@@ -18,7 +18,7 @@
 
 #include "bc_orbiter\control.h"
 #include "bc_orbiter\signals.h"
-#include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter\vessel.h"
 
 namespace bco = bc_orbiter;
 

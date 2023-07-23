@@ -39,12 +39,6 @@ void RightMFD::handle_set_class_caps(bco::vessel& vessel)
 	AssignMenu(GetBaseVessel()->GetIdForComponent(this));
 }
 
-
-bool RightMFD::OnVCMouseEvent(int id, int event)
-{
-	return OnMouseEvent(id, event);
-}
-
 bool RightMFD::handle_load_vc(bco::vessel& vessel, int vcid)
 {
 	auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
@@ -202,11 +196,6 @@ bool RightMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 
 	return true;
-}
-
-bool RightMFD::OnPanelMouseEvent(int id, int event)
-{
-	return OnMouseEvent(id, event);
 }
 
 bool RightMFD::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)

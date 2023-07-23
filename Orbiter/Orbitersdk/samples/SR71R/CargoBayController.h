@@ -19,7 +19,7 @@
 #include "OrbiterSDK.h"
 
 #include "bc_orbiter/Animation.h"
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/status_display.h"
@@ -58,7 +58,7 @@ class CargoBayController :
     , public bco::manage_state
 {
 public:
-	CargoBayController(bco::power_provider& pwr);
+	CargoBayController(bco::power_provider& pwr, bco::vessel& vessel);
 
     // set_class_caps
     void handle_set_class_caps(bco::vessel& vessel) override;
@@ -81,7 +81,7 @@ private:
 
 	bool IsPowered() const {
         return
-            power_.volts_available() > MIN_VOLTS &&
+            (power_.volts_available() > MIN_VOLTS) &&
             switchPower_.is_on();
     }
 
@@ -92,27 +92,27 @@ private:
             (animCargoBayDoors_.GetState() < 1.0); 
     }
 
-    bco::Animation		    animCargoBayDoors_{ 0.01 };
+    bco::animation_target		    animCargoBayDoors_{ 0.01 };
 
-    bco::AnimationGroup     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
+    bco::animation_group     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
                                                     bm::main::Bay1AxisPA_location, bm::main::Bay1AxisPF_location,
                                                     (160 * RAD),
                                                     0.51, 0.74
                                                 };
 
-    bco::AnimationGroup     gpCargoRightFront_  {   { bm::main::BayDoorSF_id },
+    bco::animation_group     gpCargoRightFront_  {   { bm::main::BayDoorSF_id },
                                                     bm::main::Bay1AxisSF_location, bm::main::Bay1AxisSA_location,
                                                     (160 * RAD),
                                                     0.76, 1.0
                                                 };
 
-    bco::AnimationGroup     gpCargoLeftMain_    {   { bm::main::BayDoorPA_id },
+    bco::animation_group     gpCargoLeftMain_    {   { bm::main::BayDoorPA_id },
                                                     bm::main::Bay2AxisPA_location, bm::main::Bay2AxisPF_location,
                                                     (160 * RAD),
                                                     0.0, 0.24
                                                 };
 
-    bco::AnimationGroup     gpCargoRightMain_   {   { bm::main::BayDoorSA_id },
+    bco::animation_group     gpCargoRightMain_   {   { bm::main::BayDoorSA_id },
                                                     bm::main::Bay2AxisSF_location, bm::main::Bay2AxisSA_location,
                                                     (160 * RAD),
                                                     0.26, 0.49

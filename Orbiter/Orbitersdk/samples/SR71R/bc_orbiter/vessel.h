@@ -82,14 +82,14 @@ namespace bc_orbiter
         PROPELLANT_HANDLE RcsPropellant() const				{ return rcsPropellant_; }
 
         /**
-        Creates an animation and registers it with the base vessel.  Animation registered
+        Creates an animation and registers it with the base vessel.  animation_target registered
 		with the base class automatically receive part of the PostStep time processing.
         @param target IAnimationState object that will control the animation state.
         @param speed The speed of the animation.
         @param func The function to call when the animation hits its target state.
         */
-        template<typename AT=Animation>
-        UINT CreateVesselAnimation(IAnimationState* target, double speed = 1.0, TargetAchievedFunc func = nullptr)
+        template<typename AT=animation_target>
+        UINT CreateVesselAnimation(IAnimationState* target, double speed = 1.0, func_target_achieved func = nullptr)
         {
             auto animId = VESSEL3::CreateAnimation(0.0);
 
@@ -107,7 +107,7 @@ namespace bc_orbiter
         ANIMATIONCOMPONENT_HANDLE AddVesselAnimationComponent(
             UINT animId, 
             UINT meshIdx,
-            AnimationGroup* transform,
+            animation_group* transform,
             ANIMATIONCOMPONENT_HANDLE parent = nullptr)
         {
             ANIMATIONCOMPONENT_HANDLE result = nullptr;
@@ -135,7 +135,7 @@ namespace bc_orbiter
 		@param id The animation id to set.
 		@param state The state to set the animation to.
 		*/
-        void SetAnimationState(const Animation& anim)
+        void SetAnimationState(const animation_target& anim)
         {
             auto eh = animations_.find(anim.VesselId());
             if (eh != animations_.end())	eh->second->SetState(anim.GetState());
@@ -174,7 +174,7 @@ namespace bc_orbiter
 		std::vector<load_panel*>						load_panel_components_;
 
 		std::map<int, Component*>						idComponentMap_;		// still used by MFDs.  Need to figure that out, then we can get rid of Component
-		std::map<UINT, std::unique_ptr<IAnimation>>     animations_;
+		std::map<UINT, std::unique_ptr<animation>>     animations_;
 		
 		int					nextEventId_				{ 0 };
 		bool				isCreated_					{ false };	// Set true after clbkPostCreation
@@ -280,7 +280,7 @@ namespace bc_orbiter
 		// NEW mode
 		auto vc = map_vc_targets_.find(id);
 		if (vc != map_vc_targets_.end()) {
-			vc->second->on_event();
+			vc->second->on_event(id, event);
 		}
 
 		return false;
@@ -413,7 +413,7 @@ namespace bc_orbiter
 		// NEW mode
 		auto pe = map_panel_targets_.find(id);
 		if (pe != map_panel_targets_.end()) {
-			pe->second->on_event();
+			pe->second->on_event(id, event);
 		}
 
 		return true;

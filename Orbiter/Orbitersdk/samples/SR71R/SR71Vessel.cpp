@@ -119,7 +119,7 @@ void SR71Vessel::SetupSurfaces()
 {
 	auto vessel = this;
 
-	// Left Aileron Animation
+	// Left Aileron animation_target
 	static UINT groupLeftAileron = bm::main::LeftOuterElevon_id;
 	static VECTOR3 leftAileronAxis = bm::main::AileronAxisPO_location - bm::main::AileronAxisPI_location;
 	static VECTOR3 leftElevatorAxis = bm::main::AileronAxisPI_location - bm::main::AileronAxisPO_location;
@@ -149,7 +149,7 @@ void SR71Vessel::SetupSurfaces()
 	vessel->AddAnimationComponent(anim_left_elevator_, 0, 1, &animGroupLeftElevator);
 
 
-	// Right Aileron Animation
+	// Right Aileron animation_target
 	static UINT groupRightAileron[1] = { bm::main::RightOuterElevon_id };
 	static VECTOR3 rightAileronAxis = bm::main::AileronAxisSO_location - bm::main::AileronAxisSI_location;
 
@@ -177,7 +177,7 @@ void SR71Vessel::SetupSurfaces()
 	vessel->AddAnimationComponent(anim_right_elevator_, 0, 1, &animGroupRightElevator);
 
 
-	// Left Rudder Animation
+	// Left Rudder animation_target
 	static UINT groupLeftRudder = bm::main::LeftRudder_id;
 	static VECTOR3 leftRudderAxis = bm::main::RudderAxisPB_location - bm::main::RudderAxisPT_location;
 
@@ -191,7 +191,7 @@ void SR71Vessel::SetupSurfaces()
 		AILERON_RANGE);
 
 
-	// Right Rudder Animation
+	// Right Rudder animation_target
 	static UINT groupRightRudder = bm::main::RightRudder_id;
 	static VECTOR3 rightRudderAxis = bm::main::RudderAxisSB_location - bm::main::RudderAxisST_location;
 

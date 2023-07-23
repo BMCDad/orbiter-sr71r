@@ -19,7 +19,7 @@
 #include "OrbiterSDK.h"
 
 #include "bc_orbiter/Animation.h"
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/status_display.h"
@@ -68,7 +68,7 @@ class Canopy :
     , public bco::manage_state
 {
 public:
-    Canopy(bco::power_provider& pwr);
+    Canopy(bco::power_provider& pwr, bco::vessel& vessel);
 
     // set_class_caps
     void handle_set_class_caps(bco::vessel& vessel) override;
@@ -97,13 +97,14 @@ private:
     bool CanopyIsMoving() const { 
         return 
             IsPowered() && 
+            switchOpen_.is_on() &&
             (animCanopy_.GetState() > 0.0) && 
             (animCanopy_.GetState() < 1.0); 
     }
 
-    bco::Animation		    animCanopy_     { 0.2 };
+    bco::animation_target		    animCanopy_     { 0.2 };
 
-    bco::AnimationGroup     gpCanopy_       { { bm::main::CanopyFO_id,
+    bco::animation_group     gpCanopy_       { { bm::main::CanopyFO_id,
                                                 bm::main::ForwardCanopyWindow_id,
                                                 bm::main::CanopyFI_id,
 												bm::main::CanopyWindowSI_id,
@@ -113,7 +114,7 @@ private:
                                                 0, 1
                                             };
 
-    bco::AnimationGroup     gpCanopyVC_     { { bm::vc::CanopyFI_id,
+    bco::animation_group     gpCanopyVC_     { { bm::vc::CanopyFI_id,
                                                 bm::vc::CanopyFO_id,
                                                 bm::vc::CanopyWindowInsideLeft_id,
                                                 bm::vc::CanopyWindowSI_id },

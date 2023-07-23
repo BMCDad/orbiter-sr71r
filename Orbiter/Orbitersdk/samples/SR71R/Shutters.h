@@ -18,7 +18,7 @@
 
 #include "bc_orbiter/Component.h"
 #include "bc_orbiter/Animation.h"
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/signals.h"
 #include "bc_orbiter/on_off_input.h"
 

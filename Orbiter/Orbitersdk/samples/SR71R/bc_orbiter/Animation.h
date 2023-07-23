@@ -1,4 +1,4 @@
-//	Animation - bco Orbiter Library
+//	animation_target - bco Orbiter Library
 //	Copyright(C) 2015  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
@@ -26,9 +26,9 @@
 
 namespace bc_orbiter
 {
-    struct AnimationGroup
+    struct animation_group
     {
-        AnimationGroup(
+        animation_group(
             std::initializer_list<UINT> const& grp,
             const VECTOR3& locA, const VECTOR3& locB,
             double angle,
@@ -43,7 +43,7 @@ namespace bc_orbiter
             transform_ = std::make_unique<MGROUP_ROTATE>(0, group_.data(), group_.size(), locA, axis, (float)angle);
         }
 
-        AnimationGroup(
+        animation_group(
             std::initializer_list<UINT> const& grp,
             const VECTOR3& translate,
             double start, double stop) :
@@ -66,25 +66,25 @@ namespace bc_orbiter
         a lot of virtual function calls in the 'Step' loop.
     */
 
-    typedef std::function<void()> TargetAchievedFunc;
+    using func_target_achieved = std::function<void()>;
 
-    struct StateUpdate
+    struct state_update
     {
         double	            speed_{ 1.0 };
         double				state_{};
-        double              targetState_{};
+        double              target_state_{};
     };
 
     /**
         Updates the state directly.
     */
-    struct StateUpdateDirect
+    struct state_update_direct
     {
-        static bool UpdateState(StateUpdate& state, double dt)
+        static bool update_state(state_update& state, double dt)
         {
-            if (state.state_ != state.targetState_)
+            if (state.state_ != state.target_state_)
             {
-                state.state_ = state.targetState_;
+                state.state_ = state.target_state_;
                 return true;
             }
 
@@ -95,28 +95,28 @@ namespace bc_orbiter
     /**
         Updates the state towards a target at a given speed.
     */
-    struct StateUpdateTarget
+    struct state_update_target
     {
-        static bool UpdateState(StateUpdate& state, double dt)
+        static bool update_state(state_update& state, double dt)
         {
-            if (state.state_ == state.targetState_) return false;
+            if (state.state_ == state.target_state_) return false;
 
             double da = dt * state.speed_;
-            auto stateDiff = state.state_ - state.targetState_;
+            auto stateDiff = state.state_ - state.target_state_;
 
             if (da > abs(stateDiff))
             {
-                state.state_ = state.targetState_;
+                state.state_ = state.target_state_;
             }
             else
             {
                 if (stateDiff > 0)
                 {
-                    state.state_ = max(state.targetState_, state.state_ - da);
+                    state.state_ = max(state.target_state_, state.state_ - da);
                 }
                 else
                 {
-                    state.state_ = min(state.targetState_, state.state_ + da);
+                    state.state_ = min(state.target_state_, state.state_ + da);
                 }
             }
 
@@ -129,7 +129,7 @@ namespace bc_orbiter
     };
 
     /**
-        Similar to StateUpdateTarget, but will treat the 0-1 range as
+        Similar to state_update_target, but will treat the 0-1 range as
         a loop (wrap).  Useful for things like clock or altimeter dials.
 
         This works by moving 'state' towards the 'target'.  An animation
@@ -144,11 +144,11 @@ namespace bc_orbiter
         0.8  0.2   0.6      add max( -Da, 1-Df) from state.  If state < 0: add 1
         0.2  0.8  -0.6      add min(  Da, 1+Df) from state.  If state > 1: sub 1
     */
-    struct StateUpdateWrap
+    struct state_update_wrap
     {
-        static bool UpdateState(StateUpdate& state, double dt)
+        static bool update_state(state_update& state, double dt)
         {
-            if (state.targetState_ == state.state_)
+            if (state.target_state_ == state.state_)
             {
                 return false;
             }
@@ -165,7 +165,7 @@ namespace bc_orbiter
                 Df      = -.94 = .03-.97        Df < da, so Df should always win.
                 da      =  .1                   so state become 1.07, which is wrong
             */
-            auto Df = state.targetState_ - state.state_;
+            auto Df = state.target_state_ - state.state_;
 
             if (signbit(Df)) {
                 // Negative move
@@ -210,9 +210,7 @@ namespace bc_orbiter
         }
     };
 
-    class IAnimation
-    {
-    public:
+    struct animation {
         virtual void Step(double dt) = 0;
         virtual double GetState() const = 0;
         virtual void SetState(double) = 0;
@@ -220,23 +218,23 @@ namespace bc_orbiter
 
     /**
     Class to manage vessel animations.  Supports adding rotation and translation groups as well as child animations.
-    Animation
+    animation_target
     */
-    template <typename T = StateUpdateDirect>
-    class AnimationBase : public IAnimation, public IAnimationState
+    template <typename T = state_update_direct>
+    class animation_base : public animation, public IAnimationState
     {
     public:
-        AnimationBase()
+        animation_base()
         {}
 
-        AnimationBase(IAnimationState* state, double speed, TargetAchievedFunc func = nullptr) :
+        animation_base(IAnimationState* state, double speed, func_target_achieved func = nullptr) :
             stateProvider_(state),
             funcTarget_(func)
         {
             updateState_.speed_ = speed;
         }
 
-        AnimationBase(double speed)
+        animation_base(double speed)
         {
             updateState_.speed_ = speed;
         }
@@ -249,10 +247,10 @@ namespace bc_orbiter
         */
         void Step(double target, double dt)
         {
-            updateState_.targetState_ = target;
-            if (T::UpdateState(updateState_, dt))
+            updateState_.target_state_ = target;
+            if (T::update_state(updateState_, dt))
             {
-                if (funcTarget_ && (updateState_.targetState_ == updateState_.state_))
+                if (funcTarget_ && (updateState_.target_state_ == updateState_.state_))
                 {
                     funcTarget_();
                 }
@@ -261,10 +259,10 @@ namespace bc_orbiter
 
         void Step(double dt) override
         {
-            updateState_.targetState_ = stateProvider_->GetState();
-            if (T::UpdateState(updateState_, dt))
+            updateState_.target_state_ = stateProvider_->GetState();
+            if (T::update_state(updateState_, dt))
             {
-                if (funcTarget_ && (updateState_.targetState_ == updateState_.state_))
+                if (funcTarget_ && (updateState_.target_state_ == updateState_.state_))
                 {
                     funcTarget_();
                 }
@@ -281,14 +279,14 @@ namespace bc_orbiter
         void SetState(double state)
         {
             updateState_.state_ = state;
-            updateState_.targetState_ = state;
+            updateState_.target_state_ = state;
         }
 
         /**
         SetTargetFunction
         @param func The function to call when the animation target is achieved.
         */
-        void SetTargetFunction(TargetAchievedFunc func) { funcTarget_ = func; }
+        void SetTargetFunction(func_target_achieved func) { funcTarget_ = func; }
 
         /**
         GetState
@@ -301,7 +299,7 @@ namespace bc_orbiter
         void VesselId(UINT id) { vesselId_ = id; }
         UINT VesselId() const { return vesselId_; }
 
-        friend std::istream& operator>>(std::istream& input, AnimationBase& obj) {
+        friend std::istream& operator>>(std::istream& input, animation_base& obj) {
             double state;
 
             input >> state;
@@ -310,7 +308,7 @@ namespace bc_orbiter
             return input;
         }
 
-        friend std::ostream& operator<<(std::ostream& output, AnimationBase& obj) {
+        friend std::ostream& operator<<(std::ostream& output, animation_base& obj) {
             output.precision(4);
             output << obj.GetState();
             return output;
@@ -318,17 +316,17 @@ namespace bc_orbiter
 
     private:
 
-        StateUpdate			updateState_;
-        TargetAchievedFunc  funcTarget_;
+        state_update			updateState_;
+        func_target_achieved  funcTarget_;
         IAnimationState*    stateProvider_{ nullptr };
         UINT                vesselId_{ 0 };
     };
 
-    /* Animation
-    Animation with standard target update.
+    /* animation_target
+    animation_target with standard target update.
     */
-    using Animation = AnimationBase<StateUpdateTarget>;
+    using animation_target = animation_base<state_update_target>;
 
-    // Animation with 'wrap' target update.
-    using AnimationWrap = AnimationBase<StateUpdateWrap>;
+    // animation_target with 'wrap' target update.
+    using animation_wrap = animation_base<state_update_wrap>;
 }

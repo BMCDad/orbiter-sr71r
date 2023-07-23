@@ -27,6 +27,8 @@ HoverEngines::HoverEngines(bco::power_provider& pwr, bco::vessel& vessel) :
 {
     power_.attach_consumer(this);
     animHoverDoors_.SetTargetFunction([this] { EnableHover(true); });
+    vessel.AddControl(&switchOpen_);
+    vessel.AddControl(&status_);
 }
 
 void HoverEngines::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
@@ -35,21 +37,22 @@ void HoverEngines::handle_post_step(bco::vessel& vessel, double simt, double sim
         animHoverDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
     }
 
-    status_.set_state(
-        IsPowered()
-        ?   IsMoving()
-            ?   bco::status_display::status::warn
-            :   switchOpen_.is_on()
-                ?   bco::status_display::status::on
-                :   bco::status_display::status::off
-        :   bco::status_display::status::off);
+    auto status = bco::status_display::status::off;
+    if (power_.volts_available() > MIN_VOLTS) {
+        if ((animHoverDoors_.GetState() > 0.0) && (animHoverDoors_.GetState() < 1.0)) {
+            status = bco::status_display::status::warn;
+        }
+        else {
+            if (animHoverDoors_.GetState() == 1.0) {
+                status = bco::status_display::status::on;
+            }
+        }
+    }
+    status_.set_state(status);
 }
 
 void HoverEngines::handle_set_class_caps(bco::vessel& vessel)
 {
-    vessel.AddControl(&switchOpen_);
-    vessel.AddControl(&status_);
-
     auto vcIdx = vessel.GetVCMeshIndex();
     auto mIdx = vessel.GetMainMeshIndex();
 

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/Component.h"
 #include "bc_orbiter/Animation.h"
 #include "bc_orbiter/simple_event.h"
@@ -74,31 +74,31 @@ private:
                                                     animation of the gear based on available APU
                                                     power.  See the Step method in the cpp file. 
                                                 */
-    bco::Animation          animLandingSwitch_  { 2.0 };
-    bco::Animation			animLandingGear_    { 0.15 };
+    bco::animation_target          animLandingSwitch_  { 2.0 };
+    bco::animation_target			animLandingGear_    { 0.15 };
     UINT                    idAnim_             { 0 };
 
     // VC Animations
-    bco::AnimationGroup     lgHandle_           {   {bm::vc::LGHandle_id },
+    bco::animation_group     lgHandle_           {   {bm::vc::LGHandle_id },
                                                     bm::vc::LGHandle_location, bm::vc::LGHandleAxis_location, 
                                                     (40 * RAD),
                                                     0.0, 1.0
                                                 };
 
     // External:
-    bco::AnimationGroup     gpRightFrontDoor_   {   { bm::main::LGDoorSF_id },
+    bco::animation_group     gpRightFrontDoor_   {   { bm::main::LGDoorSF_id },
                                                     bm::main::LGFRBackPivot_location, bm::main::LGFRFrontPivot_location,
                                                     (90 * RAD),
                                                     0.0, 0.3 
                                                 };
 
-    bco::AnimationGroup     gpLeftFrontDoor_    {   { bm::main::LGDoorPF_id },
+    bco::animation_group     gpLeftFrontDoor_    {   { bm::main::LGDoorPF_id },
                                                     bm::main::LGFLFrontPivot_location, bm::main::LGFLBackPivot_location, 		
                                                     (90 * RAD),
                                                     0.0, 0.3 
                                                 };
 
-    bco::AnimationGroup     gpFrontGear_        {   { bm::main::LGFrontArm_id,
+    bco::animation_group     gpFrontGear_        {   { bm::main::LGFrontArm_id,
                                                       bm::main::LGFrontAxel_id,
                                                       bm::main::LGCrossF_id,
                                                       bm::main::LGFrontLeftWheel_id,
@@ -108,25 +108,25 @@ private:
                                                     0.2, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpLeftOuterDoor_    {   { bm::main::LGDoorPO_id },
+    bco::animation_group     gpLeftOuterDoor_    {   { bm::main::LGDoorPO_id },
                                                     bm::main::LGDoorAxisPOA_location, bm::main::LGDoorAxisPOF_location,
                                                     (-100 * RAD),
                                                     0.1, 1.0
                                                 };
 
-    bco::AnimationGroup     gpLeftInnerDoor_    {   { bm::main::LGDoorPI_id },
+    bco::animation_group     gpLeftInnerDoor_    {   { bm::main::LGDoorPI_id },
                                                     bm::main::LGDoorAxisPIA_location, bm::main::LGDoorAxisPIF_location,
                                                     (100 * RAD),
                                                     0.0, 0.3
                                                 };
 
-    bco::AnimationGroup     gpLeftGearUpper_    {   { bm::main::LGLArm_id },
+    bco::animation_group     gpLeftGearUpper_    {   { bm::main::LGLArm_id },
                                                     bm::main::LGCrossAxisPA_location, bm::main::LGCrossAxisPF_location,
                                                     (-90 * RAD),
                                                     0.2, 1.0
                                                 };
 
-    bco::AnimationGroup     gpLeftGearLower_    {   { bm::main::LGLFork_id,
+    bco::animation_group     gpLeftGearLower_    {   { bm::main::LGLFork_id,
                                                       bm::main::LGLWheel1_id,
                                                       bm::main::LGLWheel2_id,
                                                       bm::main::LGLWheel3_id },
@@ -134,25 +134,25 @@ private:
                                                     0.5, 0.8
                                                 };
 
-    bco::AnimationGroup     gpRightOuterDoor_   {   { bm::main::LGDoorSO_id },
+    bco::animation_group     gpRightOuterDoor_   {   { bm::main::LGDoorSO_id },
                                                     bm::main::LGDoorAxisSOA_location, bm::main::LGDoorAxisSOF_location,
                                                     (100 * RAD),
                                                     0.2, 1.0
                                                 };
 
-    bco::AnimationGroup     gpRightInnerDoor_   {   { bm::main::LGDoorSI_id },
+    bco::animation_group     gpRightInnerDoor_   {   { bm::main::LGDoorSI_id },
                                                     bm::main::LGDoorAxisSIA_location, bm::main::LGDoorAxisSIF_location,
                                                     (-100 * RAD),
                                                     0.0, 0.3
                                                 };
 
-    bco::AnimationGroup     gpRightGearUpper_   {   { bm::main::LGRArm_id },
+    bco::animation_group     gpRightGearUpper_   {   { bm::main::LGRArm_id },
                                                     bm::main::LGCrossAxisSA_location, bm::main::LGCrossAxisSF_location,
                                                     (90 * RAD),
                                                     0.2, 1.0
                                                 };
 
-    bco::AnimationGroup     gpRightGearLower_   {   { bm::main::LGRFork_id, 
+    bco::animation_group     gpRightGearLower_   {   { bm::main::LGRFork_id, 
                                                       bm::main::LGRWheel1_id, 
                                                       bm::main::LGRWheel2_id, 
                                                       bm::main::LGRWheel3_id },

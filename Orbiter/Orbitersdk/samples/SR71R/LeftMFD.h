@@ -39,11 +39,9 @@ public:
 
 	// load_vc
 	bool handle_load_vc(bco::vessel& vessel, int vcid) override;
-	bool OnVCMouseEvent(int id, int event);
 	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf);
 
 	bool handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
-	bool OnPanelMouseEvent(int id, int event);
 	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf);
 
 private:

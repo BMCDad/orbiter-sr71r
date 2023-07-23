@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/rotary_display.h"
@@ -52,25 +52,20 @@ class VESSEL3;
 */
 class APU : 
 	public bco::vessel_component,
-	public bco::set_class_caps,
 	public bco::post_step,
 	public bco::power_consumer,
 	public bco::manage_state
 {
 public:
-	APU(bco::power_provider& pwr) : 
+	APU(bco::power_provider& pwr, bco::vessel& vessel) : 
 		power_(pwr)
 	{
 		power_.attach_consumer(this);
-
-		signalHydPressure_.attach(gaugeAPULevel_.Slot());
-	}
-
-	// set_class_caps
-	void handle_set_class_caps(bco::vessel& vessel) override {
 		vessel.AddControl(&switchEnabled_);
 		vessel.AddControl(&gaugeAPULevel_);
 		vessel.AddControl(&status_);
+
+		signalHydPressure_.attach(gaugeAPULevel_.Slot());
 	}
 
 	double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
@@ -149,7 +144,7 @@ private:
 												bm::pnl::pnlAPUSwitch_RC
 											};
 
-	bco::rotary_display<bco::Animation>	gaugeAPULevel_{
+	bco::rotary_display<bco::animation_target>	gaugeAPULevel_{
 												{ bm::vc::gaHydPress_id },
 												bm::vc::gaHydPress_location, bm::vc::axisHydPress_location,
 												bm::pnl::pnlHydPress_id,

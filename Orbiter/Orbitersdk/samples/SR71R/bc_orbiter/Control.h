@@ -41,7 +41,7 @@ namespace bc_orbiter {
 	the VC step.
 	*/
 	struct vc_animation {
-		virtual AnimationGroup*		vc_animation_group() = 0;
+		virtual animation_group*		vc_animation_group() = 0;
 		virtual double				vc_animation_speed() const = 0;
 		virtual double				vc_step(double simdt) { return 0.0; }
 	};
@@ -70,7 +70,7 @@ namespace bc_orbiter {
 	* Base class for any control that will be an event target.
 	*/
 	struct event_target {
-		virtual bool on_event() { return false; }
+		virtual bool on_event(int id, int event) { return false; }
 	};
 
 	/**

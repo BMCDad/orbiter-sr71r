@@ -82,7 +82,7 @@ namespace bc_orbiter {
 		bool is_on() const override { return state_; }
 
 		// vc_animation
-		AnimationGroup*		vc_animation_group()		override { return &vcAnimGroup_; }
+		animation_group*		vc_animation_group()		override { return &vcAnimGroup_; }
 		double				vc_animation_speed() const	override { return vcData_.animSpeed; }
 		double vc_step(double simdt) override {
 			animVC_.Step(state_ ? 1.0 : 0.0, simdt);
@@ -105,7 +105,7 @@ namespace bc_orbiter {
 		}
 
 		// event_target
-		bool on_event() override {
+		bool on_event(int id, int event) override {
 			state_ = !state_;
 			fire();
 			return true;
@@ -132,13 +132,13 @@ namespace bc_orbiter {
 		}
 
 	private:
-		AnimationGroup		vcAnimGroup_;
+		animation_group		vcAnimGroup_;
 		bool				state_{ false };
 		on_off_input_meta	vcData_;
 		UINT				pnlGroup_;
 		const NTVERTEX*		pnlVerts_;
 		RECT				pnlRect_;
 		double				pnlOffset_;
-		Animation			animVC_;
+		animation_target			animVC_;
 	};
 }

@@ -28,7 +28,7 @@ namespace bc_orbiter {
     * Panel group ID
     * Panel verts
     * rotary_display angle of movement in radians
-    * Animation speed, both panel and VC.
+    * animation_target speed, both panel and VC.
     * Signal transform.  Transforms the incoming signal to a 0 - 1 range needed by animation.
     *
     * rotary_display exposes a slot that will take the driving signal.  The transform function, if needed, should
@@ -39,7 +39,6 @@ namespace bc_orbiter {
           public control
         , public vc_animation
         , public panel_animation
-//        , public IAnimationState
     {
     public:
         rotary_display(
@@ -67,7 +66,7 @@ namespace bc_orbiter {
         }
 
         // vc_animation
-        AnimationGroup*     vc_animation_group() override { return &vcAnimGroup_; }
+        animation_group*     vc_animation_group() override { return &vcAnimGroup_; }
 //        IAnimationState*    vc_animation_state() override { return this; }
         double              vc_animation_speed() const override { return animSpeed_; }
         double vc_step(double simdt) override {
@@ -90,7 +89,7 @@ namespace bc_orbiter {
     private:
         std::function<double(double)> transform_;
         slot<double>    slotState_{ [&](double d) { this->state_ = transform_(d); } };
-        AnimationGroup	vcAnimGroup_;
+        animation_group	vcAnimGroup_;
         double          animSpeed_{ 0.0 };
         UINT			pnlGroup_{ 0 };
         const NTVERTEX* pnlVerts_;
@@ -99,4 +98,7 @@ namespace bc_orbiter {
         Tanim           animPnl_{ animSpeed_ };
         Tanim           animVC_{ animSpeed_ };
     };
+
+    using rotary_display_target = rotary_display<animation_target>;
+    using rotary_display_warp   = rotary_display<animation_wrap>;
 }

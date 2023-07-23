@@ -39,11 +39,6 @@ void LeftMFD::handle_set_class_caps(bco::vessel& vessel)
 	AssignMenu(GetBaseVessel()->GetIdForComponent(this));
 }
 
-bool LeftMFD::OnVCMouseEvent(int id, int event)
-{
-	return OnMouseEvent(id, event);
-}
-
 bool LeftMFD::handle_load_vc(bco::vessel& vessel, int vcid)
 {
 	auto vcMeshHandle = vessel.GetVCMeshHandle0();
@@ -72,6 +67,9 @@ bool LeftMFD::handle_load_vc(bco::vessel& vessel, int vcid)
 	int btn_height		= MFD_B1TEX_BOT - MFD_B1TEX_TOP;	// Button height
 	int btn_width		= MFDLLTEXR - MFDLLTEXL;			// Button width;
 
+	// This can be confusing:  oapiVCRegisterArea takes a RECT that is in TEXTURE space, not MESH space, this
+	// tells Orbiter where to redraw.  The area ID is then also associated with a mouse event.  HOWEVER the 
+	// mouse event area is defined in the oapiVCSetAreaClickmode_Spherical call below.  That takes a mesh location.
 	for (auto& a : data_)
 	{
 		int rc_l = (a.col * rc_col2_offset) + rc_left;
@@ -138,7 +136,6 @@ bool LeftMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 	MESHGROUP grp_lmfd = { VTX_MFD[0], IDX_MFD, 4, 6, 0, 0, 0, 0, 0 };
 	auto lmfd_grp = oapiAddMeshGroup(panelMesh, &grp_lmfd);   // left MFD
 
-
 	vessel.RegisterPanelMFDGeometry(hPanel, MFD_LEFT, 0, lmfd_grp);
 
 	SURFHANDLE surfHandle = oapiGetTextureHandle(panelMesh, bm::pnl::TXIDX_SR71R_100_2DPanel_dds);
@@ -167,7 +164,6 @@ bool LeftMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 		int rc_r = rc_l + btn_width;
 		int rc_b = rc_t + btn_height;
 
-//		oapiRegisterPanelArea(a.Id, _R(rc_l, rc_t, rc_r, rc_b), PANEL_REDRAW_USER);
 		vessel.RegisterPanelArea(
 			hPanel, 
 			a.id, 
@@ -206,16 +202,10 @@ bool LeftMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 	return true;
 }
 
-bool LeftMFD::OnPanelMouseEvent(int id, int event)
-{
-	return OnMouseEvent(id, event);
-}
-
 bool LeftMFD::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	auto m = std::find_if(data_.begin(), data_.end(), [&](const MFDData& o) { return o.id == id; });
 	if (m == data_.end()) return false;
-
 
 	const char* label = GetButtonLabel(id);
 

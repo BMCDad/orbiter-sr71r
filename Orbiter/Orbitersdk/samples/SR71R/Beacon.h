@@ -34,12 +34,14 @@ class Beacon :
 {
 
 public:
-	Beacon(bco::power_provider& pwr) 
+	Beacon(bco::power_provider& pwr, bco::vessel& vessel) 
 		:
 		power_(pwr)
 	{ 
 		switchBeaconLights_.attach_on_change([&]() { update(); });
 		power_.attach_consumer(this);
+
+		vessel.AddControl(&switchBeaconLights_);
 	}
 
 	// power_consumer
@@ -50,8 +52,6 @@ public:
 	void handle_set_class_caps(bco::vessel& vessel) override {
 		vessel.AddBeacon(&specBeaconTop_);
 		vessel.AddBeacon(&specBeaconBottom_);
-	
-		vessel.AddControl(&switchBeaconLights_);
 	}
 
 	// manage_state

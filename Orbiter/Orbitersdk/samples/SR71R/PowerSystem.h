@@ -149,7 +149,7 @@ private:
 												0.0244
 											};
 
-	bco::rotary_display<bco::Animation>	gaugePowerVolts_{
+	bco::rotary_display<bco::animation_target>	gaugePowerVolts_{
 												{ bm::vc::gaugeVoltMeter_id },
 												bm::vc::gaugeVoltMeter_location, bm::vc::VoltMeterFrontAxis_location,
 												bm::pnl::pnlVoltMeter_id,
@@ -159,7 +159,7 @@ private:
 												[](double d) {return (d / 30); }	// Transform from volts to anim-range.
 											};
 
-	bco::rotary_display<bco::Animation>	gaugePowerAmps_{
+	bco::rotary_display<bco::animation_target>	gaugePowerAmps_{
 												{ bm::vc::gaugeAmpMeter_id },
 												bm::vc::gaugeAmpMeter_location, bm::vc::VoltMeterFrontAxis_location,
 												bm::pnl::pnlAmpMeter_id,

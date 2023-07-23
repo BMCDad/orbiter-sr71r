@@ -35,12 +35,14 @@ class NavLight :
 {
 
 public:
-	NavLight (bco::power_provider& pwr)
+	NavLight (bco::power_provider& pwr, bco::vessel& vessel)
 		:
 		power_(pwr)
 	{
 		switchNavigationLights_.attach_on_change([&]() { update(); });
 		power_.attach_consumer(this);
+
+		vessel.AddControl(&switchNavigationLights_);
 	}
 
 	// power_consumer
@@ -52,8 +54,6 @@ public:
 		vessel.AddBeacon(&specNavLeft_);
 		vessel.AddBeacon(&specNavRight_);
 		vessel.AddBeacon(&specNavRear_);
-
-		vessel.AddControl(&switchNavigationLights_);
 	}
 
 	// manage_state

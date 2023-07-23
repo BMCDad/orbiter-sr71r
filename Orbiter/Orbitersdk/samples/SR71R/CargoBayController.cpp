@@ -22,10 +22,13 @@
 #include "CargoBayController.h"
 #include "SR71r_mesh.h"
 
-CargoBayController::CargoBayController(bco::power_provider& pwr) :
+CargoBayController::CargoBayController(bco::power_provider& pwr, bco::vessel& vessel) :
     power_(pwr)
 {
     power_.attach_consumer(this);
+    vessel.AddControl(&switchOpen_);
+    vessel.AddControl(&switchPower_);
+    vessel.AddControl(&status_);
 }
 
 void CargoBayController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
@@ -34,15 +37,18 @@ void CargoBayController::handle_post_step(bco::vessel& vessel, double simt, doub
         animCargoBayDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
 	}
 
-    status_.set_state(
-        IsPowered()
-        ?   IsMoving()
-            ?   bco::status_display::status::warn
-            :   switchOpen_.is_on()
-                ?   bco::status_display::status::on
-                :   bco::status_display::status::off
-        :   bco::status_display::status::off);
-
+    auto status = bco::status_display::status::off;
+    if (power_.volts_available() > MIN_VOLTS) {
+        if ((animCargoBayDoors_.GetState() > 0.0) && (animCargoBayDoors_.GetState() < 1.0)) {
+            status = bco::status_display::status::warn;
+        }
+        else {
+            if (animCargoBayDoors_.GetState() == 1.0) {
+                status = bco::status_display::status::on;
+            }
+        }
+    }
+    status_.set_state(status);
 }
 
 bool CargoBayController::handle_load_state(bco::vessel& vessel, const std::string& line)
@@ -62,10 +68,6 @@ std::string CargoBayController::handle_save_state(bco::vessel& vessel)
 
 void CargoBayController::handle_set_class_caps(bco::vessel& vessel)
 {
-    vessel.AddControl(&switchOpen_);
-    vessel.AddControl(&switchPower_);
-    vessel.AddControl(&status_);
-
     auto mIdx = vessel.GetMainMeshIndex();
 
     auto id = vessel.CreateVesselAnimation(&animCargoBayDoors_, 0.01);

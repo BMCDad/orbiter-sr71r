@@ -34,12 +34,14 @@ class Strobe :
 {
 
 public:
-	Strobe(bco::power_provider& pwr)
+	Strobe(bco::power_provider& pwr, bco::vessel& vessel)
 		:
 		power_(pwr)
 	{
 		switchStrobeLights_.attach_on_change([&]() { update(); });
 		power_.attach_consumer(this);
+		
+		vessel.AddControl(&switchStrobeLights_);
 	}
 
 	// power_consumer

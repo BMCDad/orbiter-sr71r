@@ -141,10 +141,7 @@
     <ClInclude Include="bc_orbiter\Animation.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\BaseVessel.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\bco.h">
+    <ClInclude Include="bc_orbiter\vessel.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\Component.h">

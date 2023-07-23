@@ -60,7 +60,7 @@ namespace bc_orbiter {
 		int					panel_redraw_flags()		override { return PANEL_REDRAW_NEVER; }
 
 		// event_target
-		bool on_event() override {
+		bool on_event(int id, int event) override {
 			signal_.fire(data_);		// Remove eventually
 			fire();
 			return true;

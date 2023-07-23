@@ -17,7 +17,7 @@
 #pragma once
 
 #include "Component.h"
-#include "BaseVessel.h"
+#include "vessel.h"
 #include "Control.h"
 #include <map>
 
@@ -48,6 +48,9 @@ namespace bc_orbiter
 		void on_change(double v) {
 			if (!IsPowered()) { oapiOpenMFD(MFD_NONE, mfdId_); }
 		}
+
+		bool OnVCMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
+		bool OnPanelMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
 
 //		virtual void ChangePowerLevel(double newLevel) override;
 

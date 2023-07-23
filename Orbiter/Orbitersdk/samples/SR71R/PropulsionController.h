@@ -21,7 +21,7 @@
 #include <string>
 
 #include "bc_orbiter/Animation.h"
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/on_off_display.h"
 #include "bc_orbiter/simple_event.h"
@@ -175,7 +175,7 @@ private:
 	};
 
 	// Gauges
-	bco::rotary_display<bco::Animation>		gaugeFuelFlow_{
+	bco::rotary_display<bco::animation_target>		gaugeFuelFlow_{
 		{ bm::vc::gaFuelFlow_id },
 			bm::vc::gaFuelFlow_location, bm::vc::FuelFlowAxisFront_location,
 			bm::pnl::pnlGaFuelFlow_id,
@@ -185,7 +185,7 @@ private:
 			[](double d) {return (d); }	// Transform to amps.
 	};
 
-	bco::rotary_display<bco::Animation>		gaugeFuelMain_{
+	bco::rotary_display<bco::animation_target>		gaugeFuelMain_{
 		{ bm::vc::gaMainFuel_id },
 			bm::vc::gaMainFuel_location, bm::vc::FuelLevelAxisFront_location,
 			bm::pnl::pnlGaFuelMain_id,
@@ -195,7 +195,7 @@ private:
 			[](double d) {return (d); }	// Transform to amps.
 	};
 
-	bco::rotary_display<bco::Animation>		gaugeFuelRCS_{
+	bco::rotary_display<bco::animation_target>		gaugeFuelRCS_{
 		{ bm::vc::gaRCSFuel_id },
 			bm::vc::gaRCSFuel_location, bm::vc::RCSLevelAxisFront_location,
 			bm::pnl::pnlGaFuelRCS_id,

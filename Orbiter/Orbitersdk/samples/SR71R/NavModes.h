@@ -16,8 +16,7 @@
 
 #pragma
 
-#include "bc_orbiter\bco.h"
-#include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/simple_event.h"
 #include "bc_orbiter/on_off_display.h"
 

@@ -18,7 +18,7 @@
 
 #include "Orbitersdk.h"
 #include "bc_orbiter/Animation.h"
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/status_display.h"
 
@@ -77,9 +77,9 @@ private:
 
     THRUSTER_HANDLE         retroThrustHandles_[2];
 
-    bco::Animation          animRetroDoors_ {   0.2};
+    bco::animation_target          animRetroDoors_ {   0.2};
 
-    bco::AnimationGroup     gpDoors_        {   {bm::main::EngineCone_id },
+    bco::animation_group     gpDoors_        {   {bm::main::EngineCone_id },
                                                 _V(0, 0, -1.2), 
                                                 0.0, 1.0 
                                             };

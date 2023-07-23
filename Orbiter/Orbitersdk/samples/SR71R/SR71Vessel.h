@@ -2,7 +2,7 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/on_off_display.h"
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/rotary_display.h"
@@ -112,12 +112,12 @@ private:
 	NavModes				navModes_		{ *this };
 	RCSSystem				rcs_			{ *this };
 	Shutters				shutters_		{ *this };
-	APU						apu_			{ powerSystem_ };
-	Beacon					beacon_			{ powerSystem_ };
-	Strobe					strobe_			{ powerSystem_ };
-	NavLight				navLight_		{ powerSystem_ };
-	Canopy					canopy_			{ powerSystem_ };
-	CargoBayController		cargobay_		{ powerSystem_ };
+	APU						apu_			{ powerSystem_, *this };
+	Beacon					beacon_			{ powerSystem_, *this };
+	Strobe					strobe_			{ powerSystem_, *this };
+	NavLight				navLight_		{ powerSystem_, *this };
+	Canopy					canopy_			{ powerSystem_, *this };
+	CargoBayController		cargobay_		{ powerSystem_, *this };
 	Avionics				avionics_		{ powerSystem_, *this };
 	HoverEngines			hoverEngines_	{ powerSystem_,	*this };
 	RetroEngines			retroEngines_	{ powerSystem_,	*this };

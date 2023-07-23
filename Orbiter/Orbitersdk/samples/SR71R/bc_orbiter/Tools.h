@@ -17,7 +17,6 @@
 #pragma once
 
 #include "Orbitersdk.h"
-#include "bco.h"
 
 namespace bc_orbiter
 {

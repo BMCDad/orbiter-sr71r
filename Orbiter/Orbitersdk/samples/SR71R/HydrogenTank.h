@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/rotary_display.h"
 #include "bc_orbiter/on_off_input.h"
@@ -56,7 +56,7 @@ public:
 private:
 
 	// ***  HYDROGEN SUPPLY  *** //
-	bco::rotary_display<bco::Animation>	gaugeLevel_ {	{ bm::vc::gaHydrogenLevel_id },
+	bco::rotary_display<bco::animation_target>	gaugeLevel_ {	{ bm::vc::gaHydrogenLevel_id },
 														bm::vc::gaHydrogenLevel_location, bm::vc::axisHydrogenLevel_location,
 														bm::pnl::pnlLH2Press_id,
 														bm::pnl::pnlLH2Press_verts,

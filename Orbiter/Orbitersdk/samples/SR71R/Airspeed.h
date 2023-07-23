@@ -18,7 +18,7 @@
 
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/signals.h"
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/status_display.h"
 
 #include "AvionBase.h"
@@ -138,7 +138,7 @@ private:
 	const double MAX_MACH = 22.0;
 	double l22 = log(23);
 
-	bco::rotary_display<bco::AnimationWrap>	speedHand_{
+	bco::rotary_display<bco::animation_wrap>	speedHand_{
 		{ bm::vc::SpeedNeedle_id },
 			bm::vc::SpeedNeedle_location, bm::vc::SpeedAxisBack_location,
 			bm::pnl::pnlSpeedNeedle_id,
@@ -148,7 +148,7 @@ private:
 			[](double d) {return d; }	// Transform to anim range.
 	};
 
-	bco::rotary_display<bco::AnimationWrap>	kiesHand_{
+	bco::rotary_display<bco::animation_wrap>	kiesHand_{
 		{ bm::vc::SpeedIndicatorKies_id },
 			bm::vc::SpeedIndicatorKies_location, bm::vc::SpeedAxisBack_location,
 			bm::pnl::pnlSpeedIndicatorKies_id,
@@ -158,7 +158,7 @@ private:
 			[](double d) { return d; }	// Transform to anim range.
 	};
 
-	bco::rotary_display<bco::AnimationWrap>	maxMachHand_{
+	bco::rotary_display<bco::animation_wrap>	maxMachHand_{
 		{ bm::vc::SpeedNeedleMax_id },
 			bm::vc::SpeedNeedleMax_location, bm::vc::SpeedAxisBack_location,
 			bm::pnl::pnlSpeedNeedleMax_id,

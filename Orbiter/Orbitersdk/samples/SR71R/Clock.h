@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/signals.h"
 #include "bc_orbiter/rotary_display.h"
@@ -52,7 +52,7 @@ private:
 	double					currentTimerTime_;
 	bool					isTimerRunning_;
 
-	bco::rotary_display<bco::AnimationWrap>	clockTimerSecondsHand_ {
+	bco::rotary_display<bco::animation_wrap>	clockTimerSecondsHand_ {
 												{ bm::vc::ClockSecond_id },
 												bm::vc::ClockSecond_location, bm::vc::ClockAxisFront_location,
 												bm::pnl::pnlClockSecond_id,
@@ -62,7 +62,7 @@ private:
 												[](double d) {return (d / 60); }	// Transform to anim range.
 											};
 
-	bco::rotary_display<bco::AnimationWrap>	clockTimerMinutesHand_ {
+	bco::rotary_display<bco::animation_wrap>	clockTimerMinutesHand_ {
 												{ bm::vc::ClockTimerMinute_id },
 												bm::vc::ClockTimerMinute_location, bm::vc::ClockAxisFront_location,
 												bm::pnl::pnlClockTimerMinute_id,
@@ -72,7 +72,7 @@ private:
 												[](double d) {return (d / 60); }	// Transform to anim range.
 											};
 
-	bco::rotary_display<bco::AnimationWrap>	clockElapsedMinutesHand_ {
+	bco::rotary_display<bco::animation_wrap>	clockElapsedMinutesHand_ {
 												{ bm::vc::ClockMinute_id },
 												bm::vc::ClockMinute_location, bm::vc::ClockAxisFront_location,
 												bm::pnl::pnlClockMinute_id,
@@ -82,7 +82,7 @@ private:
 												[](double d) {return (d / 60); }	// Transform to anim range.
 											};
 
-	bco::rotary_display<bco::AnimationWrap>	clockElapsedHoursHand_ {
+	bco::rotary_display<bco::animation_wrap>	clockElapsedHoursHand_ {
 												{ bm::vc::ClockHour_id },
 												bm::vc::ClockHour_location, bm::vc::ClockAxisFront_location,
 												bm::pnl::pnlClockHour_id,

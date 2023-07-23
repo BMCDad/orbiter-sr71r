@@ -18,7 +18,7 @@
 
 #include "Orbitersdk.h"
 #include "bc_orbiter/Animation.h"
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/on_off_input.h"
 #include "bc_orbiter/status_display.h"
 
@@ -75,29 +75,29 @@ private:
 
     void EnableHover(bool isEnabled);
 
-    THRUSTER_HANDLE     hoverThrustHandles_[3];
+    THRUSTER_HANDLE         hoverThrustHandles_[3];
 
-    bco::Animation          animHoverDoors_ {   0.2};
+    bco::animation_target   animHoverDoors_ {   0.2};
 
-    bco::AnimationGroup     gpFrontLeft_    {   { bm::main::HoverDoorPF_id },
+    bco::animation_group    gpFrontLeft_    {   { bm::main::HoverDoorPF_id },
                                                 bm::main::HoverDoorAxisPFF_location, bm::main::HoverDoorAxisPFA_location,
                                                 (140 * RAD),
                                                 0, 1
                                             };
         
-    bco::AnimationGroup     gpFrontRight_   {   { bm::main::HoverDoorSF_id },
+    bco::animation_group    gpFrontRight_   {   { bm::main::HoverDoorSF_id },
                                                 bm::main::HoverDoorAxisSFA_location, bm::main::HoverDoorAxisSFF_location,
                                                 (140 * RAD),
                                                 0, 1
                                             };
 
-    bco::AnimationGroup     gpLeft_         {   { bm::main::HoverDoorPA_id } ,
+    bco::animation_group    gpLeft_         {   { bm::main::HoverDoorPA_id } ,
                                                 bm::main::HoverDoorAxisPF_location, bm::main::HoverDoorAxisPA_location,
                                                 (100 * RAD),
                                                 0, 1
                                             };
 
-    bco::AnimationGroup     gpRight_        {   { bm::main::HoverDoorSA_id } ,
+    bco::animation_group    gpRight_        {   { bm::main::HoverDoorSA_id } ,
                                                 bm::main::HoverDoorAxisSA_location, bm::main::HoverDoorAxisSF_location, 
                                                 (100 * RAD),
                                                 0, 1

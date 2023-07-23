@@ -138,15 +138,15 @@ private:
 	};
 
 	// ***   VSI  *** //
-	bco::rotary_display<bco::Animation>		vsiHand_{
-		{ bm::vc::gaVSINeedle_id },
-			bm::vc::gaVSINeedle_location, bm::vc::VSIAxis_location,
-			bm::pnl::pnlVSINeedle_id,
-			bm::pnl::pnlVSINeedle_verts,
-			(340 * RAD),	// Clockwise
-			2.0,
-			[](double d) {return (d); }	// Transform to amps.
-	};
+	bco::rotary_display_target		vsiHand_ {	  { bm::vc::gaVSINeedle_id }
+												, bm::vc::gaVSINeedle_location, bm::vc::VSIAxis_location
+												, bm::pnl::pnlVSINeedle_id
+												, bm::pnl::pnlVSINeedle_verts
+												, (340 * RAD)
+												, 2.0
+												, [](double d) {return (d); }
+											};
+
 	bco::on_off_display		vsiActiveFlag_{
 		bm::vc::VSIOffFlag_id,
 			bm::vc::VSIOffFlag_verts,
@@ -172,31 +172,31 @@ private:
 	};
 
 	// ***  AOA  TRIM  GFORCE  ***  //
-	bco::rotary_display<bco::Animation>	aoaHand_ {	  { bm::vc::AOANeedle_id }
-													, bm::vc::AOANeedle_location, bm::vc::AOAAxis_location
-													, bm::pnl::pnlAOANeedle_id
-													, bm::pnl::pnlAOANeedle_verts
-													, (75 * RAD)
-													, 2.0
-													, [](double d) {return (d); }
-												};
+	bco::rotary_display_target	aoaHand_ {	  { bm::vc::AOANeedle_id }
+											, bm::vc::AOANeedle_location, bm::vc::AOAAxis_location
+											, bm::pnl::pnlAOANeedle_id
+											, bm::pnl::pnlAOANeedle_verts
+											, (75 * RAD)
+											, 2.0
+											, [](double d) {return (d); }
+										};
 
-	bco::rotary_display<bco::Animation>	trimHand_ {	  { bm::vc::TrimNeedle_id }
-													, bm::vc::TrimNeedle_location, bm::vc::TrimAxis_location
-													, bm::pnl::pnlTrimNeedle_id
-													, bm::pnl::pnlTrimNeedle_verts
-													, (180 * RAD)
-													, 2.0
-													, [](double d) {return (d); }
-												};
+	bco::rotary_display_target	trimHand_ {	  { bm::vc::TrimNeedle_id }
+											, bm::vc::TrimNeedle_location, bm::vc::TrimAxis_location
+											, bm::pnl::pnlTrimNeedle_id
+											, bm::pnl::pnlTrimNeedle_verts
+											, (180 * RAD)
+											, 2.0
+											, [](double d) {return (d); }
+										};
 
-	bco::rotary_display<bco::Animation>	accelHand_ {  { bm::vc::AccelNeedle_id }
-													, bm::vc::AccelNeedle_location, bm::vc::AccelAxis_location
-													, bm::pnl::pnlAccelNeedle_id
-													, bm::pnl::pnlAccelNeedle_verts
-													, (295 * RAD)
-													, 2.0
-													, [](double d) {return (d); }
-												};
+	bco::rotary_display_target	accelHand_ {  { bm::vc::AccelNeedle_id }
+											, bm::vc::AccelNeedle_location, bm::vc::AccelAxis_location
+											, bm::pnl::pnlAccelNeedle_id
+											, bm::pnl::pnlAccelNeedle_verts
+											, (295 * RAD)
+											, 2.0
+											, [](double d) {return (d); }
+										};
 
 };

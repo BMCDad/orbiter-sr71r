@@ -18,7 +18,7 @@
 
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/signals.h"
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/rotary_display.h"
 #include "bc_orbiter/transform_display.h"
 #include "bc_orbiter/flat_roll.h"
@@ -196,7 +196,7 @@ private:
 		return result;
 	}
 
-	bco::rotary_display<bco::AnimationWrap>	hsiRoseCompass_{
+	bco::rotary_display<bco::animation_wrap>	hsiRoseCompass_{
 		{ bm::vc::RoseCompass_id },
 			bm::vc::RoseCompass_location, bm::vc::HSIAxis_location,
 			bm::pnl::pnlRoseCompass_id,
@@ -206,7 +206,7 @@ private:
 			[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
 	};
 
-	bco::rotary_display<bco::AnimationWrap>	hsiHeadingBug_{
+	bco::rotary_display<bco::animation_wrap>	hsiHeadingBug_{
 		{ bm::vc::HSICompassHeading_id },
 			bm::vc::HSICompassHeading_location, bm::vc::HSIAxis_location,
 			bm::pnl::pnlHSICompassHeading_id,
@@ -216,7 +216,7 @@ private:
 			[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
 	};
 
-	bco::rotary_display<bco::AnimationWrap> hsiCourse_{
+	bco::rotary_display<bco::animation_wrap> hsiCourse_{
 		{ bm::vc::HSICourse_id },
 			bm::vc::HSICourse_location, bm::vc::HSIAxis_location,
 			bm::pnl::pnlHSICourse_id,
@@ -226,7 +226,7 @@ private:
 			[](double d) {return bco::AngleToState(-d); }
 	};
 
-	bco::rotary_display<bco::AnimationWrap> hsiBearing_{
+	bco::rotary_display<bco::animation_wrap> hsiBearing_{
 		{ bm::vc::HSIBearingArrow_id },
 			bm::vc::HSIBearingArrow_location, bm::vc::HSIAxis_location,
 			bm::pnl::pnlHSIBearingArrow_id,

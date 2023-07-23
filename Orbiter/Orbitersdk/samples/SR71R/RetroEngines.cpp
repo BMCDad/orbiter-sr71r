@@ -28,6 +28,8 @@ RetroEngines::RetroEngines(bco::power_provider& pwr, bco::vessel& vessel) :
 {
     power_.attach_consumer(this);
     animRetroDoors_.SetTargetFunction([this] {EnableRetros(true); });
+    vessel.AddControl(&switchDoors_);
+    vessel.AddControl(&status_);
 }
 
 
@@ -37,21 +39,22 @@ void RetroEngines::handle_post_step(bco::vessel& vessel, double simt, double sim
         animRetroDoors_.Step(switchDoors_.is_on() ? 1.0 : 0.0, simdt);
     }
 
-    status_.set_state(
-        IsPowered()
-        ?   IsMoving()
-            ?   bco::status_display::status::warn
-            :   switchDoors_.is_on()
-                ?   bco::status_display::status::on
-                :   bco::status_display::status::off
-        : bco::status_display::status::off);
+    auto status = bco::status_display::status::off;
+    if (power_.volts_available() > MIN_VOLTS) {
+        if ((animRetroDoors_.GetState() > 0.0) && (animRetroDoors_.GetState() < 1.0)) {
+            status = bco::status_display::status::warn;
+        }
+        else {
+            if (animRetroDoors_.GetState() == 1.0) {
+                status = bco::status_display::status::on;
+            }
+        }
+    }
+    status_.set_state(status);
 }
 
 void RetroEngines::handle_set_class_caps(bco::vessel& vessel)
 {
-    vessel.AddControl(&switchDoors_);
-    vessel.AddControl(&status_);
-
     auto main = vessel.GetMainMeshIndex();
 
     auto aid = vessel.CreateVesselAnimation(&animRetroDoors_, 0.2);

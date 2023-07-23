@@ -18,7 +18,7 @@
 
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/signals.h"
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/rotary_display.h"
 #include "bc_orbiter/flat_roll.h"
 
@@ -87,7 +87,7 @@ private:
 		altimeterExoModeFlag_.set_state(!EnabledSlot().value() ? true : AvionicsModeSlot().value());
 	}
 
-	bco::rotary_display<bco::AnimationWrap>	altimeter1Hand_{
+	bco::rotary_display<bco::animation_wrap>	altimeter1Hand_{
 		{ bm::vc::gaAlt1Needle_id },
 			bm::vc::gaAlt1Needle_location, bm::vc::AltimeterAxis_location,
 			bm::pnl::pnlAlt1Needle_id,
@@ -97,7 +97,7 @@ private:
 			[](double d) {return ((double)d / 10.0); }	// Transform to anim range.
 	};
 
-	bco::rotary_display<bco::AnimationWrap>	altimeter10Hand_{
+	bco::rotary_display<bco::animation_wrap>	altimeter10Hand_{
 		{ bm::vc::gaAlt10Needle_id },
 			bm::vc::gaAlt10Needle_location, bm::vc::AltimeterAxis_location,
 			bm::pnl::pnlAlt10Needle_id,
@@ -107,7 +107,7 @@ private:
 			[](double d) {return (d / 10); }	// Transform to anim range.
 	};
 
-	bco::rotary_display<bco::AnimationWrap>	altimeter100Hand_{
+	bco::rotary_display<bco::animation_wrap>	altimeter100Hand_{
 		{ bm::vc::gaAlt100Needle_id },
 			bm::vc::gaAlt100Needle_location, bm::vc::AltimeterAxis_location,
 			bm::pnl::pnlAlt100Needle_id,

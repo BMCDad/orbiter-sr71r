@@ -16,10 +16,10 @@
 
 #pragma once
 
-#include "bc_orbiter/BaseVessel.h"
+#include "bc_orbiter/vessel.h"
 #include "bc_orbiter/Component.h"
 #include "bc_orbiter/Animation.h"
-#include "bc_orbiter/Control.h"
+#include "bc_orbiter/control.h"
 #include "bc_orbiter/simple_event.h"
 #include "bc_orbiter/status_display.h"
 
@@ -71,34 +71,34 @@ private:
     //              key off of that, as well as the drag factor.  animSwitch will show the desired state regardless
     //              of hydraulic power.  The vc and panel switches key off of that.
 
-    bco::Animation          animBrakeSurface_;
-    bco::Animation          animBrakeSwitch_    {   2.0 };
-    bco::Animation			animAirBrake_       {   2.0 };
+    bco::animation_target          animBrakeSurface_;
+    bco::animation_target          animBrakeSwitch_    {   2.0 };
+    bco::animation_target			animAirBrake_       {   2.0 };
 
-    bco::AnimationGroup     gpBrakeHandle_      {   { bm::vc::AirBrakeLever_id },
+    bco::animation_group     gpBrakeHandle_      {   { bm::vc::AirBrakeLever_id },
                                                     bm::vc::SpBrakeAxisRight_location, bm::vc::SpBrakeAxisLeft_location,
                                                     (58 * RAD),
                                                     0.0, 1.0 };
 
-    bco::AnimationGroup     gpLeftTop_          {   { bm::main::ElevonPIT_id },
+    bco::animation_group     gpLeftTop_          {   { bm::main::ElevonPIT_id },
                                                     bm::main::AirBrakeAxisPTO_location, bm::main::AirBrakeAxisPTI_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpLeftBottom_       {   { bm::main::ElevonPIB_id },
+    bco::animation_group     gpLeftBottom_       {   { bm::main::ElevonPIB_id },
                                                     bm::main::AirBrakeAxisPTI_location, bm::main::AirBrakeAxisPTO_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpRightTop_         {   { bm::main::ElevonSIT_id },
+    bco::animation_group     gpRightTop_         {   { bm::main::ElevonSIT_id },
                                                     bm::main::AirBrakeAxisSTO_location, bm::main::AirBrakeAxisSTI_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpRightBottom_      {   { bm::main::ElevonSIB_id },
+    bco::animation_group     gpRightBottom_      {   { bm::main::ElevonSIB_id },
                                                     bm::main::AirBrakeAxisSBI_location, bm::main::AirBrakeAxisSBO_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
