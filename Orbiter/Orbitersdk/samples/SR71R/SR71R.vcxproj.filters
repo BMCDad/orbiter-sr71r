@@ -305,6 +305,9 @@
     <ClCompile Include="Avionics.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
+    <ClCompile Include="SurfaceController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="$(OrbiterDir)\Textures\SR71_VCCockPit.dds">

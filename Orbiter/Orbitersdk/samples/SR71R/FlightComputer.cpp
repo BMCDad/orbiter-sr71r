@@ -22,16 +22,16 @@
 
 namespace mvc = bm::vc;
 
-FC::FlightComputer::FlightComputer(bco::vessel& vessel, bco::power_provider& pwr) :
+FC::FlightComputer::FlightComputer(bco::vessel& vessel, bco::power_provider& pwr) 
 	//visAPMainOn_(		bm::vc::SwAPMain_verts,		bm::vc::SwAPMain_id),
 	//visAPHeadingOn_(	bm::vc::SwAPHeading_verts,	bm::vc::SwAPHeading_id),
 	//visAPAltitudeOn_(	bm::vc::SwAPAltitude_verts,	bm::vc::SwAPAltitude_id),
 	//visAPKEASOn_(		bm::vc::SwAPKEAS_verts,		bm::vc::SwAPKEAS_id),
 	//visAPMACHOn_(		bm::vc::SwAPMACH_verts,		bm::vc::SwAPMACH_id),
-	prgHoldAltitude_(	*this),
-	prgHoldHeading_(	*this),
-	prgHoldKeas_(		*this),
-	prgHoldMach_(		*this)
+	//prgHoldAltitude_(	*this),
+	//prgHoldHeading_(	*this),
+	//prgHoldKeas_(		*this),
+	//prgHoldMach_(		*this)
 {
 	//swAPMain_.SetPressedFunc([this] 
 	//{
@@ -115,7 +115,7 @@ void FC::FlightComputer::handle_draw_hud(bco::vessel& vessel, int mode, const HU
 
 void FC::FlightComputer::Boot()
 {
-	if (!HasPower()) return;
+//	if (!HasPower()) return;
 
 	MapKey(GCKey::Clear,		[this] { HandleScratchPadKey(GCKey::Clear); });
 	MapKey(GCKey::D0,			[this] { HandleScratchPadKey(GCKey::D0); });
@@ -160,12 +160,12 @@ void FC::FlightComputer::handle_post_step(bco::vessel& vessel, double simt, doub
 	//vesselCtrl_.Step(simt, simdt, mjd);
 	if (prevRunningProgs != runningPrograms_) UpdateProgs(runningPrograms_);
 
-	auto atmoOn = IsProgramRunning(FCProgFlags::AtmoActive);
+	//auto atmoOn = IsProgramRunning(FCProgFlags::AtmoActive);
 
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldAltitude))	prgHoldAltitude_.Step(simt, simdt, mjd);
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldHeading))	prgHoldHeading_.Step(simt, simdt, mjd);
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldKEAS))		prgHoldKeas_.Step(simt, simdt, mjd);
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldMACH))		prgHoldMach_.Step(simt, simdt, mjd);
+	//if (atmoOn && IsProgramRunning(FCProgFlags::HoldAltitude))	prgHoldAltitude_.Step(simt, simdt, mjd);
+	//if (atmoOn && IsProgramRunning(FCProgFlags::HoldHeading))	prgHoldHeading_.Step(simt, simdt, mjd);
+	//if (atmoOn && IsProgramRunning(FCProgFlags::HoldKEAS))		prgHoldKeas_.Step(simt, simdt, mjd);
+	//if (atmoOn && IsProgramRunning(FCProgFlags::HoldMACH))		prgHoldMach_.Step(simt, simdt, mjd);
 
 	prevRunningProgs = runningPrograms_;
 
@@ -237,95 +237,95 @@ void FC::FlightComputer::SetScratchPad(double value)
 }
 
 
-bool FC::FlightComputer::OnVCMouseEvent(int id, int event)
-{
-	auto keypressed = mapKey_.find(id);
-    if (keypressed != mapKey_.end())
-    {
-        keyBuffer_.push_back(keypressed->second);
-    }
-	
-	return false;
-}
+//bool FC::FlightComputer::OnVCMouseEvent(int id, int event)
+//{
+//	auto keypressed = mapKey_.find(id);
+//    if (keypressed != mapKey_.end())
+//    {
+//        keyBuffer_.push_back(keypressed->second);
+//    }
+//	
+//	return false;
+//}
+//
+//
+//bool FC::FlightComputer::OnLoadVC(int id)
+//{
+//    //auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
+//    //assert(vcMeshHandle != nullptr);
+//
+//    //SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
+//
+//    //// handle_set_class_caps our font:
+//    //vcFont_.surfSource = surfHandle;
+//    //vcFont_.charWidth = 12;
+//    //vcFont_.charHeight = 20;
+//    //vcFont_.sourceX = 4;
+//    //vcFont_.sourceY = 2021;
+//    //vcFont_.blankX = 1600;
+//    //vcFont_.blankY = 2021;
+//
+//    //auto eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
+//    //oapiVCRegisterArea(
+//    //    eventId,
+//    //    _R(80, 835, 320, 1060), //_R(1710, 95, 1950, 320),
+//    //    PANEL_REDRAW_USER,
+//    //    PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
+//    //    PANEL_MAP_BACKGROUND,
+//    //    surfHandle);
+//
+//    //allId_ = eventId;
+//
+//    //// mapKeyLocation_ maps a GCKey to the mouse click location on the mesh.
+//    //// We walk through the map here to register the mouse events and setup the
+//    //// mouse event to GCKey map.
+//    //for (auto& k : mapKeyLocation_)
+//    //{
+//    //    auto eid = GetBaseVessel()->RegisterVCMouseEvent(this);
+//    //    oapiVCRegisterArea(eid, PANEL_REDRAW_NEVER, PANEL_MOUSE_DOWN);
+//    //    oapiVCSetAreaClickmode_Spherical(eid, k.second, 0.01);
+//    //    mapKey_[eid] = k.first;
+//    //}
+//
+//    return true;
+//}
 
 
-bool FC::FlightComputer::OnLoadVC(int id)
-{
-    //auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
-    //assert(vcMeshHandle != nullptr);
-
-    //SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
-
-    //// handle_set_class_caps our font:
-    //vcFont_.surfSource = surfHandle;
-    //vcFont_.charWidth = 12;
-    //vcFont_.charHeight = 20;
-    //vcFont_.sourceX = 4;
-    //vcFont_.sourceY = 2021;
-    //vcFont_.blankX = 1600;
-    //vcFont_.blankY = 2021;
-
-    //auto eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
-    //oapiVCRegisterArea(
-    //    eventId,
-    //    _R(80, 835, 320, 1060), //_R(1710, 95, 1950, 320),
-    //    PANEL_REDRAW_USER,
-    //    PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
-    //    PANEL_MAP_BACKGROUND,
-    //    surfHandle);
-
-    //allId_ = eventId;
-
-    //// mapKeyLocation_ maps a GCKey to the mouse click location on the mesh.
-    //// We walk through the map here to register the mouse events and setup the
-    //// mouse event to GCKey map.
-    //for (auto& k : mapKeyLocation_)
-    //{
-    //    auto eid = GetBaseVessel()->RegisterVCMouseEvent(this);
-    //    oapiVCRegisterArea(eid, PANEL_REDRAW_NEVER, PANEL_MOUSE_DOWN);
-    //    oapiVCSetAreaClickmode_Spherical(eid, k.second, 0.01);
-    //    mapKey_[eid] = k.first;
-    //}
-
-    return true;
-}
-
-
-bool FC::FlightComputer::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	//auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-	//assert(devMesh != nullptr);
-
-	//for (int i = 0; i < DISPLAY_ROWS; i++)
-	//{
-	//	bco::DrawSurfaceText(0, i * 20, display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
-	//}
-
-	//const double offset = 0.0352;
-	//double trans = 0.0;
-
-	////trans = IsProgramRunning(FCProgFlags::AtmoActive) ? offset : 0.0;
-	////visAPMainOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	////visAPMainOn_.RotateMesh(devMesh);
-
-	////trans = IsProgramRunning(FCProgFlags::HoldHeading) ? offset : 0.0;
-	////visAPHeadingOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	////visAPHeadingOn_.RotateMesh(devMesh);
-
-	////trans = IsProgramRunning(FCProgFlags::HoldAltitude) ? offset : 0.0;
-	////visAPAltitudeOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	////visAPAltitudeOn_.RotateMesh(devMesh);
-
-	////trans = IsProgramRunning(FCProgFlags::HoldKEAS) ? offset : 0.0;
-	////visAPKEASOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	////visAPKEASOn_.RotateMesh(devMesh);
-
-	////trans = IsProgramRunning(FCProgFlags::HoldMACH) ? offset : 0.0;
-	////visAPMACHOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	////visAPMACHOn_.RotateMesh(devMesh);
-
-	return true;
-}
+//bool FC::FlightComputer::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
+//{
+//	//auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
+//	//assert(devMesh != nullptr);
+//
+//	//for (int i = 0; i < DISPLAY_ROWS; i++)
+//	//{
+//	//	bco::DrawSurfaceText(0, i * 20, display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
+//	//}
+//
+//	//const double offset = 0.0352;
+//	//double trans = 0.0;
+//
+//	////trans = IsProgramRunning(FCProgFlags::AtmoActive) ? offset : 0.0;
+//	////visAPMainOn_.SetTranslate(_V(trans, 0.0, 0.0));
+//	////visAPMainOn_.RotateMesh(devMesh);
+//
+//	////trans = IsProgramRunning(FCProgFlags::HoldHeading) ? offset : 0.0;
+//	////visAPHeadingOn_.SetTranslate(_V(trans, 0.0, 0.0));
+//	////visAPHeadingOn_.RotateMesh(devMesh);
+//
+//	////trans = IsProgramRunning(FCProgFlags::HoldAltitude) ? offset : 0.0;
+//	////visAPAltitudeOn_.SetTranslate(_V(trans, 0.0, 0.0));
+//	////visAPAltitudeOn_.RotateMesh(devMesh);
+//
+//	////trans = IsProgramRunning(FCProgFlags::HoldKEAS) ? offset : 0.0;
+//	////visAPKEASOn_.SetTranslate(_V(trans, 0.0, 0.0));
+//	////visAPKEASOn_.RotateMesh(devMesh);
+//
+//	////trans = IsProgramRunning(FCProgFlags::HoldMACH) ? offset : 0.0;
+//	////visAPMACHOn_.SetTranslate(_V(trans, 0.0, 0.0));
+//	////visAPMACHOn_.RotateMesh(devMesh);
+//
+//	return true;
+//}
 
 
 //bool FC::FlightComputer::OnLoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
@@ -456,17 +456,17 @@ void FC::FlightComputer::PageAscent()
 	ClearFuncKeys();
 	MapKey(GCKey::F1, [this] { SetTargetIncDeg(GetScratchPad()); });
 
-	MapKey(GCKey::F7, [this] { GetAvionics()->SetHeading(ascentHeading_); });
-	MapKey(GCKey::F8, [this] { GetAvionics()->SetHeading(ascentHeadingAlt_); });
+	//MapKey(GCKey::F7, [this] { GetAvionics()->SetHeading(ascentHeading_); });
+	//MapKey(GCKey::F8, [this] { GetAvionics()->SetHeading(ascentHeadingAlt_); });
 
-	// Target cannot be less than lat.
-	double vlng, vlat, vrad;
-	OBJHANDLE hRef = GetBaseVessel()->GetEquPos(vlng, vlat, vrad);
+	//// Target cannot be less than lat.
+	//double vlng, vlat, vrad;
+	//OBJHANDLE hRef = GetBaseVessel()->GetEquPos(vlng, vlat, vrad);
 
-	launchLatitude_ = vlat;
-	SetTargetIncDeg(DEG * launchLatitude_);
+	//launchLatitude_ = vlat;
+	//SetTargetIncDeg(DEG * launchLatitude_);
 
-	funcUpdate_ = [this] { UpdateAscentPage(); };
+	//funcUpdate_ = [this] { UpdateAscentPage(); };
 }
 
 
@@ -509,19 +509,19 @@ void FC::FlightComputer::SetTargetIncDeg(double tgt)
 */
 void FC::FlightComputer::Update()
 {
-	if (!isRunning_)
-	{
-		if (HasPower())
-		{
-			Boot();
-		}
-	}
+	//if (!isRunning_)
+	//{
+	//	if (HasPower())
+	//	{
+	//		Boot();
+	//	}
+	//}
 
-    if (isDisplayDirty_)
-    {
-        oapiVCTriggerRedrawArea(0, allId_);
-        isDisplayDirty_ = false;
-    }
+ //   if (isDisplayDirty_)
+ //   {
+ //       oapiVCTriggerRedrawArea(0, allId_);
+ //       isDisplayDirty_ = false;
+ //   }
 }
 
 

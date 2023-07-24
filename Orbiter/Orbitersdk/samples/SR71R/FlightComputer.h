@@ -182,14 +182,14 @@ namespace FC
 		void SetScratchPad(double value);
 
         // Input:
-		void SetAvionics(IAvionics* av)						{ avionics_ = av; }
-        void SetPropulsionControl(PropulsionController* p)	{ propulsionControl_ = p; }
-        void SetSurfaceControl(SurfaceController* s)		{ surfaceController_ = s; }
+		//void SetAvionics(IAvionics* av)						{ avionics_ = av; }
+  //      void SetPropulsionControl(PropulsionController* p)	{ propulsionControl_ = p; }
+  //      void SetSurfaceControl(SurfaceController* s)		{ surfaceController_ = s; }
 
 		// IVesselControl
-		IAvionics*              GetAvionics()               const override { return avionics_; }
-		PropulsionController*   GetPropulsionController()   const override { return propulsionControl_; }
-		SurfaceController*      GetSurfaceController()      const override { return surfaceController_; }
+		//IAvionics*              GetAvionics()               const override { return avionics_; }
+		//PropulsionController*   GetPropulsionController()   const override { return propulsionControl_; }
+		//SurfaceController*      GetSurfaceController()      const override { return surfaceController_; }
 
 		// Page Functions
 		void PageMain();
@@ -335,10 +335,10 @@ namespace FC
 		FCProgFlags					runningPrograms_{ FCProgFlags::None };
 		FCProgFlags					prevRunningProgs{ FCProgFlags::None };
 
-		HoldAltitudeProgram			prgHoldAltitude_;
-		HoldHeadingProgram			prgHoldHeading_;
-		HoldKeasProgram				prgHoldKeas_;
-		HoldMachProgram				prgHoldMach_;
+		//HoldAltitudeProgram			prgHoldAltitude_;
+		//HoldHeadingProgram			prgHoldHeading_;
+		//HoldKeasProgram				prgHoldKeas_;
+		//HoldMachProgram				prgHoldMach_;
 		
 		PropulsionController*		propulsionControl_;
 		IAvionics*					avionics_;
@@ -346,10 +346,10 @@ namespace FC
 
 		std::map<FCProgFlags, ControlProgram*>     mapPrograms_
 		{
-			{FCProgFlags::HoldAltitude,    &prgHoldAltitude_},
-			{FCProgFlags::HoldHeading,     &prgHoldHeading_},
-			{FCProgFlags::HoldKEAS,        &prgHoldKeas_ },
-			{FCProgFlags::HoldMACH,        &prgHoldMach_ }
+			//{FCProgFlags::HoldAltitude,    &prgHoldAltitude_},
+			//{FCProgFlags::HoldHeading,     &prgHoldHeading_},
+			//{FCProgFlags::HoldKEAS,        &prgHoldKeas_ },
+			//{FCProgFlags::HoldMACH,        &prgHoldMach_ }
 		};
 
 		//// Auto pilot panel

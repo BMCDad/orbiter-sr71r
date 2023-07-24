@@ -27,7 +27,7 @@
 
 #include "IAvionics.h"
 #include "PropulsionController.h"
-//#include "SurfaceController.h"
+#include "SurfaceController.h"
 
 
 namespace bco = bc_orbiter;
