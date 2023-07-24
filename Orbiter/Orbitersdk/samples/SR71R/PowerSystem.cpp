@@ -40,17 +40,13 @@ PowerSystem::PowerSystem(bco::vessel& vessel) :
 bool PowerSystem::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
 	std::stringstream ss(line);
-	ss >> switchEnabled;
-	ss >> switchConnectExternal_;
-	ss >> switchConnectFuelCell_;
-
+	ss >> switchEnabled >> switchConnectExternal_ >> switchConnectFuelCell_;
 	return true;
 }
 
 std::string PowerSystem::handle_save_state(bco::vessel& vessel)
 {
 	std::stringstream ss;
-
 	ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_;
 	return ss.str();
 }

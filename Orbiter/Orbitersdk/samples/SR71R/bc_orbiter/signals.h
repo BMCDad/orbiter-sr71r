@@ -83,9 +83,11 @@ namespace bc_orbiter {
 		}
 
 		friend std::istream& operator>>(std::istream& input, signal<T>& obj) {
-			T value;
-			input >> value;
-			obj.fire(value);
+			if (input) {
+				T value;
+				input >> value;
+				obj.fire(value);
+			}
 
 			return input;
 		}

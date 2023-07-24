@@ -58,7 +58,6 @@ public:
 
 	// manage_state
 	bool handle_load_state(bco::vessel& vessel, const std::string& line) override {
-
 		std::istringstream in(line);
 		in >> switchNavigationLights_;
 		return true;

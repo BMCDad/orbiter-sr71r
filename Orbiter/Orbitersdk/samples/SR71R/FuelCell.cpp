@@ -61,7 +61,6 @@ void FuelCell::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 bool FuelCell::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
 	std::istringstream in(line);
-
 	in >> switchEnabled_;
 	return true;
 }

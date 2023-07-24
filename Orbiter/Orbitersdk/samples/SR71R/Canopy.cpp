@@ -59,14 +59,11 @@ void Canopy::handle_post_step(bco::vessel& vessel, double simt, double simdt, do
 bool Canopy::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
-
-    if (in >> switchPower_ >> switchOpen_ >> animCanopy_) {
-        vessel.SetAnimationState(animCanopy_);
-        return true;
-    }
-    else {
-        return false;
-    }
+    in >> switchPower_;
+    in >> switchOpen_;
+    in >> animCanopy_;
+    vessel.SetAnimationState(animCanopy_);
+    return true;
 }
 
 std::string Canopy::handle_save_state(bco::vessel& vessel)

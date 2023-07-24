@@ -73,13 +73,8 @@ public:
 	// manage_state
 	bool handle_load_state(bco::vessel& vessel, const std::string& line) override {
 		std::stringstream in(line);
-
-		if (in >> switchEnabled_) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		in >> switchEnabled_;
+		return true;
 	}
 
 	std::string handle_save_state(bco::vessel& vessel) override

@@ -48,11 +48,10 @@ void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simd
 bool LandingGear::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
     // [a b] : a: position, 1 (down) 0 (up)   b: anim state
-    double lgPos = 0.0;
-
     std::istringstream in(line);
-
     in >> position_ >> animLandingGear_;
+    if (position_ < 0.0) position_ = 0.0;
+    if (position_ > 1.0) position_ = 1.0;
     vessel.SetAnimationState(animLandingGear_);
     return true;
 }

@@ -71,8 +71,8 @@ namespace bc_orbiter
     struct state_update
     {
         double	            speed_{ 1.0 };
-        double				state_{};
-        double              target_state_{};
+        double				state_{ 0.0 };
+        double              target_state_{ 0.0 };
     };
 
     /**
@@ -300,10 +300,13 @@ namespace bc_orbiter
         UINT VesselId() const { return vesselId_; }
 
         friend std::istream& operator>>(std::istream& input, animation_base& obj) {
-            double state;
-
-            input >> state;
-            obj.SetState(state);
+            if (input) {
+                double state = 0.0;
+                input >> state;
+                if (state < 0.0) state = 0.0;
+                if (state > 1.0) state = 1.0;
+                obj.SetState(state);
+            }
 
             return input;
         }

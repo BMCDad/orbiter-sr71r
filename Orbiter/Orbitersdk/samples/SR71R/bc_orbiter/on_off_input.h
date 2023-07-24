@@ -116,12 +116,13 @@ namespace bc_orbiter {
 		}
 
 		friend std::istream& operator>>(std::istream& input, on_off_input& obj) {
-			bool isEnabled;
-
-			input >> isEnabled;
-			obj.state_ = isEnabled;
-			obj.animVC_.SetState(isEnabled ? 1.0 : 0.0);
-			obj.fire();
+			if (input) {
+				bool isEnabled;
+				input >> isEnabled;
+				obj.state_ = isEnabled;
+				obj.animVC_.SetState(isEnabled ? 1.0 : 0.0);
+				obj.fire();
+			}
 
 			return input;
 		}

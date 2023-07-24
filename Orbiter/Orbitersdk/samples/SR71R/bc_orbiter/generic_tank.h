@@ -92,7 +92,6 @@ namespace bc_orbiter {
 			in >> level_ >> isFilling_;
 			level_ = fmax(0.0, level_);
 			level_ = fmin(capacity_, level_);
-
 			sigIsFilling_.fire((isFilling_ == 1) ? true : false);
 				
 			return true;

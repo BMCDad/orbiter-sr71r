@@ -47,9 +47,9 @@ public:
 private:
 	bco::FontInfo	vcFont_;
 
-	const int PnlColLeftX = 238;
+	const int PnlColLeftX = 54;
 	const int PnlColsDiff = 540;
-	const int PnlRowsTop = 1740;
+	const int PnlRowsTop = 1728;
 	const int PnlRowsDiff = 56;
 
 	struct MFDData

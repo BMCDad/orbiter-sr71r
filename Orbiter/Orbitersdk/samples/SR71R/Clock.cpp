@@ -116,11 +116,9 @@ bool Clock::handle_load_state(bco::vessel& vessel, const std::string& line)
 		{
 			currentTimerTime_ = elapsedTimer;
 		}
-		return true;
 	}
-	else {
-		return false;
-	}
+
+	return true;
 }
 
 std::string Clock::handle_save_state(bco::vessel& vessel)
