@@ -168,6 +168,7 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="Strobe.h" />
     <ClInclude Include="bc_orbiter\transform_display.h" />
+    <ClInclude Include="SurfaceController.h" />
     <ClInclude Include="TestComponent.h" />
     <ClInclude Include="VesselControl.h" />
   </ItemGroup>
