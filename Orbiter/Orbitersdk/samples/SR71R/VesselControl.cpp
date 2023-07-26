@@ -16,38 +16,35 @@
 
 #include "StdAfx.h"
 
-//#include "VesselControl.h"
-//
-//#include "SR71r_mesh.h"
-//
-////
-////VesselControl::VesselControl()
-////    :   prgHoldAltitude_(*this),
-////        prgHoldHeading_(*this),
-////        prgHoldKeas_(*this),
-////        prgHoldMach_(*this)
-////{
-////}
-////
-////void VesselControl::Step(double simt, double simdt, double mjd)
-////{
-////    auto current = RunningPrograms();
-////    if (prevRunningProgs != current) UpdateProgs(current);
-////
-////	auto atmoOn = IsRunning(FCProgFlags::AtmoActive);
-////
-////    if (atmoOn && IsRunning(FCProgFlags::HoldAltitude))	prgHoldAltitude_.Step(simt, simdt, mjd);
-////    if (atmoOn && IsRunning(FCProgFlags::HoldHeading))	prgHoldHeading_.Step(simt, simdt, mjd);
-////    if (atmoOn && IsRunning(FCProgFlags::HoldKEAS))		prgHoldKeas_.Step(simt, simdt, mjd);
-////    if (atmoOn && IsRunning(FCProgFlags::HoldMACH))		prgHoldMach_.Step(simt, simdt, mjd);
-////
-////    prevRunningProgs = current;
-////}
-////
-////void VesselControl::ToggleAtmoProgram(FCProgFlags pid)
-////{
-////	SetProgramState(pid, !IsRunning(pid));
-////
-////	if ((pid == FCProgFlags::HoldKEAS) && (IsRunning(pid)))	SetProgramState(FCProgFlags::HoldMACH, false);
-////	if ((pid == FCProgFlags::HoldMACH) && (IsRunning(pid)))	SetProgramState(FCProgFlags::HoldKEAS, false);
-////}
+#include "VesselControl.h"
+
+VesselControl::VesselControl()
+    :   prgHoldAltitude_(*this),
+        prgHoldHeading_(*this),
+        prgHoldKeas_(*this),
+        prgHoldMach_(*this)
+{
+}
+
+void VesselControl::Step(double simt, double simdt, double mjd)
+{
+    auto current = RunningPrograms();
+    if (prevRunningProgs != current) UpdateProgs(current);
+
+	auto atmoOn = IsRunning(FCProgFlags::AtmoActive);
+
+    if (atmoOn && IsRunning(FCProgFlags::HoldAltitude))	prgHoldAltitude_.Step(simt, simdt, mjd);
+    if (atmoOn && IsRunning(FCProgFlags::HoldHeading))	prgHoldHeading_.Step(simt, simdt, mjd);
+    if (atmoOn && IsRunning(FCProgFlags::HoldKEAS))		prgHoldKeas_.Step(simt, simdt, mjd);
+    if (atmoOn && IsRunning(FCProgFlags::HoldMACH))		prgHoldMach_.Step(simt, simdt, mjd);
+
+    prevRunningProgs = current;
+}
+
+void VesselControl::ToggleAtmoProgram(FCProgFlags pid)
+{
+	SetProgramState(pid, !IsRunning(pid));
+
+	if ((pid == FCProgFlags::HoldKEAS) && (IsRunning(pid)))	SetProgramState(FCProgFlags::HoldMACH, false);
+	if ((pid == FCProgFlags::HoldMACH) && (IsRunning(pid)))	SetProgramState(FCProgFlags::HoldKEAS, false);
+}

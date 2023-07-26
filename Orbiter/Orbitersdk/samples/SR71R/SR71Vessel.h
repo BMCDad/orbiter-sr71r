@@ -43,6 +43,7 @@
 #include "HydrogenTank.h"
 #include "OxygenTank.h"
 #include "FlightComputer.h"
+#include "SurfaceController.h"
 
 #include <vector>
 #include <map>
@@ -103,18 +104,20 @@ private:
 	// ***  Airspeed  *** //
 
 	PowerSystem				powerSystem_	{ *this };
+	APU						apu_			{ powerSystem_, *this };
 
-	AirBrake				airBrake_		{ *this };
+	AirBrake				airBrake_		{ *this, apu_ };
+	LandingGear				landingGear_	{ *this, apu_ };
+	SurfaceController		surfaceCtrl_	{ *this, apu_ };
+
 	Airspeed				airspeed_		{ *this };
 	Altimeter				altimeter_		{ *this };
 	Clock					clock_			{ *this };
 	FC::FlightComputer		computer_		{ *this, powerSystem_};
 	HSI						hsi_			{ *this };
-	LandingGear				landingGear_	{ *this };
 	NavModes				navModes_		{ *this };
 	RCSSystem				rcs_			{ *this };
 	Shutters				shutters_		{ *this };
-	APU						apu_			{ powerSystem_, *this };
 	Beacon					beacon_			{ powerSystem_, *this };
 	Strobe					strobe_			{ powerSystem_, *this };
 	NavLight				navLight_		{ powerSystem_, *this };
@@ -178,69 +181,6 @@ private:
 	//	0.01,
 	//	bm::pnl::pnlMilesTens_RC
 	//};
-
-	// Surface stuff:
-	bco::slot<double>		slotHydraulicLevel_;
-
-	CTRLSURFHANDLE	ctrlSurfLeftAileron_;
-	CTRLSURFHANDLE	ctrlSurfRightAileron_;
-	CTRLSURFHANDLE	ctrlSurfLeftElevator_;
-	CTRLSURFHANDLE	ctrlSurfRightElevator_;
-	CTRLSURFHANDLE	ctrlSurfLeftRudder_;
-	CTRLSURFHANDLE	ctrlSurfRightRudder_;
-	CTRLSURFHANDLE	ctrlSurfLeftTrim_;
-	CTRLSURFHANDLE	ctrlSurfRightTrim_;
-
-	int			anim_left_aileron_;
-	int			anim_left_elevator_;
-	int			anim_right_aileron_;
-	int			anim_right_elevator_;
-	int			anim_left_rudder_;
-	int			anim_right_rudder_;
-
-	void SetupSurfaces();
-
-	void UpdateHydraulicLevel(double v) {
-		if (v == 1.0) {
-			EnableSurfaceControls();
-		}
-		else {
-			DisableControls();
-		}
-	}
-
-	void EnableSurfaceControls() {
-		
-		// Aileron control : bank left/right.  For this we will just use the outer elevon area.
-		ctrlSurfLeftAileron_ = this->CreateControlSurface3(AIRCTRL_AILERON, OutboardElevonArea / 2, dClOutboard, _V(-5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_aileron_);
-		ctrlSurfRightAileron_ = this->CreateControlSurface3(AIRCTRL_AILERON, OutboardElevonArea / 2, dClOutboard, _V(5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 2.0, anim_right_aileron_);
-
-		// Elevator control : pitch up/down.  For this we use the combined inner and outer area.
-		auto fullArea = OutboardElevonArea + InboardElevonArea;
-		auto fulldc = dClInboard + dClOutboard;
-		ctrlSurfLeftElevator_ = this->CreateControlSurface3(AIRCTRL_ELEVATOR, fullArea, fulldc, _V(-5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_elevator_);
-		ctrlSurfRightElevator_ = this->CreateControlSurface3(AIRCTRL_ELEVATOR, fullArea, fulldc, _V(5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_right_elevator_);
-
-		// Rudder contro : yaw.
-		ctrlSurfLeftRudder_ = this->CreateControlSurface3(AIRCTRL_RUDDER, RudderArea, dClRudder, _V(0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_rudder_);
-		ctrlSurfRightRudder_ = this->CreateControlSurface3(AIRCTRL_RUDDER, RudderArea, dClRudder, _V(0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_right_rudder_);
-
-		// Trim : SR-71 does not have trim tabs, or flaps.  We will use the inBoard area and generall as smaller dCl to provide finer control.
-		ctrlSurfLeftTrim_ = this->CreateControlSurface3(AIRCTRL_ELEVATORTRIM, InboardElevonArea, dClInboard, _V(-5.0, 0, -8.0), AIRCTRL_AXIS_XPOS, 1.0, anim_left_elevator_);
-		ctrlSurfRightTrim_ = this->CreateControlSurface3(AIRCTRL_ELEVATORTRIM, InboardElevonArea, dClInboard, _V(5.0, 0, -8.0), AIRCTRL_AXIS_XPOS, 1.0, anim_right_elevator_);
-	}
-
-	void DisableControls()
-	{
-		this->DelControlSurface(ctrlSurfLeftAileron_);
-		this->DelControlSurface(ctrlSurfRightAileron_);
-		this->DelControlSurface(ctrlSurfLeftElevator_);
-		this->DelControlSurface(ctrlSurfRightElevator_);
-		this->DelControlSurface(ctrlSurfLeftRudder_);
-		this->DelControlSurface(ctrlSurfRightRudder_);
-		this->DelControlSurface(ctrlSurfLeftTrim_);
-		this->DelControlSurface(ctrlSurfRightTrim_);
-	}
 
 	// Put status here that does not go anywhere else.
 	bco::status_display     statusDock_	{	bm::vc::MsgLightDock_id,

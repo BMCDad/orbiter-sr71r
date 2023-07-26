@@ -123,6 +123,10 @@ namespace bc_orbiter {
 		virtual double draw(double amount) = 0;
 	};
 
+	struct hydraulic_provider {
+		virtual double level() const = 0;
+	};
+
 	/**
 	* Base class for a control.
 	*/

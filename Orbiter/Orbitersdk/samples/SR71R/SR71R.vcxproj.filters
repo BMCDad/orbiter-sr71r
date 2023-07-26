@@ -229,7 +229,7 @@
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="SurfaceController.h">
-      <Filter>Header Files</Filter>
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -306,7 +306,7 @@
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="SurfaceController.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Components\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

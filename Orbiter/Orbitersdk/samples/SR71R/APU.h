@@ -54,7 +54,8 @@ class APU :
 	public bco::vessel_component,
 	public bco::post_step,
 	public bco::power_consumer,
-	public bco::manage_state
+	public bco::manage_state,
+	public bco::hydraulic_provider
 {
 public:
 	APU(bco::power_provider& pwr, bco::vessel& vessel) : 
@@ -64,8 +65,6 @@ public:
 		vessel.AddControl(&switchEnabled_);
 		vessel.AddControl(&gaugeAPULevel_);
 		vessel.AddControl(&status_);
-
-		signalHydPressure_.attach(gaugeAPULevel_.Slot());
 	}
 
 	double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
@@ -84,26 +83,29 @@ public:
 		return os.str();
 	}
 
-
+	// haudralic_provider
+	double level() const override { return level_; }
 
 	// post_step
 	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		bool hasFuel = false;
 
 		if (!IsPowered()) {
-			signalHydPressure_.fire(0.0);
+			level_ = 0.0;
 		}
 		else {
 			hasFuel = slotFuelLevel_.value() > 0.0;
 
 			if (hasFuel) {
 // TODO				main_tank_.draw(APU_BURN_RATE * simdt);
-				signalHydPressure_.fire(1.0);
+				level_ = 1.0;
 			}
 			else {
-				signalHydPressure_.fire(0.0);
+				level_ = 0.0;
 			}
 		}
+
+		gaugeAPULevel_.set_state(level_);
 
 		status_.set_state(
 			IsPowered() 
@@ -114,7 +116,6 @@ public:
 		);
 	}
 
-	bco::signal<double>&	HydroPressSignal()		{ return signalHydPressure_; }		// Drives the hydraulic pressure gauge
 	bco::slot<double>&		FuelLevelSlot()			{ return slotFuelLevel_; }
 
 private:
@@ -126,7 +127,7 @@ private:
 			(power_.volts_available() > 24.0);
 	}
 
-	bco::signal<double>		signalHydPressure_;
+	double					level_{ 0.0 };
 	bco::slot<double>		slotFuelLevel_;
 
 

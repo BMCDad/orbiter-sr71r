@@ -343,7 +343,7 @@ bool FC::FlightComputer::handle_redraw_vc(bco::vessel& vessel, int id, int event
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 	{
-		bco::DrawSurfaceText(80, 834 + (i * 20), display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
+		bco::DrawSurfaceText(0, i * 20, display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
 	}
 
 	//const double offset = 0.0352;

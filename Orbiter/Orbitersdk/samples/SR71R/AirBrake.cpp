@@ -19,8 +19,9 @@
 #include "AirBrake.h"
 #include "SR71r_mesh.h"
 
-AirBrake::AirBrake(bco::vessel& vessel) :
-	dragFactor_(0.0)
+AirBrake::AirBrake(bco::vessel& vessel, bco::hydraulic_provider& apu) :
+	dragFactor_(0.0),
+	apu_(apu)
 {
 	vessel.AddControl(&btnDecreaseAirbrake_);
 	vessel.AddControl(&btnIncreaseAirbrake_);
@@ -37,7 +38,7 @@ void AirBrake::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 	// handle in the cockpit and can move regardless of power, therefore it must
 	// always get a piece of the time step.
 
-	if (hydraulicPressSlot_.value() > 0.8)
+	if (apu_.level() > 0.8)
 	{
 		animAirBrake_.Step(position_, simdt);
 	}

@@ -317,6 +317,7 @@ namespace bc_orbiter
 		auto pc = map_vc_component_.find(id);
 		if (pc != map_vc_component_.end()) {
 			pc->second->handle_redraw_vc(*this, id, event, surf);
+			return true;
 		}
 
 		return false;

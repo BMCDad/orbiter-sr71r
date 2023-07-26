@@ -83,8 +83,6 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	bco::vessel::clbkSetClassCaps(cfg);
 
 	SetMaxWheelbrakeForce(4e5);
-	SetupSurfaces();
-
 }
 
 int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)

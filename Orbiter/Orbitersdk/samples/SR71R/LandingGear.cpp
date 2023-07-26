@@ -19,7 +19,8 @@
 #include "LandingGear.h"
 #include "SR71r_mesh.h"
 
-LandingGear::LandingGear(bco::vessel& vessel)
+LandingGear::LandingGear(bco::vessel& vessel, bco::hydraulic_provider& apu) :
+    apu_(apu)
 {
     vessel.AddControl(&btnLowerGear_);
     vessel.AddControl(&btnRaiseGear_);
@@ -35,7 +36,7 @@ void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simd
 	// handle in the cockpit and can move regardless of power, therefore it must
 	// always get a piece of the time step.
 
-	if (hydraulicPressSlot_.value() > 0.8)
+	if (apu_.level() > 0.8)
 	{
 		animLandingGear_.Step(position_, simdt);
 	}

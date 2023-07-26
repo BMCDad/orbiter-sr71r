@@ -46,7 +46,7 @@ class LandingGear :
     , public bco::draw_hud
 {
 public:
-	LandingGear(bco::vessel& vessel);
+	LandingGear(bco::vessel& vessel, bco::hydraulic_provider& apu);
 
     // set_class_caps
     void handle_set_class_caps(bco::vessel& vessel) override;
@@ -60,11 +60,9 @@ public:
 
     void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-    bco::slot<double>&  HydraulicPressSlot()    { return hydraulicPressSlot_; }
-
 private:
 
-    bco::slot<double>       hydraulicPressSlot_;
+    bco::hydraulic_provider& apu_;
 
     double                  position_{ 0.0 };
 
