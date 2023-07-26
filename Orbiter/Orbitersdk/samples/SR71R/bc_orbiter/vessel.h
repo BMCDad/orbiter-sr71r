@@ -157,6 +157,15 @@ namespace bc_orbiter
 
 		void AddComponent(vessel_component* c) { components_.push_back(c); }
 
+		// Clean this up later when Component goes away
+		void RegisterVCComponent(int id, load_vc* vc) {
+			map_vc_component_[id] = vc;
+		}
+
+		void RegisterPanelComponent(int id, load_panel* pnl) {
+			map_panel_component_[id] = pnl;
+		}
+
 	private:
 
 		std::vector<control*>							controls_;
@@ -172,6 +181,8 @@ namespace bc_orbiter
 		std::vector<draw_hud*>							draw_hud_components_;
 		std::vector<load_vc*>							load_vc_components_;
 		std::vector<load_panel*>						load_panel_components_;
+		std::map<int, load_vc*>							map_vc_component_;
+		std::map<int, load_panel*>						map_panel_component_;
 
 		std::map<int, Component*>						idComponentMap_;		// still used by MFDs.  Need to figure that out, then we can get rid of Component
 		std::map<UINT, std::unique_ptr<animation>>     animations_;
@@ -300,6 +311,12 @@ namespace bc_orbiter
 		auto pe = map_vc_targets_.find(id);
 		if (pe != map_vc_targets_.end()) {
 			pe->second->on_vc_redraw(meshVirtualCockpit0_);
+			return true;
+		}
+
+		auto pc = map_vc_component_.find(id);
+		if (pc != map_vc_component_.end()) {
+			pc->second->handle_redraw_vc(*this, id, event, surf);
 		}
 
 		return false;
@@ -396,6 +413,12 @@ namespace bc_orbiter
 		auto pe = map_panel_targets_.find(id);
 		if (pe != map_panel_targets_.end()) {
 			pe->second->on_panel_redraw(GetpanelMeshHandle0());
+			return true;
+		}
+
+		auto pc = map_panel_component_.find(id);
+		if (pc != map_panel_component_.end()) {
+			pc->second->handle_redraw_panel(*this, id, event, surf);
 		}
 
 		return true;

@@ -81,6 +81,7 @@
 
 #include "bc_orbiter/handler_interfaces.h"
 #include "bc_orbiter/control.h"
+#include "bc_orbiter/simple_event.h"
 
 #include "VesselControl.h"
 #include "SR71r_mesh.h"
@@ -105,7 +106,8 @@ namespace FC
 		Enter,
 		Previous, Next,
 		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10,
-		Home
+		HUD,
+		Menu
 	};
 
 	enum FCProg
@@ -137,6 +139,8 @@ namespace FC
 		, public bco::post_step
 		, public bco::manage_state
 		, public bco::draw_hud
+		, public bco::load_vc
+		, public bco::load_panel
     {
 		using KeyFunc = std::function<void()>;
 
@@ -158,6 +162,14 @@ namespace FC
 		// manage_state
 		bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
 		std::string handle_save_state(bco::vessel& vessel) override;
+
+		// load_vc
+		virtual bool handle_load_vc(bco::vessel& vessel, int vcid) override;
+		virtual bool handle_redraw_vc(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
+
+		// load_panel
+		virtual bool handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
+		virtual bool handle_redraw_panel(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
 
 		// Component overrides:
 
@@ -219,6 +231,12 @@ namespace FC
 		void Update();
 		void Boot();
 
+		bco::power_provider&		power_;
+
+		bool IsPowered() const {
+			return power_.volts_available() > 24.0;
+		}
+
 		//bool LoadAPConfiguration(FILEHANDLE scn, const char* configLine);
 		//void SaveAPConfiguration(FILEHANDLE scn) const;
 
@@ -250,38 +268,38 @@ namespace FC
 		std::map<int, FC::GCKey>	mapKey_;            // Map the mouse event id to the key.
 		std::vector<FC::GCKey>      keyBuffer_;
 
-        // Map the key to the location.  This is used during LoadVC
-        // to register mouse event id with a key.
-        std::map<FC::GCKey, VECTOR3>  mapKeyLocation_
-        {
-            { FC::GCKey::D0,        mvc::GCKey0_location},
-            { FC::GCKey::D1,        mvc::GCKey1_location },
-            { FC::GCKey::D2,        mvc::GCKey2_location },
-            { FC::GCKey::D3,        mvc::GCKey3_location },
-            { FC::GCKey::D4,        mvc::GCKey4_location },
-            { FC::GCKey::D5,        mvc::GCKey5_location },
-            { FC::GCKey::D6,        mvc::GCKey6_location },
-            { FC::GCKey::D7,        mvc::GCKey7_location },
-            { FC::GCKey::D8,        mvc::GCKey8_location },
-            { FC::GCKey::D9,        mvc::GCKey9_location },
-            { FC::GCKey::Clear,     mvc::GCKeyClear_location },
-            { FC::GCKey::Decimal,   mvc::GCKeyDecimal_location },
-            { FC::GCKey::Enter,     mvc::GCKeyEnter_location },
-            { FC::GCKey::Next,      mvc::GCKeyNext_location },
-            { FC::GCKey::Previous,  mvc::GCKeyPrev_location },
-            { FC::GCKey::PlusMinus, mvc::GCKeyPlusMinus_location },
-            { FC::GCKey::F1,        mvc::GCKeyFunc1_location },
-            { FC::GCKey::F2,        mvc::GCKeyFunc2_location },
-            { FC::GCKey::F3,        mvc::GCKeyFunc3_location },
-            { FC::GCKey::F4,        mvc::GCKeyFunc4_location },
-            { FC::GCKey::F5,        mvc::GCKeyFunc5_location },
-            { FC::GCKey::F6,        mvc::GCKeyFunc6_location },
-            { FC::GCKey::F7,        mvc::GCKeyFunc7_location },
-            { FC::GCKey::F8,        mvc::GCKeyFunc8_location },
-            { FC::GCKey::F9,        mvc::GCKeyFunc9_location },
-            { FC::GCKey::F10,       mvc::GCKeyFunc10_location },
-			{ FC::GCKey::Home,		mvc::GCKeyHome_location }
-        };
+   //     // Map the key to the location.  This is used during LoadVC
+   //     // to register mouse event id with a key.
+   //     std::map<FC::GCKey, VECTOR3>  mapKeyLocation_
+   //     {
+   //         { FC::GCKey::D0,        mvc::GCKey0_location},
+   //         { FC::GCKey::D1,        mvc::GCKey1_location },
+   //         { FC::GCKey::D2,        mvc::GCKey2_location },
+   //         { FC::GCKey::D3,        mvc::GCKey3_location },
+   //         { FC::GCKey::D4,        mvc::GCKey4_location },
+   //         { FC::GCKey::D5,        mvc::GCKey5_location },
+   //         { FC::GCKey::D6,        mvc::GCKey6_location },
+   //         { FC::GCKey::D7,        mvc::GCKey7_location },
+   //         { FC::GCKey::D8,        mvc::GCKey8_location },
+   //         { FC::GCKey::D9,        mvc::GCKey9_location },
+   //         { FC::GCKey::Clear,     mvc::GCKeyClear_location },
+   //         { FC::GCKey::Decimal,   mvc::GCKeyDecimal_location },
+   //         { FC::GCKey::Enter,     mvc::GCKeyEnter_location },
+   //         { FC::GCKey::Next,      mvc::GCKeyNext_location },
+   //         { FC::GCKey::Previous,  mvc::GCKeyPrev_location },
+   //         { FC::GCKey::PlusMinus, mvc::GCKeyPlusMinus_location },
+   //         { FC::GCKey::F1,        mvc::GCKeyFunc1_location },
+   //         { FC::GCKey::F2,        mvc::GCKeyFunc2_location },
+   //         { FC::GCKey::F3,        mvc::GCKeyFunc3_location },
+   //         { FC::GCKey::F4,        mvc::GCKeyFunc4_location },
+   //         { FC::GCKey::F5,        mvc::GCKeyFunc5_location },
+   //         { FC::GCKey::F6,        mvc::GCKeyFunc6_location },
+   //         { FC::GCKey::F7,        mvc::GCKeyFunc7_location },
+   //         { FC::GCKey::F8,        mvc::GCKeyFunc8_location },
+   //         { FC::GCKey::F9,        mvc::GCKeyFunc9_location },
+   //         { FC::GCKey::F10,       mvc::GCKeyFunc10_location },
+			//{ FC::GCKey::Home,		mvc::GCKeyHome_location }
+   //     };
 
 		std::map<FC::GCKey, KeyFunc> mapKeyFunc_;
 
@@ -367,5 +385,37 @@ namespace FC
 
 		//bco::TextureVisual		visAPMACHOn_;
 		//bco::PushButtonSwitch   swAPMACH_{ bm::vc::SwAPMACH_location, 0.01 };
+
+		bco::simple_event<bool> gcKey0_			{ bm::vc::GCKey0_location,			0.01, bm::pnl::pnlGCKey0_RC };
+		bco::simple_event<bool> gcKey1_			{ bm::vc::GCKey1_location,			0.01, bm::pnl::pnlGCKey1_RC };
+		bco::simple_event<bool> gcKey2_			{ bm::vc::GCKey2_location,			0.01, bm::pnl::pnlGCKey2_RC };
+		bco::simple_event<bool> gcKey3_			{ bm::vc::GCKey3_location,			0.01, bm::pnl::pnlGCKey3_RC };
+		bco::simple_event<bool> gcKey4_			{ bm::vc::GCKey4_location,			0.01, bm::pnl::pnlGCKey4_RC };
+		bco::simple_event<bool> gcKey5_			{ bm::vc::GCKey5_location,			0.01, bm::pnl::pnlGCKey5_RC };
+		bco::simple_event<bool> gcKey6_			{ bm::vc::GCKey6_location,			0.01, bm::pnl::pnlGCKey6_RC };
+		bco::simple_event<bool> gcKey7_			{ bm::vc::GCKey7_location,			0.01, bm::pnl::pnlGCKey7_RC };
+		bco::simple_event<bool> gcKey8_			{ bm::vc::GCKey8_location,			0.01, bm::pnl::pnlGCKey8_RC };
+		bco::simple_event<bool> gcKey9_			{ bm::vc::GCKey9_location,			0.01, bm::pnl::pnlGCKey9_RC };
+		
+		bco::simple_event<bool> gcKeyClear_		{ bm::vc::GCKeyClear_location,		0.01, bm::pnl::pnlGCKeyClear_RC };
+		bco::simple_event<bool> gcKeyDecimal_	{ bm::vc::GCKeyDecimal_location,	0.01, bm::pnl::pnlGCKeyDecimal_RC };
+		bco::simple_event<bool> gcKeyEnter_		{ bm::vc::GCKeyEnter_location,		0.01, bm::pnl::pnlGCKeyEnter_RC };
+		bco::simple_event<bool> gcKeyHUD_		{ bm::vc::GCKeyHUD_location,		0.01, bm::pnl::pnlGCKeyHud_RC };
+		bco::simple_event<bool> gcKeyNext_		{ bm::vc::GCKeyNext_location,		0.01, bm::pnl::pnlGCKeyNext_RC };
+		bco::simple_event<bool> gcKeyPlusMinus_	{ bm::vc::GCKeyPlusMinus_location,	0.01, bm::pnl::pnlGCKeyPlusMinus_RC };
+		bco::simple_event<bool> gcKeyPrev_		{ bm::vc::GCKeyPrev_location,		0.01, bm::pnl::pnlGCKeyPrev_RC };
+		bco::simple_event<bool> gcKeyMenu_		{ bm::vc::GCKeyHome_location,		0.01, bm::pnl::pnlGCKeyMenu_RC };
+		
+		bco::simple_event<bool> gcKeyF1_		{ bm::vc::GCKeyFunc1_location,		0.01, bm::pnl::pnlGCKeyFunc1_RC };
+		bco::simple_event<bool> gcKeyF2_		{ bm::vc::GCKeyFunc2_location,		0.01, bm::pnl::pnlGCKeyFunc2_RC };
+		bco::simple_event<bool> gcKeyF3_		{ bm::vc::GCKeyFunc3_location,		0.01, bm::pnl::pnlGCKeyFunc3_RC };
+		bco::simple_event<bool> gcKeyF4_		{ bm::vc::GCKeyFunc4_location,		0.01, bm::pnl::pnlGCKeyFunc4_RC };
+		bco::simple_event<bool> gcKeyF5_		{ bm::vc::GCKeyFunc5_location,		0.01, bm::pnl::pnlGCKeyFunc5_RC };
+		bco::simple_event<bool> gcKeyF6_		{ bm::vc::GCKeyFunc6_location,		0.01, bm::pnl::pnlGCKeyFunc6_RC };
+		bco::simple_event<bool> gcKeyF7_		{ bm::vc::GCKeyFunc7_location,		0.01, bm::pnl::pnlGCKeyFunc7_RC };
+		bco::simple_event<bool> gcKeyF8_		{ bm::vc::GCKeyFunc8_location,		0.01, bm::pnl::pnlGCKeyFunc8_RC };
+		bco::simple_event<bool> gcKeyF9_		{ bm::vc::GCKeyFunc9_location,		0.01, bm::pnl::pnlGCKeyFunc9_RC };
+		bco::simple_event<bool> gcKeyF10_		{ bm::vc::GCKeyFunc10_location,		0.01, bm::pnl::pnlGCKeyFunc10_RC };
+
     };
 }

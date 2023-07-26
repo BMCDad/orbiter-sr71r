@@ -23,6 +23,8 @@
 namespace mvc = bm::vc;
 
 FC::FlightComputer::FlightComputer(bco::vessel& vessel, bco::power_provider& pwr) 
+	:
+	power_(pwr)
 	//visAPMainOn_(		bm::vc::SwAPMain_verts,		bm::vc::SwAPMain_id),
 	//visAPHeadingOn_(	bm::vc::SwAPHeading_verts,	bm::vc::SwAPHeading_id),
 	//visAPAltitudeOn_(	bm::vc::SwAPAltitude_verts,	bm::vc::SwAPAltitude_id),
@@ -67,6 +69,66 @@ FC::FlightComputer::FlightComputer(bco::vessel& vessel, bco::power_provider& pwr
 	//	isDisplayDirty_ = true;
 	//});
 	//vessel->RegisterVCEventTarget(&swAPMACH_);
+
+	vessel.AddControl(&gcKey0_);		
+	vessel.AddControl(&gcKey1_);		
+	vessel.AddControl(&gcKey2_);		
+	vessel.AddControl(&gcKey3_);		
+	vessel.AddControl(&gcKey4_);		
+	vessel.AddControl(&gcKey5_);		
+	vessel.AddControl(&gcKey6_);		
+	vessel.AddControl(&gcKey7_);		
+	vessel.AddControl(&gcKey8_);		
+	vessel.AddControl(&gcKey9_);		
+	vessel.AddControl(&gcKeyClear_);	
+	vessel.AddControl(&gcKeyDecimal_);
+	vessel.AddControl(&gcKeyEnter_);
+	vessel.AddControl(&gcKeyHUD_);
+	vessel.AddControl(&gcKeyNext_);
+	vessel.AddControl(&gcKeyPlusMinus_);
+	vessel.AddControl(&gcKeyPrev_);
+	vessel.AddControl(&gcKeyF1_);
+	vessel.AddControl(&gcKeyF2_);
+	vessel.AddControl(&gcKeyF3_);
+	vessel.AddControl(&gcKeyF4_);
+	vessel.AddControl(&gcKeyF5_);
+	vessel.AddControl(&gcKeyF6_);
+	vessel.AddControl(&gcKeyF7_);
+	vessel.AddControl(&gcKeyF8_);
+	vessel.AddControl(&gcKeyF9_);
+	vessel.AddControl(&gcKeyF10_);
+
+	gcKey0_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D0); });
+	gcKey1_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D1); });
+	gcKey2_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D2); });
+	gcKey3_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D3); });
+	gcKey4_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D4); });
+	gcKey5_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D5); });
+	gcKey6_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D6); });
+	gcKey7_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D7); });
+	gcKey8_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D8); });
+	gcKey9_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D9); });
+	gcKeyClear_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Clear); });
+	gcKeyDecimal_	.attach([&]() { keyBuffer_.push_back(FC::GCKey::Decimal); });
+	gcKeyEnter_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Enter); });
+	gcKeyHUD_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::HUD); });
+	gcKeyNext_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Next); });
+	gcKeyPlusMinus_	.attach([&]() { keyBuffer_.push_back(FC::GCKey::PlusMinus); });
+	gcKeyPrev_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Previous); });
+	gcKeyF1_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F1); });
+	gcKeyF2_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F2); });
+	gcKeyF3_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F3); });
+	gcKeyF4_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F4); });
+	gcKeyF5_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F5); });
+	gcKeyF6_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F6); });
+	gcKeyF7_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F7); });
+	gcKeyF8_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F8); });
+	gcKeyF9_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F9); });
+	gcKeyF10_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F10); });
+
+	allId_ = vessel.GetControlId();
+	vessel.RegisterVCComponent(allId_, this);
+	vessel.RegisterPanelComponent(allId_, this);
 }
 
 
@@ -131,7 +193,7 @@ void FC::FlightComputer::Boot()
 	MapKey(GCKey::Decimal,		[this] { HandleScratchPadKey(GCKey::Decimal); });
 	MapKey(GCKey::PlusMinus,	[this] { HandleScratchPadKey(GCKey::PlusMinus); });
 
-	MapKey(GCKey::Home,			[this] { PageMain(); });
+	MapKey(GCKey::Menu,			[this] { PageMain(); });
 	MapKey(GCKey::Previous,		[this] { });
 	MapKey(GCKey::Next,			[this] {});
 	MapKey(GCKey::Enter,		[this] {});
@@ -249,85 +311,103 @@ void FC::FlightComputer::SetScratchPad(double value)
 //}
 //
 //
-//bool FC::FlightComputer::OnLoadVC(int id)
-//{
-//    //auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
-//    //assert(vcMeshHandle != nullptr);
-//
-//    //SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
-//
-//    //// handle_set_class_caps our font:
-//    //vcFont_.surfSource = surfHandle;
-//    //vcFont_.charWidth = 12;
-//    //vcFont_.charHeight = 20;
-//    //vcFont_.sourceX = 4;
-//    //vcFont_.sourceY = 2021;
-//    //vcFont_.blankX = 1600;
-//    //vcFont_.blankY = 2021;
-//
-//    //auto eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
-//    //oapiVCRegisterArea(
-//    //    eventId,
-//    //    _R(80, 835, 320, 1060), //_R(1710, 95, 1950, 320),
-//    //    PANEL_REDRAW_USER,
-//    //    PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
-//    //    PANEL_MAP_BACKGROUND,
-//    //    surfHandle);
-//
-//    //allId_ = eventId;
-//
-//    //// mapKeyLocation_ maps a GCKey to the mouse click location on the mesh.
-//    //// We walk through the map here to register the mouse events and setup the
-//    //// mouse event to GCKey map.
-//    //for (auto& k : mapKeyLocation_)
-//    //{
-//    //    auto eid = GetBaseVessel()->RegisterVCMouseEvent(this);
-//    //    oapiVCRegisterArea(eid, PANEL_REDRAW_NEVER, PANEL_MOUSE_DOWN);
-//    //    oapiVCSetAreaClickmode_Spherical(eid, k.second, 0.01);
-//    //    mapKey_[eid] = k.first;
-//    //}
-//
-//    return true;
-//}
+bool FC::FlightComputer::handle_load_vc(bco::vessel& vessel, int vcid)
+{
+    auto vcMeshHandle = vessel.GetVCMeshHandle0();
+    assert(vcMeshHandle != nullptr);
+
+    SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
+
+    // handle_set_class_caps our font:
+    vcFont_.surfSource = surfHandle;
+    vcFont_.charWidth = 12;
+    vcFont_.charHeight = 20;
+    vcFont_.sourceX = 4;
+    vcFont_.sourceY = 2021;
+    vcFont_.blankX = 1600;
+    vcFont_.blankY = 2021;
+
+    oapiVCRegisterArea(
+        allId_,
+        _R(80, 835, 320, 1060), //_R(1710, 95, 1950, 320),
+        PANEL_REDRAW_USER,
+        PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
+        PANEL_MAP_BACKGROUND,
+        surfHandle);
+
+    return true;
+}
 
 
-//bool FC::FlightComputer::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
-//{
-//	//auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-//	//assert(devMesh != nullptr);
-//
-//	//for (int i = 0; i < DISPLAY_ROWS; i++)
-//	//{
-//	//	bco::DrawSurfaceText(0, i * 20, display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
-//	//}
-//
-//	//const double offset = 0.0352;
-//	//double trans = 0.0;
-//
-//	////trans = IsProgramRunning(FCProgFlags::AtmoActive) ? offset : 0.0;
-//	////visAPMainOn_.SetTranslate(_V(trans, 0.0, 0.0));
-//	////visAPMainOn_.RotateMesh(devMesh);
-//
-//	////trans = IsProgramRunning(FCProgFlags::HoldHeading) ? offset : 0.0;
-//	////visAPHeadingOn_.SetTranslate(_V(trans, 0.0, 0.0));
-//	////visAPHeadingOn_.RotateMesh(devMesh);
-//
-//	////trans = IsProgramRunning(FCProgFlags::HoldAltitude) ? offset : 0.0;
-//	////visAPAltitudeOn_.SetTranslate(_V(trans, 0.0, 0.0));
-//	////visAPAltitudeOn_.RotateMesh(devMesh);
-//
-//	////trans = IsProgramRunning(FCProgFlags::HoldKEAS) ? offset : 0.0;
-//	////visAPKEASOn_.SetTranslate(_V(trans, 0.0, 0.0));
-//	////visAPKEASOn_.RotateMesh(devMesh);
-//
-//	////trans = IsProgramRunning(FCProgFlags::HoldMACH) ? offset : 0.0;
-//	////visAPMACHOn_.SetTranslate(_V(trans, 0.0, 0.0));
-//	////visAPMACHOn_.RotateMesh(devMesh);
-//
-//	return true;
-//}
+bool FC::FlightComputer::handle_redraw_vc(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
+{
+	for (int i = 0; i < DISPLAY_ROWS; i++)
+	{
+		bco::DrawSurfaceText(80, 834 + (i * 20), display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
+	}
 
+	//const double offset = 0.0352;
+	//double trans = 0.0;
 
+	////trans = IsProgramRunning(FCProgFlags::AtmoActive) ? offset : 0.0;
+	////visAPMainOn_.SetTranslate(_V(trans, 0.0, 0.0));
+	////visAPMainOn_.RotateMesh(devMesh);
+
+	////trans = IsProgramRunning(FCProgFlags::HoldHeading) ? offset : 0.0;
+	////visAPHeadingOn_.SetTranslate(_V(trans, 0.0, 0.0));
+	////visAPHeadingOn_.RotateMesh(devMesh);
+
+	////trans = IsProgramRunning(FCProgFlags::HoldAltitude) ? offset : 0.0;
+	////visAPAltitudeOn_.SetTranslate(_V(trans, 0.0, 0.0));
+	////visAPAltitudeOn_.RotateMesh(devMesh);
+
+	////trans = IsProgramRunning(FCProgFlags::HoldKEAS) ? offset : 0.0;
+	////visAPKEASOn_.SetTranslate(_V(trans, 0.0, 0.0));
+	////visAPKEASOn_.RotateMesh(devMesh);
+
+	////trans = IsProgramRunning(FCProgFlags::HoldMACH) ? offset : 0.0;
+	////visAPMACHOn_.SetTranslate(_V(trans, 0.0, 0.0));
+	////visAPMACHOn_.RotateMesh(devMesh);
+
+	return true;
+}
+
+bool FC::FlightComputer::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
+{
+	auto panelMesh = vessel.GetpanelMeshHandle0();
+	SURFHANDLE surfHandle = oapiGetTextureHandle(panelMesh, bm::pnl::TXIDX_SR71R_100_2DPanel_dds);
+
+	// handle_set_class_caps our font:
+	vcFont_.surfSource = surfHandle;
+	vcFont_.charWidth = 12;
+	vcFont_.charHeight = 20;
+	vcFont_.sourceX = 4;
+	vcFont_.sourceY = 2;
+	vcFont_.blankX = 1600;
+	vcFont_.blankY = 2;
+
+	vessel.RegisterPanelArea(
+		hPanel,
+		allId_,
+		_R(1565, 2152, 1808, 2371), //_R(1710, 95, 1950, 320),
+		PANEL_REDRAW_USER,
+		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
+		surfHandle);
+	
+	return true;
+}
+
+bool FC::FlightComputer::handle_redraw_panel(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
+{
+	int left = 1568;
+	int top = 2150;
+	for (int i = 0; i < DISPLAY_ROWS; i++)
+	{
+		bco::DrawSurfaceText(left, top + (i * 20), display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
+	}
+
+	return true;
+}
 //bool FC::FlightComputer::OnLoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
 //{
 //	if (_strnicmp(key, apConfigKey_.c_str(), apConfigKey_.length()) == 0)
@@ -509,19 +589,19 @@ void FC::FlightComputer::SetTargetIncDeg(double tgt)
 */
 void FC::FlightComputer::Update()
 {
-	//if (!isRunning_)
-	//{
-	//	if (HasPower())
-	//	{
-	//		Boot();
-	//	}
-	//}
+	if (!isRunning_)
+	{
+		if (IsPowered())
+		{
+			Boot();
+		}
+	}
 
- //   if (isDisplayDirty_)
- //   {
- //       oapiVCTriggerRedrawArea(0, allId_);
- //       isDisplayDirty_ = false;
- //   }
+    if (isDisplayDirty_)
+    {
+        oapiTriggerRedrawArea(0, 0, allId_);
+        isDisplayDirty_ = false;
+    }
 }
 
 

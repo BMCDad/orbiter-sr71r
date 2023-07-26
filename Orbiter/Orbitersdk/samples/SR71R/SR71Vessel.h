@@ -42,6 +42,7 @@
 #include "Airspeed.h"
 #include "HydrogenTank.h"
 #include "OxygenTank.h"
+#include "FlightComputer.h"
 
 #include <vector>
 #include <map>
@@ -107,6 +108,7 @@ private:
 	Airspeed				airspeed_		{ *this };
 	Altimeter				altimeter_		{ *this };
 	Clock					clock_			{ *this };
+	FC::FlightComputer		computer_		{ *this, powerSystem_};
 	HSI						hsi_			{ *this };
 	LandingGear				landingGear_	{ *this };
 	NavModes				navModes_		{ *this };

@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Mon Jul 24 19:26:54 2023
+// Date: Tue Jul 25 20:05:27 2023
 
 
 #include "orbitersdk.h"
@@ -1626,6 +1626,7 @@ namespace bm
     const DWORD TXIDX_SR71R_100_VC2_dds = 2;
     const DWORD TXIDX_SR71rBody_dds = 3;
     const DWORD TXIDX_SR71R_100_VC1_dds = 4;
+    const DWORD TXIDX_SR71R_100_2DPanel_dds = 5;
     constexpr auto MESH_NAME = "SR71rVC";
 
     const UINT CockpitPanelHood_id = 0;

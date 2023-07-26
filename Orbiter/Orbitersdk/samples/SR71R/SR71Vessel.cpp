@@ -56,6 +56,7 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 
 	AddComponent(&mfdLeft_);
 	AddComponent(&mfdRight_);
+	AddComponent(&computer_);
 
 
 	bco::connect(avionics_.IsAeroActiveSignal(), altimeter_.EnabledSlot());
