@@ -374,7 +374,7 @@ void PropulsionController::SetVesselMainThrustLevel(double level)
 	vessel_.SetThrusterGroupLevel(THGROUP_MAIN, level);
 }
 
-void PropulsionController::SetAttitudeRotLevel(Axis axis, double level)
+void PropulsionController::SetAttitudeRotLevel(bco::Axis axis, double level)
 {
 	vessel_.SetAttitudeRotLevel((int)axis, level);
 }

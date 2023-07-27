@@ -41,7 +41,10 @@ namespace bc_orbiter
 	/**
 	Base class for Orbiter vessels.
 	*/
-    class vessel : public VESSEL4
+    class vessel : 
+		  public VESSEL4
+		, public avionics_provider
+		, public propulsion_control
     {
     public:
         vessel(OBJHANDLE hvessel, int flightmodel);
@@ -165,6 +168,21 @@ namespace bc_orbiter
 		void RegisterPanelComponent(int id, load_panel* pnl) {
 			map_panel_component_[id] = pnl;
 		}
+
+		// avionics_provider
+		double get_altitude() const				override { return this->GetAltitude(); }
+		void   get_angular_velocity(VECTOR3& v)	override { this->GetAngularVel(v); }
+		double get_bank() const					override { return this->GetBank(); }
+		double get_heading() const				override { return this->GetYaw(); }
+		double get_keas() const					override { return GetVesselKeas(this); }
+		double get_mach() const					override { return this->GetMachNumber(); }
+		double get_pitch() const				override { return this->GetPitch(); }
+		double get_vertical_speed() const		override { return GetVerticalSpeedFPM(this); }
+
+		// propulsion_control
+		double get_main_thrust_level() const	override { return this->GetThrusterGroupLevel(THGROUP_MAIN); }
+		void   set_main_thrust_level(double l)	override { this->SetThrusterGroupLevel(THGROUP_MAIN, l); }
+		void   set_attitude_rotation(Axis axis, double level) override { this->SetAttitudeRotLevel((int)axis, level); }
 
 	private:
 

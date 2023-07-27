@@ -127,6 +127,30 @@ namespace bc_orbiter {
 		virtual double level() const = 0;
 	};
 
+	struct avionics_provider {
+		virtual double get_altitude() const = 0;
+		virtual void   get_angular_velocity(VECTOR3& v) = 0;
+		virtual double get_bank() const = 0;
+		virtual double get_heading() const = 0;
+		virtual double get_keas() const = 0;
+		virtual double get_mach() const = 0;
+		virtual double get_pitch() const = 0;
+		virtual double get_vertical_speed() const = 0;
+	};
+
+	enum class Axis { Pitch = 0, Yaw = 1, Roll = 2 };
+
+	struct propulsion_control {
+		virtual double get_main_thrust_level() const = 0;
+		virtual void set_main_thrust_level(double l) = 0;
+		virtual void set_attitude_rotation(Axis axit, double level) = 0;
+	};
+
+	struct surface_control {
+		virtual void set_aileron_level(double l) = 0;
+		virtual void set_elevator_level(double l) = 0;
+	};
+
 	/**
 	* Base class for a control.
 	*/

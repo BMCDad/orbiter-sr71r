@@ -90,8 +90,6 @@ class PropulsionController :
 public:
 	PropulsionController(bco::power_provider& pwr, bco::vessel& vessel);
 
-    enum class Axis { Pitch = 0, Yaw = 1, Roll = 2 };
-
 	// post_step
 	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
@@ -110,7 +108,7 @@ public:
 
 	double GetVesselMainThrustLevel();
 	void SetVesselMainThrustLevel(double level);
-    void SetAttitudeRotLevel(Axis axis, double level);
+    void SetAttitudeRotLevel(bco::Axis axis, double level);
 	double CurrentMaxThrust() { return maxThrustLevel_; }
 
 	bco::signal<double>&	MainFuelLevelSignal() { return signalMainFuelLevel_; }

@@ -81,15 +81,23 @@ struct IVesselControl
 class ControlProgram
 {
 public:
-    ControlProgram(IVesselControl& p) : vesselControl_(p)
+    ControlProgram(bco::avionics_provider& ap, bco::propulsion_control& pc, bco::surface_control& sc) : 
+          avionics_(ap)
+        , propulsion_(pc)
+        , surface_(sc)
     {}
 
     virtual void Start() {}
     virtual void Stop() {}
     virtual void Step(double simt, double simdt, double mjd) {}
 
-protected:
-    IVesselControl& vesselControl_;
+    bco::avionics_provider& Avionics() { return avionics_; }
+    bco::propulsion_control& Propulsion() { return propulsion_; }
+    bco::surface_control& Surface() { return surface_; }
+private:
+    bco::avionics_provider& avionics_;
+    bco::propulsion_control& propulsion_;
+    bco::surface_control& surface_;
 };
 
 class HoldHeadingProgram : public ControlProgram
@@ -98,7 +106,8 @@ class HoldHeadingProgram : public ControlProgram
 	double target_{ 0.0 };
 
 public:
-    HoldHeadingProgram(IVesselControl& v) : ControlProgram(v)
+    HoldHeadingProgram(bco::avionics_provider& ap, bco::propulsion_control& pc, bco::surface_control& sc) 
+        : ControlProgram(ap, pc, sc)
     {}
 
 	void SetTargetHeading(double target) { target_ = target; }
@@ -106,13 +115,13 @@ public:
     void Step(double simt, double simdt, double mjd) override
     {
 		// GetHeading will return a value between 0 and PI2 (0 - 360 in degrees)
-        auto currentYaw     = vesselControl_.GetAvionics()->GetHeading();
+        auto currentYaw     = Avionics().get_heading();
 
 		// Bank will return between -PI2 to PI2
-        auto currentBank    = vesselControl_.GetAvionics()->GetBank();
+        auto currentBank    = Avionics().get_bank();
 
 		// This is the target heading in RAD, it should also be between 0 and PI2
-		target_				= vesselControl_.GetAvionics()->GetSetHeading();
+// ?? TODO		target_				= vesselControl_.GetAvionics()->GetSetHeading();
 
         // Find the delta heading from target.  This is also called the 'error'.
 		// When the target is to the left of current, the error is negative.  The
@@ -145,14 +154,13 @@ public:
         if (deltaBank > 1) deltaBank = 1;
         if (deltaBank < -1) deltaBank = -1;
 
-        vesselControl_.GetSurfaceController()->SetAileronLevel(-deltaBank);
-
+        Surface().set_aileron_level(-deltaBank);
 //        sprintf(oapiDebugString(), "Hold heading ON - Target: %.2f, deltaBank: %.2f", target * DEG, deltaBank);
     }
 
     void Stop() override
     {
-        vesselControl_.GetSurfaceController()->SetAileronLevel(0.0);
+        Surface().set_aileron_level(0.0);
     }
 };
 
@@ -166,17 +174,18 @@ class HoldAltitudeProgram : public ControlProgram
 	double target_{ 0.0 };
 
 public:
-    HoldAltitudeProgram(IVesselControl& v) : ControlProgram(v)
+    HoldAltitudeProgram(bco::avionics_provider& ap, bco::propulsion_control& pc, bco::surface_control& sc) 
+        : ControlProgram(ap, pc, sc)
     {}
 
 	void SetTargetAltitude(double t) { target_ = t; }
 
     void Step(double simt, double simdt, double mjd) override
     {
-        auto currentAltitude    = vesselControl_.GetAvionics()->GetRawAltitude();
+        auto currentAltitude    = Avionics().get_altitude();
         auto altError           = target_ - currentAltitude;
 
-        auto vertSpeed          = vesselControl_.GetAvionics()->GetVertSpeedRaw();
+        auto vertSpeed          = Avionics().get_vertical_speed();
 
         auto targetClimb = 0.0;
 
@@ -202,17 +211,17 @@ public:
             ctrlLevel = (climbError > 0) ? 1.0 : -1.0;
         }
 
-        vesselControl_.GetSurfaceController()->SetElevatorLevel(ctrlLevel / 2);
+        Surface().set_elevator_level(ctrlLevel / 2);
     }
 
     void Stop() override
     {
-        vesselControl_.GetSurfaceController()->SetElevatorLevel(0.0);
+        Surface().set_elevator_level(0.0);
     }
 
 	void Start() override
 	{
-		target_ = vesselControl_.GetAvionics()->GetRawAltitude();
+        target_ = Avionics().get_altitude();
 	}
 };
 
@@ -222,15 +231,16 @@ class HoldKeasProgram : public ControlProgram
     double target_{ 0.0 };
 
 public:
-    HoldKeasProgram(IVesselControl& v) : ControlProgram(v)
+    HoldKeasProgram(bco::avionics_provider& ap, bco::propulsion_control& pc, bco::surface_control& sc) 
+        : ControlProgram(ap, pc, sc)
     {}
 
 	void SetTargetKEAS(double t) { target_ = t; }
 
     void Step(double simt, double simdt, double mjd) override
     {
-        auto currentKeas    = vesselControl_.GetAvionics()->GetAirSpeedKeas();
-        auto thLevel        = vesselControl_.GetPropulsionController()->GetVesselMainThrustLevel();
+        auto currentKeas    = Avionics().get_keas();
+        auto thLevel        = Propulsion().get_main_thrust_level();
 
         auto accel          = (currentKeas - prevAtmoKeas_) / simdt;
         prevAtmoKeas_       = currentKeas;
@@ -238,7 +248,7 @@ public:
         auto dspd           = target_ - currentKeas;
         auto dThrot         = (dspd - accel) * simdt;
 
-        vesselControl_.GetPropulsionController()->SetVesselMainThrustLevel(thLevel + dThrot);
+        Propulsion().set_main_thrust_level(thLevel + dThrot);
     }
 
     void Stop() override
@@ -248,7 +258,7 @@ public:
 
 	void Start() override
 	{
-		target_ = vesselControl_.GetAvionics()->GetAirSpeedKeas();
+        target_ = Avionics().get_keas();
 	}
 };
 
@@ -258,17 +268,17 @@ class HoldMachProgram : public ControlProgram
 	double target_{ 0.0 };
 
 public:
-    HoldMachProgram(IVesselControl& v) : ControlProgram(v)
+    HoldMachProgram(bco::avionics_provider& ap, bco::propulsion_control& pc, bco::surface_control& sc) 
+        : ControlProgram(ap, pc, sc)
     {}
 
 	void SetTargetMach(double t) { target_ = t; }
 
     void Step(double simt, double simdt, double mjd) override
     {
-        double mach, maxMach;
-        vesselControl_.GetAvionics()->GetMachNumbers(mach, maxMach);
+        double mach         = Avionics().get_mach();
         
-        auto thLevel        = vesselControl_.GetPropulsionController()->GetVesselMainThrustLevel();
+        auto thLevel        = Propulsion().get_main_thrust_level();
 
         auto currentMach    = mach;
         auto accel          = (currentMach - prevAtmoMach_) / simdt;
@@ -277,7 +287,7 @@ public:
 		auto dspd			= target_ -currentMach;
         auto dThrot         = (dspd - accel) * simdt;
 
-        vesselControl_.GetPropulsionController()->SetVesselMainThrustLevel(thLevel + dThrot);
+        Propulsion().set_main_thrust_level(thLevel + dThrot);
     }
 
     void Stop() override
@@ -287,8 +297,7 @@ public:
 
 	void Start() override
 	{
-		double mach, maxMach;
-		vesselControl_.GetAvionics()->GetMachNumbers(mach, maxMach);
+        double mach = Avionics().get_mach();
 		target_ = mach;
 	}
 };
@@ -301,7 +310,8 @@ class HoldAttitude : public ControlProgram
 
 	double targetAOA_{ 0.0 };
 public:
-    HoldAttitude(IVesselControl& v) : ControlProgram(v)
+    HoldAttitude(bco::avionics_provider& ap, bco::propulsion_control& pc, bco::surface_control& sc) 
+        : ControlProgram(ap, pc, sc)
     {}
 
 	void SetTargetAOA(double t) { targetAOA_ = t; }
@@ -314,7 +324,7 @@ public:
 
         // Start by finding the error (eP) by subtracting the actual from the 
         // target pitch.
-        auto pitch = vesselControl_.GetAvionics()->GetPitch();
+        auto pitch = Avionics().get_pitch();
         auto eP = targetAOA_ - pitch;
 
         // Example: target = -10, actual = -20:  -10 - -20 = eP of 10.
@@ -324,7 +334,7 @@ public:
 
         // We should never get a value outside of abs(180) so we don't need to 
         // check for rollover errors.
-        auto bank = vesselControl_.GetAvionics()->GetBank();
+        auto bank = Avionics().get_bank();
 
         // Determine if we are 'up' which is bank < 90.
         auto updn = (fabs(bank) < (90 * RAD)) ? 1 : -1;
@@ -349,19 +359,19 @@ public:
         tRate = tRate * updn;
 
         VECTOR3 v;
-        vesselControl_.GetAvionics()->GetAngularVel(v);
+        Avionics().get_angular_velocity(v);
 
         // Find the rate error.
         auto eRate = tRate - v.x;
 
         auto level = (eRate / MAX_ROT_RATE);
 
-        vesselControl_.GetPropulsionController()->SetAttitudeRotLevel(PropulsionController::Axis::Pitch, level);
+        Propulsion().set_attitude_rotation(bco::Axis::Pitch, level);
     }
 
     void Stop() override
     {
-        vesselControl_.GetPropulsionController()->SetAttitudeRotLevel(PropulsionController::Axis::Pitch, 0.0);
+        Propulsion().set_attitude_rotation(bco::Axis::Pitch, 0.0);
     }
 };
 
@@ -385,31 +395,27 @@ public:
     DisableHeading
     UpdateHeading
 */
-class VesselControl : public IVesselControl
+class VesselControl :
+      public bco::vessel_component
+    , public bco::post_step
+    , public bco::power_consumer
 {
 
 public:
-    VesselControl();
+    VesselControl(
+          bco::vessel& vessel
+        , bco::power_provider& pwr
+        , bco::avionics_provider& av
+        , bco::propulsion_control& pc
+        , bco::surface_control& sc);
 
-    void Step(double simt, double simdt, double mjd);
-
-    // Input:
-    void SetAvionics(IAvionics* av)                     { avionics_ = av; }
-    void SetPropulsionControl(PropulsionController* p)  { propulsionControl_ = p; }
-    void SetSurfaceControl(SurfaceController* s)        { surfaceController_ = s; }
-
-
-    // IVesselControl
-    IAvionics*              GetAvionics()               const override { return avionics_; }
-    PropulsionController*   GetPropulsionController()   const override { return propulsionControl_; }
-    SurfaceController*      GetSurfaceController()      const override { return surfaceController_; }
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
 	const FCProgFlags RunningPrograms() const { return runningPrograms_; }
 
 	constexpr bool IsRunning(FCProgFlags pid) const { return (runningPrograms_ & pid) == pid; }
 
 	void ToggleAtmoProgram(FCProgFlags pid);
-
 
 	void SetProgramState(FCProgFlags pid, bool state)
 	{
@@ -424,14 +430,12 @@ protected:
 
 	bool CanRunAtmo() const { return true; }
 private:
-    PropulsionController*		propulsionControl_;
-    IAvionics*					avionics_;
-    SurfaceController*			surfaceController_;
+    bco::power_provider&        power_;
+    bco::avionics_provider&     avionics_;
+    bco::propulsion_control&    propulsion_;
+    bco::surface_control&       surface_;
 
 	FCProgFlags         runningPrograms_{ FCProgFlags::None };
-
-
-
 
     HoldAltitudeProgram         prgHoldAltitude_;
     HoldHeadingProgram          prgHoldHeading_;
