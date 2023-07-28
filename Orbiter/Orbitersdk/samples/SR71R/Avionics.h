@@ -186,7 +186,7 @@ private:
 											, bm::pnl::pnlTrimNeedle_id
 											, bm::pnl::pnlTrimNeedle_verts
 											, (180 * RAD)
-											, 2.0
+											, 1.0
 											, [](double d) {return (d); }
 										};
 
@@ -195,7 +195,7 @@ private:
 											, bm::pnl::pnlAccelNeedle_id
 											, bm::pnl::pnlAccelNeedle_verts
 											, (295 * RAD)
-											, 2.0
+											, 1.0
 											, [](double d) {return (d); }
 										};
 

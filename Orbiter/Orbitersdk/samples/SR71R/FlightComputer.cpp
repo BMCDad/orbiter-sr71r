@@ -98,6 +98,18 @@ FC::FlightComputer::FlightComputer(bco::vessel& vessel, bco::power_provider& pwr
 	vessel.AddControl(&gcKeyF9_);
 	vessel.AddControl(&gcKeyF10_);
 
+	vessel.AddControl(&apBtnMain_);
+	vessel.AddControl(&apBtnHeading_);
+	vessel.AddControl(&apBtnAltitude_);
+	vessel.AddControl(&apBtnKEAS_);
+	vessel.AddControl(&apBtnMACH_);
+	
+	vessel.AddControl(&apDspMain_);
+	vessel.AddControl(&apDspHeading_);
+	vessel.AddControl(&apDspAltitude_);
+	vessel.AddControl(&apDspKEAS_);
+	vessel.AddControl(&apDspMACH_);
+
 	gcKey0_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D0); });
 	gcKey1_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D1); });
 	gcKey2_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D2); });
@@ -126,6 +138,12 @@ FC::FlightComputer::FlightComputer(bco::vessel& vessel, bco::power_provider& pwr
 	gcKeyF9_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F9); });
 	gcKeyF10_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F10); });
 
+	apBtnMain_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::AtmoActive);		isDisplayDirty_ = true; });
+	apBtnHeading_	.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldHeading);	isDisplayDirty_ = true; });
+	apBtnAltitude_	.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldAltitude);	isDisplayDirty_ = true; });
+	apBtnKEAS_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldKEAS);		isDisplayDirty_ = true; });
+	apBtnMACH_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldMACH);		isDisplayDirty_ = true; });
+	
 	allId_ = vessel.GetControlId();
 	vessel.RegisterVCComponent(allId_, this);
 	vessel.RegisterPanelComponent(allId_, this);
@@ -177,7 +195,7 @@ void FC::FlightComputer::handle_draw_hud(bco::vessel& vessel, int mode, const HU
 
 void FC::FlightComputer::Boot()
 {
-//	if (!HasPower()) return;
+	if (!IsPowered()) return;
 
 	MapKey(GCKey::Clear,		[this] { HandleScratchPadKey(GCKey::Clear); });
 	MapKey(GCKey::D0,			[this] { HandleScratchPadKey(GCKey::D0); });
@@ -197,6 +215,17 @@ void FC::FlightComputer::Boot()
 	MapKey(GCKey::Previous,		[this] { });
 	MapKey(GCKey::Next,			[this] {});
 	MapKey(GCKey::Enter,		[this] {});
+	MapKey(GCKey::HUD,			[this] {});
+	MapKey(GCKey::F1,			[this] {});
+	MapKey(GCKey::F2,			[this] {});
+	MapKey(GCKey::F3,			[this] {});
+	MapKey(GCKey::F4,			[this] {});
+	MapKey(GCKey::F5,			[this] {});
+	MapKey(GCKey::F6,			[this] {});
+	MapKey(GCKey::F7,			[this] {});
+	MapKey(GCKey::F8,			[this] {});
+	MapKey(GCKey::F9,			[this] {});
+	MapKey(GCKey::F10,			[this] {});
 	
 	PageMain();
 	isRunning_ = true;

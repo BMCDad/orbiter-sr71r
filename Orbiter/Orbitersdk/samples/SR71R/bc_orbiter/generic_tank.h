@@ -93,6 +93,7 @@ namespace bc_orbiter {
 			level_ = fmax(0.0, level_);
 			level_ = fmin(capacity_, level_);
 			sigIsFilling_.fire((isFilling_ == 1) ? true : false);
+			sigLevel_.fire(level_);
 				
 			return true;
 		}
