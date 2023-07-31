@@ -96,7 +96,7 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 		switch (key)
 		{
 		case OAPI_KEY_B:
-			// TODO btnDecreaseAirbrake_.Signal().fire(true);
+			airBrake_.DecreaseDrag();
 			return 1;
 		}
 	}
@@ -106,39 +106,38 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 			return 1;
 		
 		case OAPI_KEY_B:
-			// TODO btnIncreaseAirbrake_.Signal().fire(true);
+			airBrake_.IncreaseDrag();
 			return 1;
 
 		case OAPI_KEY_1:
-			//propulsionController_.ThrustLimitSwitch().Toggle();
-//			switchThrustLimit_.Signal().fire(!switchThrustLimit_.GetState());
+			propulsion_.ToggleThrustLimit();
 			return 1;
 		}
 	}
 	else {
 		switch (key) {
 		case OAPI_KEY_G:  // "operate landing gear"
-			//landingGear_.LandingGearSwitch().Toggle();
+			landingGear_.Toggle();
 			return 1;
 
 		case OAPI_KEY_1:	// Main auto pilot toggle.
-//			computer_.APMainButton().Push();
+			computer_.ToggleProgram(FCProgFlags::AtmoActive);
 			return 1;
 
 		case OAPI_KEY_2:	// Toggle hold heading
-//			computer_.APHeadingButton().Push();
+			computer_.ToggleProgram(FCProgFlags::HoldHeading);
 			return 1;
 
 		case OAPI_KEY_3:
-//			computer_.APAltitudeButton().Push();
+			computer_.ToggleProgram(FCProgFlags::HoldAttitude);
 			return 1;
 
 		case OAPI_KEY_4:
-//			computer_.APKEASButton().Push();
+			computer_.ToggleProgram(FCProgFlags::HoldKEAS);
 			return 1;
 
 		case OAPI_KEY_5:
-//			computer_.APMACHButton().Push();
+			computer_.ToggleProgram(FCProgFlags::HoldMACH);
 			return 1;
 
 		//case OAPI_KEY_6:

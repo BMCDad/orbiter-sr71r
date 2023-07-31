@@ -184,6 +184,10 @@ namespace bc_orbiter
 		void   set_main_thrust_level(double l)	override { this->SetThrusterGroupLevel(THGROUP_MAIN, l); }
 		void   set_attitude_rotation(Axis axis, double level) override { this->SetAttitudeRotLevel((int)axis, level); }
 
+		// surface_control
+		void set_aileron_level(double l)		{ this->SetControlSurfaceLevel(AIRCTRL_AILERON, l); }
+		void set_elevator_level(double l)		{ this->SetControlSurfaceLevel(AIRCTRL_ELEVATOR, l); }
+
 	private:
 
 		std::vector<control*>							controls_;

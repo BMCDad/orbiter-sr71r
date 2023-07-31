@@ -34,7 +34,7 @@ class OxygenTank :
 {
 public:
 	OxygenTank(bco::power_provider& pwr, bco::vessel& vessel) :
-		bco::generic_tank(pwr, HYDRO_SUPPLY, HYDROGEN_FILL_RATE)
+		bco::generic_tank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE)
 	{
 		vessel.AddControl(&gaugeLevel_);
 		vessel.AddControl(&lightAvailable_);

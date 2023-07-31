@@ -58,7 +58,7 @@ class APU :
 	public bco::hydraulic_provider
 {
 public:
-	APU(bco::power_provider& pwr, bco::vessel& vessel) : 
+	APU(bco::vessel& vessel, bco::power_provider& pwr) :
 		power_(pwr)
 	{
 		power_.attach_consumer(this);

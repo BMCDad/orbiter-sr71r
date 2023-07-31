@@ -145,25 +145,12 @@ bool RightMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel
 	vcFont_.blankX = 1600;
 	vcFont_.blankY = 2;
 
-	// Mesh coords
-	int rc_left			= 1752;				// Left side of left col.
-	int rc_col2_offset	= 2352 - rc_left;	// Diff between right col and left
-	int rc_top			= 205;				// Top of row 1 buttons
-	int rc_row_offset	= 56;				// Difference in button y axis
-	int btn_height		= 40;				// Button height
-	int btn_width		= 60;				// Button width;
-
 	for (auto& a : data_)
 	{
-		int rc_l = (a.col * rc_col2_offset) + rc_left;
-		int rc_t = (a.row * rc_row_offset) + rc_top;
-		int rc_r = rc_l + btn_width;
-		int rc_b = rc_t + btn_height;
-
 		vessel.RegisterPanelArea(
 			hPanel,
 			a.id,
-			_R(rc_l, rc_t, rc_r, rc_b),
+			a.pnlRC,
 			PANEL_REDRAW_USER,
 			PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
 			surfHandle);
@@ -175,7 +162,7 @@ bool RightMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel
 	vessel.RegisterPanelArea(
 		hPanel,
 		GetPwrKey(),
-		_R(1846, fixedYTop, 1846 + btn_width, fixedYTop + btn_height),
+		bm::pnl::pnlRightMFDPwr_RC,
 		PANEL_REDRAW_NEVER,
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 
@@ -183,7 +170,7 @@ bool RightMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel
 	vessel.RegisterPanelArea(
 		hPanel,
 		GetSelectKey(),
-		_R(2120, fixedYTop, 2120 + btn_width, fixedYTop + btn_height),
+		bm::pnl::pnlRightMFDSel_RC,
 		PANEL_REDRAW_NEVER,
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 
@@ -191,7 +178,7 @@ bool RightMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel
 	vessel.RegisterPanelArea(
 		hPanel,
 		GetSelectKey(),
-		_R(2198, fixedYTop, 2198 + btn_width, fixedYTop + btn_height),
+		bm::pnl::pnlRightMFDMenu_RC,
 		PANEL_REDRAW_NEVER,
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 

@@ -51,7 +51,6 @@ class SurfaceController :
 	  public bco::vessel_component
 	, public bco::set_class_caps
 	, public bco::post_step
-	, public bco::surface_control
 {
 public:
 	SurfaceController(bco::vessel& vessel, bco::hydraulic_provider& apu);
@@ -61,10 +60,6 @@ public:
 
 	// post_step
 	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
-
-	// surface_control
-	void set_aileron_level(double l) override;
-	void set_elevator_level(double l) override;
 
 	void SetRudderLevel(double level);
 

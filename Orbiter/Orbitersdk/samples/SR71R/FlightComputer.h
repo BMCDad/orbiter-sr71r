@@ -148,10 +148,12 @@ namespace FC
         const static int DISPLAY_COLS = 20;
         const static int DISPLAY_ROWS = 11;
 
-        FlightComputer(bco::vessel& vessel, bco::power_provider& pwr);
+        FlightComputer(
+			  bco::vessel& vessel
+			, bco::power_provider& pwr);
 
 		// power_consumer
-		double amp_draw() const override { return 0.0; }
+		double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
 
 		// post_step
 		void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
@@ -204,15 +206,23 @@ namespace FC
 		double launchLatitude_{ 0.0 };
 		bool isAscentPageDirty_{ true };
 
+		bco::slot<double>&		HeadingSlot()	{ return headingSlot_; }
+		bco::signal<double>&	HeadingSignal()	{ return headingSignal_; }
+
+		void ToggleProgram(FCProgFlags prog) { ToggleAtmoProgram(prog); }
     private:
 		void Update();
 		void Boot();
 
 		bco::power_provider&		power_;
+		bco::vessel&				vessel_;
 
 		bool IsPowered() const {
 			return power_.volts_available() > 24.0;
 		}
+
+		bco::slot<double>			headingSlot_;
+		bco::signal<double>			headingSignal_;
 
 		std::string					configKey_{ "COMPUTER" };
 		std::string					apConfigKey_{ "AUTOPILOT" };
@@ -262,21 +272,21 @@ namespace FC
 				runningPrograms_ & ~pid;
 		}
 
-		void UpdateProg(FCProgFlags current, FCProgFlags pid)
+		void UpdateProg(bco::vessel& vessel, FCProgFlags current, FCProgFlags pid)
 		{
 			if ((current & pid) != (prevRunningProgs & pid))
 			{
 				auto prog = mapPrograms_[pid];
-				(current & pid) != FCProgFlags::None ? prog->Start() : prog->Stop();
+				(current & pid) != FCProgFlags::None ? prog->start(vessel) : prog->stop(vessel);
 			}
 		}
 
-		void UpdateProgs(FCProgFlags current)
+		void UpdateProgs(bco::vessel& vessel, FCProgFlags current)
 		{
-			UpdateProg(current, FCProgFlags::HoldAltitude);
-			UpdateProg(current, FCProgFlags::HoldHeading);
-			UpdateProg(current, FCProgFlags::HoldKEAS);
-			UpdateProg(current, FCProgFlags::HoldMACH);
+			UpdateProg(vessel, current, FCProgFlags::HoldAltitude);
+			UpdateProg(vessel, current, FCProgFlags::HoldHeading);
+			UpdateProg(vessel, current, FCProgFlags::HoldKEAS);
+			UpdateProg(vessel, current, FCProgFlags::HoldMACH);
 		}
 
 		constexpr bool IsProgramRunning(FCProgFlags pid) const { return (runningPrograms_ & pid) == pid; }
@@ -287,43 +297,26 @@ namespace FC
 
 			if ((pid == FCProgFlags::HoldKEAS) && (IsProgramRunning(pid)))	SetProgramState(FCProgFlags::HoldMACH, false);
 			if ((pid == FCProgFlags::HoldMACH) && (IsProgramRunning(pid)))	SetProgramState(FCProgFlags::HoldKEAS, false);
+			isDisplayDirty_ = true;
 		}
+
+		double setHeading_{ 0.0 };
 
 		FCProgFlags					runningPrograms_{ FCProgFlags::None };
 		FCProgFlags					prevRunningProgs{ FCProgFlags::None };
 
-		//HoldAltitudeProgram			prgHoldAltitude_;
-		//HoldHeadingProgram			prgHoldHeading_;
-		//HoldKeasProgram				prgHoldKeas_;
-		//HoldMachProgram				prgHoldMach_;
+		HoldAltitudeProgram			prgHoldAltitude_;
+		HoldHeadingProgram			prgHoldHeading_;
+		HoldKeasProgram				prgHoldKeas_;
+		HoldMachProgram				prgHoldMach_;
 		
-		PropulsionController*		propulsionControl_;
-		IAvionics*					avionics_;
-		SurfaceController*			surfaceController_;
-
-		std::map<FCProgFlags, ControlProgram*>     mapPrograms_
+		std::map<FCProgFlags, control_program*>     mapPrograms_
 		{
 			{FCProgFlags::HoldAltitude,    &prgHoldAltitude_},
 			{FCProgFlags::HoldHeading,     &prgHoldHeading_},
 			{FCProgFlags::HoldKEAS,        &prgHoldKeas_ },
 			{FCProgFlags::HoldMACH,        &prgHoldMach_ }
 		};
-
-		//// Auto pilot panel
-		//bco::TextureVisual		visAPMainOn_;
-		//bco::PushButtonSwitch   swAPMain_{ bm::vc::SwAPMain_location, 0.01 };
-		//
-		//bco::TextureVisual		visAPHeadingOn_;
-		//bco::PushButtonSwitch   swAPHeading_{ bm::vc::SwAPHeading_location, 0.01 };
-
-		//bco::TextureVisual		visAPAltitudeOn_;
-		//bco::PushButtonSwitch   swAPHAltitude_{ bm::vc::SwAPAltitude_location, 0.01 };
-
-		//bco::TextureVisual		visAPKEASOn_;
-		//bco::PushButtonSwitch   swAPKEAS_{ bm::vc::SwAPKEAS_location, 0.01 };
-
-		//bco::TextureVisual		visAPMACHOn_;
-		//bco::PushButtonSwitch   swAPMACH_{ bm::vc::SwAPMACH_location, 0.01 };
 
 		bco::simple_event<> gcKey0_			{ bm::vc::GCKey0_location,			0.01, bm::pnl::pnlGCKey0_RC };
 		bco::simple_event<> gcKey1_			{ bm::vc::GCKey1_location,			0.01, bm::pnl::pnlGCKey1_RC };
@@ -367,6 +360,5 @@ namespace FC
 		bco::on_off_display	apDspAltitude_	{ bm::vc::SwAPAltitude_id,	bm::vc::SwAPAltitude_verts,	bm::pnl::pnlAPAltitude_id,	bm::pnl::pnlAPAltitude_verts, 0.0352	};
 		bco::on_off_display	apDspKEAS_		{ bm::vc::SwAPKEAS_id,		bm::vc::SwAPKEAS_verts,		bm::pnl::pnlAPKEAS_id,		bm::pnl::pnlAPKEAS_verts,	  0.0352	};
 		bco::on_off_display	apDspMACH_		{ bm::vc::SwAPMACH_id,		bm::vc::SwAPMACH_verts,		bm::pnl::pnlAPMACH_id,		bm::pnl::pnlAPMACH_verts,	  0.0352	};
-
-    };
+	};
 }

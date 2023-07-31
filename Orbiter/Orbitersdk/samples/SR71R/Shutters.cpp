@@ -67,14 +67,14 @@ void Shutters::Update()
 	auto trans = shuttersSlot_.value() ? 0.22 : 0.0;
 
 	//visShuttersFrontLeft_.SetTranslate(_V(trans, 0.0, 0.0));
-	//visShuttersFrontLeft_.RotateMesh(devMesh);
+	//visShuttersFrontLeft_.TranslateMesh(devMesh);
 
 	//visShuttersFrontRight_.SetTranslate(_V(trans, 0.0, 0.0));
-	//visShuttersFrontRight_.RotateMesh(devMesh);
+	//visShuttersFrontRight_.TranslateMesh(devMesh);
 
 	//visShuttersSideLeft_.SetTranslate(_V(trans, 0.0, 0.0));
-	//visShuttersSideLeft_.RotateMesh(devMesh);
+	//visShuttersSideLeft_.TranslateMesh(devMesh);
 
 	//visShuttersSideRight_.SetTranslate(_V(0.0, trans, 0.0));
-	//visShuttersSideRight_.RotateMesh(devMesh);
+	//visShuttersSideRight_.TranslateMesh(devMesh);
 }

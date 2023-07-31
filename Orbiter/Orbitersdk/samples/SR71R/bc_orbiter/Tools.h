@@ -510,7 +510,8 @@ namespace bc_orbiter
 		return true;
 	}
 
-	inline void RotateMesh(MESHHANDLE mesh, const UINT group, const NTVERTEX* verts, const VECTOR3& trans)
+	template<typename T>
+	inline void TranslateMesh(T mesh, const UINT group, const NTVERTEX* verts, const VECTOR3& trans)
 	{
 		if (NULL == mesh)
 		{
@@ -529,7 +530,8 @@ namespace bc_orbiter
 		oapiEditMeshGroup(mesh, group, &change);
 	}
 
-	inline void RotateMesh(MESHHANDLE mesh, const UINT group, const NTVERTEX* verts, const double angle)
+	template<typename T>
+	inline void RotateMesh(T mesh, const UINT group, const NTVERTEX* verts, const double angle)
 	{
 		if (NULL == mesh)
 		{

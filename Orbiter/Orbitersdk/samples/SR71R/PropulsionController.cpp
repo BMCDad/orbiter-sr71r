@@ -54,9 +54,7 @@ PropulsionController::PropulsionController(bco::power_provider& pwr, bco::vessel
 	vessel.AddControl(&statusFuel_);
 	vessel.AddControl(&statusLimiter_);
 
-	switchThrustLimit_.attach([&]() { 
-		SetThrustLevel(switchThrustLimit_.is_on() ? ENGINE_THRUST : ENGINE_THRUST_AB); 
-		});
+	switchThrustLimit_.attach([&]() { ToggleThrustLimit(); });
 
 	btnFuelValveOpen_.attach([&]() { ToggleFill(); });
 	btnRCSValveOpen_.attach([&]() { ToggleRCSFill(); });

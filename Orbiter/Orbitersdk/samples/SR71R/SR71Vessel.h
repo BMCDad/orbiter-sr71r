@@ -104,26 +104,27 @@ private:
 	// ***  Airspeed  *** //
 
 	PowerSystem				powerSystem_	{ *this };
-	APU						apu_			{ powerSystem_, *this };
+	APU						apu_			{ *this, powerSystem_ };
 
 	AirBrake				airBrake_		{ *this, apu_ };
 	LandingGear				landingGear_	{ *this, apu_ };
 	SurfaceController		surfaceCtrl_	{ *this, apu_ };
+	FC::FlightComputer		computer_		{ *this, powerSystem_ };
 
 	Airspeed				airspeed_		{ *this };
 	Altimeter				altimeter_		{ *this };
 	Clock					clock_			{ *this };
-	FC::FlightComputer		computer_		{ *this, powerSystem_};
 	HSI						hsi_			{ *this };
 	NavModes				navModes_		{ *this };
 	RCSSystem				rcs_			{ *this };
 	Shutters				shutters_		{ *this };
+	Avionics				avionics_		{ powerSystem_, *this };
+	PropulsionController	propulsion_		{ powerSystem_, *this };
 	Beacon					beacon_			{ powerSystem_, *this };
 	Strobe					strobe_			{ powerSystem_, *this };
 	NavLight				navLight_		{ powerSystem_, *this };
 	Canopy					canopy_			{ powerSystem_, *this };
 	CargoBayController		cargobay_		{ powerSystem_, *this };
-	Avionics				avionics_		{ powerSystem_, *this };
 	HoverEngines			hoverEngines_	{ powerSystem_,	*this };
 	RetroEngines			retroEngines_	{ powerSystem_,	*this };
 	HydrogenTank			hydrogenTank_	{ powerSystem_, *this };
@@ -132,7 +133,6 @@ private:
 	bco::generic_tank		mainFuelTank_	{ powerSystem_, MAX_FUEL,		FUEL_TRANFER_RATE };
 	bco::generic_tank		rcsFuelTank_	{ powerSystem_, MAX_RCS_FUEL,	FUEL_TRANFER_RATE };
 	HUD						headsUpDisplay_	{ powerSystem_, *this };
-	PropulsionController	propulsion_		{ powerSystem_, *this };
 
 	LeftMFD					mfdLeft_		{ powerSystem_, this };
 	RightMFD				mfdRight_		{ powerSystem_, this };
@@ -144,14 +144,15 @@ private:
 		, { "APU",			&apu_			}		// [a]			: (a)Enabled switch
 		, { "AVIONICS",		&avionics_		}		// [a b c d e]	: (a)Set course, (b)Set heading, (c)power, (d)Mode switch[1=atmo], (c)Nav select
 		, { "BEACON",		&beacon_		}		// [a]			: (a)Power
+		, { "COMPUTER",		&computer_		}		// [a b c d e]	: (a)Atmo on, (b)Hold heading, (c)Hold altitude, (d)Hold KEAS, (e)Hold MACH
 		, { "CANOPY",		&canopy_		}		// [a b c]		: (a)Power, (b)Switch, (c)canopy position
 		, { "CARGO",		&cargobay_		}		// [a b c]		: (a)Power, (b)Switch, (c)Cargo doors position
 		, { "CLOCK",		&clock_			}		// [a b c]		: (a)Elapsed mission, (b)Is timer running, (c)Elapsed timer.
 		, { "FUELCELL",		&fuelCell_		}		// [a]			: (a)Power
 		, { "GEAR",			&landingGear_	}		// [a b]		: (a)Switch position, (b)Landing gear position.
 		, { "HOVER",		&hoverEngines_	}		// [a b]		: (a)Switch position, (b)Door position
-		, { "LH2",			&hydrogenTank_	}		// [a b]		: (a)Level, (b)Is filling
-		, { "LOX",			&oxygenTank_	}		// [a b]		: (a)Level, (b)Is filling
+		, { "LH2",			&hydrogenTank_	}		// [a b]		: (a)Quantity(liters 10max), (b)Is filling
+		, { "LOX",			&oxygenTank_	}		// [a b]		: (a)Quantity(liters 20max), (b)Is filling
 		, { "NAVLIGHTS",	&navLight_		}		// [a]			: (a)Power
 		, { "POWER",		&powerSystem_	}		// [a b c]		: (a)Main power switch, (b)External connected, (c)Fuelcell connected.
 		, { "PROPULSION",	&propulsion_	}		// [a]			: (a)Thrust limit switch

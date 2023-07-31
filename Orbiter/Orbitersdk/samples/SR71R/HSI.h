@@ -90,15 +90,15 @@ public:
 		}
 
 		// Set course barrels
-		auto deg = slotSetCourse_.value() * 57.2958;
+		auto deg = slotSetCourse_.value();
 		bco::TensParts parts;
-		bco::GetDigits(deg, parts);
+		bco::GetDigits(deg * DEG, parts);
 
 		// sprintf(oapiDebugString(), "CRS %+4f %+4f %+4f %+4f", deg, parts.Thousands, parts.Hundreds, parts.Tens );
 
-		CRSOnes_.SlotTransform().notify(parts.Tens);
-		CRSOnes_.SlotTransform().notify(parts.Hundreds);
-		CRSOnes_.SlotTransform().notify(parts.Thousands);
+		CRSOnes_.SlotTransform().notify(parts.Tens / 10);
+		CRSTens_.SlotTransform().notify(parts.Hundreds / 10);
+		CRSHunds_.SlotTransform().notify(parts.Thousands / 10);
 
 		signalGlideScope_.fire(glideSlope);
 		
@@ -106,8 +106,8 @@ public:
 		hsiHeadingBug_	.set_state(rotHdg);
 		hsiCourse_		.set_state(rotCrs);
 		
-		hsiCourseError_.SlotAngle()		.notify(rotCrs);
-		hsiCourseError_.SlotTransform()	.notify(navError);
+		hsiCourseError_.SetAngle(-rotCrs);
+		hsiCourseError_.SetTransform(navError, 0.0);
 
 		comStatusFlag_.set_state(comStatus);
 
@@ -249,7 +249,7 @@ private:
 			bm::pnl::pnlHSICRSOnes_id,
 			bm::pnl::pnlHSICRSOnes_verts,
 			0.1084,
-			[](double v) {return floor(v) / 10; }
+			[](double v) {return v; }
 	};
 
 	bco::flat_roll			CRSTens_{
@@ -258,7 +258,7 @@ private:
 			bm::pnl::pnlHSICRSTens_id,
 			bm::pnl::pnlHSICRSTens_verts,
 			0.1084,
-			[](double v) {return floor(v) / 10; }
+			[](double v) {return v; }
 	};
 
 	bco::flat_roll			CRSHunds_{
@@ -267,7 +267,7 @@ private:
 			bm::pnl::pnlHSICRSHunds_id,
 			bm::pnl::pnlHSICRSHunds_verts,
 			0.1084,
-			[](double v) {return floor(v) / 10; }
+			[](double v) {return v; }
 	};
 
 	bco::flat_roll			MilesOnes_{

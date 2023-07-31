@@ -58,45 +58,48 @@ public:
     bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
     std::string handle_save_state(bco::vessel& vessel) override;
 
+    void IncreaseDrag() { position_ = min(1.0, position_ + 0.33); }
+    void DecreaseDrag() { position_ = max(0.0, position_ - 0.33); }
+
 private:
 
     bco::hydraulic_provider& apu_;
 
 	double					dragFactor_;
-    double                  position_{ 0.0 };
+    double                  position_           { 0.0 };
 
     // Animations:  animSurface is only active when we have hydraulic power, the external surface animations
     //              key off of that, as well as the drag factor.  animSwitch will show the desired state regardless
     //              of hydraulic power.  The vc and panel switches key off of that.
 
-    bco::animation_target          animBrakeSurface_;
-    bco::animation_target          animBrakeSwitch_    {   2.0 };
-    bco::animation_target			animAirBrake_       {   2.0 };
+    bco::animation_target   animBrakeSurface_;
+    bco::animation_target   animBrakeSwitch_    {   2.0 };
+    bco::animation_target	animAirBrake_       {   2.0 };
 
-    bco::animation_group     gpBrakeHandle_      {   { bm::vc::AirBrakeLever_id },
+    bco::animation_group     gpBrakeHandle_     {   { bm::vc::AirBrakeLever_id },
                                                     bm::vc::SpBrakeAxisRight_location, bm::vc::SpBrakeAxisLeft_location,
                                                     (58 * RAD),
                                                     0.0, 1.0 };
 
-    bco::animation_group     gpLeftTop_          {   { bm::main::ElevonPIT_id },
+    bco::animation_group     gpLeftTop_         {   { bm::main::ElevonPIT_id },
                                                     bm::main::AirBrakeAxisPTO_location, bm::main::AirBrakeAxisPTI_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::animation_group     gpLeftBottom_       {   { bm::main::ElevonPIB_id },
+    bco::animation_group     gpLeftBottom_      {   { bm::main::ElevonPIB_id },
                                                     bm::main::AirBrakeAxisPTI_location, bm::main::AirBrakeAxisPTO_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::animation_group     gpRightTop_         {   { bm::main::ElevonSIT_id },
+    bco::animation_group     gpRightTop_        {   { bm::main::ElevonSIT_id },
                                                     bm::main::AirBrakeAxisSTO_location, bm::main::AirBrakeAxisSTI_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::animation_group     gpRightBottom_      {   { bm::main::ElevonSIB_id },
+    bco::animation_group     gpRightBottom_     {   { bm::main::ElevonSIB_id },
                                                     bm::main::AirBrakeAxisSBI_location, bm::main::AirBrakeAxisSBO_location,
                                                     (70 * RAD),
                                                     0.0, 1.0 

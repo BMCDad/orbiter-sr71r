@@ -118,8 +118,16 @@ namespace bc_orbiter {
 		virtual void attach_on_change(const std::function<void()>& func) = 0;
 	};
 
+	/**
+	consumable
+	Implemented but a component that manages a consumable that can be drawn from
+	by other components.
+	*/
 	struct consumable {
+		// Current level espressed a 0-empty, 1-full.
 		virtual double level() const = 0;
+		
+		// Removes 'amount' from the tank, returns the amount actually drawn.
 		virtual double draw(double amount) = 0;
 	};
 

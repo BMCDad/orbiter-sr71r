@@ -30,6 +30,7 @@
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
+#include "ShipMets.h"
 
 namespace bco = bc_orbiter;
 
@@ -112,6 +113,8 @@ public:
 	double CurrentMaxThrust() { return maxThrustLevel_; }
 
 	bco::signal<double>&	MainFuelLevelSignal() { return signalMainFuelLevel_; }
+
+	void ToggleThrustLimit() { SetThrustLevel(switchThrustLimit_.is_on() ? ENGINE_THRUST : ENGINE_THRUST_AB); }
 
 	// TODO:
 	// signal to report current ThrottleLimit state

@@ -25,7 +25,7 @@ namespace bc_orbiter {
 
 	/**
 	Base class for a basic tank that reports level, can be filled via a pump, and can be drawn from.
-	capacity is kg, fillrate kgs per second
+	Units is determined by the implementer.
 
 	Inputs:
 	- slot <- volts level
@@ -50,10 +50,12 @@ namespace bc_orbiter {
 		}
 
 		// consumable
-		double level() const override { return level_; }
+		double level() const override { return current_ / capacity_; }
+
 		double draw(double amount) override {
-			SetLevel(max(0.0, level_ - amount));
-			return level_;
+			auto draw_amount = max(0.0, min(current_, amount));
+			SetNewCurrentLevel(current_ - draw_amount);
+			return draw_amount;
 		}
 
 		// power_consumable
@@ -85,22 +87,22 @@ namespace bc_orbiter {
 
 		// manage_state
 		bool handle_load_state(vessel& vessel, const std::string& line) override {
-			// [a b]  :  [level fillPumpOn]
+			// [a b]  :  [current_quantity fillPumpOn]
 
 			std::istringstream in(line);
 
-			in >> level_ >> isFilling_;
-			level_ = fmax(0.0, level_);
-			level_ = fmin(capacity_, level_);
+			in >> current_ >> isFilling_;
+			current_ = fmax(0.0, current_);
+			current_ = fmin(capacity_, current_);
 			sigIsFilling_.fire((isFilling_ == 1) ? true : false);
-			sigLevel_.fire(level_);
+			sigLevel_.fire(current_ / capacity_);
 				
 			return true;
 		}
 
 		std::string handle_save_state(vessel& vessel) override {
 			std::ostringstream os;
-			os << level_ << " " << isFilling_;
+			os << current_ << " " << isFilling_;
 			return os.str();
 		}
 
@@ -116,14 +118,14 @@ namespace bc_orbiter {
 		}
 
 		void FillTank(double amount) {
-			SetLevel(min(level_ + amount, capacity_));
+			SetNewCurrentLevel(min(current_ + amount, capacity_));
 
-			if (level_ == capacity_) {
+			if (current_ == capacity_) {
 				isFilling_ = false;
 				sigIsFilling_.fire(isFilling_);
 			}
 
-			sigLevel_.fire(level_ / capacity_);		// 0 to 1 range
+			sigLevel_.fire(current_ / capacity_);		// 0 to 1 range
 		}
 
 		void ToggleFilling() {
@@ -138,9 +140,9 @@ namespace bc_orbiter {
 			sigIsFilling_.fire(isFilling_);
 		}
 
-		void SetLevel(double l) {
-			level_ = l;
-			sigLevel_.fire(level_ / capacity_);
+		void SetNewCurrentLevel(double new_current) {
+			current_ = new_current;
+			sigLevel_.fire(current_ / capacity_);
 		}
 
 		// Reports the tank level from 0 to capacity. (the signal is 0 to 1)
@@ -161,7 +163,7 @@ namespace bc_orbiter {
 		double					prevTime_	{ 0.0 };
 
 		double					capacity_;
-		double					level_		{ 0.0 };
+		double					current_	{ 0.0 };
 		double					fillRate_;
 	};
 }

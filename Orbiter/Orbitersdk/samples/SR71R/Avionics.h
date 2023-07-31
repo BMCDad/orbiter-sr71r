@@ -61,7 +61,9 @@ public:
 
 	// Signals:
 	bco::signal<double>&	SetCourseSignal()		{ return setCourseSignal_; }
+	
 	bco::signal<double>&	SetHeadingSignal()		{ return setHeadingSignal_; }
+	bco::slot<double>&		SetHeadingSlot()		{ return setHeadingSlot_; }
 
 	bco::signal<double>&	GForceSignal()			{ return gforceSignal_; }
 	bco::signal<double>&	TrimSignal()			{ return trimSignal_; }
@@ -76,7 +78,9 @@ private:
 	bco::signal<bool>		avionicsModeSignal_;
 	bco::signal<bool>		isAeroDataActive_;
 	bco::signal<double>		setCourseSignal_;
+	
 	bco::signal<double>		setHeadingSignal_;
+	bco::slot<double>		setHeadingSlot_;
 
 	bco::signal<double>		gforceSignal_;
 	bco::signal<double>		trimSignal_;
@@ -96,7 +100,7 @@ private:
 
 	bco::on_off_input		switchAvionMode_{		// Atmosphere=On, External=Off
 		{ bm::vc::vcAvionMode_id },
-			bm::vc::vcAvionMode_location, bm::vc::vcAttitudeSwitchesAxis_location,
+			bm::vc::vcAvionMode_location, bm::vc::avionModeAxis_location,
 			toggleOnOff,
 			bm::pnl::pnlAvionMode_id,
 			bm::pnl::pnlAvionMode_verts,
@@ -105,37 +109,28 @@ private:
 
 	bco::on_off_input		switchNavMode_{		// Nav mode 1 2
 		{ bm::vc::vcNavMode_id },
-			bm::vc::vcNavMode_location, bm::vc::vcAttitudeSwitchesAxis_location,
+			bm::vc::vcNavMode_location, bm::vc::vcCOMNavAxis_location,
 			toggleOnOff,
 			bm::pnl::pnlNavMode_id,
 			bm::pnl::pnlNavMode_verts,
 			bm::pnl::pnlNavMode_RC
 	};
 
-	bco::simple_event<>		dialSetCourseIncrement_{
-		bm::vc::CourseKnob_location,
-			0.01,
-			bm::pnl::pnlSetCourseInc_RC
-	};
+	bco::simple_event<>		dialSetCourseIncrement_{	bm::vc::CourseKnobInc_location,
+														0.01,
+														bm::pnl::pnlSetCourseInc_RC		};
 
-	bco::simple_event<>		dialSetCourseDecrement_{
-		bm::vc::CourseKnob_location,
-			0.01,
-			bm::pnl::pnlSetCourseDec_RC
-	};
+	bco::simple_event<>		dialSetCourseDecrement_{	bm::vc::CourseKnobDec_location,
+														0.01,
+														bm::pnl::pnlSetCourseDec_RC		};
 
-	bco::simple_event<>		dialSetHeadingIncrement_{
-		bm::vc::HeadingKnob_location,
-			0.01,
-			bm::pnl::pnlSetHeadingInc_RC
-	};
+	bco::simple_event<>		dialSetHeadingIncrement_{	bm::vc::HeadingKnobInc_location,
+														0.01,
+														bm::pnl::pnlSetHeadingInc_RC	};
 
-	bco::simple_event<>		dialSetHeadingDecrement_{
-
-		bm::vc::HeadingKnob_location,
-			0.01,
-			bm::pnl::pnlSetHeadingDec_RC
-	};
+	bco::simple_event<>		dialSetHeadingDecrement_{	bm::vc::HeadingKnobDec_location,
+														0.01,
+														bm::pnl::pnlSetHeadingDec_RC	};
 
 	// ***   VSI  *** //
 	bco::rotary_display_target		vsiHand_ {	  { bm::vc::gaVSINeedle_id }

@@ -27,8 +27,8 @@ AirBrake::AirBrake(bco::vessel& vessel, bco::hydraulic_provider& apu) :
 	vessel.AddControl(&btnIncreaseAirbrake_);
 	vessel.AddControl(&status_);
 
-	btnIncreaseAirbrake_.attach([&]() { position_ = min(1.0, position_ + 0.33); });
-	btnDecreaseAirbrake_.attach([&]() { position_ = max(0.0, position_ - 0.33); });
+	btnIncreaseAirbrake_.attach([&]() { IncreaseDrag(); });
+	btnDecreaseAirbrake_.attach([&]() { DecreaseDrag(); });
 }
 
 void AirBrake::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
@@ -50,7 +50,7 @@ void AirBrake::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 //	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
 
 	// This needs to be put into a switch statement eventually
-	bco::RotateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_verts, sTrans * animBrakeSwitch_.GetState());
+	bco::TranslateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_verts, sTrans * animBrakeSwitch_.GetState());
 
 	status_.set_state(
 		dragFactor_ > 0.05 

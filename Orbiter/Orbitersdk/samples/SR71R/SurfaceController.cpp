@@ -141,19 +141,9 @@ void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
 	vessel.AddAnimationComponent(anim_right_rudder_, 0, 1, &animGroupRightRudder);
 }
 
-void SurfaceController::set_aileron_level(double level)
-{
-	vessel_.SetControlSurfaceLevel(AIRCTRL_AILERON, level);
-}
-
 void SurfaceController::SetRudderLevel(double level)
 {
 	vessel_.SetControlSurfaceLevel(AIRCTRL_RUDDER, level);
-}
-
-void SurfaceController::set_elevator_level(double level)
-{
-	vessel_.SetControlSurfaceLevel(AIRCTRL_ELEVATOR, level);
 }
 
 void SurfaceController::EnableControls()

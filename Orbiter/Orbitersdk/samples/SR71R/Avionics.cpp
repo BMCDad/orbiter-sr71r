@@ -21,7 +21,8 @@
 #include "Avionics.h"
 
 Avionics::Avionics(bco::power_provider& pwr, bco::vessel& vessel) :
-	power_(pwr)
+	power_(pwr),
+	setHeadingSlot_([&](double v) { setHeadingSignal_.fire(v); })
 {
 	power_.attach_consumer(this);
 
@@ -34,10 +35,10 @@ Avionics::Avionics(bco::power_provider& pwr, bco::vessel& vessel) :
 	vessel.AddControl(&dialSetHeadingDecrement_);
 	vessel.AddControl(&dialSetHeadingIncrement_);
 
-	dialSetCourseDecrement_.attach([&]() { UpdateSetCourse(0.0175); });
-	dialSetCourseIncrement_.attach([&]() { UpdateSetCourse(-0.0175); });
-	dialSetHeadingDecrement_.attach([&]() { UpdateSetHeading(0.0175); });
-	dialSetHeadingIncrement_.attach([&]() { UpdateSetHeading(-0.0175); });
+	dialSetCourseDecrement_.attach([&]() { UpdateSetCourse(-0.0175); });
+	dialSetCourseIncrement_.attach([&]() { UpdateSetCourse(0.0175); });
+	dialSetHeadingDecrement_.attach([&]() { UpdateSetHeading(-0.0175); });
+	dialSetHeadingIncrement_.attach([&]() { UpdateSetHeading(0.0175); });
 
 	vessel.AddControl(&vsiHand_);
 	vessel.AddControl(&vsiActiveFlag_);
@@ -87,8 +88,8 @@ void Avionics::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 	vsiActiveFlag_.set_state(IsPowered());
 
 	// attitude
-	attitudeDisplay_.SlotAngle().notify(bank);
-	attitudeDisplay_.SlotTransform().notify(0.100093 * pitch);
+	attitudeDisplay_.SetAngle(bank);
+	attitudeDisplay_.SetTransform(0.0, (-0.100093 * pitch));
 	attitudeFlag_.set_state(IsPowered());
 
 	// accel

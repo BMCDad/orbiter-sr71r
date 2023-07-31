@@ -43,7 +43,7 @@ void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simd
 
     animLandingSwitch_.Step(position_, simdt);
 
-    bco::RotateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_verts, sTrans * animLandingSwitch_.GetState());
+    bco::TranslateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_verts, sTrans * animLandingSwitch_.GetState());
 }
 
 bool LandingGear::handle_load_state(bco::vessel& vessel, const std::string& line)

@@ -42,25 +42,25 @@ namespace bc_orbiter {
 
         // vc_tex_animation
         void vc_step(DEVMESHHANDLE mesh, double simdt) override {
-            TransformUV<DEVMESHHANDLE>(mesh, vcGroup_, vcVerts_, slotAngle_.value(), vecTrans_);
+//            RotateMesh<DEVMESHHANDLE>(mesh, vcGroup_, vcVerts_, angle_);
+            TransformUV<DEVMESHHANDLE>(mesh, vcGroup_, vcVerts_, angle_, vecTrans_);
         }
 
         // panel_animation
         void panel_step(MESHHANDLE mesh, double simdt) override {
-            TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, slotAngle_.value(), vecTrans_);
+//            RotateMesh<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, angle_);
+            TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, angle_, vecTrans_);
         }
 
-        slot<double>& SlotAngle() { return slotAngle_; }
-        slot<double>& SlotTransform() { return slotTransform_; }
+        void SetAngle(double a) { angle_ = a; }
+        void SetTransform(double x, double y) { vecTrans_.x = x; vecTrans_.y = y; }
 
     private:
-        slot<double>    slotAngle_{ [&](double d) { } };
-        slot<double>    slotTransform_{ [&](double d) { vecTrans_.y = d; } };
-
-        VECTOR3         vecTrans_{ 0.0, 0.0, 0.0 };
-        UINT			vcGroup_{ 0 };
+        double          angle_      { 0.0 };
+        VECTOR3         vecTrans_   { 0.0, 0.0, 0.0 };
+        UINT			vcGroup_    { 0 };
         const NTVERTEX* vcVerts_;
-        UINT			pnlGroup_{ 0 };
+        UINT			pnlGroup_   { 0 };
         const NTVERTEX* pnlVerts_;
     };
 }

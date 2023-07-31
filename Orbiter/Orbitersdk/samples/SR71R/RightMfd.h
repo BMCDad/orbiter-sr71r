@@ -59,21 +59,22 @@ private:
 		int row;
 		int col;
 		const VECTOR3& vcLoc;
+		const RECT& pnlRC;
 	};
 
 	std::vector<MFDData> data_
 	{
-		{ vessel_.GetIdForComponent(this), 0,  0, 0, bm::vc::MFCRightL1_location },
-		{ vessel_.GetIdForComponent(this), 1,  1, 0, bm::vc::MFCRightL2_location },
-		{ vessel_.GetIdForComponent(this), 2,  2, 0, bm::vc::MFCRightL3_location },
-		{ vessel_.GetIdForComponent(this), 3,  3, 0, bm::vc::MFCRightL4_location },
-		{ vessel_.GetIdForComponent(this), 4,  4, 0, bm::vc::MFCRightL5_location },
-		{ vessel_.GetIdForComponent(this), 5,  5, 0, bm::vc::MFCRightL6_location },
-		{ vessel_.GetIdForComponent(this), 6,  0, 1, bm::vc::MFCRightR1_location },
-		{ vessel_.GetIdForComponent(this), 7,  1, 1, bm::vc::MFCRightR2_location },
-		{ vessel_.GetIdForComponent(this), 8,  2, 1, bm::vc::MFCRightR3_location },
-		{ vessel_.GetIdForComponent(this), 9,  3, 1, bm::vc::MFCRightR4_location },
-		{ vessel_.GetIdForComponent(this), 10, 4, 1, bm::vc::MFCRightR5_location },
-		{ vessel_.GetIdForComponent(this), 11, 5, 1, bm::vc::MFCRightR6_location }
+		{ vessel_.GetIdForComponent(this), 0,  0, 0, bm::vc::MFCRightL1_location, bm::pnl::pnlRightMFD1_RC },
+		{ vessel_.GetIdForComponent(this), 1,  1, 0, bm::vc::MFCRightL2_location, bm::pnl::pnlRightMFD2_RC },
+		{ vessel_.GetIdForComponent(this), 2,  2, 0, bm::vc::MFCRightL3_location, bm::pnl::pnlRightMFD3_RC },
+		{ vessel_.GetIdForComponent(this), 3,  3, 0, bm::vc::MFCRightL4_location, bm::pnl::pnlRightMFD4_RC },
+		{ vessel_.GetIdForComponent(this), 4,  4, 0, bm::vc::MFCRightL5_location, bm::pnl::pnlRightMFD5_RC },
+		{ vessel_.GetIdForComponent(this), 5,  5, 0, bm::vc::MFCRightL6_location, bm::pnl::pnlRightMFD6_RC },
+		{ vessel_.GetIdForComponent(this), 6,  0, 1, bm::vc::MFCRightR1_location, bm::pnl::pnlRightMFD7_RC },
+		{ vessel_.GetIdForComponent(this), 7,  1, 1, bm::vc::MFCRightR2_location, bm::pnl::pnlRightMFD8_RC },
+		{ vessel_.GetIdForComponent(this), 8,  2, 1, bm::vc::MFCRightR3_location, bm::pnl::pnlRightMFD9_RC },
+		{ vessel_.GetIdForComponent(this), 9,  3, 1, bm::vc::MFCRightR4_location, bm::pnl::pnlRightMFD10_RC },
+		{ vessel_.GetIdForComponent(this), 10, 4, 1, bm::vc::MFCRightR5_location, bm::pnl::pnlRightMFD11_RC },
+		{ vessel_.GetIdForComponent(this), 11, 5, 1, bm::vc::MFCRightR6_location, bm::pnl::pnlRightMFD12_RC }
 	};
 };
