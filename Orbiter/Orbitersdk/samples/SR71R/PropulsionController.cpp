@@ -54,7 +54,7 @@ PropulsionController::PropulsionController(bco::power_provider& pwr, bco::vessel
 	vessel.AddControl(&statusFuel_);
 	vessel.AddControl(&statusLimiter_);
 
-	switchThrustLimit_.attach([&]() { ToggleThrustLimit(); });
+	switchThrustLimit_.attach([&]() { SetThrustLevel(switchThrustLimit_.is_on() ? ENGINE_THRUST : ENGINE_THRUST_AB); });
 
 	btnFuelValveOpen_.attach([&]() { ToggleFill(); });
 	btnRCSValveOpen_.attach([&]() { ToggleRCSFill(); });
@@ -125,7 +125,7 @@ void PropulsionController::Update(double deltaUpdate)
 	gaugeFuelFlow_.set_state(flow / maxMainFlow_);
 
 	statusLimiter_.set_state(
-		(!IsPowered() || !switchThrustLimit_.is_on())
+		(!IsPowered() || switchThrustLimit_.is_on())
 		?	bco::status_display::status::off
 		:	bco::status_display::status::on
 	);

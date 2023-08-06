@@ -31,8 +31,8 @@
 
 class PowerSystem;
 
-const double OXYGEN_BURN_RATE_PER_SEC_100A = (2.0 / 3600) / 100;		// 2 lbs per hour per at 100 amps.
-const double HYDROGEN_BURN_RATE_PER_SEC_100A = (1.0 / 3600) / 100;			// 0.3 lbs per hour @ 100 amps.  
+const double OXYGEN_BURN_RATE_PER_SEC_100A = (0.2 / 3600) / 100;		// 2 lbs per hour per at 100 amps.
+const double HYDROGEN_BURN_RATE_PER_SEC_100A = (0.1 / 3600) / 100;			// 0.3 lbs per hour @ 100 amps.  
 
 namespace bco = bc_orbiter;
 

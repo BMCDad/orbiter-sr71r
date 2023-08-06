@@ -114,10 +114,8 @@ public:
 
 	bco::signal<double>&	MainFuelLevelSignal() { return signalMainFuelLevel_; }
 
-	void ToggleThrustLimit() { SetThrustLevel(switchThrustLimit_.is_on() ? ENGINE_THRUST : ENGINE_THRUST_AB); }
+	void ToggleThrustLimit() { switchThrustLimit_.toggle_state(); }
 
-	// TODO:
-	// signal to report current ThrottleLimit state
 private:
 	bco::vessel&		vessel_;
 	bco::power_provider&	power_;

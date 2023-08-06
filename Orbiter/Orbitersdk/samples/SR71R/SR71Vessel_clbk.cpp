@@ -187,20 +187,6 @@ void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 	statusDock_.set_state( DockingStatus(0) == 1 ? bco::status_display::status::on : bco::status_display::status::off);
 }
 
-bool SR71Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
-{
-//	headsUpDisplay_.DrawHUD(mode, hps, skp);
-//    landingGear_.DrawHUD(mode, hps, skp);
-//    autoPilot_.DrawHUD(mode, hps, skp);
-//	computer_.DrawHUD(mode, hps, skp);
-//    navModes_.DrawHUD(mode, hps, skp);
-//    propulsionController_.DrawHUD(mode, hps, skp);
-//    hoverEngines_.DrawHUD(mode, hps, skp);
-//    retroEngines_.DrawHUD(mode, hps, skp);
-
-	return VESSEL3::clbkDrawHUD(mode, hps, skp);
-}
-
 void SR71Vessel::clbkPostCreation()
 {
 	vessel::clbkPostCreation();

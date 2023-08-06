@@ -237,6 +237,8 @@ namespace bc_orbiter
 		for (auto& ps : draw_hud_components_) {
 			ps->handle_draw_hud(*this, mode, hps, skp);
 		}
+
+		VESSEL3::clbkDrawHUD(mode, hps, skp);
 		return true;
 	}
 

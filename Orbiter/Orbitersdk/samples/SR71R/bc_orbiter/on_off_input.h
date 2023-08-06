@@ -115,6 +115,12 @@ namespace bc_orbiter {
 			attach(func);
 		}
 
+		void toggle_state() {
+			state_ = !state_;
+			fire();
+			oapiTriggerRedrawArea(0, 0, get_id());
+		}
+
 		friend std::istream& operator>>(std::istream& input, on_off_input& obj) {
 			if (input) {
 				bool isEnabled;

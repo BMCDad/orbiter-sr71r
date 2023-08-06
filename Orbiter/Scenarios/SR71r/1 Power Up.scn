@@ -21,6 +21,8 @@ When closed set [POWER-CNPY : DOWN] to prevent accidently opening the canopy.</p
 <p>With the cargo bay and canopy closed we can now power up the avionics, MFDs and other components we will need to setup our flight.
 To power up the main avionics set [POWER-AVION : UP].  Enable the MFD panels by pressing the [PWR] button on the MFD panel.</p>
 
+<p>Finally, enable the APU [APU : UP].
+
 <p>You should now be ready to setup your flight.</p>
 
 END_HYPERDESC

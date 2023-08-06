@@ -52,10 +52,13 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	AddComponent(&surfaceCtrl_);
 
 	bco::connect( avionics_.IsAeroActiveSignal(),	altimeter_.EnabledSlot());
-	bco::connect( avionics_.IsAeroModeAtmoSignal(), altimeter_.AvionicsModeSlot());
 	bco::connect( avionics_.IsAeroActiveSignal(),	airspeed_.EnabledSlot());
-	bco::connect( avionics_.IsAeroModeAtmoSignal(),	airspeed_.AvionicsModeSlot());
 	bco::connect( avionics_.IsAeroActiveSignal(),	hsi_.EnabledSlot());
+	bco::connect( avionics_.IsAeroActiveSignal(),	rcs_.IsAeroActiveSlot());
+	bco::connect( avionics_.IsAeroActiveSignal(),	navModes_.IsEnabledSlot());
+
+	bco::connect( avionics_.IsAeroModeAtmoSignal(), altimeter_.AvionicsModeSlot());
+	bco::connect( avionics_.IsAeroModeAtmoSignal(),	airspeed_.AvionicsModeSlot());
 	bco::connect( avionics_.IsAeroModeAtmoSignal(), hsi_.AvionicsModeSlot());
 
 	// Fuel cell					// A signal can drive more then one slot
@@ -64,7 +67,6 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	bco::connect( propulsion_.MainFuelLevelSignal(),		apu_.FuelLevelSlot());
 
 	// RCS
-	bco::connect( avionics_.IsAeroActiveSignal(),			rcs_.IsAeroActiveSlot());
 
 	// ...which in turn drive the HSI course and heading
 	bco::connect( avionics_.SetCourseSignal(),				hsi_.SetCourseSlot());

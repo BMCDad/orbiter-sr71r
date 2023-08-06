@@ -55,13 +55,13 @@ public:
 
 	void OnHudMode(int mode);
 
-	bco::slot<bool>&	DockModeSlot()		{ return slotDockMode_; }
-	bco::slot<bool>&	OrbitModeSlot()		{ return slotOrbitMode_; }
-	bco::slot<bool>&	SurfaceModeSlot()	{ return slotSurfaceMode_; }
+	//bco::slot<bool>&	DockModeSlot()		{ return slotDockMode_; }
+	//bco::slot<bool>&	OrbitModeSlot()		{ return slotOrbitMode_; }
+	//bco::slot<bool>&	SurfaceModeSlot()	{ return slotSurfaceMode_; }
 
-	bco::signal<bool>&	DockModeSignal()	{ return sigDockMode_; }
-	bco::signal<bool>&	OrbitModeSignal()	{ return sigOrbitMode_; }
-	bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
+	//bco::signal<bool>&	DockModeSignal()	{ return sigDockMode_; }
+	//bco::signal<bool>&	OrbitModeSignal()	{ return sigOrbitMode_; }
+	//bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
 
 private:
 	bco::power_provider& power_;
@@ -70,13 +70,13 @@ private:
 
 	void OnChanged(int mode);
 
-	bco::slot<bool> slotDockMode_;
-	bco::slot<bool> slotOrbitMode_;
-	bco::slot<bool> slotSurfaceMode_;
+	//bco::slot<bool> slotDockMode_;
+	//bco::slot<bool> slotOrbitMode_;
+	//bco::slot<bool> slotSurfaceMode_;
 
-	bco::signal<bool> sigDockMode_;
-	bco::signal<bool> sigOrbitMode_;
-	bco::signal<bool> sigSurfaceMode_;
+	//bco::signal<bool> sigDockMode_;
+	//bco::signal<bool> sigOrbitMode_;
+	//bco::signal<bool> sigSurfaceMode_;
 
 	// *** HUD *** 
 	bco::simple_event<>		btnDocking_	{		bm::vc::vcHUDDock_location,

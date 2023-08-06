@@ -68,8 +68,6 @@ public:
 
 	void					clbkPostStep(double simt, double simdt, double mjd);
 	
-	bool					clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
-
 	bool					clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) override;
 	void					clbkLoadStateEx(FILEHANDLE scn, void* vs) override;
 	void					clbkSaveState(FILEHANDLE scn) override;

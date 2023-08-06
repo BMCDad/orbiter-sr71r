@@ -122,9 +122,9 @@ public:
 //		sprintf(oapiDebugString(), "speedRatio (mach hand): %+4.2f", speedRatio);
 
 		bco::GetDigits(mach, parts);
-		airspeedMACHOnes_.SlotTransform().notify(parts.Tens);
-		airspeedMACHTens_.SlotTransform().notify(parts.Hundreds);
-		airspeedMACHHunds_.SlotTransform().notify(parts.Thousands);
+		airspeedMACHOnes_.SlotTransform().notify(parts.Tenths);
+		airspeedMACHTens_.SlotTransform().notify(parts.Tens);
+		airspeedMACHHunds_.SlotTransform().notify(parts.Hundreds);
 
 		status_.set_state(isOverSpeed ? bco::status_display::status::error : bco::status_display::status::off);
 	}

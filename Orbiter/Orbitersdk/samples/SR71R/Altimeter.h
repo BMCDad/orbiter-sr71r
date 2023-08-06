@@ -64,15 +64,25 @@ public:
 		}
 
 		bco::IntParts iOut;
-		bco::BreakTens(altFeet, iOut);
+		if (altFeet < 100000) {
+			bco::BreakTens((altFeet > 100000 ? 0.0 : altFeet), iOut);
 
-		altimeter1Hand_.set_state(iOut.Hundreds/10.0);
-		altimeter10Hand_.set_state(iOut.Thousands/10.0);
-		altimeter100Hand_.set_state(iOut.TenThousands/10.0);
+			altimeter1Hand_.set_state(iOut.Hundreds / 10.0);
+			altimeter10Hand_.set_state(iOut.Thousands / 10.0);
+			altimeter100Hand_.set_state(iOut.TenThousands / 10.0);
+			altimeterEnabledFlag_.set_state(EnabledSlot().value());
+		}
+		else {
+			altimeter1Hand_.set_state(0);
+			altimeter10Hand_.set_state(0);
+			altimeter100Hand_.set_state(0);
+			altimeterEnabledFlag_.set_state(false);
+		}
+		
 
 		// ** ALTIMETER **
 		bco::TensParts parts;
-		bco::GetDigits((altFeet > 100000) ? 0 : altFeet, parts);  // Limit to 100000
+		bco::GetDigits((altFeet > 1000000) ? 0 : altFeet, parts);  // Limit to 100000
 
 		//sprintf(oapiDebugString(), "Alt: : %+2i : %+2i : %+2i", altFeet, parts.Tens, parts.Hundreds);
 
@@ -87,7 +97,6 @@ private:
 
 	void OnChanged() {
 		// Logic for flags and stuff here.
-		altimeterEnabledFlag_.set_state(EnabledSlot().value());
 		altimeterExoModeFlag_.set_state(!EnabledSlot().value() ? true : AvionicsModeSlot().value());
 	}
 
