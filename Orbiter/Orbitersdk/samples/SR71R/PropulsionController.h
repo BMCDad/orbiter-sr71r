@@ -182,8 +182,7 @@ private:
 			bm::pnl::pnlGaFuelFlow_id,
 			bm::pnl::pnlGaFuelFlow_verts,
 			(270 * RAD),	// Clockwise
-			1.0,
-			[](double d) {return (d); }	// Transform to amps.
+			1.0
 	};
 
 	bco::rotary_display<bco::animation_target>		gaugeFuelMain_{
@@ -192,8 +191,7 @@ private:
 			bm::pnl::pnlGaFuelMain_id,
 			bm::pnl::pnlGaFuelMain_verts,
 			(256 * RAD),	// Clockwise
-			1.0,
-			[](double d) {return (d); }	// Transform to amps.
+			1.0
 	};
 
 	bco::rotary_display<bco::animation_target>		gaugeFuelRCS_{
@@ -202,8 +200,7 @@ private:
 			bm::pnl::pnlGaFuelRCS_id,
 			bm::pnl::pnlGaFuelRCS_verts,
 			(264 * RAD),	// Clockwise
-			1.0,
-			[](double d) {return (d); }	// Transform to amps.
+			1.0
 	};
 
 	// Displays

@@ -63,20 +63,24 @@ public:
 			altFeet = alt * 3.28084;
 		}
 
-		bco::TensParts parts;
+		bco::IntParts iOut;
+		bco::BreakTens(altFeet, iOut);
+
+		altimeter1Hand_.set_state(iOut.Hundreds/10.0);
+		altimeter10Hand_.set_state(iOut.Thousands/10.0);
+		altimeter100Hand_.set_state(iOut.TenThousands/10.0);
 
 		// ** ALTIMETER **
-		bco::BreakTens((altFeet > 100000) ? 0 : altFeet, parts);  // Limit to 100000
+		bco::TensParts parts;
+		bco::GetDigits((altFeet > 100000) ? 0 : altFeet, parts);  // Limit to 100000
 
-		altimeter1Hand_.set_state(parts.Tens);
-		altimeter10Hand_.set_state(parts.Hundreds);
-		altimeter100Hand_.set_state(parts.Thousands);
+		//sprintf(oapiDebugString(), "Alt: : %+2i : %+2i : %+2i", altFeet, parts.Tens, parts.Hundreds);
 
-		tdiAltOnes_.SlotTransform().notify(parts.Tens);
-		tdiAltTens_.SlotTransform().notify(parts.Hundreds);
-		tdiAltHunds_.SlotTransform().notify(parts.Thousands);
-		tdiAltThou_.SlotTransform().notify(parts.TenThousands);
-		tdiAltTenThou_.SlotTransform().notify(parts.HundredThousands);
+		tdiAltOnes_.SlotTransform().notify(parts.Hundreds);
+		tdiAltTens_.SlotTransform().notify(parts.Thousands);
+		tdiAltHunds_.SlotTransform().notify(parts.TenThousands);
+		tdiAltThou_.SlotTransform().notify(parts.HundredThousands);
+		tdiAltTenThou_.SlotTransform().notify(parts.Millions);
 	}
 
 private:
@@ -93,8 +97,7 @@ private:
 			bm::pnl::pnlAlt1Needle_id,
 			bm::pnl::pnlAlt1Needle_verts,
 			(360 * RAD),	// Clockwise
-			2.0,
-			[](double d) {return ((double)d / 10.0); }	// Transform to anim range.
+			2.0
 	};
 
 	bco::rotary_display<bco::animation_wrap>	altimeter10Hand_{
@@ -103,8 +106,7 @@ private:
 			bm::pnl::pnlAlt10Needle_id,
 			bm::pnl::pnlAlt10Needle_verts,
 			(360 * RAD),	// Clockwise
-			2.0,
-			[](double d) {return (d / 10); }	// Transform to anim range.
+			2.0
 	};
 
 	bco::rotary_display<bco::animation_wrap>	altimeter100Hand_{
@@ -113,8 +115,7 @@ private:
 			bm::pnl::pnlAlt100Needle_id,
 			bm::pnl::pnlAlt100Needle_verts,
 			(360 * RAD),	// Clockwise
-			2.0,
-			[](double d) {return (d / 10); }	// Transform to anim range.
+			2.0
 	};
 
 	bco::flat_roll			tdiAltOnes_{

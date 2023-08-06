@@ -130,8 +130,8 @@ private:
 	HydrogenTank			hydrogenTank_	{ powerSystem_, *this };
 	OxygenTank				oxygenTank_		{ powerSystem_, *this };
 	FuelCell				fuelCell_		{ powerSystem_, *this, oxygenTank_,	hydrogenTank_ };
-	bco::generic_tank		mainFuelTank_	{ powerSystem_, MAX_FUEL,		FUEL_TRANFER_RATE };
-	bco::generic_tank		rcsFuelTank_	{ powerSystem_, MAX_RCS_FUEL,	FUEL_TRANFER_RATE };
+	//bco::generic_tank		mainFuelTank_	{ powerSystem_, MAX_FUEL,		FUEL_TRANFER_RATE };
+	//bco::generic_tank		rcsFuelTank_	{ powerSystem_, MAX_RCS_FUEL,	FUEL_TRANFER_RATE };
 	HUD						headsUpDisplay_	{ powerSystem_, *this };
 
 	LeftMFD					mfdLeft_		{ powerSystem_, this };

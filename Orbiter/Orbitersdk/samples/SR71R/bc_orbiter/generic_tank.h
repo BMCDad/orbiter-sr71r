@@ -64,22 +64,25 @@ namespace bc_orbiter {
 		}
 
 		// post_step
-		void handle_post_step(vessel& vessel, double simt, double simdt, double mjd) override {
+		virtual void handle_post_step(vessel& vessel, double simt, double simdt, double mjd) override {
 			auto tD = simt - prevTime_;
 
 			if (fabs(tD) > 0.2)
 			{
 				isExternal_ = vessel.IsStoppedOrDocked();
 				if (isExternal_ && IsPowered()) {
-					sigIsAvailable_.fire(true);
+					//sigIsAvailable_.fire(true);
+					UpdateIsAvailable(true);
 
-					if (sigIsFilling_.current()) {
+					if (isFilling_) {
 						FillTank(fillRate_ * simdt);
 					}
 				}
 				else {
-					sigIsAvailable_.fire(false);
-					sigIsFilling_.fire(false);
+					//sigIsAvailable_.fire(false);
+					UpdateIsAvailable(false);
+					//sigIsFilling_.fire(false);
+					UpdateIsFilling(false);
 				}
 				prevTime_ = simt;
 			}
@@ -94,8 +97,10 @@ namespace bc_orbiter {
 			in >> current_ >> isFilling_;
 			current_ = fmax(0.0, current_);
 			current_ = fmin(capacity_, current_);
-			sigIsFilling_.fire((isFilling_ == 1) ? true : false);
-			sigLevel_.fire(current_ / capacity_);
+			//sigIsFilling_.fire((isFilling_ == 1) ? true : false);
+			UpdateIsFilling((isFilling_ == 1) ? true : false);
+			UpdateLevel(current_ / capacity_);
+			//sigLevel_.fire(current_ / capacity_);
 				
 			return true;
 		}
@@ -106,10 +111,10 @@ namespace bc_orbiter {
 			return os.str();
 		}
 
-		// Outputs
-		signal<double>&		LevelSignal()		{ return sigLevel_; }				// 0 - 1 : does adjustment based on capacity
-		signal<bool>&		IsFillingSignal()	{ return sigIsFilling_; }			// Is fill pump running.
-		signal<bool>&		IsAvailableSignal()	{ return sigIsAvailable_; }			// Is external available
+		// Outputs  TODO
+		//signal<double>&		LevelSignal()		{ return sigLevel_; }				// 0 - 1 : does adjustment based on capacity
+		//signal<bool>&		IsFillingSignal()	{ return sigIsFilling_; }			// Is fill pump running.
+		//signal<bool>&		IsAvailableSignal()	{ return sigIsAvailable_; }			// Is external available
 
 	protected:
 		bool IsPowered() const {
@@ -122,10 +127,12 @@ namespace bc_orbiter {
 
 			if (current_ == capacity_) {
 				isFilling_ = false;
-				sigIsFilling_.fire(isFilling_);
+				//sigIsFilling_.fire(isFilling_);
+				UpdateIsFilling(isFilling_);
 			}
 
-			sigLevel_.fire(current_ / capacity_);		// 0 to 1 range
+			//sigLevel_.fire(current_ / capacity_);		// 0 to 1 range
+			UpdateLevel(current_ / capacity_);
 		}
 
 		void ToggleFilling() {
@@ -137,14 +144,19 @@ namespace bc_orbiter {
 					isFilling_ = true;
 				}
 			}
-			sigIsFilling_.fire(isFilling_);
+			//sigIsFilling_.fire(isFilling_);
+			UpdateIsFilling(isFilling_);
 		}
 
 		void SetNewCurrentLevel(double new_current) {
 			current_ = new_current;
-			sigLevel_.fire(current_ / capacity_);
+			//sigLevel_.fire(current_ / capacity_);
+			UpdateLevel(current_ / capacity_);
 		}
 
+		virtual void UpdateLevel(double l) {};
+		virtual void UpdateIsFilling(bool b) {};
+		virtual void UpdateIsAvailable(bool b) {};
 		// Reports the tank level from 0 to capacity. (the signal is 0 to 1)
 		//double Level() { return level_; }
 
@@ -154,9 +166,9 @@ namespace bc_orbiter {
 		const double			VOLTS_MIN = 24.0;
 		const double			AMPS_PUMP = 4.0;
 
-		signal<double>			sigLevel_;
+//		signal<double>			sigLevel_;
 		signal<bool>			sigIsFilling_;
-		signal<bool>			sigIsAvailable_;
+//		signal<bool>			sigIsAvailable_;
 
 		bool					isFilling_	{ false };
 		bool					isExternal_	{ false };

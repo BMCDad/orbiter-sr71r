@@ -131,29 +131,23 @@ private:
 	bco::slot<double>		slotFuelLevel_;
 
 
-	bco::on_off_input		switchEnabled_ {			// APU Power
-												{ bm::vc::SwAPUPower_id },
+	bco::on_off_input			switchEnabled_ { { bm::vc::SwAPUPower_id },
 												bm::vc::SwAPUPower_location, bm::vc::LeftPanelTopRightAxis_location,
 												toggleOnOff,
 												bm::pnl::pnlAPUSwitch_id,
 												bm::pnl::pnlAPUSwitch_verts,
-												bm::pnl::pnlAPUSwitch_RC
-											};
+												bm::pnl::pnlAPUSwitch_RC	};
 
-	bco::rotary_display<bco::animation_target>	gaugeAPULevel_{
-												{ bm::vc::gaHydPress_id },
+	bco::rotary_display_target	gaugeAPULevel_{ { bm::vc::gaHydPress_id },
 												bm::vc::gaHydPress_location, bm::vc::axisHydPress_location,
 												bm::pnl::pnlHydPress_id,
 												bm::pnl::pnlHydPress_verts,
 												(300 * RAD),	// Clockwise
-												0.2,
-												[](double d) {return (d); }	// Transform to amps.
-											};
+												0.2	};
 
-	bco::status_display     status_     {       bm::vc::MsgLightAPU_id,
+	bco::status_display			status_		{   bm::vc::MsgLightAPU_id,
 												bm::vc::MsgLightAPU_verts,
 												bm::pnl::pnlMsgLightAPU_id,
 												bm::pnl::pnlMsgLightAPU_verts,
-												0.0361
-											};
+												0.0361	};
 };

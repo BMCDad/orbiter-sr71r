@@ -24,6 +24,7 @@
 */
 
 #include "Orbitersdk.h"
+#include "bc_orbiter\pid_altitude.h"
 
 #include "IAvionics.h"
 #include "PropulsionController.h"
@@ -150,12 +151,42 @@ public:
 
 class HoldAltitudeProgram : public control_program
 {
+    /*
+        PID - Proportion  -  Integration  -  Derivative
+        Each of these parts is tuned using a gain function, which is generally a value between
+        0 and 1.  Adjust these to adjust the function.
+
+        Proportion:
+        This is simply the Kp (Proportion gain) times the error.  In the case of altitude the error
+        is the delta between the current altitude and the target.  For example:
+
+        Target = 20000
+        Current = 19500
+        Error = -500  -  Current - Target.  We are 500 below our target.
+
+        If your Kp value was .5, the result would be -250.
+
+        In a simple controller a negative value from the function would call for an increase in
+        elevator control.
+
+    */
     // Auto pilot consts:
     const double TargetClimbRateMPS = 20.0;
     const double AltitudeHoldRange = 100.0;
     const double ClimbHoldRange = 2.0;
 
 	double target_{ 0.0 };
+
+    bco::pid_altitude pid_;
+    double kp = 0.1;  // .5 start .2 no change .8 no change
+    double ki = 0.4;    // .2 start .1 nothing
+    double kd = 0.1;
+
+    double ALT_ERROR_RANGE  = 200.0;      // 20 meters.
+    double MAX_VS           = 100.0;
+    double VS_STEP_PS       =   0.01;       // Trim steps per second.
+
+    double prev_error       = 0.0;
 
 public:
     HoldAltitudeProgram() 
@@ -165,35 +196,22 @@ public:
 
     void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
     {
-        auto altError           = target_ - vessel.get_altitude();
+        auto currentAlt     = vessel.get_altitude();
+        auto currentCtrl    = vessel.GetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM);
+        auto altError       = target_ - vessel.get_altitude();
 
-        auto vertSpeed          = vessel.get_vertical_speed();
+        auto pid_control = pid_.compute(currentAlt, target_);
 
-        auto targetClimb = 0.0;
+        // Simple first implementation.  Negative pid_control calls for a positive input change.
+        // We need to translate altitude error into control input.
+        auto adjustment = pid_control * VS_STEP_PS * simdt;
 
-        if (fabs(altError) < AltitudeHoldRange)	// within AltRange
-        {
-            targetClimb = TargetClimbRateMPS * (altError / AltitudeHoldRange);
-        }
-        else
-        {
-            targetClimb = (altError > 0) ? TargetClimbRateMPS : -TargetClimbRateMPS;
-        }
+        vessel.set_elevator_level(currentCtrl + adjustment);
 
-        auto climbError = targetClimb - vertSpeed;
-
-        auto ctrlLevel = 0.0;
-
-        if (fabs(climbError) < TargetClimbRateMPS)
-        {
-            ctrlLevel = climbError / TargetClimbRateMPS;
-        }
-        else
-        {
-            ctrlLevel = (climbError > 0) ? 1.0 : -1.0;
-        }
-
-        vessel.set_elevator_level(ctrlLevel);
+        sprintf(oapiDebugString(), "[%+6.0f] : pid_control: %+6.2f : Elevator: %6.2f",
+            target_ * 3.28084,
+            pid_control,
+            vessel.GetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM));
     }
 
     void stop(bco::vessel& vessel) override
@@ -203,7 +221,9 @@ public:
 
 	void start(bco::vessel& vessel) override
 	{
+        vessel.set_elevator_level(0.0);
         target_ = vessel.get_altitude();
+        pid_.reset(target_, kp, ki, kd);
 	}
 };
 

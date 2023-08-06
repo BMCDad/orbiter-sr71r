@@ -43,11 +43,15 @@ public:
 
 		btnFill_.attach([&]() { ToggleFilling(); });
 
-		LevelSignal()		.attach( gaugeLevel_.Slot());
-		IsFillingSignal()	.attach( btnLightFill_.Slot());
-		IsAvailableSignal()	.attach( lightAvailable_.Slot());
+		// TODO
+		//LevelSignal()		.attach( gaugeLevel_.Slot());
+		//IsFillingSignal()	.attach( btnLightFill_.Slot());
+		//IsAvailableSignal()	.attach( lightAvailable_.Slot());
 	}
 
+	void UpdateLevel(double l) override { gaugeLevel_.set_state(l); }
+	void UpdateIsFilling(bool b) override { btnLightFill_.set_state(b); }
+	void UpdateIsAvailable(bool b) override { lightAvailable_.set_state(b); }
 
 	double amp_draw() const override {
 		return generic_tank::amp_draw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
@@ -56,14 +60,12 @@ public:
 private:
 
 	// ***  HYDROGEN SUPPLY  *** //
-	bco::rotary_display<bco::animation_target>	gaugeLevel_ {	{ bm::vc::gaHydrogenLevel_id },
-														bm::vc::gaHydrogenLevel_location, bm::vc::axisHydrogenLevel_location,
-														bm::pnl::pnlLH2Press_id,
-														bm::pnl::pnlLH2Press_verts,
-														(300 * RAD),	// Clockwise
-														0.2,
-														[](double d) {return (d); }	// Transform to amps.
-													};
+	bco::rotary_display_target		gaugeLevel_ {	{ bm::vc::gaHydrogenLevel_id },
+													bm::vc::gaHydrogenLevel_location, bm::vc::axisHydrogenLevel_location,
+													bm::pnl::pnlLH2Press_id,
+													bm::pnl::pnlLH2Press_verts,
+													(300 * RAD),
+													0.2	};
 
 	bco::on_off_display				lightAvailable_ {	bm::vc::LH2SupplyOnLight_id,
 														bm::vc::LH2SupplyOnLight_verts,

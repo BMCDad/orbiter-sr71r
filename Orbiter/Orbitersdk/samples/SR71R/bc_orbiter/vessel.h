@@ -186,14 +186,14 @@ namespace bc_orbiter
 
 		// surface_control
 		void set_aileron_level(double l)		{ this->SetControlSurfaceLevel(AIRCTRL_AILERON, l); }
-		void set_elevator_level(double l)		{ this->SetControlSurfaceLevel(AIRCTRL_ELEVATOR, l); }
+		void set_elevator_level(double l)		{ this->SetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM, l); }
 
 	private:
 
 		std::vector<control*>							controls_;
 		std::map<int, vc_event_target*>					map_vc_targets_;
 		std::map<int, panel_event_target*>				map_panel_targets_;
-		std::vector<panel_animation*>					map_panel_animations_;
+		std::vector<panel_animation*>					panel_animations_;
 		std::vector<vc_tex_animation*>					vc_texture_animations_;
 		std::map<int, vc_animation*>					map_vc_animations_;
 
@@ -290,7 +290,7 @@ namespace bc_orbiter
 				map_vc_animations_[aid] = c;
 			}
 
-			if (auto* c = dynamic_cast<panel_animation*		>(vc)) map_panel_animations_.push_back(c);
+			if (auto* c = dynamic_cast<panel_animation*		>(vc)) panel_animations_.push_back(c);
 			if (auto* c = dynamic_cast<vc_event_target*		>(vc)) map_vc_targets_[vc->get_id()] = c;
 			if (auto* c = dynamic_cast<panel_event_target*	>(vc)) map_panel_targets_[vc->get_id()] = c;
 			if (auto* c = dynamic_cast<vc_tex_animation*	>(vc)) vc_texture_animations_.push_back(c);
@@ -383,7 +383,7 @@ namespace bc_orbiter
 
 		if (oapiCockpitMode() == COCKPIT_PANELS) {
 			auto mesh = GetpanelMeshHandle0();
-			for (auto& pa : map_panel_animations_) {
+			for (auto& pa : panel_animations_) {
 				pa->panel_step(mesh, simdt);
 			}
 		}

@@ -102,9 +102,9 @@ public:
 
 		signalGlideScope_.fire(glideSlope);
 		
-		hsiRoseCompass_	.set_state(yaw);
-		hsiHeadingBug_	.set_state(rotHdg);
-		hsiCourse_		.set_state(rotCrs);
+		hsiRoseCompass_	.set_state(-yaw/PI2);
+		hsiHeadingBug_	.set_state(-rotHdg/PI2);
+		hsiCourse_		.set_state(-rotCrs/PI2);
 		
 		hsiCourseError_.SetAngle(-rotCrs);
 		hsiCourseError_.SetTransform(navError, 0.0);
@@ -196,44 +196,40 @@ private:
 		return result;
 	}
 
-	bco::rotary_display<bco::animation_wrap>	hsiRoseCompass_{
+	bco::rotary_display_wrap	hsiRoseCompass_{
 		{ bm::vc::RoseCompass_id },
 			bm::vc::RoseCompass_location, bm::vc::HSIAxis_location,
 			bm::pnl::pnlRoseCompass_id,
 			bm::pnl::pnlRoseCompass_verts,
 			(360 * RAD),	// Clockwise
-			1.0,
-			[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
+			1.0
 	};
 
-	bco::rotary_display<bco::animation_wrap>	hsiHeadingBug_{
+	bco::rotary_display_wrap	hsiHeadingBug_{
 		{ bm::vc::HSICompassHeading_id },
 			bm::vc::HSICompassHeading_location, bm::vc::HSIAxis_location,
 			bm::pnl::pnlHSICompassHeading_id,
 			bm::pnl::pnlHSICompassHeading_verts,
 			(360 * RAD),	// Clockwise
-			1.0,
-			[](double d) {return bco::AngleToState(-d); }	// Transform to anim range.
+			1.0
 	};
 
-	bco::rotary_display<bco::animation_wrap> hsiCourse_{
+	bco::rotary_display_wrap	hsiCourse_{
 		{ bm::vc::HSICourse_id },
 			bm::vc::HSICourse_location, bm::vc::HSIAxis_location,
 			bm::pnl::pnlHSICourse_id,
 			bm::pnl::pnlHSICourse_verts,
 			(360 * RAD),
-			1.0,
-			[](double d) {return bco::AngleToState(-d); }
+			1.0
 	};
 
-	bco::rotary_display<bco::animation_wrap> hsiBearing_{
+	bco::rotary_display_wrap	hsiBearing_{
 		{ bm::vc::HSIBearingArrow_id },
 			bm::vc::HSIBearingArrow_location, bm::vc::HSIAxis_location,
 			bm::pnl::pnlHSIBearingArrow_id,
 			bm::pnl::pnlHSIBearingArrow_verts,
 			(360 * RAD),
-			1.0,
-			[](double d) {return bco::AngleToState(-d); }
+			1.0
 	};
 
 	bco::transform_display	hsiCourseError_{

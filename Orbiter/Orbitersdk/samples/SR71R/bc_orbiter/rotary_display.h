@@ -29,7 +29,6 @@ namespace bc_orbiter {
     * Panel verts
     * rotary_display angle of movement in radians
     * animation_target speed, both panel and VC.
-    * Signal transform.  Transforms the incoming signal to a 0 - 1 range needed by animation.
     *
     * rotary_display exposes a slot that will take the driving signal.  The transform function, if needed, should
     * convert the signal to a 0 to 1 value.  The angle and speed for both are the same.
@@ -47,8 +46,7 @@ namespace bc_orbiter {
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
             double angle,
-            double speed,
-            std::function<double(double)> trans)
+            double speed)
             : 
             control(-1),       // id not used for gauges.
             vcAnimGroup_(
@@ -59,10 +57,8 @@ namespace bc_orbiter {
             pnlGroup_(pnlGroupId),
             pnlVerts_(pnlVerts),
             animSpeed_(speed),
-            angle_(angle),
-            transform_(trans)
+            angle_(angle)
         {
-
         }
 
         // vc_animation
@@ -70,8 +66,8 @@ namespace bc_orbiter {
 //        IAnimationState*    vc_animation_state() override { return this; }
         double              vc_animation_speed() const override { return animSpeed_; }
         double vc_step(double simdt) override {
-            animVC_.Step(state_, simdt);
-            return animVC_.GetState();
+            anim_.Step(state_, simdt);
+            return anim_.GetState();
         }
 
         // IAnimationState
@@ -79,26 +75,24 @@ namespace bc_orbiter {
 
         // panel_animation
         void panel_step(MESHHANDLE mesh, double simdt) override {
-            animPnl_.Step(state_, simdt);
-            RotateMesh(mesh, pnlGroup_, pnlVerts_, (animPnl_.GetState() * -angle_));
+            anim_.Step(state_, simdt);
+            RotateMesh(mesh, pnlGroup_, pnlVerts_, (anim_.GetState() * -angle_));
         }
 
-        void set_state(double d) { slotState_.notify(d); }
+        void set_state(double d) { 
+            state_ = d;
+        }
 
-        slot<double>& Slot() { return slotState_; }
     private:
-        std::function<double(double)> transform_;
-        slot<double>    slotState_{ [&](double d) { this->state_ = transform_(d); } };
         animation_group	vcAnimGroup_;
         double          animSpeed_{ 0.0 };
         UINT			pnlGroup_{ 0 };
         const NTVERTEX* pnlVerts_;
         double          state_{ 0.0 };
         double          angle_{ 0.0 };
-        Tanim           animPnl_{ animSpeed_ };
-        Tanim           animVC_{ animSpeed_ };
+        Tanim           anim_{ animSpeed_ };
     };
 
     using rotary_display_target = rotary_display<animation_target>;
-    using rotary_display_warp   = rotary_display<animation_wrap>;
+    using rotary_display_wrap   = rotary_display<animation_wrap>;
 }

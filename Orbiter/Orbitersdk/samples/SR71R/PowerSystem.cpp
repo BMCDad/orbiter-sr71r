@@ -100,7 +100,7 @@ void PowerSystem::Update(bco::vessel& vessel)
 		}
 	}
 
-	gaugePowerVolts_.set_state(availPower);
+	gaugePowerVolts_.set_state(availPower / FULL_POWER);
 
 	statusBattery_.set_state(
 		(switchEnabled.is_on() && isDrawingBattery_)

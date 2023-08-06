@@ -33,7 +33,7 @@ public:
 
 	Airspeed(bco::vessel& vessel) {
 		vessel.AddControl(&kiesHand_);
-		vessel.AddControl(&speedHand_);
+		vessel.AddControl(&machHand_);
 		vessel.AddControl(&maxMachHand_);
 
 		vessel.AddControl(&airspeedKeasOnes_);
@@ -71,6 +71,7 @@ public:
 		double  maxMachRatio	= 0.0;
 		double  kiasSpeed		= 0.0;
 		bool	isOverSpeed		= false;
+		bool	isAtmoMode		= AvionicsModeSlot().value();
 
 		if (EnabledSlot().value()) {
 			keas = bco::GetVesselKeas(&vessel);
@@ -84,32 +85,28 @@ public:
 				isOverSpeed = mach > maxMach;
 			}
 
-			auto spGauge = (mach > MAX_MACH) ? MAX_MACH : mach;
+			auto machGauge = (mach > MAX_MACH) ? MAX_MACH : mach;		// machGauge will be pinned, mach itself will be used to set the dials, so it not pinned.
 
-			if (!AvionicsModeSlot().value())  // if exo mode, use velocity for spGauge
+			if (!isAtmoMode)  // if exo mode, use velocity for machGauge
 			{
-				spGauge = vessel.GetAirspeed() / 100;
+				machGauge = vessel.GetAirspeed() / 100;
 				maxMach = 22.0;
 			}
 
 			// Set WARNING MAX MACH gauge : MACH scale is log base 22 (max mach):
 			// LOG range 1 to 23 (22 positions) to avoid <1 values.
-			auto r = MAX_PIN * RAD;					// Max amount in RAD the gauge can move.
 
+			// Calculate the max mach needle.
 			if (maxMach > 22.0) maxMach = 22.0;		// Pin MAX to 22 and 1
 			if (maxMach < 0.0) maxMach = 0.0;
-
-			auto rm = (maxMach == 0.0) ? 0.0 : log(maxMach + 1) / l22;	// Determine LOG based on speed.
-			auto mmRot = rm * r;					// Get rotation RAD
-			maxMachRatio = mmRot / r;
+			maxMachRatio = (maxMach == 0.0)
+				? 0.0 
+				: ((log(maxMach + 1) / l22) * MAX_PIN_RAD) / MAX_PIN_RAD;	// Determine LOG based on speed then convert to 0-1 ration for the gauge.
 
 			// Kies dial
-			auto rr = log(spGauge + 1.0) / l22;
-			auto spRot = rr * r;
-
-			speedRatio = spRot / r;
-			auto kRatio = kias / 600;
-			kiasSpeed = (AvionicsModeSlot().value()) ? speedRatio : (kRatio - speedRatio);
+			speedRatio = ((log(machGauge + 1.0) / l22) * MAX_PIN_RAD) / MAX_PIN_RAD;
+			auto kRatio = kias / 600; // 600 max kias speed
+			kiasSpeed = (isAtmoMode) ? (speedRatio - kRatio) : speedRatio;	// If atmo, subtract the speedRatio to get correct rotation.
 		}
 
 		bco::TensParts parts;
@@ -119,8 +116,10 @@ public:
 		airspeedKeasHunds_.SlotTransform().notify(parts.Thousands);
 
 		maxMachHand_.set_state(maxMachRatio);
-		speedHand_.set_state(speedRatio);
-		kiesHand_.set_state(kiasSpeed);
+		machHand_.set_state(speedRatio);
+		kiesHand_.set_state(speedRatio - (kias / 600));
+
+//		sprintf(oapiDebugString(), "speedRatio (mach hand): %+4.2f", speedRatio);
 
 		bco::GetDigits(mach, parts);
 		airspeedMACHOnes_.SlotTransform().notify(parts.Tens);
@@ -133,39 +132,36 @@ public:
 private:
 	const double MaxPress = 60000.0; // 30.0 * 1000 * 2 = 60000 --> a guess at the dynamic values of SR71r.
 	// ** SPEED **
-	const double MIN_PIN = 0.0;
-	const double MAX_PIN = 300.0;
-	const double MAX_MACH = 22.0;
+	const double MIN_PIN		=  0.0;
+	const double MAX_PIN_RAD	=  5.236; // 300.0 deg
+	const double MAX_MACH		= 22.0;
 	double l22 = log(23);
 
-	bco::rotary_display<bco::animation_wrap>	speedHand_{
+	bco::rotary_display_target	machHand_{
 		{ bm::vc::SpeedNeedle_id },
-			bm::vc::SpeedNeedle_location, bm::vc::SpeedAxisBack_location,
+			bm::vc::SpeedNeedle_location, bm::vc::SpeedAxis_location,
 			bm::pnl::pnlSpeedNeedle_id,
 			bm::pnl::pnlSpeedNeedle_verts,
 			(300 * RAD),	// Clockwise
-			2.0,
-			[](double d) {return d; }	// Transform to anim range.
+			2.0
 	};
 
-	bco::rotary_display<bco::animation_wrap>	kiesHand_{
+	bco::rotary_display_target	kiesHand_{
 		{ bm::vc::SpeedIndicatorKies_id },
-			bm::vc::SpeedIndicatorKies_location, bm::vc::SpeedAxisBack_location,
+			bm::vc::SpeedIndicatorKies_location, bm::vc::SpeedAxis_location,
 			bm::pnl::pnlSpeedIndicatorKies_id,
 			bm::pnl::pnlSpeedIndicatorKies_verts,
 			(300 * RAD),	// Clockwise
-			2.0,
-			[](double d) { return d; }	// Transform to anim range.
+			2.0
 	};
 
-	bco::rotary_display<bco::animation_wrap>	maxMachHand_{
+	bco::rotary_display_target	maxMachHand_{
 		{ bm::vc::SpeedNeedleMax_id },
-			bm::vc::SpeedNeedleMax_location, bm::vc::SpeedAxisBack_location,
+			bm::vc::SpeedNeedleMax_location, bm::vc::SpeedAxis_location,
 			bm::pnl::pnlSpeedNeedleMax_id,
 			bm::pnl::pnlSpeedNeedleMax_verts,
 			(300 * RAD),	// Clockwise
-			2.0,
-			[](double d) {return d; }	// Transform to anim range.
+			2.0
 	};
 
 	bco::flat_roll			airspeedKeasOnes_{

@@ -119,6 +119,7 @@
     <ClInclude Include="APU.h" />
     <ClInclude Include="AvionBase.h" />
     <ClInclude Include="bc_orbiter\Animation.h" />
+    <ClInclude Include="bc_orbiter\pid_altitude.h" />
     <ClInclude Include="bc_orbiter\vessel.h" />
     <ClInclude Include="bc_orbiter\Component.h" />
     <ClInclude Include="bc_orbiter\control.h" />

@@ -62,8 +62,8 @@ public:
 			draw += c->amp_draw();
 		}
 
-		ampDraw_ = draw;
-		gaugePowerAmps_.set_state(ampDraw_);
+		ampDraw_ = fmin(draw, AMP_OVERLOAD);
+		gaugePowerAmps_.set_state(ampDraw_ / AMP_OVERLOAD);
 		Update(vessel);
 	}
 
@@ -149,31 +149,29 @@ private:
 												0.0244
 											};
 
-	bco::rotary_display<bco::animation_target>	gaugePowerVolts_{
+	bco::rotary_display_target	gaugePowerVolts_{
 												{ bm::vc::gaugeVoltMeter_id },
 												bm::vc::gaugeVoltMeter_location, bm::vc::VoltMeterFrontAxis_location,
 												bm::pnl::pnlVoltMeter_id,
 												bm::pnl::pnlVoltMeter_verts,
 												-(120 * RAD),
-												0.2,
-												[](double d) {return (d / 30); }	// Transform from volts to anim-range.
+												0.2
 											};
 
-	bco::rotary_display<bco::animation_target>	gaugePowerAmps_{
+	bco::rotary_display_target	gaugePowerAmps_{
 												{ bm::vc::gaugeAmpMeter_id },
 												bm::vc::gaugeAmpMeter_location, bm::vc::VoltMeterFrontAxis_location,
 												bm::pnl::pnlAmpMeter_id,
 												bm::pnl::pnlAmpMeter_verts,
 												(120 * RAD),	// Clockwise
-												0.2,
-												[](double d) {return (d / 90); }	// Transform to amps.
+												0.2
 											};
 
-	bco::status_display     statusBattery_     {
-		bm::vc::MsgLightBattery_id,
-		bm::vc::MsgLightBattery_verts,
-		bm::pnl::pnlMsgLightBattery_id,
-		bm::pnl::pnlMsgLightBattery_verts,
-		0.0361
-	};
+	bco::status_display			statusBattery_ {
+												bm::vc::MsgLightBattery_id,
+												bm::vc::MsgLightBattery_verts,
+												bm::pnl::pnlMsgLightBattery_id,
+												bm::pnl::pnlMsgLightBattery_verts,
+												0.0361
+											};
 };

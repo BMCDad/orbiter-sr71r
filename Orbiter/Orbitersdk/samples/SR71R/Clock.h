@@ -52,44 +52,40 @@ private:
 	double					currentTimerTime_;
 	bool					isTimerRunning_;
 
-	bco::rotary_display<bco::animation_wrap>	clockTimerSecondsHand_ {
+	bco::rotary_display_wrap	clockTimerSecondsHand_ {
 												{ bm::vc::ClockSecond_id },
 												bm::vc::ClockSecond_location, bm::vc::ClockAxisFront_location,
 												bm::pnl::pnlClockSecond_id,
 												bm::pnl::pnlClockSecond_verts,
 												(360 * RAD),	// Clockwise
-												0.4,
-												[](double d) {return (d / 60); }	// Transform to anim range.
+												0.4
 											};
 
-	bco::rotary_display<bco::animation_wrap>	clockTimerMinutesHand_ {
+	bco::rotary_display_wrap	clockTimerMinutesHand_ {
 												{ bm::vc::ClockTimerMinute_id },
 												bm::vc::ClockTimerMinute_location, bm::vc::ClockAxisFront_location,
 												bm::pnl::pnlClockTimerMinute_id,
 												bm::pnl::pnlClockTimerMinute_verts,
 												(360 * RAD),	// Clockwise
-												0.4,
-												[](double d) {return (d / 60); }	// Transform to anim range.
+												0.4
 											};
 
-	bco::rotary_display<bco::animation_wrap>	clockElapsedMinutesHand_ {
+	bco::rotary_display_wrap	clockElapsedMinutesHand_ {
 												{ bm::vc::ClockMinute_id },
 												bm::vc::ClockMinute_location, bm::vc::ClockAxisFront_location,
 												bm::pnl::pnlClockMinute_id,
 												bm::pnl::pnlClockMinute_verts,
 												(360 * RAD),	// Clockwise
-												0.4,
-												[](double d) {return (d / 60); }	// Transform to anim range.
+												0.4
 											};
 
-	bco::rotary_display<bco::animation_wrap>	clockElapsedHoursHand_ {
+	bco::rotary_display_wrap	clockElapsedHoursHand_ {
 												{ bm::vc::ClockHour_id },
 												bm::vc::ClockHour_location, bm::vc::ClockAxisFront_location,
 												bm::pnl::pnlClockHour_id,
 												bm::pnl::pnlClockHour_verts,
 												(360 * RAD),	// Clockwise
-												0.4,
-												[](double d) {return (d / 12); }	// Transform to anim range.
+												0.4
 											};
 
 	bco::simple_event<>						clockTimerReset_ {

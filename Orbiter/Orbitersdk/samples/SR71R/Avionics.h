@@ -139,7 +139,6 @@ private:
 												, bm::pnl::pnlVSINeedle_verts
 												, (340 * RAD)
 												, 2.0
-												, [](double d) {return (d); }
 											};
 
 	bco::on_off_display		vsiActiveFlag_{
@@ -173,7 +172,6 @@ private:
 											, bm::pnl::pnlAOANeedle_verts
 											, (75 * RAD)
 											, 2.0
-											, [](double d) {return (d); }
 										};
 
 	bco::rotary_display_target	trimHand_ {	  { bm::vc::TrimNeedle_id }
@@ -182,7 +180,6 @@ private:
 											, bm::pnl::pnlTrimNeedle_verts
 											, (180 * RAD)
 											, 1.0
-											, [](double d) {return (d); }
 										};
 
 	bco::rotary_display_target	accelHand_ {  { bm::vc::AccelNeedle_id }
@@ -191,7 +188,6 @@ private:
 											, bm::pnl::pnlAccelNeedle_verts
 											, (295 * RAD)
 											, 1.0
-											, [](double d) {return (d); }
 										};
 
 };

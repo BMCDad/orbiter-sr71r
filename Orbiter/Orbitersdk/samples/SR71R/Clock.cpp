@@ -81,16 +81,16 @@ void Clock::handle_post_step(bco::vessel& vessel, double simt, double simdt, dou
 	auto elapsedRun = simt - startElapsedTime_;
 
 	
-	clockElapsedMinutesHand_.set_state(fmod((elapsedRun / 60), 60));
-	clockElapsedHoursHand_.set_state(fmod((elapsedRun / 3600), 12));
+	clockElapsedMinutesHand_.set_state(fmod((elapsedRun / 60), 60) / 60);
+	clockElapsedHoursHand_.set_state(fmod((elapsedRun / 3600), 12) / 60);
 
 	if (isTimerRunning_)
 	{
 		currentTimerTime_ = simt - startTimerTime_;
 	}
 
-	clockTimerSecondsHand_.set_state(fmod(currentTimerTime_, 60));
-	clockTimerMinutesHand_.set_state(fmod((currentTimerTime_ / 60), 60));
+	clockTimerSecondsHand_.set_state(fmod(currentTimerTime_, 60) / 60);
+	clockTimerMinutesHand_.set_state(fmod((currentTimerTime_ / 60), 60) / 60);
 }
 
 // [elapsedMissionTime] [isTimerRunning] [elapsedTimer]

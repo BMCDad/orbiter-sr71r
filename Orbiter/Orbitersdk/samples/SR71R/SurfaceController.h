@@ -34,7 +34,7 @@ const float AILERON_RANGE = (float)(20.0 * RAD);
 	vessel.  To see how these are applied look at the 'EnableControls' method of this class.
 */
 const double InboardElevonArea =	3.6;		// From manual, inboard (39sf/3.6ms).
-const double dClInboard =			0.2;		// Adjust to impact mostly elevator function.
+const double dClInboard =			0.6;		// Adjust to impact mostly elevator function.
 const double OutboardElevonArea =	4.8;		// From manual, outboard (52.5sf/4.8ms).
 const double dClOutboard =			0.2;		// Adjust to impact both elevator and aileron function.
 const double RudderArea =			6.4;		// From manual, movable rudder area (70sf)

@@ -43,11 +43,14 @@ public:
 
 		btnFill_.attach([&]() { ToggleFilling(); });
 
-		LevelSignal().attach(		gaugeLevel_.Slot());
-		IsFillingSignal().attach(	btnLightFill_.Slot());
-		IsAvailableSignal().attach(	lightAvailable_.Slot());
+		//LevelSignal().attach(		gaugeLevel_.Slot());
+		//IsFillingSignal().attach(	btnLightFill_.Slot());
+		//IsAvailableSignal().attach(	lightAvailable_.Slot());
 	}
 
+	void UpdateLevel(double l) override { gaugeLevel_.set_state(l); }
+	void UpdateIsFilling(bool b) override { btnLightFill_.set_state(b); }
+	void UpdateIsAvailable(bool b) override { lightAvailable_.set_state(b); }
 
 	double amp_draw() const override {
 		return generic_tank::amp_draw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
@@ -61,8 +64,7 @@ private:
 														bm::pnl::pnlLOXPress_id,
 														bm::pnl::pnlLOXPress_verts,
 														(300 * RAD),	// Clockwise
-														0.2,
-														[](double d) {return (d); }	// Transform to amps.
+														0.2
 	};
 
 	bco::on_off_display				lightAvailable_ {	bm::vc::LOXSupplyOnLight_id,
