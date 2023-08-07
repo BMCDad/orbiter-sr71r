@@ -40,6 +40,7 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	AddComponent(&hsi_);
 	AddComponent(&landingGear_);
 	AddComponent(&navLight_);
+	AddComponent(&navModes_);
 	AddComponent(&oxygenTank_);
 	AddComponent(&propulsion_);
 	AddComponent(&powerSystem_);

@@ -24,6 +24,7 @@ LandingGear::LandingGear(bco::vessel& vessel, bco::hydraulic_provider& apu) :
 {
     vessel.AddControl(&btnLowerGear_);
     vessel.AddControl(&btnRaiseGear_);
+    vessel.AddControl(&pnlHudGear_);
 
     btnLowerGear_.attach([&]() { position_ = 1.0; });
     btnRaiseGear_.attach([&]() { position_ = 0.0; });
@@ -44,6 +45,15 @@ void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simd
     animLandingSwitch_.Step(position_, simdt);
 
     bco::TranslateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_verts, sTrans * animLandingSwitch_.GetState());
+
+    auto hudState = 1; // Gear up
+    if (animLandingGear_.GetState() > 0.0) {
+        if ((animLandingGear_.GetState() == 1.0) || (fmod(oapiGetSimTime(), 1.0) < 0.5)) {
+            hudState = 0;
+        }
+    }
+
+    pnlHudGear_.set_position(hudState);
 }
 
 bool LandingGear::handle_load_state(bco::vessel& vessel, const std::string& line)

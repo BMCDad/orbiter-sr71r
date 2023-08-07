@@ -19,6 +19,7 @@
 #include "bc_orbiter/vessel.h"
 #include "bc_orbiter/simple_event.h"
 #include "bc_orbiter/on_off_display.h"
+#include "bc_orbiter/panel_display.h"
 
 #include "SR71r_mesh.h"
 
@@ -31,8 +32,9 @@ namespace bco = bc_orbiter;
 Models the nav mode selector function.
 */
 class NavModes :
-	bco::vessel_component,
-	bco::draw_hud
+	public bco::vessel_component,
+	public bco::draw_hud,
+	public bco::post_step
 {
 public:
 	NavModes(bco::vessel& baseVessel);
@@ -43,9 +45,19 @@ public:
 
 	bco::slot<bool>&					IsEnabledSlot()			{ return slotIsEnabled_; }		// Will come from aerodata (avion enabled)
 
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+		if (oapiCockpitMode() != COCKPIT_PANELS) return;
+		UpdatePanel(); 
+	}
+
 protected:
 	void Update();
 
+	void UpdatePanel() { 
+		pnlHudFrame_.set_position(((navMode1_ + navMode2_) == 0) ? 1 : 0); 
+		pnlHudMode_.set_position(navMode1_);
+		pnlHudMode2_.set_position(navMode2_);
+	}
 private:
 	bco::vessel&					baseVessel_;
 	void ToggleMode(int mode);
@@ -149,4 +161,15 @@ private:
 			0.0352
 	};
 
+	bco::panel_display		pnlHudFrame_	{	bm::pnl::pnlHUDNavTile_id,
+												bm::pnl::pnlHUDNavTile_verts,
+												0.0610 };
+
+	bco::panel_display		pnlHudMode_		{	bm::pnl::pnlHUDNavText_id, 
+												bm::pnl::pnlHUDNavText_verts, 
+												0.0305 };
+
+	bco::panel_display		pnlHudMode2_	{	bm::pnl::pnlHUDNavText2_id,
+												bm::pnl::pnlHUDNavText2_verts,
+												0.0305 };
 };

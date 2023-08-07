@@ -234,6 +234,9 @@
     <ClInclude Include="bc_orbiter\pid_altitude.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bc_orbiter\panel_display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">

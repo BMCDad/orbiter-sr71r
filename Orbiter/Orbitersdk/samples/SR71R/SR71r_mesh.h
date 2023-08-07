@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 3.5.0  Blender Tools: (2, 1, 0)
-// Date: Sun Aug  6 07:02:56 2023
+// Date: Mon Aug  7 14:40:38 2023
 
 
 #include "orbitersdk.h"
@@ -572,6 +572,26 @@ namespace bm
     {983.3450f, 546.3737f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.4078f},
     {924.2671f, 516.9513f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2660f, 0.3930f},
     {983.3450f, 516.9513f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2879f, 0.3930f}    };
+    const NTVERTEX pnlHUDGear_verts[4] = {
+    {1243.8594f, 87.9324f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0974f, 0.0347f},
+    {1313.8594f, 87.9324f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1254f, 0.0347f},
+    {1243.8594f, 55.9325f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.0974f, 0.0214f},
+    {1313.8594f, 55.9325f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1254f, 0.0214f}    };
+    const NTVERTEX pnlHUDNavTile_verts[4] = {
+    {594.2181f, 87.9324f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1896f, 0.0503f},
+    {734.2181f, 87.9324f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2484f, 0.0503f},
+    {594.2181f, 55.9325f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1896f, 0.0370f},
+    {734.2181f, 55.9325f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2484f, 0.0370f}    };
+    const NTVERTEX pnlHUDNavText_verts[4] = {
+    {660.4497f, 87.9324f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1899f, 0.0347f},
+    {730.4497f, 87.9324f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2178f, 0.0347f},
+    {660.4497f, 55.9325f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1899f, 0.0214f},
+    {730.4497f, 55.9325f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2178f, 0.0214f}    };
+    const NTVERTEX pnlHUDNavText2_verts[4] = {
+    {733.8369f, 87.9324f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1899f, 0.0347f},
+    {803.8369f, 87.9324f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2178f, 0.0347f},
+    {733.8369f, 55.9325f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.1899f, 0.0214f},
+    {803.8369f, 55.9325f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.2178f, 0.0214f}    };
     const NTVERTEX pnlAttitudeIndicator_verts[4] = {
     {1127.9720f, 133.4347f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3711f, 0.1478f},
     {1426.2108f, 133.4232f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.5171f, 0.1478f},
@@ -972,58 +992,62 @@ namespace bm
     const UINT pnlRightMFDSel_id = 142;
     const UINT pnlRightMFDMenu_id = 143;
     const UINT pnlMACHWindow_id = 144;
-    const UINT pnlAttitudeIndicator_id = 145;
-    const UINT pnlVSINeedle_id = 146;
-    const UINT pnlVSIOffFlag_id = 147;
-    const UINT pnlAltimeterOffFlag_id = 148;
-    const UINT pnlAltimeterGround_id = 149;
-    const UINT pnlSpeedNeedleMax_id = 150;
-    const UINT pnlMsgLightThrustLimit_id = 151;
-    const UINT pnlMsgLightSpeedBrake_id = 152;
-    const UINT pnlMsgLightRetro_id = 153;
-    const UINT pnlMsgLightKeasWarn_id = 154;
-    const UINT pnlMsgLightHover_id = 155;
-    const UINT pnlMsgLightFuelWarn_id = 156;
-    const UINT pnlMsgLightDock_id = 157;
-    const UINT pnlMsgLightCanopy_id = 158;
-    const UINT pnlMsgLightC2_id = 159;
-    const UINT pnlMsgLightBay_id = 160;
-    const UINT pnlMsgLightBattery_id = 161;
-    const UINT pnlMsgLightAPU_id = 162;
-    const UINT pnlTrimNeedle_id = 163;
-    const UINT pnlAccelNeedle_id = 164;
-    const UINT pnlClockTimerMinute_id = 165;
-    const UINT pnlRoseCompass_id = 166;
-    const UINT pnlSpeedIndicatorKies_id = 167;
-    const UINT pnlMessagesLabels_id = 168;
-    const UINT pnlClockHour_id = 169;
-    const UINT pnlHSIBearingArrow_id = 170;
-    const UINT pnlSpeedNeedle_id = 171;
-    const UINT pnlHSITopPlane_id = 172;
-    const UINT pnlClockMinute_id = 173;
-    const UINT pnlHSICourse_id = 174;
-    const UINT pnlClockSecond_id = 175;
-    const UINT pnlHydPress_id = 176;
-    const UINT pnlLOXPress_id = 177;
-    const UINT pnlLH2Press_id = 178;
-    const UINT pnlAmpMeter_id = 179;
-    const UINT pnlVoltMeter_id = 180;
-    const UINT pnlGaFuelFlow_id = 181;
-    const UINT pnlGaFuelMain_id = 182;
-    const UINT pnlGaFuelRCS_id = 183;
-    const UINT pnlHorizonFace_id = 184;
-    const UINT pnlHSICourseNeedle_id = 185;
-    const UINT pnlAlt100Needle_id = 186;
-    const UINT pnlHSICompassHeading_id = 187;
-    const UINT pnlAttitudeFlagOff_id = 188;
-    const UINT pnlHSIOffFlag_id = 189;
-    const UINT pnlCOMStatusPanel_id = 190;
-    const UINT pnlSpeedVelocityFlag_id = 191;
-    const UINT pnlAOANeedle_id = 192;
-    const UINT pnlAlt10Needle_id = 193;
-    const UINT pnlHSIExoFlag_id = 194;
-    const UINT pnlSpeedFlagOff_id = 195;
-    const UINT pnlAlt1Needle_id = 196;
+    const UINT pnlHUDGear_id = 145;
+    const UINT pnlHUDNavTile_id = 146;
+    const UINT pnlHUDNavText_id = 147;
+    const UINT pnlHUDNavText2_id = 148;
+    const UINT pnlAttitudeIndicator_id = 149;
+    const UINT pnlVSINeedle_id = 150;
+    const UINT pnlVSIOffFlag_id = 151;
+    const UINT pnlAltimeterOffFlag_id = 152;
+    const UINT pnlAltimeterGround_id = 153;
+    const UINT pnlSpeedNeedleMax_id = 154;
+    const UINT pnlMsgLightThrustLimit_id = 155;
+    const UINT pnlMsgLightSpeedBrake_id = 156;
+    const UINT pnlMsgLightRetro_id = 157;
+    const UINT pnlMsgLightKeasWarn_id = 158;
+    const UINT pnlMsgLightHover_id = 159;
+    const UINT pnlMsgLightFuelWarn_id = 160;
+    const UINT pnlMsgLightDock_id = 161;
+    const UINT pnlMsgLightCanopy_id = 162;
+    const UINT pnlMsgLightC2_id = 163;
+    const UINT pnlMsgLightBay_id = 164;
+    const UINT pnlMsgLightBattery_id = 165;
+    const UINT pnlMsgLightAPU_id = 166;
+    const UINT pnlTrimNeedle_id = 167;
+    const UINT pnlAccelNeedle_id = 168;
+    const UINT pnlClockTimerMinute_id = 169;
+    const UINT pnlRoseCompass_id = 170;
+    const UINT pnlSpeedIndicatorKies_id = 171;
+    const UINT pnlMessagesLabels_id = 172;
+    const UINT pnlClockHour_id = 173;
+    const UINT pnlHSIBearingArrow_id = 174;
+    const UINT pnlSpeedNeedle_id = 175;
+    const UINT pnlHSITopPlane_id = 176;
+    const UINT pnlClockMinute_id = 177;
+    const UINT pnlHSICourse_id = 178;
+    const UINT pnlClockSecond_id = 179;
+    const UINT pnlHydPress_id = 180;
+    const UINT pnlLOXPress_id = 181;
+    const UINT pnlLH2Press_id = 182;
+    const UINT pnlAmpMeter_id = 183;
+    const UINT pnlVoltMeter_id = 184;
+    const UINT pnlGaFuelFlow_id = 185;
+    const UINT pnlGaFuelMain_id = 186;
+    const UINT pnlGaFuelRCS_id = 187;
+    const UINT pnlHorizonFace_id = 188;
+    const UINT pnlHSICourseNeedle_id = 189;
+    const UINT pnlAlt100Needle_id = 190;
+    const UINT pnlHSICompassHeading_id = 191;
+    const UINT pnlAttitudeFlagOff_id = 192;
+    const UINT pnlHSIOffFlag_id = 193;
+    const UINT pnlCOMStatusPanel_id = 194;
+    const UINT pnlSpeedVelocityFlag_id = 195;
+    const UINT pnlAOANeedle_id = 196;
+    const UINT pnlAlt10Needle_id = 197;
+    const UINT pnlHSIExoFlag_id = 198;
+    const UINT pnlSpeedFlagOff_id = 199;
+    const UINT pnlAlt1Needle_id = 200;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 1024.0;
     constexpr RECT pnlNavKillrot_RC = {853, 597, 923, 653};
@@ -1200,6 +1224,10 @@ namespace bm
     constexpr RECT pnlRightMFDMenu_RC = {2387, 577, 2439, 616};
     constexpr RECT pnlMACHWindow_RC = {925, 517, 984, 546};
     constexpr VECTOR3 pnlHSITopPlane_location =     {1279.0599, 637.8126, -1.0000};
+    constexpr RECT pnlHUDGear_RC = {1244, 56, 1314, 88};
+    constexpr RECT pnlHUDNavTile_RC = {596, 56, 736, 88};
+    constexpr RECT pnlHUDNavText_RC = {661, 56, 731, 88};
+    constexpr RECT pnlHUDNavText2_RC = {734, 56, 804, 88};
 
   }
 

@@ -20,6 +20,7 @@
 #include "bc_orbiter/Component.h"
 #include "bc_orbiter/Animation.h"
 #include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/panel_display.h"
 
 #include "SR71r_mesh.h"
 
@@ -170,5 +171,10 @@ private:
     bco::simple_event<>		btnLowerGear_       {   bm::vc::GearLeverDownTarget_location,
                                                     0.01,
                                                     bm::pnl::pnlLandingGearDown_RC
+    };
+
+    bco::panel_display      pnlHudGear_         {   bm::pnl::pnlHUDGear_id,     /* 0-DOWN, 1-UP, 2-Transition*/
+                                                    bm::pnl::pnlHUDGear_verts, 
+                                                    0.0305
                                                 };
 };

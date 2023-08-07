@@ -41,6 +41,10 @@ NavModes::NavModes(bco::vessel& baseVessel) :
     baseVessel_.AddControl(&lightPrograde_);
     baseVessel_.AddControl(&lightRetrograde_);
 
+    baseVessel_.AddControl(&pnlHudFrame_);
+    baseVessel_.AddControl(&pnlHudMode_);
+    baseVessel_.AddControl(&pnlHudMode2_);
+
     btnKillRot_     .attach([&]() { ToggleMode(NAVMODE_KILLROT); });
     btnHorzLevel_   .attach([&]() { ToggleMode(NAVMODE_HLEVEL); });
     btnAntiNorm_    .attach([&]() { ToggleMode(NAVMODE_ANTINORMAL); });
@@ -54,23 +58,31 @@ void NavModes::OnNavMode(int mode, bool active)
     switch (mode) {
     case NAVMODE_ANTINORMAL:
         lightAntiNorm_.set_state(active);
+        navMode1_ = active ? NAVMODE_ANTINORMAL : 0;
         break;
     case NAVMODE_HLEVEL:
         lightHorzLevel_.set_state(active);
+        navMode2_ = active ? NAVMODE_HLEVEL : 0;
         break;
     case NAVMODE_KILLROT:
         lightKillRot_.set_state(active);
+        navMode1_ = active ? NAVMODE_KILLROT : 0;
         break;
     case NAVMODE_NORMAL:
         lightNormal_.set_state(active);
+        navMode1_ = active ? NAVMODE_NORMAL : 0;
         break;
     case NAVMODE_PROGRADE:
         lightPrograde_.set_state(active);
+        navMode1_ = active ? NAVMODE_PROGRADE : 0;
         break;
     case NAVMODE_RETROGRADE:
         lightRetrograde_.set_state(active);
+        navMode1_ = active ? NAVMODE_RETROGRADE : 0;
         break;
     }
+
+    UpdatePanel();
 }
 
 void NavModes::ToggleMode(int mode)
