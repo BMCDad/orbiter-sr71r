@@ -82,6 +82,7 @@
 #include "bc_orbiter/handler_interfaces.h"
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/panel_display.h"
 
 #include "VesselControl.h"
 #include "SR71r_mesh.h"
@@ -360,5 +361,10 @@ namespace FC
 		bco::on_off_display	apDspAltitude_	{ bm::vc::SwAPAltitude_id,	bm::vc::SwAPAltitude_verts,	bm::pnl::pnlAPAltitude_id,	bm::pnl::pnlAPAltitude_verts, 0.0352	};
 		bco::on_off_display	apDspKEAS_		{ bm::vc::SwAPKEAS_id,		bm::vc::SwAPKEAS_verts,		bm::pnl::pnlAPKEAS_id,		bm::pnl::pnlAPKEAS_verts,	  0.0352	};
 		bco::on_off_display	apDspMACH_		{ bm::vc::SwAPMACH_id,		bm::vc::SwAPMACH_verts,		bm::pnl::pnlAPMACH_id,		bm::pnl::pnlAPMACH_verts,	  0.0352	};
-	};
+	
+		bco::panel_display	pnlHUDTile_		{ bm::pnl::pnlHUDFCTile_id,		bm::pnl::pnlHUDFCTile_verts,  0.0914 };
+		bco::panel_display	pnlHUDText1_	{ bm::pnl::pnlHUDFCText1_id,	bm::pnl::pnlHUDFCText1_verts, 0.0305 };
+		bco::panel_display	pnlHUDText2_	{ bm::pnl::pnlHUDFCText2_id,	bm::pnl::pnlHUDFCText2_verts, 0.0305 };
+		bco::panel_display	pnlHUDText3_	{ bm::pnl::pnlHUDFCText3_id,	bm::pnl::pnlHUDFCText3_verts, 0.0305 };
+};
 }

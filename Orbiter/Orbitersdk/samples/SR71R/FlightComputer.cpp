@@ -70,6 +70,11 @@ FC::FlightComputer::FlightComputer(
 	vessel.AddControl(&apDspKEAS_);
 	vessel.AddControl(&apDspMACH_);
 
+	vessel.AddControl(&pnlHUDTile_);
+	vessel.AddControl(&pnlHUDText1_);
+	vessel.AddControl(&pnlHUDText2_);
+	vessel.AddControl(&pnlHUDText3_);
+
 	gcKey0_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D0); });
 	gcKey1_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D1); });
 	gcKey2_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D2); });
@@ -209,12 +214,21 @@ void FC::FlightComputer::handle_post_step(bco::vessel& vessel, double simt, doub
 	if (prevRunningProgs != runningPrograms_) UpdateProgs(vessel, runningPrograms_);
 
 	auto atmoOn = IsProgramRunning(FCProgFlags::AtmoActive);
+	auto isHoldAlt = (atmoOn && IsProgramRunning(FCProgFlags::HoldAltitude));
+	auto isHoldHdg = (atmoOn && IsProgramRunning(FCProgFlags::HoldHeading));
+	auto isHoldKEAS = (atmoOn && IsProgramRunning(FCProgFlags::HoldKEAS));
+	auto isHoldMACH = (atmoOn && IsProgramRunning(FCProgFlags::HoldMACH));
 
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldAltitude))	prgHoldAltitude_.step(vessel, simt, simdt, mjd);
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldHeading))	prgHoldHeading_.step(vessel, simt, simdt, mjd);
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldKEAS))		prgHoldKeas_.step(vessel, simt, simdt, mjd);
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldMACH))		prgHoldMach_.step(vessel, simt, simdt, mjd);
+	if (isHoldAlt)	prgHoldAltitude_.step(vessel, simt, simdt, mjd);
+	if (isHoldHdg)	prgHoldHeading_.step(vessel, simt, simdt, mjd);
+	if (isHoldKEAS)	prgHoldKeas_.step(vessel, simt, simdt, mjd);
+	if (isHoldMACH)	prgHoldMach_.step(vessel, simt, simdt, mjd);
 
+	pnlHUDTile_.set_position(atmoOn ? 0 : 1);
+	pnlHUDText1_.set_position(isHoldHdg ? 1 : 0);
+	pnlHUDText2_.set_position(isHoldAlt ? 2 : 0);
+	pnlHUDText3_.set_position((isHoldKEAS || isHoldMACH) ? (isHoldKEAS ? 3 : 4) : 0);
+	
 	prevRunningProgs = runningPrograms_;
 
 	apDspMain_		.set_state(atmoOn);
