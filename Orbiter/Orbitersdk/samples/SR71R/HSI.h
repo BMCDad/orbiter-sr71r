@@ -56,15 +56,6 @@ public:
 
 	~HSI() {}
 
-	void OnEnabledChanged() override {
-		hsiOffFlag_.set_state(EnabledSlot().value());
-		OnAvionModeChanged();
-	}
-
-	void OnAvionModeChanged() override {
-		hsiExoFlag_.set_state(!EnabledSlot().value() ? true : AvionicsModeSlot().value());
-	}
-
 	// post_step
 	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		double		yaw			= 0.0;
@@ -117,8 +108,11 @@ public:
 		MilesTens_.SlotTransform().notify(parts.Hundreds);
 		MilesHunds_.SlotTransform().notify(parts.Thousands);
 
-//		hsiOffFlag_.set_state(EnabledSlot().value());
-//		hsiExoFlag_.set_state(EnabledSlot().value() && AvionicsModeSlot().value());
+		hsiOffFlag_.set_state(EnabledSlot().value());
+		hsiExoFlag_.set_state(
+			!EnabledSlot().value()
+			? true
+			: AvionicsModeSlot().value());
 	}
 
 	bco::signal<double>&	GlideScopeSignal()	{ return signalGlideScope_; }

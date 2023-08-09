@@ -70,13 +70,11 @@ public:
 			altimeter1Hand_.set_state(iOut.Hundreds / 10.0);
 			altimeter10Hand_.set_state(iOut.Thousands / 10.0);
 			altimeter100Hand_.set_state(iOut.TenThousands / 10.0);
-			altimeterEnabledFlag_.set_state(EnabledSlot().value());
 		}
 		else {
 			altimeter1Hand_.set_state(0);
 			altimeter10Hand_.set_state(0);
 			altimeter100Hand_.set_state(0);
-			altimeterEnabledFlag_.set_state(false);
 		}
 		
 
@@ -91,13 +89,25 @@ public:
 		tdiAltHunds_.SlotTransform().notify(parts.TenThousands);
 		tdiAltThou_.SlotTransform().notify(parts.HundredThousands);
 		tdiAltTenThou_.SlotTransform().notify(parts.Millions);
+
+		altimeterExoModeFlag_.set_state(		// FALSE show flag, TRUE hide flag
+			!EnabledSlot().value()				// So if altimeter is OFF set TRUE so the flag does NOT show.
+			? true
+			: AvionicsModeSlot().value());		// True for this switch means ATMO mode.
+
+		altimeterEnabledFlag_.set_state(		// FALSE show flag, TRUE hide flag
+			!EnabledSlot().value()
+			? false								// Avionics off, so show flag.
+			: (	(altFeet > 100000) &&			// If enabled, then SHOW if > 100000 ft
+				AvionicsModeSlot().value()		// AND we are in atmo mode.
+				? false
+				: true));
 	}
 
 private:
 
 	void OnChanged() {
 		// Logic for flags and stuff here.
-		altimeterExoModeFlag_.set_state(!EnabledSlot().value() ? true : AvionicsModeSlot().value());
 	}
 
 	bco::rotary_display<bco::animation_wrap>	altimeter1Hand_{

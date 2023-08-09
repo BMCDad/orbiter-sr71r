@@ -49,11 +49,6 @@ namespace bc_orbiter {
 			, pnlGroupId_(pnlGroupId)
 			, pnlVerts_(pnlVerts)
 			, offset_(offset)
-			, slotState_([&](bool v) 
-				{
-					oapiTriggerRedrawArea(0, 0, get_id()); 
-					slotState_.set();
-				})
 		{
 		}
 
@@ -63,7 +58,7 @@ namespace bc_orbiter {
 				TransformUV2d(
 					vcVerts_,
 					delta, 4,
-					_V(slotState_.value() ? offset_ : 0.0,
+					_V(state_ ? offset_ : 0.0,
 						0.0,
 						0.0),
 					0.0);
@@ -78,7 +73,7 @@ namespace bc_orbiter {
 			}
 
 			void on_panel_redraw(MESHHANDLE meshPanel) override {
-				DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, slotState_.value(), offset_);
+				DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, state_, offset_);
 			}
 
 			int vc_mouse_flags() { return PANEL_MOUSE_IGNORE; }
@@ -86,16 +81,17 @@ namespace bc_orbiter {
 			int panel_mouse_flags() { return PANEL_MOUSE_IGNORE; }
 			int panel_redraw_flags() { return PANEL_REDRAW_USER; }
 
-			void set_state(bool s) { slotState_.notify(s); }		// Temp until we can remove the slot.
+			void set_state(bool s) { 
+				oapiTriggerRedrawArea(0, 0, get_id());
+				state_ = s;
+			}
 
-			slot<bool>& Slot() { return slotState_; }
 	private:
-		UINT					vcGroupId_;
-		const NTVERTEX* vcVerts_;
-		UINT					pnlGroupId_;
-		const NTVERTEX* pnlVerts_;
-		bool					state_{ false };
-		double					offset_{ 0.0 };
-		slot<bool>				slotState_;
+		UINT				vcGroupId_;
+		const NTVERTEX*		vcVerts_;
+		UINT				pnlGroupId_;
+		const NTVERTEX*		pnlVerts_;
+		bool				state_{ false };
+		double				offset_{ 0.0 };
 	};
 }

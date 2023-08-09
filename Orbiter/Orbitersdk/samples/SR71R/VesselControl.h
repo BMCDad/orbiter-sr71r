@@ -196,22 +196,36 @@ public:
 
     void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
     {
-        auto currentAlt     = vessel.get_altitude();
-        auto currentCtrl    = vessel.GetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM);
-        auto altError       = target_ - vessel.get_altitude();
+        auto currentAltitude = vessel.get_altitude();
+        auto altError = target_ - currentAltitude;
 
-        auto pid_control = pid_.compute(currentAlt, target_);
+        auto vertSpeed = vessel.get_vertical_speed();
 
-        // Simple first implementation.  Negative pid_control calls for a positive input change.
-        // We need to translate altitude error into control input.
-        auto adjustment = pid_control * VS_STEP_PS * simdt;
+        auto targetClimb = 0.0;
 
-        vessel.set_elevator_level(currentCtrl + adjustment);
+        if (fabs(altError) < AltitudeHoldRange)	// within AltRange
+        {
+            targetClimb = TargetClimbRateMPS * (altError / AltitudeHoldRange);
+        }
+        else
+        {
+            targetClimb = (altError > 0) ? TargetClimbRateMPS : -TargetClimbRateMPS;
+        }
 
-        sprintf(oapiDebugString(), "[%+6.0f] : pid_control: %+6.2f : Elevator: %6.2f",
-            target_ * 3.28084,
-            pid_control,
-            vessel.GetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM));
+        auto climbError = targetClimb - vertSpeed;
+
+        auto ctrlLevel = 0.0;
+
+        if (fabs(climbError) < TargetClimbRateMPS)
+        {
+            ctrlLevel = climbError / TargetClimbRateMPS;
+        }
+        else
+        {
+            ctrlLevel = (climbError > 0) ? 1.0 : -1.0;
+        }
+
+        vessel.set_aileron_level(ctrlLevel / 2);
     }
 
     void stop(bco::vessel& vessel) override

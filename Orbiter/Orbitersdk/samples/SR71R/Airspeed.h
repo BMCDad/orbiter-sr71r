@@ -52,15 +52,6 @@ public:
 
 	~Airspeed() {}
 
-	void OnEnabledChanged() override {
-		speedIsEnabledFlag_.set_state(EnabledSlot().value());
-		OnAvionModeChanged();
-	}
-
-	void OnAvionModeChanged() override {
-		speedIsVelocityFlag_.set_state(!EnabledSlot().value() ? true : AvionicsModeSlot().value());
-	}
-
 	// post_step
 	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		double  keas			= 0.0;		// equivalent airspeed, shows in TDI
@@ -127,6 +118,13 @@ public:
 		airspeedMACHHunds_.SlotTransform().notify(parts.Hundreds);
 
 		status_.set_state(isOverSpeed ? bco::status_display::status::error : bco::status_display::status::off);
+
+		speedIsEnabledFlag_.set_state(EnabledSlot().value());
+
+		speedIsVelocityFlag_.set_state(
+			EnabledSlot().value() 
+			? AvionicsModeSlot().value()
+			: true);
 	}
 
 private:
@@ -219,7 +217,7 @@ private:
 	};
 
 	bco::on_off_display		speedIsEnabledFlag_{
-		bm::vc::SpeedFlagOff_id,
+			bm::vc::SpeedFlagOff_id,
 			bm::vc::SpeedFlagOff_verts,
 			bm::pnl::pnlSpeedFlagOff_id,
 			bm::pnl::pnlSpeedFlagOff_verts,
