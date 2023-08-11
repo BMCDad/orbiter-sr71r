@@ -93,8 +93,9 @@ namespace bc_orbiter {
 			// [a b]  :  [current_quantity fillPumpOn]
 
 			std::istringstream in(line);
-
-			in >> current_ >> isFilling_;
+			double amount;
+			in >> amount >> isFilling_;
+			current_ = amount * capacity_;
 			current_ = fmax(0.0, current_);
 			current_ = fmin(capacity_, current_);
 			//sigIsFilling_.fire((isFilling_ == 1) ? true : false);
