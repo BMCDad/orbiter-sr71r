@@ -120,14 +120,15 @@ void Avionics::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 
 // manage_state
 bool Avionics::handle_load_state(bco::vessel& vessel, const std::string& line) {
+	//sscanf_s(configLine + 8, "%i%i%i%i%i", &power, &heading, &course, &navSelect, &navMode);
 	std::istringstream in(line);
-	in >> setCourseSignal_ >> setHeadingSignal_ >> switchAvionPower_ >> switchAvionMode_ >> switchNavMode_;
+	in >> switchAvionPower_ >> setHeadingSignal_ >> setCourseSignal_ >> switchNavMode_ >> switchAvionMode_;
 	return true;
 }
 
 std::string Avionics::handle_save_state(bco::vessel& vessel) {
 	std::ostringstream os;
-	os << setCourseSignal_ << " " << setHeadingSignal_ << " " << switchAvionPower_ << " " << switchAvionMode_ << " " << switchNavMode_;
+	os << switchAvionPower_  << " " << setHeadingSignal_ << " " << setCourseSignal_ << " " << switchNavMode_ << " " << switchAvionMode_;
 	return os.str();
 }
 
