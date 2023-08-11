@@ -41,7 +41,7 @@ void RightMFD::handle_set_class_caps(bco::vessel& vessel)
 
 bool RightMFD::handle_load_vc(bco::vessel& vessel, int vcid)
 {
-	auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
+	auto vcMeshHandle = vessel.GetVCMeshHandle0();
 	assert(vcMeshHandle != nullptr);
 
 	SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
@@ -85,15 +85,15 @@ bool RightMFD::handle_load_vc(bco::vessel& vessel, int vcid)
 
 	// PWR
 	oapiVCRegisterArea(GetPwrKey(), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
-	oapiVCSetAreaClickmode_Spherical(GetPwrKey(), bm::vc::MFCRightPWR_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(GetPwrKey(), bm::vc::MFCRightPWR_loc, MFDBRAD);
 
 	// SEL
 	oapiVCRegisterArea(GetSelectKey(), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
-	oapiVCSetAreaClickmode_Spherical(GetSelectKey(), bm::vc::MFCRightSEL_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(GetSelectKey(), bm::vc::MFCRightSEL_loc, MFDBRAD);
 
 	// MNU
 	oapiVCRegisterArea(GetMenuKey(), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
-	oapiVCSetAreaClickmode_Spherical(GetMenuKey(), bm::vc::MFCRightMNU_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(GetMenuKey(), bm::vc::MFCRightMNU_loc, MFDBRAD);
 	return true;
 }
 
@@ -117,10 +117,10 @@ bool RightMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel
 	// Orbiter bug with panel MFDs, it expects a specific vertex sequence, so we need to re-arrange.
 	static NTVERTEX VTX_MFD[1][4] = {
 		{
-			bm::pnl::pnlMFDRight_verts[2],
-			bm::pnl::pnlMFDRight_verts[3],
-			bm::pnl::pnlMFDRight_verts[0],
-			bm::pnl::pnlMFDRight_verts[1]
+			bm::pnl::pnlMFDRight_vrt[2],
+			bm::pnl::pnlMFDRight_vrt[3],
+			bm::pnl::pnlMFDRight_vrt[0],
+			bm::pnl::pnlMFDRight_vrt[1]
 		}
 	};
 	static WORD IDX_MFD[6] = {
@@ -130,7 +130,6 @@ bool RightMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel
 
 	MESHGROUP grp_lmfd = { VTX_MFD[0], IDX_MFD, 4, 6, 0, 0, 0, 0, 0 };
 	auto lmfd_grp = oapiAddMeshGroup(panelMesh, &grp_lmfd);   // left MFD
-
 
 	vessel.RegisterPanelMFDGeometry(hPanel, MFD_RIGHT, 0, lmfd_grp);
 
@@ -155,9 +154,6 @@ bool RightMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel
 			PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
 			surfHandle);
 	}
-
-	// PWR
-	int fixedYTop = 585;
 
 	vessel.RegisterPanelArea(
 		hPanel,
@@ -189,7 +185,6 @@ bool RightMFD::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
 	auto m = std::find_if(data_.begin(), data_.end(), [&](const MFDData& o) { return o.id == id; });
 	if (m == data_.end()) return false;
-
 
 	const char* label = GetButtonLabel(id);
 

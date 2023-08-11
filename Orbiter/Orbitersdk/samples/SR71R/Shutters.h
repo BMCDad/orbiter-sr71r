@@ -50,10 +50,10 @@ private:
 	// ***  Shutters  *** //
 	bco::on_off_input		switchShutters_{		// Open close shutters
 		{ bm::vc::swShutter_id },
-			bm::vc::swShutter_location, bm::vc::DoorsRightAxis_location,
+			bm::vc::swShutter_loc, bm::vc::DoorsRightAxis_loc,
 			toggleOnOff,
 			bm::pnl::pnlScreenSwitch_id,
-			bm::pnl::pnlScreenSwitch_verts,
+			bm::pnl::pnlScreenSwitch_vrt,
 			bm::pnl::pnlScreenSwitch_RC
 	};
 };

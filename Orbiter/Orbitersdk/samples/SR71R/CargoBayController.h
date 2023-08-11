@@ -95,49 +95,49 @@ private:
     bco::animation_target		    animCargoBayDoors_{ 0.01 };
 
     bco::animation_group     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
-                                                    bm::main::Bay1AxisPA_location, bm::main::Bay1AxisPF_location,
+                                                    bm::main::Bay1AxisPA_loc, bm::main::Bay1AxisPF_loc,
                                                     (160 * RAD),
                                                     0.51, 0.74
                                                 };
 
     bco::animation_group     gpCargoRightFront_  {   { bm::main::BayDoorSF_id },
-                                                    bm::main::Bay1AxisSF_location, bm::main::Bay1AxisSA_location,
+                                                    bm::main::Bay1AxisSF_loc, bm::main::Bay1AxisSA_loc,
                                                     (160 * RAD),
                                                     0.76, 1.0
                                                 };
 
     bco::animation_group     gpCargoLeftMain_    {   { bm::main::BayDoorPA_id },
-                                                    bm::main::Bay2AxisPA_location, bm::main::Bay2AxisPF_location,
+                                                    bm::main::Bay2AxisPA_loc, bm::main::Bay2AxisPF_loc,
                                                     (160 * RAD),
                                                     0.0, 0.24
                                                 };
 
     bco::animation_group     gpCargoRightMain_   {   { bm::main::BayDoorSA_id },
-                                                    bm::main::Bay2AxisSF_location, bm::main::Bay2AxisSA_location,
+                                                    bm::main::Bay2AxisSF_loc, bm::main::Bay2AxisSA_loc,
                                                     (160 * RAD),
                                                     0.26, 0.49
                                                 };
 
     bco::on_off_input		switchPower_        { { bm::vc::SwCargoPower_id },
-                                                    bm::vc::SwCargoPower_location, bm::vc::PowerTopRightAxis_location,
+                                                    bm::vc::SwCargoPower_loc, bm::vc::PowerTopRightAxis_loc,
                                                     toggleOnOff,
                                                     bm::pnl::pnlPwrCargo_id,
-                                                    bm::pnl::pnlPwrCargo_verts,
+                                                    bm::pnl::pnlPwrCargo_vrt,
                                                     bm::pnl::pnlPwrCargo_RC
                                                 };
 
     bco::on_off_input		switchOpen_         { { bm::vc::SwCargoOpen_id },
-                                                    bm::vc::SwCargoOpen_location, bm::vc::DoorsRightAxis_location,
+                                                    bm::vc::SwCargoOpen_loc, bm::vc::DoorsRightAxis_loc,
                                                     toggleOnOff,
                                                     bm::pnl::pnlDoorCargo_id,
-                                                    bm::pnl::pnlDoorCargo_verts,
+                                                    bm::pnl::pnlDoorCargo_vrt,
                                                     bm::pnl::pnlDoorCargo_RC
                                                 };
 
     bco::status_display     status_     {           bm::vc::MsgLightBay_id,
-                                                    bm::vc::MsgLightBay_verts,
+                                                    bm::vc::MsgLightBay_vrt,
                                                     bm::pnl::pnlMsgLightBay_id,
-                                                    bm::pnl::pnlMsgLightBay_verts,
+                                                    bm::pnl::pnlMsgLightBay_vrt,
                                                     0.0361
                                                 };
 };

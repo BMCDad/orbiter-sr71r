@@ -52,16 +52,6 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	AddComponent(&computer_);
 	AddComponent(&surfaceCtrl_);
 
-	bco::connect( avionics_.IsAeroActiveSignal(),	altimeter_.EnabledSlot());
-	bco::connect( avionics_.IsAeroActiveSignal(),	airspeed_.EnabledSlot());
-	bco::connect( avionics_.IsAeroActiveSignal(),	hsi_.EnabledSlot());
-	bco::connect( avionics_.IsAeroActiveSignal(),	rcs_.IsAeroActiveSlot());
-	bco::connect( avionics_.IsAeroActiveSignal(),	navModes_.IsEnabledSlot());
-
-	bco::connect( avionics_.IsAeroModeAtmoSignal(), altimeter_.AvionicsModeSlot());
-	bco::connect( avionics_.IsAeroModeAtmoSignal(),	airspeed_.AvionicsModeSlot());
-	bco::connect( avionics_.IsAeroModeAtmoSignal(), hsi_.AvionicsModeSlot());
-
 	// Fuel cell					// A signal can drive more then one slot
 	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
 

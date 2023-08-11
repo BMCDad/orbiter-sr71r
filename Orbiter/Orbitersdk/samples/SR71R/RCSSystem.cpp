@@ -24,9 +24,9 @@
 #include "SR71r_mesh.h"
 
 
-RCSSystem::RCSSystem(bco::vessel& vessel) :
+RCSSystem::RCSSystem(bco::vessel& vessel, bco::power_provider& pwr) :
 	vessel_(vessel),
-	slotIsAeroActive_([&](bool v) { ActiveChanged(v); })
+	power_(pwr)
 { 
 	vessel_.AddControl(&btnLinear_);
 	vessel_.AddControl(&btnRotate_);
@@ -51,7 +51,7 @@ void RCSSystem::ActiveChanged(bool isActive)
 // Callback:
 void RCSSystem::OnRCSMode(int mode)
 {
-	if ((RCS_NONE != mode) && (!slotIsAeroActive_.value()))
+	if ((RCS_NONE != mode) && (!IsPowered()))
 	{
 		vessel_.SetAttitudeMode(RCS_NONE);
 		lightLinear_.set_state(false);
@@ -65,11 +65,9 @@ void RCSSystem::OnRCSMode(int mode)
 
 void RCSSystem::OnChanged(int mode)
 {
-	auto currentMode = vessel_.GetAttitudeMode();
+	if (!vessel_.IsCreated()) return;
 
-	if (vessel_.IsCreated())
-	{
-		auto newMode = ((mode == currentMode) || !slotIsAeroActive_.value()) ? RCS_NONE : mode;
-		vessel_.SetAttitudeMode(newMode);
-	}
+	auto currentMode = vessel_.GetAttitudeMode();
+	auto newMode = (mode == currentMode) ? RCS_NONE : mode;
+	vessel_.SetAttitudeMode(newMode);
 }

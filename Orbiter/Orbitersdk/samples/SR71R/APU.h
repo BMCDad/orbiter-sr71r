@@ -97,7 +97,7 @@ public:
 			hasFuel = slotFuelLevel_.value() > 0.0;
 
 			if (hasFuel) {
-// TODO				main_tank_.draw(APU_BURN_RATE * simdt);
+				// Note:  We don't actually draw fuel, but when its gone the APU will shutdown.
 				level_ = 1.0;
 			}
 			else {
@@ -132,22 +132,22 @@ private:
 
 
 	bco::on_off_input			switchEnabled_ { { bm::vc::SwAPUPower_id },
-												bm::vc::SwAPUPower_location, bm::vc::LeftPanelTopRightAxis_location,
+												bm::vc::SwAPUPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
 												toggleOnOff,
 												bm::pnl::pnlAPUSwitch_id,
-												bm::pnl::pnlAPUSwitch_verts,
+												bm::pnl::pnlAPUSwitch_vrt,
 												bm::pnl::pnlAPUSwitch_RC	};
 
 	bco::rotary_display_target	gaugeAPULevel_{ { bm::vc::gaHydPress_id },
-												bm::vc::gaHydPress_location, bm::vc::axisHydPress_location,
+												bm::vc::gaHydPress_loc, bm::vc::axisHydPress_loc,
 												bm::pnl::pnlHydPress_id,
-												bm::pnl::pnlHydPress_verts,
+												bm::pnl::pnlHydPress_vrt,
 												(300 * RAD),	// Clockwise
 												0.2	};
 
 	bco::status_display			status_		{   bm::vc::MsgLightAPU_id,
-												bm::vc::MsgLightAPU_verts,
+												bm::vc::MsgLightAPU_vrt,
 												bm::pnl::pnlMsgLightAPU_id,
-												bm::pnl::pnlMsgLightAPU_verts,
+												bm::pnl::pnlMsgLightAPU_vrt,
 												0.0361	};
 };

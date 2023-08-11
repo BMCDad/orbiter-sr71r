@@ -42,11 +42,6 @@ public:
 		vessel.AddControl(&btnLightFill_);
 
 		btnFill_.attach([&]() { ToggleFilling(); });
-
-		// TODO
-		//LevelSignal()		.attach( gaugeLevel_.Slot());
-		//IsFillingSignal()	.attach( btnLightFill_.Slot());
-		//IsAvailableSignal()	.attach( lightAvailable_.Slot());
 	}
 
 	void UpdateLevel(double l) override { gaugeLevel_.set_state(l); }
@@ -61,28 +56,28 @@ private:
 
 	// ***  HYDROGEN SUPPLY  *** //
 	bco::rotary_display_target		gaugeLevel_ {	{ bm::vc::gaHydrogenLevel_id },
-													bm::vc::gaHydrogenLevel_location, bm::vc::axisHydrogenLevel_location,
+													bm::vc::gaHydrogenLevel_loc, bm::vc::axisHydrogenLevel_loc,
 													bm::pnl::pnlLH2Press_id,
-													bm::pnl::pnlLH2Press_verts,
+													bm::pnl::pnlLH2Press_vrt,
 													(300 * RAD),
 													0.2	};
 
 	bco::on_off_display				lightAvailable_ {	bm::vc::LH2SupplyOnLight_id,
-														bm::vc::LH2SupplyOnLight_verts,
+														bm::vc::LH2SupplyOnLight_vrt,
 														bm::pnl::pnlLH2Avail_id,
-														bm::pnl::pnlLH2Avail_verts,
+														bm::pnl::pnlLH2Avail_vrt,
 														0.0244
 													};
 
-	bco::simple_event<>				btnFill_		{	bm::vc::LH2ValveOpenSwitch_location,
+	bco::simple_event<>				btnFill_		{	bm::vc::LH2ValveOpenSwitch_loc,
 														0.01,
 														bm::pnl::pnlLH2Switch_RC
 													};
 
 	bco::on_off_display				btnLightFill_	{	bm::vc::LH2ValveOpenSwitch_id,
-														bm::vc::LH2ValveOpenSwitch_verts,
+														bm::vc::LH2ValveOpenSwitch_vrt,
 														bm::pnl::pnlLH2Switch_id,
-														bm::pnl::pnlLH2Switch_verts,
+														bm::pnl::pnlLH2Switch_vrt,
 														0.0352
 													};
 };

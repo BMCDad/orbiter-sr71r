@@ -77,51 +77,51 @@ private:
     bco::animation_target	animAirBrake_       {   2.0 };
 
     bco::animation_group     gpBrakeHandle_     {   { bm::vc::AirBrakeLever_id },
-                                                    bm::vc::SpBrakeAxisRight_location, bm::vc::SpBrakeAxisLeft_location,
+                                                    bm::vc::SpBrakeAxisRight_loc, bm::vc::SpBrakeAxisLeft_loc,
                                                     (58 * RAD),
                                                     0.0, 1.0 };
 
     bco::animation_group     gpLeftTop_         {   { bm::main::ElevonPIT_id },
-                                                    bm::main::AirBrakeAxisPTO_location, bm::main::AirBrakeAxisPTI_location,
+                                                    bm::main::AirBrakeAxisPTO_loc, bm::main::AirBrakeAxisPTI_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
     bco::animation_group     gpLeftBottom_      {   { bm::main::ElevonPIB_id },
-                                                    bm::main::AirBrakeAxisPTI_location, bm::main::AirBrakeAxisPTO_location,
+                                                    bm::main::AirBrakeAxisPTI_loc, bm::main::AirBrakeAxisPTO_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
     bco::animation_group     gpRightTop_        {   { bm::main::ElevonSIT_id },
-                                                    bm::main::AirBrakeAxisSTO_location, bm::main::AirBrakeAxisSTI_location,
+                                                    bm::main::AirBrakeAxisSTO_loc, bm::main::AirBrakeAxisSTI_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
     bco::animation_group     gpRightBottom_     {   { bm::main::ElevonSIB_id },
-                                                    bm::main::AirBrakeAxisSBI_location, bm::main::AirBrakeAxisSBO_location,
+                                                    bm::main::AirBrakeAxisSBI_loc, bm::main::AirBrakeAxisSBO_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
     // Panel
-    const VECTOR3 sTrans { bm::pnl::pnlSpeedBrakeFull_location - bm::pnl::pnlSpeedBrakeOff_location };
+    const VECTOR3 sTrans { bm::pnl::pnlSpeedBrakeFull_loc - bm::pnl::pnlSpeedBrakeOff_loc };
 
-    bco::simple_event<>		btnDecreaseAirbrake_ {  bm::vc::ABTargetDecrease_location,
+    bco::simple_event<>		btnDecreaseAirbrake_ {  bm::vc::ABTargetDecrease_loc,
                                                     0.01,
                                                     bm::pnl::pnlAirBrakeDecrease_RC
                                                 };
 
-    bco::simple_event<>		btnIncreaseAirbrake_ {  bm::vc::ABTargetIncrease_location,
+    bco::simple_event<>		btnIncreaseAirbrake_ {  bm::vc::ABTargetIncrease_loc,
                                                     0.01,
                                                     bm::pnl::pnlAirBrakeIncrease_RC
                                                 };
 
     bco::status_display     status_     {           bm::vc::MsgLightSpeedBrake_id,
-                                                    bm::vc::MsgLightSpeedBrake_verts,
+                                                    bm::vc::MsgLightSpeedBrake_vrt,
                                                     bm::pnl::pnlMsgLightSpeedBrake_id,
-                                                    bm::pnl::pnlMsgLightSpeedBrake_verts,
+                                                    bm::pnl::pnlMsgLightSpeedBrake_vrt,
                                                     0.0361
                                                 };
 };

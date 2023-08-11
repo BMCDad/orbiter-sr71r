@@ -79,39 +79,39 @@ private:
 	//bco::signal<bool> sigSurfaceMode_;
 
 	// *** HUD *** 
-	bco::simple_event<>		btnDocking_	{		bm::vc::vcHUDDock_location,
+	bco::simple_event<>		btnDocking_	{		bm::vc::vcHUDDock_loc,
 												0.01,
 												bm::pnl::pnlHUDDock_RC
 											};
 
 	bco::on_off_display		btnLightDocking_ {	bm::vc::vcHUDDock_id,
-												bm::vc::vcHUDDock_verts,
+												bm::vc::vcHUDDock_vrt,
 												bm::pnl::pnlHUDDock_id,
-												bm::pnl::pnlHUDDock_verts,
+												bm::pnl::pnlHUDDock_vrt,
 												0.0352
 											};
 
-	bco::simple_event<>		btnOrbit_ {			bm::vc::vcHUDOrbit_location,
+	bco::simple_event<>		btnOrbit_ {			bm::vc::vcHUDOrbit_loc,
 												0.01,
 												bm::pnl::pnlHUDOrbit_RC
 											};
 
 	bco::on_off_display		btnLightOrbit_ {	bm::vc::vcHUDOrbit_id,
-												bm::vc::vcHUDOrbit_verts,
+												bm::vc::vcHUDOrbit_vrt,
 												bm::pnl::pnlHUDOrbit_id,
-												bm::pnl::pnlHUDOrbit_verts,
+												bm::pnl::pnlHUDOrbit_vrt,
 												0.0352
 											};
 
-	bco::simple_event<>		btnSurface_ {		bm::vc::vcHUDSURF_location,
+	bco::simple_event<>		btnSurface_ {		bm::vc::vcHUDSURF_loc,
 												0.01,
 												bm::pnl::pnlHUDSurf_RC
 										};
 
 	bco::on_off_display		btnLightSurface_ {	bm::vc::vcHUDSURF_id,
-												bm::vc::vcHUDSURF_verts,
+												bm::vc::vcHUDSURF_vrt,
 												bm::pnl::pnlHUDSurf_id,
-												bm::pnl::pnlHUDSurf_verts,
+												bm::pnl::pnlHUDSurf_vrt,
 												0.0352
 											};
 };

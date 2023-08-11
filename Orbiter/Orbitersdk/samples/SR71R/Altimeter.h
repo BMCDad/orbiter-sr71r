@@ -22,20 +22,22 @@
 #include "bc_orbiter/rotary_display.h"
 #include "bc_orbiter/flat_roll.h"
 
-#include "AvionBase.h"
+#include "Avionics.h"
+
 
 namespace bco = bc_orbiter;
 
 class Altimeter :
-	public AvionBase,
+	public bco::vessel_component,
 	public bco::post_step {
 
 public:
 
-	Altimeter(bco::vessel& vessel) {
-		vessel.AddControl(&altimeter1Hand_);
-		vessel.AddControl(&altimeter10Hand_);
-		vessel.AddControl(&altimeter100Hand_);
+	Altimeter(bco::vessel& vessel, Avionics& avionics) : 
+		avionics_(avionics) {
+		vessel.AddControl(&onesHand_);
+		vessel.AddControl(&tensHand_);
+		vessel.AddControl(&hundsHand_);
 
 		vessel.AddControl(&tdiAltOnes_);
 		vessel.AddControl(&tdiAltTens_);
@@ -43,21 +45,18 @@ public:
 		vessel.AddControl(&tdiAltThou_);
 		vessel.AddControl(&tdiAltTenThou_);
 
-		vessel.AddControl(&altimeterEnabledFlag_);
+		vessel.AddControl(&enabledFlag_);
 		vessel.AddControl(&altimeterExoModeFlag_);
 	}
 
 	~Altimeter() {}
 
-	void OnEnabledChanged() override { OnChanged(); }
-	void OnAvionModeChanged() override { OnChanged(); }
-
 
 	// post_step
 	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		double altFeet = 0.0;
-		if (EnabledSlot().value()) {
-			auto altMode = AvionicsModeSlot().value() ? AltitudeMode::ALTMODE_GROUND : AltitudeMode::ALTMODE_MEANRAD;
+		if (avionics_.IsAeroActive()) {
+			auto altMode = avionics_.IsAeroAtmoMode() ? AltitudeMode::ALTMODE_GROUND : AltitudeMode::ALTMODE_MEANRAD;
 			int res = 0;
 			auto alt = vessel.GetAltitude(altMode, &res);
 			altFeet = alt * 3.28084;
@@ -67,14 +66,14 @@ public:
 		if (altFeet < 100000) {
 			bco::BreakTens((altFeet > 100000 ? 0.0 : altFeet), iOut);
 
-			altimeter1Hand_.set_state(iOut.Hundreds / 10.0);
-			altimeter10Hand_.set_state(iOut.Thousands / 10.0);
-			altimeter100Hand_.set_state(iOut.TenThousands / 10.0);
+			onesHand_.set_state(iOut.Hundreds / 10.0);
+			tensHand_.set_state(iOut.Thousands / 10.0);
+			hundsHand_.set_state(iOut.TenThousands / 10.0);
 		}
 		else {
-			altimeter1Hand_.set_state(0);
-			altimeter10Hand_.set_state(0);
-			altimeter100Hand_.set_state(0);
+			onesHand_.set_state(0);
+			tensHand_.set_state(0);
+			hundsHand_.set_state(0);
 		}
 		
 
@@ -84,117 +83,57 @@ public:
 
 		//sprintf(oapiDebugString(), "Alt: : %+2i : %+2i : %+2i", altFeet, parts.Tens, parts.Hundreds);
 
-		tdiAltOnes_.SlotTransform().notify(parts.Hundreds);
-		tdiAltTens_.SlotTransform().notify(parts.Thousands);
-		tdiAltHunds_.SlotTransform().notify(parts.TenThousands);
-		tdiAltThou_.SlotTransform().notify(parts.HundredThousands);
-		tdiAltTenThou_.SlotTransform().notify(parts.Millions);
+		tdiAltOnes_.set_position(parts.Hundreds);
+		tdiAltTens_.set_position(parts.Thousands);
+		tdiAltHunds_.set_position(parts.TenThousands);
+		tdiAltThou_.set_position(parts.HundredThousands);
+		tdiAltTenThou_.set_position(parts.Millions);
 
 		altimeterExoModeFlag_.set_state(		// FALSE show flag, TRUE hide flag
-			!EnabledSlot().value()				// So if altimeter is OFF set TRUE so the flag does NOT show.
+			!avionics_.IsAeroActive()			// So if altimeter is OFF set TRUE so the flag does NOT show.
 			? true
-			: AvionicsModeSlot().value());		// True for this switch means ATMO mode.
+			: avionics_.IsAeroAtmoMode());		// True for this switch means ATMO mode.
 
-		altimeterEnabledFlag_.set_state(		// FALSE show flag, TRUE hide flag
-			!EnabledSlot().value()
+		enabledFlag_.set_state(		// FALSE show flag, TRUE hide flag
+			!avionics_.IsAeroActive()
 			? false								// Avionics off, so show flag.
 			: (	(altFeet > 100000) &&			// If enabled, then SHOW if > 100000 ft
-				AvionicsModeSlot().value()		// AND we are in atmo mode.
+				avionics_.IsAeroAtmoMode()		// AND we are in atmo mode.
 				? false
 				: true));
 	}
 
 private:
 
-	void OnChanged() {
-		// Logic for flags and stuff here.
-	}
+	Avionics& avionics_;
 
-	bco::rotary_display<bco::animation_wrap>	altimeter1Hand_{
-		{ bm::vc::gaAlt1Needle_id },
-			bm::vc::gaAlt1Needle_location, bm::vc::AltimeterAxis_location,
-			bm::pnl::pnlAlt1Needle_id,
-			bm::pnl::pnlAlt1Needle_verts,
-			(360 * RAD),	// Clockwise
-			2.0
-	};
+	using dial = bco::rotary_display_wrap;
+	using roll = bco::flat_roll;
+	const double ofs = 0.1084;		// flat_roll offset.
 
-	bco::rotary_display<bco::animation_wrap>	altimeter10Hand_{
-		{ bm::vc::gaAlt10Needle_id },
-			bm::vc::gaAlt10Needle_location, bm::vc::AltimeterAxis_location,
-			bm::pnl::pnlAlt10Needle_id,
-			bm::pnl::pnlAlt10Needle_verts,
-			(360 * RAD),	// Clockwise
-			2.0
-	};
+	dial onesHand_	{ bm::vc::vcAlt1Hand_id,	bm::vc::vcAlt1Hand_loc,		bm::vc::AltimeterAxis_loc, bm::pnl::pnlAlt1Hand_id,		bm::pnl::pnlAlt1Hand_vrt,	(360 * RAD), 2.0};
+	dial tensHand_	{ bm::vc::vcAlt10Hand_id,	bm::vc::vcAlt10Hand_loc,	bm::vc::AltimeterAxis_loc, bm::pnl::pnlAlt10Hand_id,	bm::pnl::pnlAlt10Hand_vrt,	(360 * RAD), 2.0};
+	dial hundsHand_	{ bm::vc::vcAlt100Hand_id,	bm::vc::vcAlt100Hand_loc,	bm::vc::AltimeterAxis_loc, bm::pnl::pnlAlt100Hand_id,	bm::pnl::pnlAlt100Hand_vrt,	(360 * RAD), 2.0};
 
-	bco::rotary_display<bco::animation_wrap>	altimeter100Hand_{
-		{ bm::vc::gaAlt100Needle_id },
-			bm::vc::gaAlt100Needle_location, bm::vc::AltimeterAxis_location,
-			bm::pnl::pnlAlt100Needle_id,
-			bm::pnl::pnlAlt100Needle_verts,
-			(360 * RAD),	// Clockwise
-			2.0
-	};
+	roll tdiAltOnes_	{ bm::vc::vcTDIAltOnes_id,		bm::vc::vcTDIAltOnes_vrt,		bm::pnl::pnlTDIAltOnes_id,		bm::pnl::pnlTDIAltOnes_vrt,		ofs };
+	roll tdiAltTens_	{ bm::vc::vcTDIAltTens_id,		bm::vc::vcTDIAltTens_vrt,		bm::pnl::pnlTDIAltTens_id,		bm::pnl::pnlTDIAltTens_vrt,		ofs };
+	roll tdiAltHunds_	{ bm::vc::vcTDIAltHunds_id,		bm::vc::vcTDIAltHunds_vrt,		bm::pnl::pnlTDIAltHund_id,		bm::pnl::pnlTDIAltHund_vrt,		ofs };
+	roll tdiAltThou_	{ bm::vc::vcTDIAltThous_id,		bm::vc::vcTDIAltThous_vrt,		bm::pnl::pnlTDIAltThous_id,		bm::pnl::pnlTDIAltThous_vrt,	ofs };
+	roll tdiAltTenThou_	{ bm::vc::vcTDIAltTenThous_id,	bm::vc::vcTDIAltTenThous_vrt,	bm::pnl::pnlTDIAltTenThou_id,	bm::pnl::pnlTDIAltTenThou_vrt,	ofs };
 
-	bco::flat_roll			tdiAltOnes_{
-		bm::vc::vcTDIAltOnes_id,
-			bm::vc::vcTDIAltOnes_verts,
-			bm::pnl::pnlTDIAltOnes_id,
-			bm::pnl::pnlTDIAltOnes_verts,
-			0.1084,
-			[](double v) {return floor(v) / 10; }
-	};
-
-	bco::flat_roll			tdiAltTens_{
-		bm::vc::vcTDIAltTens_id,
-			bm::vc::vcTDIAltTens_verts,
-			bm::pnl::pnlTDIAltTens_id,
-			bm::pnl::pnlTDIAltTens_verts,
-			0.1084,
-			[](double v) {return floor(v) / 10; }
-	};
-
-	bco::flat_roll			tdiAltHunds_{
-		bm::vc::vcTDIAltHunds_id,
-			bm::vc::vcTDIAltHunds_verts,
-			bm::pnl::pnlTDIAltHund_id,
-			bm::pnl::pnlTDIAltHund_verts,
-			0.1084,
-			[](double v) {return floor(v) / 10; }
-	};
-
-	bco::flat_roll			tdiAltThou_{
-		bm::vc::vcTDIAltThous_id,
-			bm::vc::vcTDIAltThous_verts,
-			bm::pnl::pnlTDIAltThous_id,
-			bm::pnl::pnlTDIAltThous_verts,
-			0.1084,
-			[](double v) {return floor(v) / 10; }
-	};
-
-	bco::flat_roll			tdiAltTenThou_{
-		bm::vc::vcTDIAltTenThous_id,
-			bm::vc::vcTDIAltTenThous_verts,
-			bm::pnl::pnlTDIAltTenThou_id,
-			bm::pnl::pnlTDIAltTenThou_verts,
-			0.1084,
-			[](double v) {return floor(v) / 10; }
-	};
-
-	bco::on_off_display		altimeterEnabledFlag_{
+	bco::on_off_display		enabledFlag_{
 		bm::vc::AltimeterOffFlag_id,
-			bm::vc::AltimeterOffFlag_verts,
+			bm::vc::AltimeterOffFlag_vrt,
 			bm::pnl::pnlAltimeterOffFlag_id,
-			bm::pnl::pnlAltimeterOffFlag_verts,
+			bm::pnl::pnlAltimeterOffFlag_vrt,
 			0.0244
 	};
 
 	bco::on_off_display		altimeterExoModeFlag_{
 		bm::vc::AltimeterGround_id,
-			bm::vc::AltimeterGround_verts,
+			bm::vc::AltimeterGround_vrt,
 			bm::pnl::pnlAltimeterGround_id,
-			bm::pnl::pnlAltimeterGround_verts,
+			bm::pnl::pnlAltimeterGround_vrt,
 			0.0244
 	};
 

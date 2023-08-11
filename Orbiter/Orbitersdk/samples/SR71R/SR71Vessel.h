@@ -85,21 +85,8 @@ private:
 
 	MESHHANDLE				vcMeshHandle_{ nullptr };
 	DEVMESHHANDLE			meshVirtualCockpit_{ nullptr };
-
-
-	// OLD Components:
-//	LeftMFD					mfdLeft_;
-//	RightMFD				mfdRight_;
-//	StatusBoard				statusBoard_;
-
 	// DRAG
 	double					bDrag{ 0.0 };
-	// Collections:
-
-	// ** COMPONENTS **
-
-
-	// ***  Airspeed  *** //
 
 	PowerSystem				powerSystem_	{ *this };
 	APU						apu_			{ *this, powerSystem_ };
@@ -109,14 +96,14 @@ private:
 	SurfaceController		surfaceCtrl_	{ *this, apu_ };
 	FC::FlightComputer		computer_		{ *this, powerSystem_ };
 
-	Airspeed				airspeed_		{ *this };
-	Altimeter				altimeter_		{ *this };
+	Avionics				avionics_		{ *this, powerSystem_ };
+	Airspeed				airspeed_		{ *this, avionics_ };
+	Altimeter				altimeter_		{ *this, avionics_ };
+	HSI						hsi_			{ *this, avionics_ };
+	NavModes				navModes_		{ *this, avionics_ };
 	Clock					clock_			{ *this };
-	HSI						hsi_			{ *this };
-	NavModes				navModes_		{ *this };
-	RCSSystem				rcs_			{ *this };
+	RCSSystem				rcs_			{ *this, powerSystem_ };
 	Shutters				shutters_		{ *this };
-	Avionics				avionics_		{ powerSystem_, *this };
 	PropulsionController	propulsion_		{ powerSystem_, *this };
 	Beacon					beacon_			{ powerSystem_, *this };
 	Strobe					strobe_			{ powerSystem_, *this };
@@ -128,8 +115,6 @@ private:
 	HydrogenTank			hydrogenTank_	{ powerSystem_, *this };
 	OxygenTank				oxygenTank_		{ powerSystem_, *this };
 	FuelCell				fuelCell_		{ powerSystem_, *this, oxygenTank_,	hydrogenTank_ };
-	//bco::generic_tank		mainFuelTank_	{ powerSystem_, MAX_FUEL,		FUEL_TRANFER_RATE };
-	//bco::generic_tank		rcsFuelTank_	{ powerSystem_, MAX_RCS_FUEL,	FUEL_TRANFER_RATE };
 	HUD						headsUpDisplay_	{ powerSystem_, *this };
 
 	LeftMFD					mfdLeft_		{ powerSystem_, this };
@@ -158,34 +143,11 @@ private:
 		, { "STROBE",		&strobe_		}		// [a]			: (a)Power
 	};
 
-
-	//// ** TEST ** //
-	//bco::flat_roll<int>  numtest{
-	//	bm::pnl::pnlMilesOnes_id,
-	//	bm::pnl::pnlMilesOnes_verts,
-	//	0.1084,		// Tex offset
-	//	[](int v) {return (double)v / 10; }
-	//};
-
-	//bco::simple_event		testUp_{
-	//	GetControlId(),
-	//	bm::vc::vcRCSRot_location,
-	//	0.01,
-	//	bm::pnl::pnlMilesHunds_RC
-	//};
-
-	//bco::simple_event		testDown_{
-	//	GetControlId(),
-	//	bm::vc::vcRCSLin_location,
-	//	0.01,
-	//	bm::pnl::pnlMilesTens_RC
-	//};
-
 	// Put status here that does not go anywhere else.
 	bco::status_display     statusDock_	{	bm::vc::MsgLightDock_id,
-											bm::vc::MsgLightDock_verts,
+											bm::vc::MsgLightDock_vrt,
 											bm::pnl::pnlMsgLightDock_id,
-											bm::pnl::pnlMsgLightDock_verts,
+											bm::pnl::pnlMsgLightDock_vrt,
 											0.0361
 										};
 

@@ -94,9 +94,9 @@ void HoverEngines::handle_set_class_caps(bco::vessel& vessel)
     };
 
     for (auto i = 0; i < 3; i++) vessel.AddExhaust(es_hover + i);
-    vessel.AddExhaustStream(hoverThrustHandles_[0], bm::main::ThrustHoverF_location, &exhaust_hover);
-    vessel.AddExhaustStream(hoverThrustHandles_[1], bm::main::ThrustHoverP_location, &exhaust_hover);
-    vessel.AddExhaustStream(hoverThrustHandles_[2], bm::main::ThrustHoverS_location, &exhaust_hover);
+    vessel.AddExhaustStream(hoverThrustHandles_[0], bm::main::ThrustHoverF_loc, &exhaust_hover);
+    vessel.AddExhaustStream(hoverThrustHandles_[1], bm::main::ThrustHoverP_loc, &exhaust_hover);
+    vessel.AddExhaustStream(hoverThrustHandles_[2], bm::main::ThrustHoverS_loc, &exhaust_hover);
 
 
 //    swOpen_.Setup(vessel);
@@ -193,6 +193,6 @@ void HoverEngines::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINT
 //
 //bool HoverEngines::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 //{
-//    bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlDoorHover_id, bm::pnl::pnlDoorHover_verts, swOpen_.IsOn(), 0.0148);
+//    bco::DrawPanelOnOff(GetBaseVessel()->GetpanelMeshHandle0(), bm::pnl::pnlDoorHover_id, bm::pnl::pnlDoorHover_vrt, swOpen_.IsOn(), 0.0148);
 //    return true;
 //}

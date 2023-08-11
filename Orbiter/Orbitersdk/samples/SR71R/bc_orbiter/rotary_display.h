@@ -41,7 +41,7 @@ namespace bc_orbiter {
     {
     public:
         rotary_display(
-            std::initializer_list<UINT> const& vcAnimGroupIds,
+            const UINT vcAnimGroupIds,
             const VECTOR3& vcLocation, const VECTOR3& vcAxisLocation,
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
@@ -50,7 +50,7 @@ namespace bc_orbiter {
             : 
             control(-1),       // id not used for gauges.
             vcAnimGroup_(
-                vcAnimGroupIds,
+                { vcAnimGroupIds },
                 vcLocation, vcAxisLocation,
                 angle,
                 0.0, 1.0),

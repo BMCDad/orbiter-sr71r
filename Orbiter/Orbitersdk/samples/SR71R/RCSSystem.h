@@ -30,49 +30,52 @@ class VESSEL3;
 */
 
 class RCSSystem : 
-	public bco::vessel_component
+	  public bco::vessel_component
+	, public bco::power_consumer
 {
 public:
-	RCSSystem(bco::vessel& vessel);
+	RCSSystem(bco::vessel& vessel, bco::power_provider& pwr);
 
 	// Callback:
 	void OnRCSMode(int mode);
 
-	bco::slot<bool>&	IsAeroActiveSlot()	{ return slotIsAeroActive_; }
+	double amp_draw() const override { return IsPowered() ? 2.0 : 0.0; }
+	void on_change(double v) override { }
 
 private:
-	bco::vessel&	vessel_;
+	bco::vessel&			vessel_;
+	bco::power_provider&	power_;
+
+	bool IsPowered() const { return power_.volts_available() > 24; }
 
     void OnChanged(int mode);
 	void ActiveChanged(bool isActive);
 
-	bco::slot<bool>		slotIsAeroActive_;
-
 	bco::simple_event<>		btnLinear_{
-		bm::vc::vcRCSLin_location,
+		bm::vc::vcRCSLin_loc,
 			0.01,
 			bm::pnl::pnlRCSLin_RC
 	};
 
 	bco::on_off_display		lightLinear_{
 		bm::vc::vcRCSLin_id,
-			bm::vc::vcRCSLin_verts,
+			bm::vc::vcRCSLin_vrt,
 			bm::pnl::pnlRCSLin_id,
-			bm::pnl::pnlRCSLin_verts,
+			bm::pnl::pnlRCSLin_vrt,
 			0.0352
 	};
 
 	bco::simple_event<>		btnRotate_{
-		bm::vc::vcRCSRot_location,
+		bm::vc::vcRCSRot_loc,
 			0.01,
 			bm::pnl::pnlRCSRot_RC
 	};
 
 	bco::on_off_display		lightRotate_{
 		bm::vc::vcRCSRot_id,
-			bm::vc::vcRCSRot_verts,
+			bm::vc::vcRCSRot_vrt,
 			bm::pnl::pnlRCSRot_id,
-			bm::pnl::pnlRCSRot_verts,
+			bm::pnl::pnlRCSRot_vrt,
 			0.0352
 	};
 };

@@ -20,15 +20,15 @@
 
 static const DWORD ntdvtx_geardown = 9;
 static TOUCHDOWNVTX tdvtx_geardown[ntdvtx_geardown] = {
-    { bm::main::LandingTouchF_location,    1e6, 1e5, 1.6, 0.1 },      // front
-    { bm::main::LandingTouchS_location,    1e6, 1e5, 3.0, 0.2 },      // right back
-    { bm::main::LandingTouchP_location,    1e6, 1e5, 3.0, 0.2 },      // left back
-    { bm::main::TPNose_location,           1e7, 1e5, 3.0 },
-    { bm::main::TPHood_location,           1e7, 1e5, 3.0 },
-    { bm::main::TPRudder_location,         1e7, 1e5, 3.0 },
-    { bm::main::TPTail_location,           1e7, 1e5, 3.0 },
-    { bm::main::TPWingS_location,          1e7, 1e5, 3.0 },
-    { bm::main::TPWingP_location,          1e7, 1e5, 3.0 }
+    { bm::main::LandingTouchF_loc,    1e6, 1e5, 1.6, 0.1 },      // front
+    { bm::main::LandingTouchS_loc,    1e6, 1e5, 3.0, 0.2 },      // right back
+    { bm::main::LandingTouchP_loc,    1e6, 1e5, 3.0, 0.2 },      // left back
+    { bm::main::TPNose_loc,           1e7, 1e5, 3.0 },
+    { bm::main::TPHood_loc,           1e7, 1e5, 3.0 },
+    { bm::main::TPRudder_loc,         1e7, 1e5, 3.0 },
+    { bm::main::TPTail_loc,           1e7, 1e5, 3.0 },
+    { bm::main::TPWingS_loc,          1e7, 1e5, 3.0 },
+    { bm::main::TPWingP_loc,          1e7, 1e5, 3.0 }
 };
 
 
@@ -64,14 +64,14 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	SetPMI(PMI);
 	SetCrossSections(CROSSSECTIONS);
 	SetRotDrag(ROTDRAG);
-	SetDockParams(bm::main::DockingPort_location, _V(0, 1, 0), _V(0, 0, 1));
+	SetDockParams(bm::main::DockingPort_loc, _V(0, 1, 0), _V(0, 0, 1));
     SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
     SetNosewheelSteering(true);
 	SetNosewheelSteering(true);
 
 	// Setups:
 	SetupAerodynamics();
-	SetCameraOffset(bm::main::PilotPOV_location);
+	SetCameraOffset(bm::main::PilotPOV_loc);
 
     // Propellent, move to setup method:
     CreateMainPropellant(MAX_FUEL);
@@ -177,7 +177,7 @@ void SR71Vessel::clbkNavMode(int mode, bool active)
 void SR71Vessel::clbkMFDMode(int mfd, int mode)
 {
 	mfdLeft_.OnMfdMode(mfd, mode);
-//	mfdRight_.OnMfdMode(mfd, mode);
+	mfdRight_.OnMfdMode(mfd, mode);
 }
 
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)

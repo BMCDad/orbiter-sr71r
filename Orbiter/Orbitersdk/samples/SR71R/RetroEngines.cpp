@@ -62,14 +62,14 @@ void RetroEngines::handle_set_class_caps(bco::vessel& vessel)
 
 
     retroThrustHandles_[0] = vessel.CreateThruster(
-        bm::main::ThrustRetroP_location,
+        bm::main::ThrustRetroP_loc,
         _V(0, 0, -1),
         RETRO_THRUST,
         vessel.MainPropellant(),
         THRUST_ISP);
 
     retroThrustHandles_[1] = vessel.CreateThruster(
-        bm::main::ThrustRetroS_location,
+        bm::main::ThrustRetroS_loc,
         _V(0, 0, -1),
         RETRO_THRUST,
         vessel.MainPropellant(),

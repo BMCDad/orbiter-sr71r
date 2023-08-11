@@ -80,41 +80,41 @@ private:
     bco::animation_target   animHoverDoors_ {   0.2};
 
     bco::animation_group    gpFrontLeft_    {   { bm::main::HoverDoorPF_id },
-                                                bm::main::HoverDoorAxisPFF_location, bm::main::HoverDoorAxisPFA_location,
+                                                bm::main::HoverDoorAxisPFF_loc, bm::main::HoverDoorAxisPFA_loc,
                                                 (140 * RAD),
                                                 0, 1
                                             };
         
     bco::animation_group    gpFrontRight_   {   { bm::main::HoverDoorSF_id },
-                                                bm::main::HoverDoorAxisSFA_location, bm::main::HoverDoorAxisSFF_location,
+                                                bm::main::HoverDoorAxisSFA_loc, bm::main::HoverDoorAxisSFF_loc,
                                                 (140 * RAD),
                                                 0, 1
                                             };
 
     bco::animation_group    gpLeft_         {   { bm::main::HoverDoorPA_id } ,
-                                                bm::main::HoverDoorAxisPF_location, bm::main::HoverDoorAxisPA_location,
+                                                bm::main::HoverDoorAxisPF_loc, bm::main::HoverDoorAxisPA_loc,
                                                 (100 * RAD),
                                                 0, 1
                                             };
 
     bco::animation_group    gpRight_        {   { bm::main::HoverDoorSA_id } ,
-                                                bm::main::HoverDoorAxisSA_location, bm::main::HoverDoorAxisSF_location, 
+                                                bm::main::HoverDoorAxisSA_loc, bm::main::HoverDoorAxisSF_loc, 
                                                 (100 * RAD),
                                                 0, 1
                                             };
 
     bco::on_off_input		switchOpen_     { { bm::vc::swHoverDoor_id },
-                                                bm::vc::swHoverDoor_location, bm::vc::DoorsRightAxis_location,
+                                                bm::vc::swHoverDoor_loc, bm::vc::DoorsRightAxis_loc,
                                                 toggleOnOff,
                                                 bm::pnl::pnlDoorHover_id,
-                                                bm::pnl::pnlDoorHover_verts,
+                                                bm::pnl::pnlDoorHover_vrt,
                                                 bm::pnl::pnlDoorHover_RC
                                         };
 
     bco::status_display     status_ {           bm::vc::MsgLightHover_id,
-                                                bm::vc::MsgLightHover_verts,
+                                                bm::vc::MsgLightHover_vrt,
                                                 bm::pnl::pnlMsgLightHover_id,
-                                                bm::pnl::pnlMsgLightHover_verts,
+                                                bm::pnl::pnlMsgLightHover_vrt,
                                                 0.0361
                                             };
 };

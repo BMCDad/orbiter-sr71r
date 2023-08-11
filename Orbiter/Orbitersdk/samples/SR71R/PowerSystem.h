@@ -100,78 +100,78 @@ private:
 	double					prevVolts_{ -1.0 };
 
 	bco::on_off_input		switchEnabled	{ { bm::vc::swMainPower_id },
-												bm::vc::swMainPower_location, bm::vc::PowerTopRightAxis_location,
+												bm::vc::swMainPower_loc, bm::vc::PowerTopRightAxis_loc,
 												toggleOnOff,
 												bm::pnl::pnlPwrMain_id,
-												bm::pnl::pnlPwrMain_verts,
+												bm::pnl::pnlPwrMain_vrt,
 												bm::pnl::pnlPwrMain_RC
 											};
 
 	bco::on_off_input		switchConnectExternal_ {
 												{ bm::vc::swConnectExternalPower_id },
-												bm::vc::swConnectExternalPower_location, bm::vc::PowerBottomRightAxis_location,
+												bm::vc::swConnectExternalPower_loc, bm::vc::PowerBottomRightAxis_loc,
 												toggleOnOff,
 												bm::pnl::pnlPwrExtBus_id,
-												bm::pnl::pnlPwrExtBus_verts,
+												bm::pnl::pnlPwrExtBus_vrt,
 												bm::pnl::pnlPwrExtBus_RC
 											};
 
 	bco::on_off_input		switchConnectFuelCell_ {
 												{ bm::vc::swConnectFuelCell_id },
-												bm::vc::swConnectFuelCell_location, bm::vc::PowerBottomRightAxis_location,
+												bm::vc::swConnectFuelCell_loc, bm::vc::PowerBottomRightAxis_loc,
 												toggleOnOff,
 												bm::pnl::pnlPwrFCBus_id,
-												bm::pnl::pnlPwrFCBus_verts,
+												bm::pnl::pnlPwrFCBus_vrt,
 												bm::pnl::pnlPwrFCBus_RC
 											};
 
 	bco::on_off_display		lightFuelCellConnected_ {
 												bm::vc::FuelCellConnectedLight_id,
-												bm::vc::FuelCellConnectedLight_verts,
+												bm::vc::FuelCellConnectedLight_vrt,
 												bm::pnl::pnlLgtFCPwrOn_id,
-												bm::pnl::pnlLgtFCPwrOn_verts,
+												bm::pnl::pnlLgtFCPwrOn_vrt,
 												0.0244
 											};
 
 	bco::on_off_display		lightExternalAvail_ {
 												bm::vc::ExtAvailableLight_id,
-												bm::vc::ExtAvailableLight_verts,
+												bm::vc::ExtAvailableLight_vrt,
 												bm::pnl::pnlLgtExtPwrAvail_id,
-												bm::pnl::pnlLgtExtPwrAvail_verts,
+												bm::pnl::pnlLgtExtPwrAvail_vrt,
 												0.0244
 											};
 
 	bco::on_off_display		lightExternalConnected_ {
 												bm::vc::ExtConnectedLight_id,
-												bm::vc::ExtConnectedLight_verts,
+												bm::vc::ExtConnectedLight_vrt,
 												bm::pnl::pnlLgtExtPwrOn_id,
-												bm::pnl::pnlLgtExtPwrOn_verts,
+												bm::pnl::pnlLgtExtPwrOn_vrt,
 												0.0244
 											};
 
 	bco::rotary_display_target	gaugePowerVolts_{
 												{ bm::vc::gaugeVoltMeter_id },
-												bm::vc::gaugeVoltMeter_location, bm::vc::VoltMeterFrontAxis_location,
+												bm::vc::gaugeVoltMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
 												bm::pnl::pnlVoltMeter_id,
-												bm::pnl::pnlVoltMeter_verts,
+												bm::pnl::pnlVoltMeter_vrt,
 												-(120 * RAD),
 												0.2
 											};
 
 	bco::rotary_display_target	gaugePowerAmps_{
 												{ bm::vc::gaugeAmpMeter_id },
-												bm::vc::gaugeAmpMeter_location, bm::vc::VoltMeterFrontAxis_location,
+												bm::vc::gaugeAmpMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
 												bm::pnl::pnlAmpMeter_id,
-												bm::pnl::pnlAmpMeter_verts,
+												bm::pnl::pnlAmpMeter_vrt,
 												(120 * RAD),	// Clockwise
 												0.2
 											};
 
 	bco::status_display			statusBattery_ {
 												bm::vc::MsgLightBattery_id,
-												bm::vc::MsgLightBattery_verts,
+												bm::vc::MsgLightBattery_vrt,
 												bm::pnl::pnlMsgLightBattery_id,
-												bm::pnl::pnlMsgLightBattery_verts,
+												bm::pnl::pnlMsgLightBattery_vrt,
 												0.0361
 											};
 };

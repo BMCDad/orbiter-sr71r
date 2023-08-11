@@ -24,8 +24,9 @@
 
 #include <assert.h>
 
-NavModes::NavModes(bco::vessel& baseVessel) :
-    baseVessel_(baseVessel)
+NavModes::NavModes(bco::vessel& baseVessel, Avionics& avionics) :
+      baseVessel_(baseVessel)
+    , avionics_(avionics)
 {
     baseVessel_.AddControl(&btnKillRot_);
     baseVessel_.AddControl(&btnHorzLevel_);
@@ -39,7 +40,7 @@ NavModes::NavModes(bco::vessel& baseVessel) :
     baseVessel_.AddControl(&lightAntiNorm_);
     baseVessel_.AddControl(&lightNormal_);
     baseVessel_.AddControl(&lightPrograde_);
-    baseVessel_.AddControl(&lightRetrograde_);
+    baseVessel_.AddControl(&lightRetro_);
 
     baseVessel_.AddControl(&pnlHudFrame_);
     baseVessel_.AddControl(&pnlHudMode_);
@@ -77,7 +78,7 @@ void NavModes::OnNavMode(int mode, bool active)
         navMode1_ = active ? NAVMODE_PROGRADE : 0;
         break;
     case NAVMODE_RETROGRADE:
-        lightRetrograde_.set_state(active);
+        lightRetro_.set_state(active);
         navMode1_ = active ? NAVMODE_RETROGRADE : 0;
         break;
     }
@@ -87,7 +88,7 @@ void NavModes::OnNavMode(int mode, bool active)
 
 void NavModes::ToggleMode(int mode)
 {
-	if (slotIsEnabled_.value())
+	if (avionics_.IsAeroActive())
 	{
         baseVessel_.ToggleNavmode(mode);
 	}
@@ -97,7 +98,7 @@ void NavModes::ToggleMode(int mode)
 
 void NavModes::Update()
 {
-	if (!IsEnabledSlot().value())
+	if (!avionics_.IsAeroActive())
 	{
 		// Shut down all modes:
 		baseVessel_.DeactivateNavmode(NAVMODE_KILLROT);

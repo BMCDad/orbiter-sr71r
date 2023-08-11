@@ -85,17 +85,17 @@ private:
                                             };
 
     bco::on_off_input		switchDoors_    { { bm::vc::swRetroDoors_id },
-                                                bm::vc::swRetroDoors_location, bm::vc::DoorsRightAxis_location,
+                                                bm::vc::swRetroDoors_loc, bm::vc::DoorsRightAxis_loc,
                                                 toggleOnOff,
                                                 bm::pnl::pnlDoorRetro_id,
-                                                bm::pnl::pnlDoorRetro_verts,
+                                                bm::pnl::pnlDoorRetro_vrt,
                                                 bm::pnl::pnlDoorRetro_RC
                                             };
 
     bco::status_display     status_ {           bm::vc::MsgLightRetro_id,
-                                                bm::vc::MsgLightRetro_verts,
+                                                bm::vc::MsgLightRetro_vrt,
                                                 bm::pnl::pnlMsgLightRetro_id,
-                                                bm::pnl::pnlMsgLightRetro_verts,
+                                                bm::pnl::pnlMsgLightRetro_vrt,
                                                 0.0361
                                             };
 

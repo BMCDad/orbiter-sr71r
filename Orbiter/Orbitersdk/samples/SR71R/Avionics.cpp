@@ -20,7 +20,7 @@
 
 #include "Avionics.h"
 
-Avionics::Avionics(bco::power_provider& pwr, bco::vessel& vessel) :
+Avionics::Avionics(bco::vessel& vessel, bco::power_provider& pwr) :
 	power_(pwr),
 	setHeadingSlot_([&](double v) { setHeadingSignal_.fire(v); })
 {
@@ -63,11 +63,10 @@ void Avionics::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 	double dynPress  = 0.0;
 	
 
-	isAeroDataActive_.fire(IsPowered());
+	isAeroDataActive_ = IsPowered();
+	isAtmoMode_ = switchAvionMode_.is_on();
 
-	avionicsModeSignal_.fire(switchAvionMode_.is_on());
-
-	if (isAeroDataActive_.current()) {
+	if (isAeroDataActive_) {
 		gforce		= bco::GetVesselGs(vessel);
 		trim		= vessel.GetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM);
 		aoa			= vessel.GetAOA();

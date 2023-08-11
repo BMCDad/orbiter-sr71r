@@ -60,29 +60,29 @@ private:
 
 	// ***  HYDROGEN SUPPLY  *** //
 	bco::rotary_display<bco::animation_target>	gaugeLevel_{ { bm::vc::gaugeOxygenLevel_id },
-														bm::vc::gaugeOxygenLevel_location, bm::vc::axisOxygenLevel_location,
+														bm::vc::gaugeOxygenLevel_loc, bm::vc::axisOxygenLevel_loc,
 														bm::pnl::pnlLOXPress_id,
-														bm::pnl::pnlLOXPress_verts,
+														bm::pnl::pnlLOXPress_vrt,
 														(300 * RAD),	// Clockwise
 														0.2
 	};
 
 	bco::on_off_display				lightAvailable_ {	bm::vc::LOXSupplyOnLight_id,
-														bm::vc::LOXSupplyOnLight_verts,
+														bm::vc::LOXSupplyOnLight_vrt,
 														bm::pnl::pnlO2Avail_id,
-														bm::pnl::pnlO2Avail_verts,
+														bm::pnl::pnlO2Avail_vrt,
 														0.0244
 													};
 
-	bco::simple_event<>				btnFill_		{	bm::vc::LOXValveOpenSwitch_location,
+	bco::simple_event<>				btnFill_		{	bm::vc::LOXValveOpenSwitch_loc,
 														0.01,
 														bm::pnl::pnlO2Switch_RC
 													};
 
 	bco::on_off_display				btnLightFill_	{	bm::vc::LOXValveOpenSwitch_id,
-														bm::vc::LOXValveOpenSwitch_verts,
+														bm::vc::LOXValveOpenSwitch_vrt,
 														bm::pnl::pnlO2Switch_id,
-														bm::pnl::pnlO2Switch_verts,
+														bm::pnl::pnlO2Switch_vrt,
 														0.0352
 													};
 };

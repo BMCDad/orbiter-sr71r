@@ -106,18 +106,18 @@ private:
 	double				ampDrawFactor_{ 0.0 };
 
 	bco::on_off_input	switchEnabled_		{ { bm::vc::swFuelCellPower_id },
-												bm::vc::swFuelCellPower_location, bm::vc::PowerTopRightAxis_location,
+												bm::vc::swFuelCellPower_loc, bm::vc::PowerTopRightAxis_loc,
 												toggleOnOff,
 												bm::pnl::pnlPwrFC_id,
-												bm::pnl::pnlPwrFC_verts,
+												bm::pnl::pnlPwrFC_vrt,
 												bm::pnl::pnlPwrFC_RC
 											};
 
 	bco::on_off_display	lightAvailable_		{
 												bm::vc::FuelCellAvailableLight_id,
-												bm::vc::FuelCellAvailableLight_verts,
+												bm::vc::FuelCellAvailableLight_vrt,
 												bm::pnl::pnlLgtFCPwrAvail_id,
-												bm::pnl::pnlLgtFCPwrAvail_verts,
+												bm::pnl::pnlLgtFCPwrAvail_vrt,
 												0.0244
 											};
 };

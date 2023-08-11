@@ -28,27 +28,24 @@ namespace bc_orbiter {
     * The texture transforms in the 'v' or 'y' axis.  This can be parameterized if needed.
     */
     class flat_roll :
-        public control,
-        public vc_tex_animation,
-        public panel_animation {
+          public control
+        , public vc_tex_animation
+        , public panel_animation {
     public:
         flat_roll(
-            const UINT vcGroupId,
-            const NTVERTEX* vcVerts,
-            const UINT pnlGroupId,
-            const NTVERTEX* pnlVerts,
-            const double texOffset,
-            std::function<double(double)> trans)
+              const UINT vcGroupId
+            , const NTVERTEX* vcVerts
+            , const UINT pnlGroupId
+            , const NTVERTEX* pnlVerts
+            , const double texOffset)
             :
-            control(0),
-            vcGroup_(vcGroupId),
-            vcVerts_(vcVerts),
-            pnlGroup_(pnlGroupId),
-            pnlVerts_(pnlVerts),
-            texOffset_(texOffset),
-            transform_(trans)
-        {
-        }
+              control(0)
+            , vcGroup_(vcGroupId)
+            , vcVerts_(vcVerts)
+            , pnlGroup_(pnlGroupId)
+            , pnlVerts_(pnlVerts)
+            , texOffset_(texOffset)
+        { }
 
         void vc_step(DEVMESHHANDLE mesh, double simdt) override {
             anim_.Step(target_state_, simdt);
@@ -64,16 +61,12 @@ namespace bc_orbiter {
             //            sprintf(oapiDebugString(), "T: %+4.4f  Anim: %+4.4f  Slot: %+4.4f", target_state_, anim_.GetState(), (double)slotTransform_.value());
         }
 
-        // .0184 : 222 / 2048
-        slot<double>& SlotTransform() { return slotTransform_; }
+        void set_position(double pos) { target_state_ = floor(pos) / 10; }
 
     private:
-        slot<double>    slotTransform_{ [&](double d) { target_state_ = transform_(d); } };
-        std::function<double(double)> transform_;
-
         double          target_state_{ 0.0 };
         double          texOffset_{ 0.0 };
-        animation_wrap   anim_{ 1.0 };
+        animation_wrap  anim_{ 1.0 };
         VECTOR3         vecTrans_{ 0.0, 0.0, 0.0 };
         UINT			pnlGroup_{ 0 };
         const NTVERTEX* pnlVerts_{ nullptr };

@@ -111,11 +111,6 @@ namespace bc_orbiter {
 			return os.str();
 		}
 
-		// Outputs  TODO
-		//signal<double>&		LevelSignal()		{ return sigLevel_; }				// 0 - 1 : does adjustment based on capacity
-		//signal<bool>&		IsFillingSignal()	{ return sigIsFilling_; }			// Is fill pump running.
-		//signal<bool>&		IsAvailableSignal()	{ return sigIsAvailable_; }			// Is external available
-
 	protected:
 		bool IsPowered() const {
 			return
@@ -144,21 +139,17 @@ namespace bc_orbiter {
 					isFilling_ = true;
 				}
 			}
-			//sigIsFilling_.fire(isFilling_);
 			UpdateIsFilling(isFilling_);
 		}
 
 		void SetNewCurrentLevel(double new_current) {
 			current_ = new_current;
-			//sigLevel_.fire(current_ / capacity_);
 			UpdateLevel(current_ / capacity_);
 		}
 
 		virtual void UpdateLevel(double l) {};
 		virtual void UpdateIsFilling(bool b) {};
 		virtual void UpdateIsAvailable(bool b) {};
-		// Reports the tank level from 0 to capacity. (the signal is 0 to 1)
-		//double Level() { return level_; }
 
 	private:
 		power_provider&			power_;
@@ -166,9 +157,7 @@ namespace bc_orbiter {
 		const double			VOLTS_MIN = 24.0;
 		const double			AMPS_PUMP = 4.0;
 
-//		signal<double>			sigLevel_;
 		signal<bool>			sigIsFilling_;
-//		signal<bool>			sigIsAvailable_;
 
 		bool					isFilling_	{ false };
 		bool					isExternal_	{ false };

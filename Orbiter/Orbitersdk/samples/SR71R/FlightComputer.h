@@ -319,52 +319,52 @@ namespace FC
 			{FCProgFlags::HoldMACH,        &prgHoldMach_ }
 		};
 
-		bco::simple_event<> gcKey0_			{ bm::vc::GCKey0_location,			0.01, bm::pnl::pnlGCKey0_RC };
-		bco::simple_event<> gcKey1_			{ bm::vc::GCKey1_location,			0.01, bm::pnl::pnlGCKey1_RC };
-		bco::simple_event<> gcKey2_			{ bm::vc::GCKey2_location,			0.01, bm::pnl::pnlGCKey2_RC };
-		bco::simple_event<> gcKey3_			{ bm::vc::GCKey3_location,			0.01, bm::pnl::pnlGCKey3_RC };
-		bco::simple_event<> gcKey4_			{ bm::vc::GCKey4_location,			0.01, bm::pnl::pnlGCKey4_RC };
-		bco::simple_event<> gcKey5_			{ bm::vc::GCKey5_location,			0.01, bm::pnl::pnlGCKey5_RC };
-		bco::simple_event<> gcKey6_			{ bm::vc::GCKey6_location,			0.01, bm::pnl::pnlGCKey6_RC };
-		bco::simple_event<> gcKey7_			{ bm::vc::GCKey7_location,			0.01, bm::pnl::pnlGCKey7_RC };
-		bco::simple_event<> gcKey8_			{ bm::vc::GCKey8_location,			0.01, bm::pnl::pnlGCKey8_RC };
-		bco::simple_event<> gcKey9_			{ bm::vc::GCKey9_location,			0.01, bm::pnl::pnlGCKey9_RC };
+		bco::simple_event<> gcKey0_			{ bm::vc::GCKey0_loc,			0.01, bm::pnl::pnlGCKey0_RC };
+		bco::simple_event<> gcKey1_			{ bm::vc::GCKey1_loc,			0.01, bm::pnl::pnlGCKey1_RC };
+		bco::simple_event<> gcKey2_			{ bm::vc::GCKey2_loc,			0.01, bm::pnl::pnlGCKey2_RC };
+		bco::simple_event<> gcKey3_			{ bm::vc::GCKey3_loc,			0.01, bm::pnl::pnlGCKey3_RC };
+		bco::simple_event<> gcKey4_			{ bm::vc::GCKey4_loc,			0.01, bm::pnl::pnlGCKey4_RC };
+		bco::simple_event<> gcKey5_			{ bm::vc::GCKey5_loc,			0.01, bm::pnl::pnlGCKey5_RC };
+		bco::simple_event<> gcKey6_			{ bm::vc::GCKey6_loc,			0.01, bm::pnl::pnlGCKey6_RC };
+		bco::simple_event<> gcKey7_			{ bm::vc::GCKey7_loc,			0.01, bm::pnl::pnlGCKey7_RC };
+		bco::simple_event<> gcKey8_			{ bm::vc::GCKey8_loc,			0.01, bm::pnl::pnlGCKey8_RC };
+		bco::simple_event<> gcKey9_			{ bm::vc::GCKey9_loc,			0.01, bm::pnl::pnlGCKey9_RC };
 		
-		bco::simple_event<> gcKeyClear_		{ bm::vc::GCKeyClear_location,		0.01, bm::pnl::pnlGCKeyClear_RC };
-		bco::simple_event<> gcKeyDecimal_	{ bm::vc::GCKeyDecimal_location,	0.01, bm::pnl::pnlGCKeyDecimal_RC };
-		bco::simple_event<> gcKeyEnter_		{ bm::vc::GCKeyEnter_location,		0.01, bm::pnl::pnlGCKeyEnter_RC };
-		bco::simple_event<> gcKeyHUD_		{ bm::vc::GCKeyHUD_location,		0.01, bm::pnl::pnlGCKeyHud_RC };
-		bco::simple_event<> gcKeyNext_		{ bm::vc::GCKeyNext_location,		0.01, bm::pnl::pnlGCKeyNext_RC };
-		bco::simple_event<> gcKeyPlusMinus_	{ bm::vc::GCKeyPlusMinus_location,	0.01, bm::pnl::pnlGCKeyPlusMinus_RC };
-		bco::simple_event<> gcKeyPrev_		{ bm::vc::GCKeyPrev_location,		0.01, bm::pnl::pnlGCKeyPrev_RC };
-		bco::simple_event<> gcKeyMenu_		{ bm::vc::GCKeyHome_location,		0.01, bm::pnl::pnlGCKeyMenu_RC };
+		bco::simple_event<> gcKeyClear_		{ bm::vc::GCKeyClear_loc,		0.01, bm::pnl::pnlGCKeyClear_RC };
+		bco::simple_event<> gcKeyDecimal_	{ bm::vc::GCKeyDecimal_loc,	0.01, bm::pnl::pnlGCKeyDecimal_RC };
+		bco::simple_event<> gcKeyEnter_		{ bm::vc::GCKeyEnter_loc,		0.01, bm::pnl::pnlGCKeyEnter_RC };
+		bco::simple_event<> gcKeyHUD_		{ bm::vc::GCKeyHUD_loc,		0.01, bm::pnl::pnlGCKeyHud_RC };
+		bco::simple_event<> gcKeyNext_		{ bm::vc::GCKeyNext_loc,		0.01, bm::pnl::pnlGCKeyNext_RC };
+		bco::simple_event<> gcKeyPlusMinus_	{ bm::vc::GCKeyPlusMinus_loc,	0.01, bm::pnl::pnlGCKeyPlusMinus_RC };
+		bco::simple_event<> gcKeyPrev_		{ bm::vc::GCKeyPrev_loc,		0.01, bm::pnl::pnlGCKeyPrev_RC };
+		bco::simple_event<> gcKeyMenu_		{ bm::vc::GCKeyHome_loc,		0.01, bm::pnl::pnlGCKeyMenu_RC };
 		
-		bco::simple_event<> gcKeyF1_		{ bm::vc::GCKeyFunc1_location,		0.01, bm::pnl::pnlGCKeyFunc1_RC };
-		bco::simple_event<> gcKeyF2_		{ bm::vc::GCKeyFunc2_location,		0.01, bm::pnl::pnlGCKeyFunc2_RC };
-		bco::simple_event<> gcKeyF3_		{ bm::vc::GCKeyFunc3_location,		0.01, bm::pnl::pnlGCKeyFunc3_RC };
-		bco::simple_event<> gcKeyF4_		{ bm::vc::GCKeyFunc4_location,		0.01, bm::pnl::pnlGCKeyFunc4_RC };
-		bco::simple_event<> gcKeyF5_		{ bm::vc::GCKeyFunc5_location,		0.01, bm::pnl::pnlGCKeyFunc5_RC };
-		bco::simple_event<> gcKeyF6_		{ bm::vc::GCKeyFunc6_location,		0.01, bm::pnl::pnlGCKeyFunc6_RC };
-		bco::simple_event<> gcKeyF7_		{ bm::vc::GCKeyFunc7_location,		0.01, bm::pnl::pnlGCKeyFunc7_RC };
-		bco::simple_event<> gcKeyF8_		{ bm::vc::GCKeyFunc8_location,		0.01, bm::pnl::pnlGCKeyFunc8_RC };
-		bco::simple_event<> gcKeyF9_		{ bm::vc::GCKeyFunc9_location,		0.01, bm::pnl::pnlGCKeyFunc9_RC };
-		bco::simple_event<> gcKeyF10_		{ bm::vc::GCKeyFunc10_location,		0.01, bm::pnl::pnlGCKeyFunc10_RC };
+		bco::simple_event<> gcKeyF1_		{ bm::vc::GCKeyFunc1_loc,		0.01, bm::pnl::pnlGCKeyFunc1_RC };
+		bco::simple_event<> gcKeyF2_		{ bm::vc::GCKeyFunc2_loc,		0.01, bm::pnl::pnlGCKeyFunc2_RC };
+		bco::simple_event<> gcKeyF3_		{ bm::vc::GCKeyFunc3_loc,		0.01, bm::pnl::pnlGCKeyFunc3_RC };
+		bco::simple_event<> gcKeyF4_		{ bm::vc::GCKeyFunc4_loc,		0.01, bm::pnl::pnlGCKeyFunc4_RC };
+		bco::simple_event<> gcKeyF5_		{ bm::vc::GCKeyFunc5_loc,		0.01, bm::pnl::pnlGCKeyFunc5_RC };
+		bco::simple_event<> gcKeyF6_		{ bm::vc::GCKeyFunc6_loc,		0.01, bm::pnl::pnlGCKeyFunc6_RC };
+		bco::simple_event<> gcKeyF7_		{ bm::vc::GCKeyFunc7_loc,		0.01, bm::pnl::pnlGCKeyFunc7_RC };
+		bco::simple_event<> gcKeyF8_		{ bm::vc::GCKeyFunc8_loc,		0.01, bm::pnl::pnlGCKeyFunc8_RC };
+		bco::simple_event<> gcKeyF9_		{ bm::vc::GCKeyFunc9_loc,		0.01, bm::pnl::pnlGCKeyFunc9_RC };
+		bco::simple_event<> gcKeyF10_		{ bm::vc::GCKeyFunc10_loc,		0.01, bm::pnl::pnlGCKeyFunc10_RC };
 
-		bco::simple_event<>	apBtnMain_		{ bm::vc::SwAPMain_location,		0.01, bm::pnl::pnlAPMain_RC };
-		bco::simple_event<>	apBtnHeading_	{ bm::vc::SwAPHeading_location,		0.01, bm::pnl::pnlAPHeading_RC };
-		bco::simple_event<>	apBtnAltitude_	{ bm::vc::SwAPAltitude_location,	0.01, bm::pnl::pnlAPAltitude_RC };
-		bco::simple_event<>	apBtnKEAS_		{ bm::vc::SwAPKEAS_location,		0.01, bm::pnl::pnlAPKEAS_RC };
-		bco::simple_event<>	apBtnMACH_		{ bm::vc::SwAPMACH_location,		0.01, bm::pnl::pnlAPMACH_RC };
+		bco::simple_event<>	apBtnMain_		{ bm::vc::SwAPMain_loc,		0.01, bm::pnl::pnlAPMain_RC };
+		bco::simple_event<>	apBtnHeading_	{ bm::vc::SwAPHeading_loc,		0.01, bm::pnl::pnlAPHeading_RC };
+		bco::simple_event<>	apBtnAltitude_	{ bm::vc::SwAPAltitude_loc,	0.01, bm::pnl::pnlAPAltitude_RC };
+		bco::simple_event<>	apBtnKEAS_		{ bm::vc::SwAPKEAS_loc,		0.01, bm::pnl::pnlAPKEAS_RC };
+		bco::simple_event<>	apBtnMACH_		{ bm::vc::SwAPMACH_loc,		0.01, bm::pnl::pnlAPMACH_RC };
 
-		bco::on_off_display	apDspMain_		{ bm::vc::SwAPMain_id,		bm::vc::SwAPMain_verts,		bm::pnl::pnlAPMain_id,		bm::pnl::pnlAPMain_verts,	  0.0352	};
-		bco::on_off_display	apDspHeading_	{ bm::vc::SwAPHeading_id,	bm::vc::SwAPHeading_verts,	bm::pnl::pnlAPHeading_id,	bm::pnl::pnlAPHeading_verts,  0.0352	};
-		bco::on_off_display	apDspAltitude_	{ bm::vc::SwAPAltitude_id,	bm::vc::SwAPAltitude_verts,	bm::pnl::pnlAPAltitude_id,	bm::pnl::pnlAPAltitude_verts, 0.0352	};
-		bco::on_off_display	apDspKEAS_		{ bm::vc::SwAPKEAS_id,		bm::vc::SwAPKEAS_verts,		bm::pnl::pnlAPKEAS_id,		bm::pnl::pnlAPKEAS_verts,	  0.0352	};
-		bco::on_off_display	apDspMACH_		{ bm::vc::SwAPMACH_id,		bm::vc::SwAPMACH_verts,		bm::pnl::pnlAPMACH_id,		bm::pnl::pnlAPMACH_verts,	  0.0352	};
+		bco::on_off_display	apDspMain_		{ bm::vc::SwAPMain_id,		bm::vc::SwAPMain_vrt,		bm::pnl::pnlAPMain_id,		bm::pnl::pnlAPMain_vrt,	  0.0352	};
+		bco::on_off_display	apDspHeading_	{ bm::vc::SwAPHeading_id,	bm::vc::SwAPHeading_vrt,	bm::pnl::pnlAPHeading_id,	bm::pnl::pnlAPHeading_vrt,  0.0352	};
+		bco::on_off_display	apDspAltitude_	{ bm::vc::SwAPAltitude_id,	bm::vc::SwAPAltitude_vrt,	bm::pnl::pnlAPAltitude_id,	bm::pnl::pnlAPAltitude_vrt, 0.0352	};
+		bco::on_off_display	apDspKEAS_		{ bm::vc::SwAPKEAS_id,		bm::vc::SwAPKEAS_vrt,		bm::pnl::pnlAPKEAS_id,		bm::pnl::pnlAPKEAS_vrt,	  0.0352	};
+		bco::on_off_display	apDspMACH_		{ bm::vc::SwAPMACH_id,		bm::vc::SwAPMACH_vrt,		bm::pnl::pnlAPMACH_id,		bm::pnl::pnlAPMACH_vrt,	  0.0352	};
 	
-		bco::panel_display	pnlHUDTile_		{ bm::pnl::pnlHUDFCTile_id,		bm::pnl::pnlHUDFCTile_verts,  0.0914 };
-		bco::panel_display	pnlHUDText1_	{ bm::pnl::pnlHUDFCText1_id,	bm::pnl::pnlHUDFCText1_verts, 0.0305 };
-		bco::panel_display	pnlHUDText2_	{ bm::pnl::pnlHUDFCText2_id,	bm::pnl::pnlHUDFCText2_verts, 0.0305 };
-		bco::panel_display	pnlHUDText3_	{ bm::pnl::pnlHUDFCText3_id,	bm::pnl::pnlHUDFCText3_verts, 0.0305 };
+		bco::panel_display	pnlHUDTile_		{ bm::pnl::pnlHUDFCTile_id,		bm::pnl::pnlHUDFCTile_vrt,  0.0914 };
+		bco::panel_display	pnlHUDText1_	{ bm::pnl::pnlHUDFCText1_id,	bm::pnl::pnlHUDFCText1_vrt, 0.0305 };
+		bco::panel_display	pnlHUDText2_	{ bm::pnl::pnlHUDFCText2_id,	bm::pnl::pnlHUDFCText2_vrt, 0.0305 };
+		bco::panel_display	pnlHUDText3_	{ bm::pnl::pnlHUDFCText3_id,	bm::pnl::pnlHUDFCText3_vrt, 0.0305 };
 };
 }

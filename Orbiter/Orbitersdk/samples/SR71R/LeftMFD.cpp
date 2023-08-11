@@ -90,15 +90,15 @@ bool LeftMFD::handle_load_vc(bco::vessel& vessel, int vcid)
 
 	// PWR
 	oapiVCRegisterArea(GetPwrKey(), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
-	oapiVCSetAreaClickmode_Spherical(GetPwrKey(), bm::vc::MFCLeftPWR_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(GetPwrKey(), bm::vc::MFCLeftPWR_loc, MFDBRAD);
 
 	// SEL
 	oapiVCRegisterArea(GetSelectKey(), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
-	oapiVCSetAreaClickmode_Spherical(GetSelectKey(), bm::vc::MFCLeftSEL_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(GetSelectKey(), bm::vc::MFCLeftSEL_loc, MFDBRAD);
 
 	// MNU
 	oapiVCRegisterArea(GetMenuKey(), PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
-	oapiVCSetAreaClickmode_Spherical(GetMenuKey(), bm::vc::MFCLeftMNU_location, MFDBRAD);
+	oapiVCSetAreaClickmode_Spherical(GetMenuKey(), bm::vc::MFCLeftMNU_loc, MFDBRAD);
 	return true;
 }
 
@@ -122,10 +122,10 @@ bool LeftMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 	// Orbiter bug with panel MFDs, it expects a specific vertex sequence, so we need to re-arrange.
 	static NTVERTEX VTX_MFD[1][4] = {
 		{
-			bm::pnl::pnlMFDLeft_verts[2],
-			bm::pnl::pnlMFDLeft_verts[3],
-			bm::pnl::pnlMFDLeft_verts[0],
-			bm::pnl::pnlMFDLeft_verts[1]
+			bm::pnl::pnlMFDLeft_vrt[2],
+			bm::pnl::pnlMFDLeft_vrt[3],
+			bm::pnl::pnlMFDLeft_vrt[0],
+			bm::pnl::pnlMFDLeft_vrt[1]
 		}
 	};
 	static WORD IDX_MFD[6] = {
@@ -159,9 +159,6 @@ bool LeftMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 			PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY, 
 			surfHandle);
 	}
-
-	// PWR
-	int fixedYTop = 578;
 
 	vessel.RegisterPanelArea(
 		hPanel,
@@ -198,7 +195,7 @@ bool LeftMFD::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 
 	auto xPos = PnlColLeftX + (m->col * PnlColsDiff);
 	auto yPos = PnlRowsTop + (m->row * PnlRowsDiff);
-	bco::DrawBlankText(xPos-20, yPos, surf, vcFont_);
+	bco::DrawBlankText(xPos - 20, yPos, surf, vcFont_);
 
 	if (NULL != label)
 	{

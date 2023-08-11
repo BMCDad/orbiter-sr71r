@@ -23,17 +23,19 @@
 #include "bc_orbiter/transform_display.h"
 #include "bc_orbiter/flat_roll.h"
 
-#include "AvionBase.h"
+#include "Avionics.h"
 
 namespace bco = bc_orbiter;
 
 class HSI :
-	public AvionBase,
+	public bco::vessel_component,
 	public bco::post_step {
 
 public:
 
-	HSI(bco::vessel& vessel) {
+	HSI(bco::vessel& vessel, Avionics& avionics) : 
+		avionics_(avionics) 
+	{
 		vessel.AddControl(&hsiBearing_);
 		vessel.AddControl(&hsiCourseError_);
 		vessel.AddControl(&hsiCourse_);
@@ -68,7 +70,7 @@ public:
 		double		milesBeacon = 0.0;		// from CalcNavMetrics
 		bool		comStatus	= false;	// from CalcNavMetrics
 
-		if (EnabledSlot().value()) {
+		if (avionics_.IsAeroActive()) {
 			yaw = vessel.GetYaw();
 			rotHdg = yaw - slotSetHeading_.value();
 			rotCrs = yaw - slotSetCourse_.value();
@@ -87,9 +89,9 @@ public:
 
 		// sprintf(oapiDebugString(), "CRS %+4f %+4f %+4f %+4f", deg, parts.Thousands, parts.Hundreds, parts.Tens );
 
-		CRSOnes_.SlotTransform().notify(parts.Tens / 10);
-		CRSTens_.SlotTransform().notify(parts.Hundreds / 10);
-		CRSHunds_.SlotTransform().notify(parts.Thousands / 10);
+		CRSOnes_.set_position(parts.Tens / 10);
+		CRSTens_.set_position(parts.Hundreds / 10);
+		CRSHunds_.set_position(parts.Thousands / 10);
 
 		signalGlideScope_.fire(glideSlope);
 		
@@ -104,15 +106,15 @@ public:
 
 		// Miles barrels
 		bco::GetDigits(milesBeacon, parts);
-		MilesOnes_.SlotTransform().notify(parts.Tens);
-		MilesTens_.SlotTransform().notify(parts.Hundreds);
-		MilesHunds_.SlotTransform().notify(parts.Thousands);
+		MilesOnes_.set_position(parts.Tens);
+		MilesTens_.set_position(parts.Hundreds);
+		MilesHunds_.set_position(parts.Thousands);
 
-		hsiOffFlag_.set_state(EnabledSlot().value());
+		hsiOffFlag_.set_state(avionics_.IsAeroActive());
 		hsiExoFlag_.set_state(
-			!EnabledSlot().value()
+			!avionics_.IsAeroActive()
 			? true
-			: AvionicsModeSlot().value());
+			: avionics_.IsAeroAtmoMode());
 	}
 
 	bco::signal<double>&	GlideScopeSignal()	{ return signalGlideScope_; }
@@ -124,6 +126,7 @@ public:
 
 private:
 
+	Avionics&				avionics_;
 	bco::signal<double>		signalGlideScope_;
 
 	bco::slot<double>		slotSetCourse_;
@@ -192,122 +195,110 @@ private:
 
 	bco::rotary_display_wrap	hsiRoseCompass_{
 		{ bm::vc::RoseCompass_id },
-			bm::vc::RoseCompass_location, bm::vc::HSIAxis_location,
+			bm::vc::RoseCompass_loc, bm::vc::HSIAxis_loc,
 			bm::pnl::pnlRoseCompass_id,
-			bm::pnl::pnlRoseCompass_verts,
+			bm::pnl::pnlRoseCompass_vrt,
 			(360 * RAD),	// Clockwise
 			1.0
 	};
 
 	bco::rotary_display_wrap	hsiHeadingBug_{
 		{ bm::vc::HSICompassHeading_id },
-			bm::vc::HSICompassHeading_location, bm::vc::HSIAxis_location,
+			bm::vc::HSICompassHeading_loc, bm::vc::HSIAxis_loc,
 			bm::pnl::pnlHSICompassHeading_id,
-			bm::pnl::pnlHSICompassHeading_verts,
+			bm::pnl::pnlHSICompassHeading_vrt,
 			(360 * RAD),	// Clockwise
 			1.0
 	};
 
 	bco::rotary_display_wrap	hsiCourse_{
 		{ bm::vc::HSICourse_id },
-			bm::vc::HSICourse_location, bm::vc::HSIAxis_location,
+			bm::vc::HSICourse_loc, bm::vc::HSIAxis_loc,
 			bm::pnl::pnlHSICourse_id,
-			bm::pnl::pnlHSICourse_verts,
+			bm::pnl::pnlHSICourse_vrt,
 			(360 * RAD),
 			1.0
 	};
 
 	bco::rotary_display_wrap	hsiBearing_{
 		{ bm::vc::HSIBearingArrow_id },
-			bm::vc::HSIBearingArrow_location, bm::vc::HSIAxis_location,
+			bm::vc::HSIBearingArrow_loc, bm::vc::HSIAxis_loc,
 			bm::pnl::pnlHSIBearingArrow_id,
-			bm::pnl::pnlHSIBearingArrow_verts,
+			bm::pnl::pnlHSIBearingArrow_vrt,
 			(360 * RAD),
 			1.0
 	};
 
 	bco::transform_display	hsiCourseError_{
 		bm::vc::HSICourseNeedle_id,
-			bm::vc::HSICourseNeedle_verts,
+			bm::vc::HSICourseNeedle_vrt,
 			bm::pnl::pnlHSICourseNeedle_id,
-			bm::pnl::pnlHSICourseNeedle_verts
+			bm::pnl::pnlHSICourseNeedle_vrt
 	};
 
 	bco::flat_roll			CRSOnes_{
 		bm::vc::vcCrsOnes_id,
-			bm::vc::vcCrsOnes_verts,
+			bm::vc::vcCrsOnes_vrt,
 			bm::pnl::pnlHSICRSOnes_id,
-			bm::pnl::pnlHSICRSOnes_verts,
-			0.1084,
-			[](double v) {return v; }
-	};
+			bm::pnl::pnlHSICRSOnes_vrt,
+			0.1084};
 
 	bco::flat_roll			CRSTens_{
 		bm::vc::vcCrsTens_id,
-			bm::vc::vcCrsTens_verts,
+			bm::vc::vcCrsTens_vrt,
 			bm::pnl::pnlHSICRSTens_id,
-			bm::pnl::pnlHSICRSTens_verts,
-			0.1084,
-			[](double v) {return v; }
-	};
+			bm::pnl::pnlHSICRSTens_vrt,
+			0.1084};
 
 	bco::flat_roll			CRSHunds_{
 		bm::vc::vcCrsHunds_id,
-			bm::vc::vcCrsHunds_verts,
+			bm::vc::vcCrsHunds_vrt,
 			bm::pnl::pnlHSICRSHunds_id,
-			bm::pnl::pnlHSICRSHunds_verts,
-			0.1084,
-			[](double v) {return v; }
-	};
+			bm::pnl::pnlHSICRSHunds_vrt,
+			0.1084};
 
 	bco::flat_roll			MilesOnes_{
 		bm::vc::vcMilesOnes_id,
-			bm::vc::vcMilesOnes_verts,
+			bm::vc::vcMilesOnes_vrt,
 			bm::pnl::pnlHSIMilesOnes_id,
-			bm::pnl::pnlHSIMilesOnes_verts,
-			0.1084,
-			[](double v) {return floor(v) / 10; }
-	};
+			bm::pnl::pnlHSIMilesOnes_vrt,
+			0.1084};
 
 	bco::flat_roll			MilesTens_{
 		bm::vc::vcMilesTens_id,
-			bm::vc::vcMilesTens_verts,
+			bm::vc::vcMilesTens_vrt,
 			bm::pnl::pnlHSIMilesTens_id,
-			bm::pnl::pnlHSIMilesTens_verts,
-			0.1084,
-			[](double v) {return floor(v) / 10; }
-	};
+			bm::pnl::pnlHSIMilesTens_vrt,
+			0.1084};
 
 	bco::flat_roll			MilesHunds_{
 		bm::vc::vcMilesHunds_id,
-			bm::vc::vcMilesHunds_verts,
+			bm::vc::vcMilesHunds_vrt,
 			bm::pnl::pnlHSIMilesHunds_id,
-			bm::pnl::pnlHSIMilesHunds_verts,
-			0.1084,
-			[](double v) {return floor(v) / 10; }
-	};
+			bm::pnl::pnlHSIMilesHunds_vrt,
+			0.1084};
 
 	bco::on_off_display		hsiOffFlag_{
 		bm::vc::HSIOffFlag_id,
-			bm::vc::HSIOffFlag_verts,
+			bm::vc::HSIOffFlag_vrt,
 			bm::pnl::pnlHSIOffFlag_id,
-			bm::pnl::pnlHSIOffFlag_verts,
+			bm::pnl::pnlHSIOffFlag_vrt,
 			0.0244
 	};
 
 	bco::on_off_display		hsiExoFlag_{
 		bm::vc::HSIExoFlag_id,
-			bm::vc::HSIExoFlag_verts,
+			bm::vc::HSIExoFlag_vrt,
 			bm::pnl::pnlHSIExoFlag_id,
-			bm::pnl::pnlHSIExoFlag_verts,
+			bm::pnl::pnlHSIExoFlag_vrt,
 			0.0244
 	};
 
 	bco::on_off_display		comStatusFlag_{
 		bm::vc::COMStatusPanel_id,
-			bm::vc::COMStatusPanel_verts,
+			bm::vc::COMStatusPanel_vrt,
 			bm::pnl::pnlCOMStatusPanel_id,
-			bm::pnl::pnlCOMStatusPanel_verts,
+			bm::pnl::pnlCOMStatusPanel_vrt,
 			0.0244
 	};
 };

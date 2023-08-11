@@ -109,7 +109,7 @@ private:
                                                 bm::main::CanopyFI_id,
 												bm::main::CanopyWindowSI_id,
 												bm::main::CanopyWindowInsideLeft_id},
-                                                bm::main::CockpitAxisS_location, bm::main::CockpitAxisP_location,
+                                                bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
                                                 (55 * RAD),
                                                 0, 1
                                             };
@@ -118,33 +118,33 @@ private:
                                                 bm::vc::CanopyFO_id,
                                                 bm::vc::CanopyWindowInsideLeft_id,
                                                 bm::vc::CanopyWindowSI_id },
-                                                bm::main::CockpitAxisS_location, bm::main::CockpitAxisP_location,
+                                                bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
                                                 (55 * RAD),
                                                 0, 1
                                             };
 
     bco::on_off_input		switchPower_    { { bm::vc::SwCanopyPower_id },
-                                                bm::vc::SwCanopyPower_location,
-                                                bm::vc::PowerTopRightAxis_location,
+                                                bm::vc::SwCanopyPower_loc,
+                                                bm::vc::PowerTopRightAxis_loc,
                                                 toggleOnOff,
                                                 bm::pnl::pnlPwrCanopy_id,
-                                                bm::pnl::pnlPwrCanopy_verts,
+                                                bm::pnl::pnlPwrCanopy_vrt,
                                                 bm::pnl::pnlPwrCanopy_RC
                                             };
 
     bco::on_off_input		switchOpen_     { { bm::vc::SwCanopyOpen_id },
-                                                bm::vc::SwCanopyOpen_location,
-                                                bm::vc::DoorsRightAxis_location, 
+                                                bm::vc::SwCanopyOpen_loc,
+                                                bm::vc::DoorsRightAxis_loc, 
                                                 toggleOnOff,
                                                 bm::pnl::pnlDoorCanopy_id,
-                                                bm::pnl::pnlDoorCanopy_verts,
+                                                bm::pnl::pnlDoorCanopy_vrt,
                                                 bm::pnl::pnlDoorCanopy_RC
                                             };
 
     bco::status_display     status_ {           bm::vc::MsgLightCanopy_id,
-                                                bm::vc::MsgLightCanopy_verts,
+                                                bm::vc::MsgLightCanopy_vrt,
                                                 bm::pnl::pnlMsgLightCanopy_id,
-                                                bm::pnl::pnlMsgLightCanopy_verts,
+                                                bm::pnl::pnlMsgLightCanopy_vrt,
                                                 0.0361
                                             };
 };

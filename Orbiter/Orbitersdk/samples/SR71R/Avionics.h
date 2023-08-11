@@ -14,7 +14,7 @@
 //	You should have received a copy of the GNU General Public License
 //	along with this program.If not, see <http://www.gnu.org/licenses/>.
 
-#pragma
+#pragma once
 
 #include "bc_orbiter/control.h"
 #include "bc_orbiter/signals.h"
@@ -39,7 +39,7 @@ class Avionics :
 public:
 	enum AvionMode { AvionAtmo, AvionExo };
 
-	Avionics(bco::power_provider& pwr, bco::vessel& vessel);
+	Avionics(bco::vessel& vessel, bco::power_provider& pwr);
 	~Avionics() {}
 
 	// post_step
@@ -55,9 +55,9 @@ public:
 	void SetCourse(double s);
 	void SetHeading(double s);
 
-	// Slots:
-	bco::signal<bool>&		IsAeroActiveSignal()	{ return isAeroDataActive_; }		// Is aero available (switch is on, power is adequate)
-	bco::signal<bool>&		IsAeroModeAtmoSignal()	{ return avionicsModeSignal_; }
+
+	bool	IsAeroActive()	{ return isAeroDataActive_; }		// Is aero available (switch is on, power is adequate)
+	bool	IsAeroAtmoMode()	{ return isAtmoMode_; }
 
 	// Signals:
 	bco::signal<double>&	SetCourseSignal()		{ return setCourseSignal_; }
@@ -74,9 +74,10 @@ private:
 
 	bool IsPowered() const { return switchAvionPower_.is_on() && (power_.volts_available() > 24.0); }
 
+	bool		isAeroDataActive_;
+	bool		isAtmoMode_;
+
 	// Signals:
-	bco::signal<bool>		avionicsModeSignal_;
-	bco::signal<bool>		isAeroDataActive_;
 	bco::signal<double>		setCourseSignal_;
 	
 	bco::signal<double>		setHeadingSignal_;
@@ -91,101 +92,101 @@ private:
 
 	bco::on_off_input		switchAvionPower_{		// Main avionics power
 		{ bm::vc::SwAvionics_id },
-			bm::vc::SwAvionics_location, bm::vc::PowerTopRightAxis_location,
+			bm::vc::SwAvionics_loc, bm::vc::PowerTopRightAxis_loc,
 			toggleOnOff,
 			bm::pnl::pnlPwrAvion_id,
-			bm::pnl::pnlPwrAvion_verts,
+			bm::pnl::pnlPwrAvion_vrt,
 			bm::pnl::pnlPwrAvion_RC
 	};
 
 	bco::on_off_input		switchAvionMode_{		// Atmosphere=On, External=Off
 		{ bm::vc::vcAvionMode_id },
-			bm::vc::vcAvionMode_location, bm::vc::avionModeAxis_location,
+			bm::vc::vcAvionMode_loc, bm::vc::avionModeAxis_loc,
 			toggleOnOff,
 			bm::pnl::pnlAvionMode_id,
-			bm::pnl::pnlAvionMode_verts,
+			bm::pnl::pnlAvionMode_vrt,
 			bm::pnl::pnlAvionMode_RC
 	};
 
 	bco::on_off_input		switchNavMode_{		// Nav mode 1 2
 		{ bm::vc::vcNavMode_id },
-			bm::vc::vcNavMode_location, bm::vc::vcCOMNavAxis_location,
+			bm::vc::vcNavMode_loc, bm::vc::vcCOMNavAxis_loc,
 			toggleOnOff,
 			bm::pnl::pnlNavMode_id,
-			bm::pnl::pnlNavMode_verts,
+			bm::pnl::pnlNavMode_vrt,
 			bm::pnl::pnlNavMode_RC
 	};
 
-	bco::simple_event<>		dialSetCourseIncrement_{	bm::vc::CourseKnobInc_location,
+	bco::simple_event<>		dialSetCourseIncrement_{	bm::vc::CourseKnobInc_loc,
 														0.01,
 														bm::pnl::pnlSetCourseInc_RC		};
 
-	bco::simple_event<>		dialSetCourseDecrement_{	bm::vc::CourseKnobDec_location,
+	bco::simple_event<>		dialSetCourseDecrement_{	bm::vc::CourseKnobDec_loc,
 														0.01,
 														bm::pnl::pnlSetCourseDec_RC		};
 
-	bco::simple_event<>		dialSetHeadingIncrement_{	bm::vc::HeadingKnobInc_location,
+	bco::simple_event<>		dialSetHeadingIncrement_{	bm::vc::HeadingKnobInc_loc,
 														0.01,
 														bm::pnl::pnlSetHeadingInc_RC	};
 
-	bco::simple_event<>		dialSetHeadingDecrement_{	bm::vc::HeadingKnobDec_location,
+	bco::simple_event<>		dialSetHeadingDecrement_{	bm::vc::HeadingKnobDec_loc,
 														0.01,
 														bm::pnl::pnlSetHeadingDec_RC	};
 
 	// ***   VSI  *** //
 	bco::rotary_display_target		vsiHand_ {	  { bm::vc::gaVSINeedle_id }
-												, bm::vc::gaVSINeedle_location, bm::vc::VSIAxis_location
+												, bm::vc::gaVSINeedle_loc, bm::vc::VSIAxis_loc
 												, bm::pnl::pnlVSINeedle_id
-												, bm::pnl::pnlVSINeedle_verts
+												, bm::pnl::pnlVSINeedle_vrt
 												, (340 * RAD)
 												, 2.0
 											};
 
 	bco::on_off_display		vsiActiveFlag_{
 		bm::vc::VSIOffFlag_id,
-			bm::vc::VSIOffFlag_verts,
+			bm::vc::VSIOffFlag_vrt,
 			bm::pnl::pnlVSIOffFlag_id,
-			bm::pnl::pnlVSIOffFlag_verts,
+			bm::pnl::pnlVSIOffFlag_vrt,
 			0.0244
 	};
 
 	// ***  ATTITUDE  *** //
 	bco::transform_display	attitudeDisplay_{
 		bm::vc::AttitudeIndicator_id,
-			bm::vc::AttitudeIndicator_verts,
+			bm::vc::AttitudeIndicator_vrt,
 			bm::pnl::pnlAttitudeIndicator_id,
-			bm::pnl::pnlAttitudeIndicator_verts
+			bm::pnl::pnlAttitudeIndicator_vrt
 	};
 	
 	bco::on_off_display		attitudeFlag_{
 		bm::vc::AttitudeFlagOff_id,
-			bm::vc::AttitudeFlagOff_verts,
+			bm::vc::AttitudeFlagOff_vrt,
 			bm::pnl::pnlAttitudeFlagOff_id,
-			bm::pnl::pnlAttitudeFlagOff_verts,
+			bm::pnl::pnlAttitudeFlagOff_vrt,
 			0.0244
 	};
 
 	// ***  AOA  TRIM  GFORCE  ***  //
 	bco::rotary_display_target	aoaHand_ {	  { bm::vc::AOANeedle_id }
-											, bm::vc::AOANeedle_location, bm::vc::AOAAxis_location
+											, bm::vc::AOANeedle_loc, bm::vc::AOAAxis_loc
 											, bm::pnl::pnlAOANeedle_id
-											, bm::pnl::pnlAOANeedle_verts
+											, bm::pnl::pnlAOANeedle_vrt
 											, (75 * RAD)
 											, 2.0
 										};
 
 	bco::rotary_display_target	trimHand_ {	  { bm::vc::TrimNeedle_id }
-											, bm::vc::TrimNeedle_location, bm::vc::TrimAxis_location
+											, bm::vc::TrimNeedle_loc, bm::vc::TrimAxis_loc
 											, bm::pnl::pnlTrimNeedle_id
-											, bm::pnl::pnlTrimNeedle_verts
+											, bm::pnl::pnlTrimNeedle_vrt
 											, (180 * RAD)
 											, 1.0
 										};
 
 	bco::rotary_display_target	accelHand_ {  { bm::vc::AccelNeedle_id }
-											, bm::vc::AccelNeedle_location, bm::vc::AccelAxis_location
+											, bm::vc::AccelNeedle_loc, bm::vc::AccelAxis_loc
 											, bm::pnl::pnlAccelNeedle_id
-											, bm::pnl::pnlAccelNeedle_verts
+											, bm::pnl::pnlAccelNeedle_vrt
 											, (295 * RAD)
 											, 1.0
 										};

@@ -90,7 +90,7 @@ private:
 
 	BEACONLIGHTSPEC			specNavLeft_{
 		BEACONSHAPE_DIFFUSE,
-		const_cast<VECTOR3*>(&bm::main::NavLightP_location),
+		const_cast<VECTOR3*>(&bm::main::NavLightP_loc),
 		&colRed,		// color
 		0.3,			// size
 		0.4,			// falloff
@@ -102,7 +102,7 @@ private:
 
 	BEACONLIGHTSPEC			specNavRight_{
 		BEACONSHAPE_DIFFUSE,
-		const_cast<VECTOR3*>(&bm::main::NavLightS_location),
+		const_cast<VECTOR3*>(&bm::main::NavLightS_loc),
 		&colGreen,		// color
 		0.3,			// size
 		0.4,			// falloff
@@ -114,7 +114,7 @@ private:
 
 	BEACONLIGHTSPEC			specNavRear_{
 		BEACONSHAPE_DIFFUSE,
-		const_cast<VECTOR3*>(&bm::main::NavLightTail_location),
+		const_cast<VECTOR3*>(&bm::main::NavLightTail_loc),
 		&colWhite,		// color
 		0.3,			// size
 		0.4,			// falloff
@@ -126,10 +126,10 @@ private:
 
 	bco::on_off_input		switchNavigationLights_ {		// On off switch for external navigation lights.
 		{ bm::vc::SwitchNavLights_id },
-			bm::vc::SwitchNavLights_location, bm::vc::LightsRightAxis_location,
+			bm::vc::SwitchNavLights_loc, bm::vc::LightsRightAxis_loc,
 			toggleOnOff,
 			bm::pnl::pnlLightNav_id,
-			bm::pnl::pnlLightNav_verts,
+			bm::pnl::pnlLightNav_vrt,
 			bm::pnl::pnlLightNav_RC
 	};
 };

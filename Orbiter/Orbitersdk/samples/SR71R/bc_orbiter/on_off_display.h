@@ -82,8 +82,8 @@ namespace bc_orbiter {
 			int panel_redraw_flags() { return PANEL_REDRAW_USER; }
 
 			void set_state(bool s) { 
-				oapiTriggerRedrawArea(0, 0, get_id());
 				state_ = s;
+				oapiTriggerRedrawArea(0, 0, get_id());
 			}
 
 	private:

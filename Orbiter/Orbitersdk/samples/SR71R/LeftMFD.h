@@ -64,17 +64,17 @@ private:
 
 	std::vector<MFDData> data_
 	{
-		{ vessel_.GetIdForComponent(this), 0,  0, 0, bm::vc::MFCLeftL1_location, bm::pnl::pnlLeftMFD1_RC },
-		{ vessel_.GetIdForComponent(this), 1,  1, 0, bm::vc::MFCLeftL2_location, bm::pnl::pnlLeftMFD2_RC },
-		{ vessel_.GetIdForComponent(this), 2,  2, 0, bm::vc::MFCLeftL3_location, bm::pnl::pnlLeftMFD3_RC },
-		{ vessel_.GetIdForComponent(this), 3,  3, 0, bm::vc::MFCLeftL4_location, bm::pnl::pnlLeftMFD4_RC },
-		{ vessel_.GetIdForComponent(this), 4,  4, 0, bm::vc::MFCLeftL5_location, bm::pnl::pnlLeftMFD5_RC },
-		{ vessel_.GetIdForComponent(this), 5,  5, 0, bm::vc::MFCLeftL6_location, bm::pnl::pnlLeftMFD6_RC },
-		{ vessel_.GetIdForComponent(this), 6,  0, 1, bm::vc::MFCLeftR1_location, bm::pnl::pnlLeftMFD7_RC },
-		{ vessel_.GetIdForComponent(this), 7,  1, 1, bm::vc::MFCLeftR2_location, bm::pnl::pnlLeftMFD8_RC },
-		{ vessel_.GetIdForComponent(this), 8,  2, 1, bm::vc::MFCLeftR3_location, bm::pnl::pnlLeftMFD9_RC },
-		{ vessel_.GetIdForComponent(this), 9,  3, 1, bm::vc::MFCLeftR4_location, bm::pnl::pnlLeftMFD10_RC },
-		{ vessel_.GetIdForComponent(this), 10, 4, 1, bm::vc::MFCLeftR5_location, bm::pnl::pnlLeftMFD11_RC },
-		{ vessel_.GetIdForComponent(this), 11, 5, 1, bm::vc::MFCLeftR6_location, bm::pnl::pnlLeftMFD12_RC }
+		{ vessel_.GetIdForComponent(this), 0,  0, 0, bm::vc::MFCLeftL1_loc, bm::pnl::pnlLeftMFD1_RC },
+		{ vessel_.GetIdForComponent(this), 1,  1, 0, bm::vc::MFCLeftL2_loc, bm::pnl::pnlLeftMFD2_RC },
+		{ vessel_.GetIdForComponent(this), 2,  2, 0, bm::vc::MFCLeftL3_loc, bm::pnl::pnlLeftMFD3_RC },
+		{ vessel_.GetIdForComponent(this), 3,  3, 0, bm::vc::MFCLeftL4_loc, bm::pnl::pnlLeftMFD4_RC },
+		{ vessel_.GetIdForComponent(this), 4,  4, 0, bm::vc::MFCLeftL5_loc, bm::pnl::pnlLeftMFD5_RC },
+		{ vessel_.GetIdForComponent(this), 5,  5, 0, bm::vc::MFCLeftL6_loc, bm::pnl::pnlLeftMFD6_RC },
+		{ vessel_.GetIdForComponent(this), 6,  0, 1, bm::vc::MFCLeftR1_loc, bm::pnl::pnlLeftMFD7_RC },
+		{ vessel_.GetIdForComponent(this), 7,  1, 1, bm::vc::MFCLeftR2_loc, bm::pnl::pnlLeftMFD8_RC },
+		{ vessel_.GetIdForComponent(this), 8,  2, 1, bm::vc::MFCLeftR3_loc, bm::pnl::pnlLeftMFD9_RC },
+		{ vessel_.GetIdForComponent(this), 9,  3, 1, bm::vc::MFCLeftR4_loc, bm::pnl::pnlLeftMFD10_RC },
+		{ vessel_.GetIdForComponent(this), 10, 4, 1, bm::vc::MFCLeftR5_loc, bm::pnl::pnlLeftMFD11_RC },
+		{ vessel_.GetIdForComponent(this), 11, 5, 1, bm::vc::MFCLeftR6_loc, bm::pnl::pnlLeftMFD12_RC }
 	};
 };

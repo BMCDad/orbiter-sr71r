@@ -88,7 +88,7 @@ private:
 
 	BEACONLIGHTSPEC			specBeaconTop_{
 		BEACONSHAPE_STAR,
-		const_cast<VECTOR3*>(&bm::main::BeaconTop_location),
+		const_cast<VECTOR3*>(&bm::main::BeaconTop_loc),
 		&colRed,		// color
 		0.55,			// size
 		0.6,			// falloff
@@ -100,7 +100,7 @@ private:
 	
 	BEACONLIGHTSPEC			specBeaconBottom_{
 		BEACONSHAPE_STAR,
-		const_cast<VECTOR3*>(&bm::main::BeaconBottom_location),
+		const_cast<VECTOR3*>(&bm::main::BeaconBottom_loc),
 		&colRed,		// color
 		0.55,			// size
 		0.6,			// falloff
@@ -112,10 +112,10 @@ private:
 
 	bco::on_off_input		switchBeaconLights_{		// On off switch for external beacon lights.
 		  { bm::vc::SwitchBeaconLights_id }
-		, bm::vc::SwitchBeaconLights_location, bm::vc::LightsRightAxis_location
+		, bm::vc::SwitchBeaconLights_loc, bm::vc::LightsRightAxis_loc
 		, toggleOnOff
 		, bm::pnl::pnlLightBeacon_id
-		, bm::pnl::pnlLightBeacon_verts
+		, bm::pnl::pnlLightBeacon_vrt
 		, bm::pnl::pnlLightBeacon_RC
 	};
 };

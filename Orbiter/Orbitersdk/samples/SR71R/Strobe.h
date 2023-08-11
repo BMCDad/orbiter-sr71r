@@ -87,7 +87,7 @@ private:
 
 	BEACONLIGHTSPEC			specStrobeLeft_{
 		BEACONSHAPE_DIFFUSE,
-		const_cast<VECTOR3*>(&bm::main::StrobeLightP_location),
+		const_cast<VECTOR3*>(&bm::main::StrobeLightP_loc),
 		&colWhite,		// color
 		0.3,			// size
 		0.6,			// falloff
@@ -99,7 +99,7 @@ private:
 
 	BEACONLIGHTSPEC			specStrobeRight_{
 		BEACONSHAPE_DIFFUSE,
-		const_cast<VECTOR3*>(&bm::main::StrobeLightS_location),
+		const_cast<VECTOR3*>(&bm::main::StrobeLightS_loc),
 		&colWhite,		// color
 		0.3,			// size
 		0.6,			// falloff
@@ -111,10 +111,10 @@ private:
 
 	bco::on_off_input		switchStrobeLights_{		// On off switch for external strobe lights.
 		{ bm::vc::SwitchStrobeLights_id },
-			bm::vc::SwitchStrobeLights_location, bm::vc::LightsRightAxis_location,
+			bm::vc::SwitchStrobeLights_loc, bm::vc::LightsRightAxis_loc,
 			toggleOnOff,
 			bm::pnl::pnlLightStrobe_id,
-			bm::pnl::pnlLightStrobe_verts,
+			bm::pnl::pnlLightStrobe_vrt,
 			bm::pnl::pnlLightStrobe_RC
 	};
 

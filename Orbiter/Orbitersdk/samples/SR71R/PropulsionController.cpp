@@ -249,14 +249,14 @@ void PropulsionController::handle_set_class_caps(bco::vessel& vessel)
 {
 	//	Start with max thrust (ENGINE_THRUST) this will change base on the max thrust selector.
 	mainThrustHandles_[0] = vessel.CreateThruster(
-        bm::main::ThrusterP_location,  
+        bm::main::ThrusterP_loc,  
         _V(0, 0, 1), 
         ENGINE_THRUST, 
         vessel.MainPropellant(), 
         THRUST_ISP);
 
 	mainThrustHandles_[1] = vessel.CreateThruster(
-        bm::main::ThrusterS_location, 
+        bm::main::ThrusterS_loc, 
         _V(0, 0, 1), 
         ENGINE_THRUST, 
         vessel.MainPropellant(), 
@@ -294,14 +294,14 @@ void PropulsionController::handle_set_class_caps(bco::vessel& vessel)
 	vessel.CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_DOWN);
 
 	// Exhaust visuals
-	vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FL_DOWN_location, _V(0, -1, 0));
-	vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_DOWN_location, _V(0, -1, 0));
-	vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RL_UP_location,   _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RR_UP_location,   _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_UP_location,   _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FR_UP_location,   _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RL_DOWN_location, _V(0, -1, 0));
-	vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RR_DOWN_location, _V(0, -1, 0));
+	vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FL_DOWN_loc, _V(0, -1, 0));
+	vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_DOWN_loc, _V(0, -1, 0));
+	vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RL_UP_loc,   _V(0,  1, 0));
+	vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RR_UP_loc,   _V(0,  1, 0));
+	vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_UP_loc,   _V(0,  1, 0));
+	vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FR_UP_loc,   _V(0,  1, 0));
+	vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RL_DOWN_loc, _V(0, -1, 0));
+	vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RR_DOWN_loc, _V(0, -1, 0));
 
 
 	// Yaw left and right simplified at 10 meters.
@@ -315,10 +315,10 @@ void PropulsionController::handle_set_class_caps(bco::vessel& vessel)
 	vessel.CreateThrusterGroup(th_att_lin    , 2, THGROUP_ATT_LEFT);
 	vessel.CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_RIGHT);
 
-	vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_RIGHT_location, _V( 1, 0, 0));
-	vessel.AddExhaust(th_att_rot[1], 0.94, 0.122, bm::main::RCS_RL_LEFT_location,  _V(-1, 0, 0));
-	vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_LEFT_location,  _V(-1, 0, 0));
-	vessel.AddExhaust(th_att_rot[3], 0.94, 0.122, bm::main::RCS_RR_RIGHT_location, _V( 1, 0, 0));
+	vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_RIGHT_loc, _V( 1, 0, 0));
+	vessel.AddExhaust(th_att_rot[1], 0.94, 0.122, bm::main::RCS_RL_LEFT_loc,  _V(-1, 0, 0));
+	vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_LEFT_loc,  _V(-1, 0, 0));
+	vessel.AddExhaust(th_att_rot[3], 0.94, 0.122, bm::main::RCS_RR_RIGHT_loc, _V( 1, 0, 0));
 
 	// Bank left and right.
 
@@ -330,10 +330,10 @@ void PropulsionController::handle_set_class_caps(bco::vessel& vessel)
 	vessel.CreateThrusterGroup(th_att_rot    , 2, THGROUP_ATT_BANKLEFT);
 	vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_BANKRIGHT);
 
-	vessel.AddExhaust(th_att_rot[0], 1.03, 0.134, bm::main::RCS_L_TOP_location,    _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[1], 1.03, 0.134, bm::main::RCS_R_BOTTOM_location, _V(0, -1, 0));
-	vessel.AddExhaust(th_att_rot[2], 1.03, 0.134, bm::main::RCS_R_TOP_location,    _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[3], 1.03, 0.134, bm::main::RCS_L_BOTTOM_location, _V(0, -1, 0));
+	vessel.AddExhaust(th_att_rot[0], 1.03, 0.134, bm::main::RCS_L_TOP_loc,    _V(0,  1, 0));
+	vessel.AddExhaust(th_att_rot[1], 1.03, 0.134, bm::main::RCS_R_BOTTOM_loc, _V(0, -1, 0));
+	vessel.AddExhaust(th_att_rot[2], 1.03, 0.134, bm::main::RCS_R_TOP_loc,    _V(0,  1, 0));
+	vessel.AddExhaust(th_att_rot[3], 1.03, 0.134, bm::main::RCS_L_BOTTOM_loc, _V(0, -1, 0));
 
 
 	// Forward and back
@@ -343,10 +343,10 @@ void PropulsionController::handle_set_class_caps(bco::vessel& vessel)
 	vessel.CreateThrusterGroup(th_att_lin    , 1, THGROUP_ATT_FORWARD);
 	vessel.CreateThrusterGroup(th_att_lin + 1, 1, THGROUP_ATT_BACK);
 
-	vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RL_LEFT_location,   _V(0, 0, -1));
-	vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RR_RIGHT_location,  _V(0, 0, -1));
-	vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_L_FORWARD_location, _V(0, 0,  1));
-	vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_R_FORWARD_location, _V(0, 0,  1));
+	vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RL_LEFT_loc,   _V(0, 0, -1));
+	vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RR_RIGHT_loc,  _V(0, 0, -1));
+	vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_L_FORWARD_loc, _V(0, 0,  1));
+	vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_R_FORWARD_loc, _V(0, 0,  1));
 
 	// swThrustLimit_.SetOff();
 	

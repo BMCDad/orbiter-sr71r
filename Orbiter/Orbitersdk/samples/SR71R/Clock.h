@@ -54,48 +54,48 @@ private:
 
 	bco::rotary_display_wrap	clockTimerSecondsHand_ {
 												{ bm::vc::ClockSecond_id },
-												bm::vc::ClockSecond_location, bm::vc::ClockAxisFront_location,
+												bm::vc::ClockSecond_loc, bm::vc::ClockAxisFront_loc,
 												bm::pnl::pnlClockSecond_id,
-												bm::pnl::pnlClockSecond_verts,
+												bm::pnl::pnlClockSecond_vrt,
 												(360 * RAD),	// Clockwise
 												0.4
 											};
 
 	bco::rotary_display_wrap	clockTimerMinutesHand_ {
 												{ bm::vc::ClockTimerMinute_id },
-												bm::vc::ClockTimerMinute_location, bm::vc::ClockAxisFront_location,
+												bm::vc::ClockTimerMinute_loc, bm::vc::ClockAxisFront_loc,
 												bm::pnl::pnlClockTimerMinute_id,
-												bm::pnl::pnlClockTimerMinute_verts,
+												bm::pnl::pnlClockTimerMinute_vrt,
 												(360 * RAD),	// Clockwise
 												0.4
 											};
 
 	bco::rotary_display_wrap	clockElapsedMinutesHand_ {
 												{ bm::vc::ClockMinute_id },
-												bm::vc::ClockMinute_location, bm::vc::ClockAxisFront_location,
+												bm::vc::ClockMinute_loc, bm::vc::ClockAxisFront_loc,
 												bm::pnl::pnlClockMinute_id,
-												bm::pnl::pnlClockMinute_verts,
+												bm::pnl::pnlClockMinute_vrt,
 												(360 * RAD),	// Clockwise
 												0.4
 											};
 
 	bco::rotary_display_wrap	clockElapsedHoursHand_ {
 												{ bm::vc::ClockHour_id },
-												bm::vc::ClockHour_location, bm::vc::ClockAxisFront_location,
+												bm::vc::ClockHour_loc, bm::vc::ClockAxisFront_loc,
 												bm::pnl::pnlClockHour_id,
-												bm::pnl::pnlClockHour_verts,
+												bm::pnl::pnlClockHour_vrt,
 												(360 * RAD),	// Clockwise
 												0.4
 											};
 
 	bco::simple_event<>						clockTimerReset_ {
-												bm::vc::ClockTimerReset_location,
+												bm::vc::ClockTimerReset_loc,
 												0.01,
 												bm::pnl::pnlClockTimerReset_RC
 											};
 
 	bco::simple_event<>						clockElapsedReset_ {
-												bm::vc::ClockElapsedReset_location,
+												bm::vc::ClockElapsedReset_loc,
 												0.01,
 												bm::pnl::pnlClockElapsedReset_RC
 											};

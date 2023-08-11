@@ -44,7 +44,7 @@ void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simd
 
     animLandingSwitch_.Step(position_, simdt);
 
-    bco::TranslateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_verts, sTrans * animLandingSwitch_.GetState());
+    bco::TranslateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlLandingGear_id, bm::pnl::pnlLandingGear_vrt, sTrans * animLandingSwitch_.GetState());
 
     auto hudState = 1; // Gear up
     if (animLandingGear_.GetState() > 0.0) {
