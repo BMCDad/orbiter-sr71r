@@ -127,7 +127,7 @@ private:
 		, { "APU",			&apu_			}		// [a]			: (a)Enabled switch
 		, { "AVIONICS",		&avionics_		}		// [a b c d e]	: (a)Set course, (b)Set heading, (c)power, (d)Mode switch[1=atmo], (c)Nav select
 		, { "BEACON",		&beacon_		}		// [a]			: (a)Power
-		, { "COMPUTER",		&computer_		}		// [a b c d e]	: (a)Atmo on, (b)Hold heading, (c)Hold altitude, (d)Hold KEAS, (e)Hold MACH
+		, { "AUTOPILOT",	&computer_		}		// [a b c d e]	: (a)Atmo on, (b)Hold heading, (c)Hold altitude, (d)Hold Speed, (e)Hold MACH
 		, { "CANOPY",		&canopy_		}		// [a b c]		: (a)Power, (b)Switch, (c)canopy position
 		, { "CARGO",		&cargobay_		}		// [a b c]		: (a)Power, (b)Switch, (c)Cargo doors position
 		, { "CLOCK",		&clock_			}		// [a b c]		: (a)Elapsed mission, (b)Is timer running, (c)Elapsed timer.

@@ -374,13 +374,13 @@ bool FC::FlightComputer::handle_redraw_panel(bco::vessel& vessel, int id, int ev
 bool FC::FlightComputer::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
 	std::istringstream in(line);
-	bool isOn, isHoldHeading, isHoldAltitude, isHoldKEAS, isHoldMACH;
-	if (in >> isOn >> isHoldHeading >> isHoldAltitude >> isHoldKEAS >> isHoldMACH) {
+	bool isOn, isHoldHeading, isHoldAltitude, isHoldSpeed, isHoldMACH;
+	if (in >> isOn >> isHoldHeading >> isHoldAltitude >> isHoldSpeed >> isHoldMACH) {
 		SetProgramState(FCProgFlags::AtmoActive,	isOn);
 		SetProgramState(FCProgFlags::HoldHeading,	isHoldHeading);
 		SetProgramState(FCProgFlags::HoldAltitude,	isHoldAltitude);
-		SetProgramState(FCProgFlags::HoldKEAS,		isHoldKEAS);
-		SetProgramState(FCProgFlags::HoldMACH,		isHoldMACH);
+		SetProgramState(FCProgFlags::HoldKEAS,		(isHoldSpeed && !isHoldMACH));
+		SetProgramState(FCProgFlags::HoldMACH,		(isHoldSpeed && isHoldMACH));
 	}
 
 	return true;
@@ -392,7 +392,7 @@ std::string FC::FlightComputer::handle_save_state(bco::vessel& vessel)
 	os << IsProgramRunning(FCProgFlags::AtmoActive)
 		<< " " << IsProgramRunning(FCProgFlags::HoldHeading)
 		<< " " << IsProgramRunning(FCProgFlags::HoldAltitude)
-		<< " " << IsProgramRunning(FCProgFlags::HoldKEAS)
+		<< " " << (IsProgramRunning(FCProgFlags::HoldKEAS) || IsProgramRunning(FCProgFlags::HoldMACH))
 		<< " " << IsProgramRunning(FCProgFlags::HoldMACH);
 	
 	return os.str();
