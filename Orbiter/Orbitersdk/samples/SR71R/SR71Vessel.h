@@ -129,7 +129,7 @@ private:
 		, { "BEACON",		&beacon_		}		// [a]			: (a)Power
 		, { "AUTOPILOT",	&computer_		}		// [a b c d e]	: (a)Atmo on, (b)Hold heading, (c)Hold altitude, (d)Hold Speed, (e)Hold MACH
 		, { "CANOPY",		&canopy_		}		// [a b c]		: (a)Power, (b)Switch, (c)canopy position
-		, { "CARGO",		&cargobay_		}		// [a b c]		: (a)Power, (b)Switch, (c)Cargo doors position
+		, { "CARGOBAY",		&cargobay_		}		// [a b c]		: (a)Power, (b)Switch, (c)Cargo doors position
 		, { "CLOCK",		&clock_			}		// [a b c]		: (a)Elapsed mission, (b)Is timer running, (c)Elapsed timer.
 		, { "FUELCELL",		&fuelCell_		}		// [a]			: (a)Power
 		, { "GEAR",			&landingGear_	}		// [a b]		: (a)Switch position, (b)Landing gear position.
