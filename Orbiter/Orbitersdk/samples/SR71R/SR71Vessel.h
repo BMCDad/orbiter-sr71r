@@ -134,8 +134,8 @@ private:
 		, { "FUELCELL",		&fuelCell_		}		// [a]			: (a)Power
 		, { "GEAR",			&landingGear_	}		// [a b]		: (a)Switch position, (b)Landing gear position.
 		, { "HOVER",		&hoverEngines_	}		// [a b]		: (a)Switch position, (b)Door position
-		, { "LH2",			&hydrogenTank_	}		// [a b]		: (a)Quantity(liters 10max), (b)Is filling
-		, { "LOX",			&oxygenTank_	}		// [a b]		: (a)Quantity(liters 20max), (b)Is filling
+		, { "HYDROGEN",		&hydrogenTank_	}		// [a b]		: (a)Quantity(liters 10max), (b)Is filling
+		, { "OXYGEN",		&oxygenTank_	}		// [a b]		: (a)Quantity(liters 20max), (b)Is filling
 		, { "NAVLIGHTS",	&navLight_		}		// [a]			: (a)Power
 		, { "POWER",		&powerSystem_	}		// [a b c]		: (a)Main power switch, (b)External connected, (c)Fuelcell connected.
 		, { "PROPULSION",	&propulsion_	}		// [a]			: (a)Thrust limit switch
