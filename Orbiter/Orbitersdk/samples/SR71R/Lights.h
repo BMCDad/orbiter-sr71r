@@ -1,4 +1,4 @@
-//	Strobe - SR-71r Orbiter Addon
+//	Lights - SR-71r Orbiter Addon
 //	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
@@ -16,8 +16,9 @@
 
 #pragma once
 
-#include "bc_orbiter\signals.h"
 #include "bc_orbiter\control.h"
+#include "bc_orbiter\handler_interfaces.h"
+#include "bc_orbiter\vessel.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
@@ -26,7 +27,7 @@
 
 namespace bco = bc_orbiter;
 
-class Strobe :
+class Lights :
   	  public bco::vessel_component
 	, public bco::power_consumer
 	, public bco::set_class_caps 
@@ -34,7 +35,7 @@ class Strobe :
 {
 
 public:
-	Strobe(bco::power_provider& pwr, bco::vessel& vessel)
+	Lights(bco::power_provider& pwr, bco::vessel& vessel)
 		:
 		power_(pwr)
 	{
@@ -72,12 +73,21 @@ private:
 	bco::power_provider& power_;
 
 	void update() {
-		auto isActive =
-			switchStrobeLights_.is_on() &&
-			(power_.volts_available() > 25.0);
+		auto power = (power_.volts_available() > 25.0);
 
-		specStrobeLeft_.active = isActive;
-		specStrobeRight_.active = isActive;
+		auto strob = switchStrobeLights_.is_on() && power;
+		auto beacon = switchBeaconLights_.is_on() && power;
+		auto nav = switchNavigationLights_.is_on() && power;
+
+		specStrobeLeft_.active = strob;
+		specStrobeRight_.active = strob;
+
+		specBeaconTop_.active = beacon;
+		specBeaconBottom_.active = beacon;
+
+		specNavLeft_.active = nav;
+		specNavRear_.active = nav;
+		specNavRight_.active = nav;
 	}
 
 	// Set light specs:
@@ -109,6 +119,66 @@ private:
 		false,			// active
 	};
 
+	BEACONLIGHTSPEC			specBeaconTop_{
+		BEACONSHAPE_STAR,
+		const_cast<VECTOR3*>(&bm::main::BeaconTop_loc),
+		&colRed,		// color
+		0.55,			// size
+		0.6,			// falloff
+		2.0,			// period
+		0.1,			// duration
+		0.0,			// tofs
+		false,			// active
+	};
+
+	BEACONLIGHTSPEC			specBeaconBottom_{
+		BEACONSHAPE_STAR,
+		const_cast<VECTOR3*>(&bm::main::BeaconBottom_loc),
+		&colRed,		// color
+		0.55,			// size
+		0.6,			// falloff
+		2.0,			// period
+		0.1,			// duration
+		0.0,			// tofs
+		false,			// active
+	};
+
+	BEACONLIGHTSPEC			specNavLeft_{
+		BEACONSHAPE_DIFFUSE,
+		const_cast<VECTOR3*>(&bm::main::NavLightP_loc),
+		&colRed,		// color
+		0.3,			// size
+		0.4,			// falloff
+		0.0,			// period
+		0.1,			// duration
+		0.2,			// tofs
+		false,			// active
+	};
+
+	BEACONLIGHTSPEC			specNavRight_{
+		BEACONSHAPE_DIFFUSE,
+		const_cast<VECTOR3*>(&bm::main::NavLightS_loc),
+		&colGreen,		// color
+		0.3,			// size
+		0.4,			// falloff
+		0.0,			// period
+		0.1,			// duration
+		0.2,			// tofs
+		false,			// active
+	};
+
+	BEACONLIGHTSPEC			specNavRear_{
+		BEACONSHAPE_DIFFUSE,
+		const_cast<VECTOR3*>(&bm::main::NavLightTail_loc),
+		&colWhite,		// color
+		0.3,			// size
+		0.4,			// falloff
+		0.0,			// period
+		0.1,			// duration
+		0.2,			// tofs
+		false,			// active
+	};
+
 	bco::on_off_input		switchStrobeLights_{		// On off switch for external strobe lights.
 		{ bm::vc::SwitchStrobeLights_id },
 			bm::vc::SwitchStrobeLights_loc, bm::vc::LightsRightAxis_loc,
@@ -118,6 +188,23 @@ private:
 			bm::pnl::pnlLightStrobe_RC
 	};
 
+	bco::on_off_input		switchBeaconLights_{		// On off switch for external beacon lights.
+		{ bm::vc::SwitchBeaconLights_id }
+		, bm::vc::SwitchBeaconLights_loc, bm::vc::LightsRightAxis_loc
+			, toggleOnOff
+			, bm::pnl::pnlLightBeacon_id
+			, bm::pnl::pnlLightBeacon_vrt
+			, bm::pnl::pnlLightBeacon_RC
+	};
+
+	bco::on_off_input		switchNavigationLights_ {		// On off switch for external navigation lights.
+		{ bm::vc::SwitchNavLights_id },
+			bm::vc::SwitchNavLights_loc, bm::vc::LightsRightAxis_loc,
+			toggleOnOff,
+			bm::pnl::pnlLightNav_id,
+			bm::pnl::pnlLightNav_vrt,
+			bm::pnl::pnlLightNav_RC
+	};
 };
 
 

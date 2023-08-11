@@ -183,7 +183,7 @@
     <ClInclude Include="Beacon.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Strobe.h">
+    <ClInclude Include="Lights.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Avionics.h">

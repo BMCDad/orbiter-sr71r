@@ -35,7 +35,7 @@
 #include "RetroEngines.h"
 #include "NavLights.h"
 #include "Beacon.h"
-#include "Strobe.h"
+#include "Lights.h"
 #include "Avionics.h"
 #include "Altimeter.h"
 #include "HSI.h"
@@ -106,7 +106,7 @@ private:
 	Shutters				shutters_		{ *this };
 	PropulsionController	propulsion_		{ powerSystem_, *this };
 	Beacon					beacon_			{ powerSystem_, *this };
-	Strobe					strobe_			{ powerSystem_, *this };
+	Lights					strobe_			{ powerSystem_, *this };
 	NavLight				navLight_		{ powerSystem_, *this };
 	Canopy					canopy_			{ powerSystem_, *this };
 	CargoBayController		cargobay_		{ powerSystem_, *this };
@@ -140,7 +140,7 @@ private:
 		, { "POWER",		&powerSystem_	}		// [a b c]		: (a)Main power switch, (b)External connected, (c)Fuelcell connected.
 		, { "PROPULSION",	&propulsion_	}		// [a]			: (a)Thrust limit switch
 		, { "RETRO",		&retroEngines_	}		// [a b]		: (a)Switch position, (b)Door position
-		, { "STROBE",		&strobe_		}		// [a]			: (a)Power
+		, { "LIGHTS",		&lights_		}		// [a]			: (a)Power
 	};
 
 	// Put status here that does not go anywhere else.
