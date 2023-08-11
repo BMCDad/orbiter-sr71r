@@ -39,15 +39,18 @@ PowerSystem::PowerSystem(bco::vessel& vessel) :
 
 bool PowerSystem::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
+	// sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
+	double volt, bl; // Not used, but we read them.
+
 	std::stringstream ss(line);
-	ss >> switchEnabled >> switchConnectExternal_ >> switchConnectFuelCell_;
+	ss >> switchEnabled >> switchConnectExternal_ >> switchConnectFuelCell_ >> volt >> bl;
 	return true;
 }
 
 std::string PowerSystem::handle_save_state(bco::vessel& vessel)
 {
 	std::stringstream ss;
-	ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_;
+	ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_ << " 0.0 0.0";
 	return ss.str();
 }
 
