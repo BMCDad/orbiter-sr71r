@@ -40,19 +40,37 @@ public:
 		power_(pwr)
 	{
 		switchStrobeLights_.attach_on_change([&]() { update(); });
+		switchBeaconLights_.attach_on_change([&]() { update(); });
+		switchNavigationLights_.attach_on_change([&]() { update(); });
+
 		power_.attach_consumer(this);
 		
 		vessel.AddControl(&switchStrobeLights_);
+		vessel.AddControl(&switchBeaconLights_);
+		vessel.AddControl(&switchNavigationLights_);
 	}
 
 	// power_consumer
 	void on_change(double v) override { update(); }
-	double amp_draw() const override { return switchStrobeLights_.is_on() ? 4.0 : 0.0; }
+	double amp_draw() const override { 
+		auto total = 0.0;
+		total += switchStrobeLights_.is_on() ? 4.0 : 0.0;
+		total += switchBeaconLights_.is_on() ? 4.0 : 0.0;
+		total += switchNavigationLights_.is_on() ? 4.0 : 0.0;
+		return total;
+	}
 
 	// set_class_caps
 	void handle_set_class_caps(bco::vessel& vessel) {
 		vessel.AddBeacon(&specStrobeLeft_);
 		vessel.AddBeacon(&specStrobeRight_);
+		
+		vessel.AddBeacon(&specBeaconTop_);
+		vessel.AddBeacon(&specBeaconBottom_);
+		
+		vessel.AddBeacon(&specNavLeft_);
+		vessel.AddBeacon(&specNavRear_);
+		vessel.AddBeacon(&specNavRight_);
 	}
 
 	// manage_state
