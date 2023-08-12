@@ -193,7 +193,6 @@ void FC::FlightComputer::Boot()
 	isRunning_ = true;
 }
 
-
 void FC::FlightComputer::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Handle low lever computer stuff, boot etc.
@@ -352,7 +351,8 @@ bool FC::FlightComputer::handle_load_panel(bco::vessel& vessel, int id, PANELHAN
 	vessel.RegisterPanelArea(
 		hPanel,
 		allId_,
-		_R(1565, 2152, 1808, 2371), //_R(1710, 95, 1950, 320),
+//		_R(1565, 2152, 1808, 2371), //_R(1710, 95, 1950, 320),
+		bm::pnl::pnlFCScreen_RC,
 		PANEL_REDRAW_USER,
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
 		surfHandle);
@@ -362,7 +362,7 @@ bool FC::FlightComputer::handle_load_panel(bco::vessel& vessel, int id, PANELHAN
 
 bool FC::FlightComputer::handle_redraw_panel(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
 {
-	int left = 1568;
+	int left = 1585;
 	int top = 2150;
 	for (int i = 0; i < DISPLAY_ROWS; i++) {
 		bco::DrawSurfaceText(left, top + (i * 20), display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
