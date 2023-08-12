@@ -35,7 +35,7 @@ class Lights :
 {
 
 public:
-	Lights(bco::power_provider& pwr, bco::vessel& vessel)
+	Lights(bco::vessel& vessel, bco::power_provider& pwr)
 		:
 		power_(pwr)
 	{
@@ -57,14 +57,16 @@ public:
 
 	// manage_state
 	bool handle_load_state(bco::vessel& vessel, const std::string& line) override {
+		// sscanf_s(configLine + 6, "%i%i%i%i", &nav, &beacon, &strobe, &dock);
+		double dock; // not used.
 		std::istringstream in(line);
-		in >> switchStrobeLights_;
+		in >> switchNavigationLights_ >> switchBeaconLights_ >> switchStrobeLights_ >> dock;
 		return true;
 	}
 
 	std::string handle_save_state(bco::vessel& vessel) override {
 		std::ostringstream os;
-		os << switchStrobeLights_;
+		os << switchNavigationLights_ << " " << switchBeaconLights_ << " " << switchStrobeLights_ << 0;
 		return os.str();
 	}
 

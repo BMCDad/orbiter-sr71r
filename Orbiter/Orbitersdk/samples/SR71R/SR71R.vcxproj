@@ -136,7 +136,6 @@
     <ClInclude Include="bc_orbiter\simple_event.h" />
     <ClInclude Include="bc_orbiter\status_display.h" />
     <ClInclude Include="bc_orbiter\Tools.h" />
-    <ClInclude Include="Beacon.h" />
     <ClInclude Include="Canopy.h" />
     <ClInclude Include="CargoBayController.h" />
     <ClInclude Include="Clock.h" />
@@ -149,7 +148,6 @@
     <ClInclude Include="FuelCell.h" />
     <ClInclude Include="IConsumable.h" />
     <ClInclude Include="LandingGear.h" />
-    <ClInclude Include="NavLights.h" />
     <ClInclude Include="OxygenTank.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RetroEngines.h" />

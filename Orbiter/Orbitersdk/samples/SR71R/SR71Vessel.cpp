@@ -29,7 +29,6 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	AddComponent(&airspeed_);
 	AddComponent(&altimeter_);
 	AddComponent(&apu_);
-	AddComponent(&beacon_);
 	AddComponent(&canopy_);
 	AddComponent(&cargobay_);
 	AddComponent(&clock_);
@@ -39,13 +38,12 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	AddComponent(&hydrogenTank_);
 	AddComponent(&hsi_);
 	AddComponent(&landingGear_);
-	AddComponent(&navLight_);
 	AddComponent(&navModes_);
 	AddComponent(&oxygenTank_);
 	AddComponent(&propulsion_);
 	AddComponent(&powerSystem_);
 	AddComponent(&retroEngines_);
-	AddComponent(&strobe_);
+	AddComponent(&lights_);
 
 	AddComponent(&mfdLeft_);
 	AddComponent(&mfdRight_);

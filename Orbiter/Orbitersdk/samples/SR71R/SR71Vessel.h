@@ -33,8 +33,6 @@
 #include "VesselControl.h"
 #include "HoverEngines.h"
 #include "RetroEngines.h"
-#include "NavLights.h"
-#include "Beacon.h"
 #include "Lights.h"
 #include "Avionics.h"
 #include "Altimeter.h"
@@ -102,12 +100,10 @@ private:
 	HSI						hsi_			{ *this, avionics_ };
 	NavModes				navModes_		{ *this, avionics_ };
 	Clock					clock_			{ *this };
-	RCSSystem				rcs_			{ *this, powerSystem_ };
 	Shutters				shutters_		{ *this };
+	RCSSystem				rcs_			{ *this, powerSystem_ };
+	Lights					lights_			{ *this, powerSystem_ };
 	PropulsionController	propulsion_		{ powerSystem_, *this };
-	Beacon					beacon_			{ powerSystem_, *this };
-	Lights					strobe_			{ powerSystem_, *this };
-	NavLight				navLight_		{ powerSystem_, *this };
 	Canopy					canopy_			{ powerSystem_, *this };
 	CargoBayController		cargobay_		{ powerSystem_, *this };
 	HoverEngines			hoverEngines_	{ powerSystem_,	*this };
@@ -126,7 +122,6 @@ private:
 		  { "AIRBRAKE",		&airBrake_		}		// [a b]		: (a)Switch position,  (b)Brake position
 		, { "APU",			&apu_			}		// [a]			: (a)Enabled switch
 		, { "AVIONICS",		&avionics_		}		// [a b c d e]	: (a)Set course, (b)Set heading, (c)power, (d)Mode switch[1=atmo], (c)Nav select
-		, { "BEACON",		&beacon_		}		// [a]			: (a)Power
 		, { "AUTOPILOT",	&computer_		}		// [a b c d e]	: (a)Atmo on, (b)Hold heading, (c)Hold altitude, (d)Hold Speed, (e)Hold MACH
 		, { "CANOPY",		&canopy_		}		// [a b c]		: (a)Power, (b)Switch, (c)canopy position
 		, { "CARGOBAY",		&cargobay_		}		// [a b c]		: (a)Power, (b)Switch, (c)Cargo doors position
@@ -136,7 +131,6 @@ private:
 		, { "HOVER",		&hoverEngines_	}		// [a b]		: (a)Switch position, (b)Door position
 		, { "HYDROGEN",		&hydrogenTank_	}		// [a b]		: (a)Quantity(liters 10max), (b)Is filling
 		, { "OXYGEN",		&oxygenTank_	}		// [a b]		: (a)Quantity(liters 20max), (b)Is filling
-		, { "NAVLIGHTS",	&navLight_		}		// [a]			: (a)Power
 		, { "POWER",		&powerSystem_	}		// [a b c]		: (a)Main power switch, (b)External connected, (c)Fuelcell connected.
 		, { "PROPULSION",	&propulsion_	}		// [a]			: (a)Thrust limit switch
 		, { "RETRO",		&retroEngines_	}		// [a b]		: (a)Switch position, (b)Door position

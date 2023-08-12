@@ -156,9 +156,6 @@
     <ClInclude Include="bc_orbiter\Tools.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="NavLights.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\signals.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
@@ -179,9 +176,6 @@
     </ClInclude>
     <ClInclude Include="bc_orbiter\simple_event.h">
       <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="Beacon.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Lights.h">
       <Filter>Components</Filter>
