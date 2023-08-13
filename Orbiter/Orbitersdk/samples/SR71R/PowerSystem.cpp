@@ -1,5 +1,5 @@
 //	PowerSystem - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -22,198 +22,92 @@
 
 #include <assert.h>
 
-PowerSystem::PowerSystem(bco::BaseVessel* vessel) :
-PoweredComponent(vessel, 0.0, 0.0),
-powerExternal_(0.0),
-fuelCell_(nullptr),
-externAvailLight_(			bt_mesh::SR71rVC::ExtAvailableLight_verts,		bt_mesh::SR71rVC::ExtAvailableLight_id),
-externConnectedLight_(		bt_mesh::SR71rVC::ExtConnectedLight_verts,		bt_mesh::SR71rVC::ExtConnectedLight_id),
-fuelCellAvailLight_(		bt_mesh::SR71rVC::FuelCellAvailableLight_verts,	bt_mesh::SR71rVC::FuelCellAvailableLight_id),
-fuelCellConnectedLight_(	bt_mesh::SR71rVC::FuelCellConnectedLight_verts,	bt_mesh::SR71rVC::FuelCellConnectedLight_id),
-isBatteryDraw_(false),
-prevTime_(0.0),
-prevAvailPower_(-1.0)
+PowerSystem::PowerSystem(bco::vessel& vessel) :
+	batteryLevel_(1.0),			// Always available for now.
+	slotFuelCellAvailablePower_([&](double v) { })
 {
+	vessel.AddControl(&switchEnabled);
+	vessel.AddControl(&switchConnectExternal_);
+	vessel.AddControl(&switchConnectFuelCell_);
+	vessel.AddControl(&lightFuelCellConnected_);
+	vessel.AddControl(&lightExternalAvail_);
+	vessel.AddControl(&lightExternalConnected_);
+	vessel.AddControl(&gaugePowerAmps_);
+	vessel.AddControl(&gaugePowerVolts_);
+	vessel.AddControl(&statusBattery_);
 }
 
-void PowerSystem::Step(double simt, double simdt, double mjd)
+bool PowerSystem::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
-	mainCircuit_.Step(simt, simdt, mjd);
+	// sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
+	double volt, bl; // Not used, but we read them.
 
-    gaugePowerVolt_.SetState(VoltNeedlePosition());
-	gaugePowerAmp_.SetState(AmpNeedlePosition());
-
-	if (fabs(simt - prevTime_) > 0.2)
-	{
-		Update();
-		prevTime_ = simt;
-	}
-}
-
-void PowerSystem::SetClassCaps()
-{
-    auto vessel = GetBaseVessel();
-    
-    swPower_.Setup(vessel);
-    swConnectExternal_.Setup(vessel);
-    swConnectFuelCell_.Setup(vessel);
-    gaugePowerVolt_.Setup(vessel);
-	gaugePowerAmp_.Setup(vessel);
-	
-	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
-}
-
-bool PowerSystem::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
-{
-	if (_strnicmp(key, ConfigKey, 5) != 0)
-	{
-		return false;
-	}
-
-	int main = 0;
-	int external = 0;
-	int fuelcell = 0;
-	double volt = 0.0;
-	double batLvl = 1.0;
-
-	sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
-
-	swPower_.SetState((main == 0) ? 0.0 : 1.0);
-	swConnectExternal_.SetState((external == 0) ? 0.0 : 1.0);
-	swConnectFuelCell_.SetState((fuelcell == 0) ? 0.0 : 1.0);
-
-	volt = max(0.0, min(30.0, volt));		// Bracket to 0-30
-	mainCircuit_.PowerVolts((double)volt);
-
-	batteryLevel_ = max(0.0, min(1.0, batLvl));
-
+	std::stringstream ss(line);
+	ss >> switchEnabled >> switchConnectExternal_ >> switchConnectFuelCell_ >> volt >> bl;
 	return true;
 }
 
-void PowerSystem::SaveConfiguration(FILEHANDLE scn) const
+std::string PowerSystem::handle_save_state(bco::vessel& vessel)
 {
-	char cbuf[256];
-	auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
-	auto ext = (swConnectExternal_.GetState() == 0.0) ? 0 : 1;
-	auto fc = (swConnectFuelCell_.GetState() == 0.0) ? 0 : 1;
-	auto vlt = mainCircuit_.GetVoltLevel();
-	auto blv = 1.0;
-
-	sprintf_s(cbuf, "%i %i %i %0.2f %0.2f", val, ext, fc, vlt, blv);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	std::stringstream ss;
+	ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_ << " 0.0 0.0";
+	return ss.str();
 }
 
-void PowerSystem::PostCreation()
+//void PowerSystem::AddMainCircuitDevice(bco::PoweredComponent* device)
+//{
+//	mainCircuit_.AddDevice(device);
+//}
+
+void PowerSystem::Update(bco::vessel& vessel)
 {
-    Update();
-}
+	/* Power system update:
+	*	Determine if we have a power source available and how much it provides.
+	*	Check the current amp total and determine if we have an overload.
+	*	Report the voltage available signal so components know what they have to work with.
+	*/
+	auto externalConnected = vessel.IsStoppedOrDocked();
+	lightExternalAvail_.set_state(externalConnected);
 
-bool PowerSystem::LoadVC(int id)
-{
-	// Redraw areas:
-	oapiVCRegisterArea(areaId_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
+	// handle connected power
+	auto availExternal = 
+		externalConnected &&				// External power is available
+		switchConnectExternal_.is_on() 		// External power is connected to the bus
+		? FULL_POWER : 0.0;
 
-	return true;
-}
+	lightExternalConnected_.set_state(availExternal > USEABLE_POWER);
 
-bool PowerSystem::VCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-	assert(devMesh != nullptr);
+	// handle fuelcell power
+	auto availFuelCell = switchConnectFuelCell_.is_on() ? slotFuelCellAvailablePower_.value() : 0.0;
+	lightFuelCellConnected_.set_state(availFuelCell > USEABLE_POWER);
 
-	const double offset = 0.0244;
-	double trans = 0.0;
-
-	trans = IsExternalSourceAvailable() ? offset : 0.0;
-	externAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	externAvailLight_.Draw(devMesh);
-
-	trans = IsExternalSourceConnected() ? offset : 0.0;
-	externConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	externConnectedLight_.Draw(devMesh);
-
-	trans = IsFuelCellAvailable() ? offset : 0.0;
-	fuelCellAvailLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	fuelCellAvailLight_.Draw(devMesh);
-
-	trans = IsFuelCellConnected() ? offset : 0.0;
-	fuelCellConnectedLight_.SetTranslate(_V(trans, 0.0, 0.0));
-	fuelCellConnectedLight_.Draw(devMesh);
-
-	return true;
-}
-
-void PowerSystem::AddMainCircuitDevice(bco::PoweredComponent* device)
-{
-	mainCircuit_.AddDevice(device);
-}
-
-void PowerSystem::Update()
-{
+	// handle battery power
+	auto availBattery = batteryLevel_ * FULL_POWER;
 	auto availPower = 0.0;
+	isDrawingBattery_ = false;
 
-	powerExternal_ = (GetBaseVessel()->IsStoppedOrDocked()) ? FULL_POWER : 0.0;
-
-    // Check if our circuit is overloaded, turn off power if it is.
-    if (mainCircuit_.GetTotalAmps() > AMP_OVERLOAD)
-    {
-        swPower_.SetOff();
-    }
-
-	// If main switch is off, then powersource is nullptr--no power.
-	// Otherwise see if either external or fuel cell is on.  External
-	// power will take precedence if on.
-	if (swPower_.IsOn())
+	if (switchEnabled.is_on())
 	{
-		auto availExternal = 0.0;
-		auto availFuelCell = 0.0;
-		auto availBattery = batteryLevel_ * FULL_POWER;
-
-		if (swConnectExternal_.IsOn())
-		{
-			availExternal = powerExternal_;
-		}
-		
-		if (swConnectFuelCell_.IsOn())
-		{
-			availFuelCell = (nullptr != fuelCell_) ? fuelCell_->AvailablePower() : 0.0;
-		}
-
-
 		availPower = fmax(availExternal, availFuelCell);
-
-		if (availPower > USEABLE_POWER)
-		{
-			isBatteryDraw_ = false;
-			availPower = FULL_POWER;
-		}
-		else
-		{
-			isBatteryDraw_ = true;
+		if (availPower < USEABLE_POWER) {
+			isDrawingBattery_ = true;
 			availPower = availBattery;
 		}
 	}
-	else
-	{
-		// Main switch is off.  Only external avail power light should be on.
-		isBatteryDraw_ = false;
+
+	if (availPower != prevVolts_) {
+		prevVolts_ = availPower;
+
+		for each (auto & c in consumers_) {
+			c->on_change(prevVolts_);
+		}
 	}
 
-	if (availPower != prevAvailPower_)
-	{
-		mainCircuit_.PowerVolts(availPower);
-		prevAvailPower_ = availPower;
-	}
+	gaugePowerVolts_.set_state(availPower / FULL_POWER);
 
-	GetBaseVessel()->UpdateUIArea(areaId_);
-}
-
-bool PowerSystem::IsFuelCellAvailable()
-{
-	return (nullptr != fuelCell_) ? fuelCell_->IsFuelCellPowerAvailable() : false; 
-}
-
-bool PowerSystem::IsFuelCellConnected()
-{
-	return IsFuelCellAvailable() && swConnectFuelCell_.IsOn(); 
+	statusBattery_.set_state(
+		(switchEnabled.is_on() && isDrawingBattery_)
+		?	bco::status_display::status::warn
+		:	bco::status_display::status::off
+	);
 }

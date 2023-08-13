@@ -17,7 +17,6 @@
 #pragma once
 
 #include "Orbitersdk.h"
-#include "bco.h"
 
 namespace bc_orbiter
 {
@@ -50,6 +49,16 @@ namespace bc_orbiter
 		double Millions;
 	};
 
+	struct IntParts {
+		double Ones;
+		double Tens;
+		double Hundreds;
+		double Thousands;
+		double TenThousands;
+		double HundredThousands;
+		double Millions;
+	};
+
 	// Indicates how to draw text.  See DrawSurfaceText.
 	enum DrawTextFormat { Left, Right, Center };
 
@@ -60,30 +69,66 @@ namespace bc_orbiter
         return state;
     }
 
+	inline void GetParts(int number, IntParts& out) {
+		out.HundredThousands	= (number / 100000) % 10;
+		out.TenThousands		= (number / 10000) % 10;
+		out.Thousands			= (number / 1000) % 10;
+		out.Hundreds			= (number / 100) % 10;
+		out.Tens				= (number / 10) % 10;
+	}
+
 	/**
 	Breaks a number into its component 10s parts.
 	@param number The input number
 	@param out Returns the number's tens parts.
 	*/
-	inline void BreakTens(double number, TensParts& out)
-	{
-		out.Millions = number / 1000000;
-		double remainder = number - ((int)out.Millions * 1000000);
+	inline void BreakTens(double number, IntParts& out) {
+		// Convert the number to an integer to work with whole parts
+		int integerPart = static_cast<int>(number);
 
-		out.HundredThousands = remainder / 100000;
-		remainder = remainder - ((int)out.HundredThousands * 100000);
+		// Calculate millions
+		out.Millions = integerPart / static_cast<double>(1000000);
+		integerPart %= 1000000;
 
-		out.TenThousands = remainder / 10000;
-		remainder = remainder - ((int)out.TenThousands * 10000);
+		// Calculate hundred thousands
+		out.HundredThousands = integerPart / static_cast<double>(100000);
+		integerPart %= 100000;
 
-		out.Thousands = remainder / 1000;
-		remainder = remainder - ((int)out.Thousands * 1000);
+		// Calculate ten thousands
+		out.TenThousands = integerPart / static_cast<double>(10000);
+		integerPart %= 10000;
 
-		out.Hundreds = remainder / 100;
-		remainder = remainder - ((int)out.Hundreds * 100);
+		// Calculate thousands
+		out.Thousands = integerPart / static_cast<double>(1000);
+		integerPart %= 1000;
 
-		out.Tens = remainder / 10;
+		// Calculate hundreds
+		out.Hundreds = integerPart / static_cast<double>(100);
+		integerPart %= 100;
+
+		// Calculate tens
+		out.Tens = integerPart / static_cast<double>(10);
 	}
+
+	//inline void BreakTens(double number, TensParts& out)
+	//{
+	//	out.Millions = (number / 100000) / 10;
+	//	double remainder = number - ((int)out.Millions * 100000);
+
+	//	out.HundredThousands = (remainder / 10000) / 10;
+	//	remainder = remainder - ((int)out.HundredThousands * 10000);
+
+	//	out.TenThousands = (remainder / 1000) / 10;
+	//	remainder = remainder - ((int)out.TenThousands * 1000);
+
+	//	out.Thousands = (remainder / 100) / 10;
+	//	remainder = remainder - ((int)out.Thousands * 100);
+
+	//	out.Hundreds = (remainder / 10) / 10;
+	//	remainder = remainder - ((int)out.Hundreds * 10);
+
+	//	out.Tens = (remainder / 1) / 10;
+	//}
 
 	/**
 	Breaks the number into its tenparts components.  Each
@@ -144,7 +189,7 @@ namespace bc_orbiter
 		double z = rotationaxis.z;
 
 		// Build rotation matrix
-		MATRIX3 rMatrix;
+		MATRIX3 rMatrix{};
 		rMatrix.m11 = (t * x * x + c);
 		rMatrix.m12 = (t * x * y - s * z);
 		rMatrix.m13 = (t * x * z + s * y);
@@ -290,16 +335,12 @@ namespace bc_orbiter
 		// speed of sound at sea level
 		double speedOfSound = 340.29;   // m/s
 
-										// use Orbiter's constant for earth sea level pressure
-		double seaLevelPres = ATMP;
 		double ias = 0;
-		double statPres, dynPres, mach;
+		double dynPres, mach;
 		const ATMCONST *atmConst;
-		OBJHANDLE atmRef = vessel->GetAtmRef();
-		if (atmRef != NULL)
-		{
-			// Freestream static pressure
-			statPres = vessel->GetAtmPressure();
+		OBJHANDLE atmRef = vessel->GetAtmRef();		// Get ref for current body, null if none.
+		if (atmRef != NULL) {
+			double staticAtmoPres = vessel->GetAtmPressure();	// static atmospheric pressure.
 
 			// Retrieve the ratio of specific heats
 			atmConst = oapiGetPlanetAtmConstants(atmRef);
@@ -313,41 +354,48 @@ namespace bc_orbiter
 			dynPres = (gamma - 1) * pow(mach, 2.0) / 2 + 1;
 			dynPres = pow(dynPres, gamma / (gamma - 1));
 			// Convert stagnation pressure to dynamic pressure
-			dynPres = dynPres * statPres - statPres;
+			dynPres = dynPres * staticAtmoPres - staticAtmoPres;
 
 			// Following is the equation from the Orbiter manual, page 62
-			ias = dynPres / seaLevelPres + 1;
+			ias = dynPres / ATMP + 1;
 			ias = pow(ias, ((gamma - 1) / gamma)) - 1.0;
 			ias = ias * 2 / (gamma - 1);
 			ias = sqrt(ias) * speedOfSound;
 		}
 
+//		sprintf(oapiDebugString(), "IAS M/S: %+4.2f", ias);
 		result = ias * 1.94384; // To knots.
+//		sprintf(oapiDebugString(), "KIAS: %+4.2f", result);
 
 		return result;
 	}
 
 	/**
 	Calculate the KEAS for the given vessel.
+	Knots Equivalent Air Speed -- adjusted for atmospheric air pressure.
 	@param vessel Vessel to get KEAS for.
 	*/
 	inline double GetVesselKeas(const VESSEL3* vessel)
 	{
-		double speedOfSound = 340.29;   // m/s
-
-		return (vessel->GetMachNumber() * speedOfSound * sqrt(vessel->GetAtmPressure() / ATMP)) * 1.94384;
+		const double speedOfSound = 340.29;		// Speed of sound in meters per second.
+		const double msKnots = 1.94384;			// Convert m/s to knots
+		
+		return	(	vessel->GetMachNumber() *				// Start with mach
+					speedOfSound *							// Multiply by speed of sound
+					sqrt(vessel->GetAtmPressure() / ATMP)	// Multiply by atmo pressure ration squared.  As you get higher this goes to 0.
+				) * msKnots;								// Convert to knots.
 	}
 
 	/**
 	Calculate the G force on the vessel.
 	@param vessel Vessel to calculate G forces for.
 	*/
-	inline double GetVesselGs(const VESSEL3* vessel)
+	inline double GetVesselGs(const VESSEL3& vessel)
 	{
 		VECTOR3 vW, vF;
-		vessel->GetWeightVector(vW);
-		vessel->GetForceVector(vF);
-		auto m = vessel->GetMass();
+		vessel.GetWeightVector(vW);
+		vessel.GetForceVector(vF);
+		auto m = vessel.GetMass();
 
 		auto vA = (vF - vW) / m;
 		return length(vA) / 9.81;
@@ -509,5 +557,105 @@ namespace bc_orbiter
 		if (direct < 0.0) direct = PI2 + direct;
 		
 		return true;
+	}
+
+	template<typename T>
+	inline void TranslateMesh(T mesh, const UINT group, const NTVERTEX* verts, const VECTOR3& trans)
+	{
+		if (NULL == mesh)
+		{
+			return;
+		}
+
+		GROUPEDITSPEC change{};
+		NTVERTEX delta[4];
+
+		TransformXY2d(verts, delta, 4, trans, 0.0);
+
+		change.flags = GRPEDIT_VTXCRD;
+		change.nVtx = 4;
+		change.vIdx = NULL; //Just use the mesh order
+		change.Vtx = delta;
+		oapiEditMeshGroup(mesh, group, &change);
+	}
+
+	template<typename T>
+	inline void RotateMesh(T mesh, const UINT group, const NTVERTEX* verts, const double angle)
+	{
+		if (NULL == mesh)
+		{
+			return;
+		}
+
+		GROUPEDITSPEC change {};
+		NTVERTEX delta[4];
+
+		TransformXY2d(verts, delta, 4, _V(0.0, 0.0, 0.0), angle);
+
+		change.flags = GRPEDIT_VTXCRD;
+		change.nVtx = 4;
+		change.vIdx = NULL; //Just use the mesh order
+		change.Vtx = delta;
+		oapiEditMeshGroup(mesh, group, &change);
+	}
+
+	template<typename T>
+	inline void TransformUV(T mesh, const UINT group, const NTVERTEX* verts, const double angle, const VECTOR3& trans)
+	{
+		if (NULL == mesh)
+		{
+			return;
+		}
+
+		GROUPEDITSPEC change{};
+		NTVERTEX delta[4];
+
+		TransformUV2d(verts, delta, 4, trans, angle);
+
+		change.flags = GRPEDIT_VTXTEX;
+		change.nVtx = 4;
+		change.vIdx = NULL; //Just use the mesh order
+		change.Vtx = delta;
+		oapiEditMeshGroup(mesh, group, &change);
+	}
+
+	inline void DrawPanelOnOff(MESHHANDLE mesh, UINT group, const NTVERTEX* verts, bool isOn, double offset)
+	{
+		auto grp = oapiMeshGroup(mesh, group);
+
+		float trans = (float)(isOn ? (float)offset : 0.0);
+		grp->Vtx[0].tu = verts[0].tu + trans;
+		grp->Vtx[1].tu = verts[1].tu + trans;
+		grp->Vtx[2].tu = verts[2].tu + trans;
+		grp->Vtx[3].tu = verts[3].tu + trans;
+	}
+
+	inline void DrawPanelOffset(MESHHANDLE mesh, UINT group, const NTVERTEX* verts, double offset)
+	{
+		auto grp = oapiMeshGroup(mesh, group);
+
+		float trans = (float)offset;
+		grp->Vtx[0].tu = verts[0].tu + trans;
+		grp->Vtx[1].tu = verts[1].tu + trans;
+		grp->Vtx[2].tu = verts[2].tu + trans;
+		grp->Vtx[3].tu = verts[3].tu + trans;
+	}
+
+	template <typename T>
+	inline void UVTranslate(T mesh, UINT group, const NTVERTEX* verts, double offset_u, double offset_v)
+	{
+		if (mesh == nullptr) return;
+
+		auto grp = oapiMeshGroup(mesh, group);
+
+		grp->Vtx[0].tu = verts[0].tu + offset_u;
+		grp->Vtx[1].tu = verts[1].tu + offset_u;
+		grp->Vtx[2].tu = verts[2].tu + offset_u;
+		grp->Vtx[3].tu = verts[3].tu + offset_u;
+
+		grp->Vtx[0].tv = verts[0].tv + offset_v;
+		grp->Vtx[1].tv = verts[1].tv + offset_v;
+		grp->Vtx[2].tv = verts[2].tv + offset_v;
+		grp->Vtx[3].tv = verts[3].tv + offset_v;
 	}
 }

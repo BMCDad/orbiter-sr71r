@@ -20,65 +20,103 @@
 
 #include <assert.h>
 
-namespace mvc = bt_mesh::SR71rVC;
+namespace mvc = bm::vc;
 
-FC::FlightComputer::FlightComputer(bco::BaseVessel * vessel, double amps) :
-	bco::PoweredComponent(vessel, 10.0, 25.0),
-	visAPMainOn_(		bt_mesh::SR71rVC::SwAPMain_verts,		bt_mesh::SR71rVC::SwAPMain_id),
-	visAPHeadingOn_(	bt_mesh::SR71rVC::SwAPHeading_verts,	bt_mesh::SR71rVC::SwAPHeading_id),
-	visAPAltitudeOn_(	bt_mesh::SR71rVC::SwAPAltitude_verts,	bt_mesh::SR71rVC::SwAPAltitude_id),
-	visAPKEASOn_(		bt_mesh::SR71rVC::SwAPKEAS_verts,		bt_mesh::SR71rVC::SwAPKEAS_id),
-	visAPMACHOn_(		bt_mesh::SR71rVC::SwAPMACH_verts,		bt_mesh::SR71rVC::SwAPMACH_id),
-	prgHoldAltitude_(	*this),
-	prgHoldHeading_(	*this),
-	prgHoldKeas_(		*this),
-	prgHoldMach_(		*this)
+FC::FlightComputer::FlightComputer(
+	  bco::vessel& vessel
+	, bco::power_provider& pwr)
+	:
+	  power_(pwr)
+	, vessel_(vessel)
+	, headingSlot_([&](double v) { prgHoldHeading_.set_target(v); })
 {
-	swAPMain_.SetPressedFunc([this] 
-	{
-		ToggleAtmoProgram(FCProgFlags::AtmoActive); 
-		isDisplayDirty_ = true;
-	});
-	vessel->RegisterVCEventTarget(&swAPMain_);
+	vessel.AddControl(&gcKey0_);		
+	vessel.AddControl(&gcKey1_);		
+	vessel.AddControl(&gcKey2_);		
+	vessel.AddControl(&gcKey3_);		
+	vessel.AddControl(&gcKey4_);		
+	vessel.AddControl(&gcKey5_);		
+	vessel.AddControl(&gcKey6_);		
+	vessel.AddControl(&gcKey7_);		
+	vessel.AddControl(&gcKey8_);		
+	vessel.AddControl(&gcKey9_);		
+	vessel.AddControl(&gcKeyClear_);	
+	vessel.AddControl(&gcKeyDecimal_);
+	vessel.AddControl(&gcKeyEnter_);
+	vessel.AddControl(&gcKeyHUD_);
+	vessel.AddControl(&gcKeyNext_);
+	vessel.AddControl(&gcKeyPlusMinus_);
+	vessel.AddControl(&gcKeyPrev_);
+	vessel.AddControl(&gcKeyF1_);
+	vessel.AddControl(&gcKeyF2_);
+	vessel.AddControl(&gcKeyF3_);
+	vessel.AddControl(&gcKeyF4_);
+	vessel.AddControl(&gcKeyF5_);
+	vessel.AddControl(&gcKeyF6_);
+	vessel.AddControl(&gcKeyF7_);
+	vessel.AddControl(&gcKeyF8_);
+	vessel.AddControl(&gcKeyF9_);
+	vessel.AddControl(&gcKeyF10_);
 
-	swAPHeading_.SetPressedFunc([this] 
-	{
-		ToggleAtmoProgram(FCProgFlags::HoldHeading); 
-		isDisplayDirty_ = true;
-	});
-	vessel->RegisterVCEventTarget(&swAPHeading_);
+	vessel.AddControl(&apBtnMain_);
+	vessel.AddControl(&apBtnHeading_);
+	vessel.AddControl(&apBtnAltitude_);
+	vessel.AddControl(&apBtnKEAS_);
+	vessel.AddControl(&apBtnMACH_);
+	
+	vessel.AddControl(&apDspMain_);
+	vessel.AddControl(&apDspHeading_);
+	vessel.AddControl(&apDspAltitude_);
+	vessel.AddControl(&apDspKEAS_);
+	vessel.AddControl(&apDspMACH_);
 
-	swAPHAltitude_.SetPressedFunc([this]
-	{
-		ToggleAtmoProgram(FCProgFlags::HoldAltitude);
-		isDisplayDirty_ = true;
-	});
-	vessel->RegisterVCEventTarget(&swAPHAltitude_);
+	vessel.AddControl(&pnlHUDTile_);
+	vessel.AddControl(&pnlHUDText1_);
+	vessel.AddControl(&pnlHUDText2_);
+	vessel.AddControl(&pnlHUDText3_);
 
-	swAPKEAS_.SetPressedFunc([this]
-	{
-		ToggleAtmoProgram(FCProgFlags::HoldKEAS);
-		isDisplayDirty_ = true;
-	});
-	vessel->RegisterVCEventTarget(&swAPKEAS_);
+	gcKey0_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D0); });
+	gcKey1_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D1); });
+	gcKey2_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D2); });
+	gcKey3_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D3); });
+	gcKey4_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D4); });
+	gcKey5_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D5); });
+	gcKey6_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D6); });
+	gcKey7_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D7); });
+	gcKey8_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D8); });
+	gcKey9_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D9); });
+	gcKeyClear_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Clear); });
+	gcKeyDecimal_	.attach([&]() { keyBuffer_.push_back(FC::GCKey::Decimal); });
+	gcKeyEnter_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Enter); });
+	gcKeyHUD_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::HUD); });
+	gcKeyNext_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Next); });
+	gcKeyPlusMinus_	.attach([&]() { keyBuffer_.push_back(FC::GCKey::PlusMinus); });
+	gcKeyPrev_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Previous); });
+	gcKeyF1_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F1); });
+	gcKeyF2_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F2); });
+	gcKeyF3_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F3); });
+	gcKeyF4_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F4); });
+	gcKeyF5_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F5); });
+	gcKeyF6_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F6); });
+	gcKeyF7_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F7); });
+	gcKeyF8_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F8); });
+	gcKeyF9_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F9); });
+	gcKeyF10_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F10); });
 
-	swAPMACH_.SetPressedFunc([this]
-	{
-		ToggleAtmoProgram(FCProgFlags::HoldMACH);
-		isDisplayDirty_ = true;
-	});
-	vessel->RegisterVCEventTarget(&swAPMACH_);
+	apBtnMain_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::AtmoActive); });
+	apBtnHeading_	.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldHeading); });
+	apBtnAltitude_	.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldAltitude); });
+	apBtnKEAS_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldKEAS); });
+	apBtnMACH_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldMACH); });
+	
+	allId_ = vessel.GetControlId();
+	vessel.RegisterVCComponent(allId_, this);
+	vessel.RegisterPanelComponent(allId_, this);
 }
 
-
-void FC::FlightComputer::SetClassCaps()
+void FC::FlightComputer::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
-}
-
-
-bool FC::FlightComputer::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
-{
-	if (oapiCockpitMode() != COCKPIT_VIRTUAL) return false;
+	if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 
 	if (IsProgramRunning(FCProgFlags::AtmoActive))
 	{
@@ -115,13 +153,11 @@ bool FC::FlightComputer::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketch
 			skp->Text(xLeft - 162, yTop + 1, "MA", 2);
 		}
 	}
-	return true;
 }
-
 
 void FC::FlightComputer::Boot()
 {
-	if (!HasPower()) return;
+	if (!IsPowered()) return;
 
 	MapKey(GCKey::Clear,		[this] { HandleScratchPadKey(GCKey::Clear); });
 	MapKey(GCKey::D0,			[this] { HandleScratchPadKey(GCKey::D0); });
@@ -137,29 +173,27 @@ void FC::FlightComputer::Boot()
 	MapKey(GCKey::Decimal,		[this] { HandleScratchPadKey(GCKey::Decimal); });
 	MapKey(GCKey::PlusMinus,	[this] { HandleScratchPadKey(GCKey::PlusMinus); });
 
-	MapKey(GCKey::Home,			[this] { PageMain(); });
+	MapKey(GCKey::Menu,			[this] { PageMain(); });
 	MapKey(GCKey::Previous,		[this] { });
 	MapKey(GCKey::Next,			[this] {});
 	MapKey(GCKey::Enter,		[this] {});
+	MapKey(GCKey::HUD,			[this] {});
+	MapKey(GCKey::F1,			[this] {});
+	MapKey(GCKey::F2,			[this] {});
+	MapKey(GCKey::F3,			[this] {});
+	MapKey(GCKey::F4,			[this] {});
+	MapKey(GCKey::F5,			[this] {});
+	MapKey(GCKey::F6,			[this] {});
+	MapKey(GCKey::F7,			[this] {});
+	MapKey(GCKey::F8,			[this] {});
+	MapKey(GCKey::F9,			[this] {});
+	MapKey(GCKey::F10,			[this] {});
 	
 	PageMain();
 	isRunning_ = true;
 }
 
-
-void FC::FlightComputer::ChangePowerLevel(double newLevel)
-{
-    PoweredComponent::ChangePowerLevel(newLevel);
-
-	if (!HasPower())
-	{
-		isRunning_ = false;
-		ClearScreen();
-	}
-}
-
-
-void FC::FlightComputer::Step(double simt, double simdt, double mjd)
+void FC::FlightComputer::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Handle low lever computer stuff, boot etc.
 	Update();
@@ -176,16 +210,31 @@ void FC::FlightComputer::Step(double simt, double simdt, double mjd)
 
 	// Give control programs simulator time.
 	//vesselCtrl_.Step(simt, simdt, mjd);
-	if (prevRunningProgs != runningPrograms_) UpdateProgs(runningPrograms_);
+	if (prevRunningProgs != runningPrograms_) UpdateProgs(vessel, runningPrograms_);
 
 	auto atmoOn = IsProgramRunning(FCProgFlags::AtmoActive);
+	auto isHoldAlt = (atmoOn && IsProgramRunning(FCProgFlags::HoldAltitude));
+	auto isHoldHdg = (atmoOn && IsProgramRunning(FCProgFlags::HoldHeading));
+	auto isHoldKEAS = (atmoOn && IsProgramRunning(FCProgFlags::HoldKEAS));
+	auto isHoldMACH = (atmoOn && IsProgramRunning(FCProgFlags::HoldMACH));
 
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldAltitude))	prgHoldAltitude_.Step(simt, simdt, mjd);
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldHeading))	prgHoldHeading_.Step(simt, simdt, mjd);
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldKEAS))		prgHoldKeas_.Step(simt, simdt, mjd);
-	if (atmoOn && IsProgramRunning(FCProgFlags::HoldMACH))		prgHoldMach_.Step(simt, simdt, mjd);
+	if (isHoldAlt)	prgHoldAltitude_.step(vessel, simt, simdt, mjd);
+	if (isHoldHdg)	prgHoldHeading_.step(vessel, simt, simdt, mjd);
+	if (isHoldKEAS)	prgHoldKeas_.step(vessel, simt, simdt, mjd);
+	if (isHoldMACH)	prgHoldMach_.step(vessel, simt, simdt, mjd);
 
+	pnlHUDTile_.set_position(atmoOn ? 0 : 1);
+	pnlHUDText1_.set_position(isHoldHdg ? 1 : 0);
+	pnlHUDText2_.set_position(isHoldAlt ? 2 : 0);
+	pnlHUDText3_.set_position((isHoldKEAS || isHoldMACH) ? (isHoldKEAS ? 3 : 4) : 0);
+	
 	prevRunningProgs = runningPrograms_;
+
+	apDspMain_		.set_state(atmoOn);
+	apDspHeading_	.set_state(IsProgramRunning(FCProgFlags::HoldHeading));
+	apDspAltitude_	.set_state(IsProgramRunning(FCProgFlags::HoldAltitude));
+	apDspKEAS_		.set_state(IsProgramRunning(FCProgFlags::HoldKEAS));
+	apDspMACH_		.set_state(IsProgramRunning(FCProgFlags::HoldMACH));
 
 	// Now call the update method for the active page.
 	if (fabs(simt - prevTime_) > 0.2)
@@ -195,14 +244,6 @@ void FC::FlightComputer::Step(double simt, double simdt, double mjd)
 	}
 }
 
-
-double FC::FlightComputer::CurrentDraw()
-{
-	// TODO: Implement power draw based on running programs.
-	return 0.0;
-}
-
-
 void FC::FlightComputer::ClearScreen()
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
@@ -210,7 +251,6 @@ void FC::FlightComputer::ClearScreen()
 		DisplayLine(i, "                   ");
 	}
 }
-
 
 void FC::FlightComputer::DisplayLine(int row, char* mask, ...)
 {
@@ -221,7 +261,6 @@ void FC::FlightComputer::DisplayLine(int row, char* mask, ...)
 
 	isDisplayDirty_ = true;
 }
-
 
 void FC::FlightComputer::DisplayText(int row, int col, const char* text)
 {
@@ -246,7 +285,6 @@ void FC::FlightComputer::DisplayText(int row, int col, const char* text)
 	isDisplayDirty_ = true;
 }
 
-
 double FC::FlightComputer::GetScratchPad()
 {
 	auto temp = scratchValue_;
@@ -254,35 +292,20 @@ double FC::FlightComputer::GetScratchPad()
 	return temp;
 }
 
-
 void FC::FlightComputer::SetScratchPad(double value)
 {
 	scratchValue_ = value;
-
-	DisplayLine(10, "[%10.2f]", scratchValue_);
+	DisplayLine(10, "[%10.2f]       ", scratchValue_);
 }
 
-
-bool FC::FlightComputer::MouseEvent(int id, int event)
+bool FC::FlightComputer::handle_load_vc(bco::vessel& vessel, int vcid)
 {
-	auto keypressed = mapKey_.find(id);
-    if (keypressed != mapKey_.end())
-    {
-        keyBuffer_.push_back(keypressed->second);
-    }
-	
-	return false;
-}
-
-
-bool FC::FlightComputer::LoadVC(int id)
-{
-    auto vcMeshHandle = GetBaseVessel()->GetVCMeshHandle0();
+    auto vcMeshHandle = vessel.GetVCMeshHandle0();
     assert(vcMeshHandle != nullptr);
 
-    SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bt_mesh::SR71rVC::TXIDX_SR71R_100_VC2_dds);
+    SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
 
-    // Init our font:
+    // handle_set_class_caps our font:
     vcFont_.surfSource = surfHandle;
     vcFont_.charWidth = 12;
     vcFont_.charHeight = 20;
@@ -291,125 +314,89 @@ bool FC::FlightComputer::LoadVC(int id)
     vcFont_.blankX = 1600;
     vcFont_.blankY = 2021;
 
-    auto eventId = GetBaseVessel()->RegisterVCEvent(this, bco::VCIdMode::All);
     oapiVCRegisterArea(
-        eventId,
+        allId_,
         _R(80, 835, 320, 1060), //_R(1710, 95, 1950, 320),
         PANEL_REDRAW_USER,
         PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
         PANEL_MAP_BACKGROUND,
         surfHandle);
 
-    allId_ = eventId;
-
-    // mapKeyLocation_ maps a GCKey to the mouse click location on the mesh.
-    // We walk through the map here to register the mouse events and setup the
-    // mouse event to GCKey map.
-    for (auto& k : mapKeyLocation_)
-    {
-        auto eid = GetBaseVessel()->RegisterVCMouseEvent(this);
-        oapiVCRegisterArea(eid, PANEL_REDRAW_NEVER, PANEL_MOUSE_DOWN);
-        oapiVCSetAreaClickmode_Spherical(eid, k.second, 0.01);
-        mapKey_[eid] = k.first;
-    }
-
     return true;
 }
 
-
-bool FC::FlightComputer::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+bool FC::FlightComputer::handle_redraw_vc(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
 {
-	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-	assert(devMesh != nullptr);
-
-	for (int i = 0; i < DISPLAY_ROWS; i++)
-	{
+	for (int i = 0; i < DISPLAY_ROWS; i++) {
 		bco::DrawSurfaceText(0, i * 20, display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
 	}
 
-	const double offset = 0.0352;
-	double trans = 0.0;
-
-	trans = IsProgramRunning(FCProgFlags::AtmoActive) ? offset : 0.0;
-	visAPMainOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPMainOn_.Draw(devMesh);
-
-	trans = IsProgramRunning(FCProgFlags::HoldHeading) ? offset : 0.0;
-	visAPHeadingOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPHeadingOn_.Draw(devMesh);
-
-	trans = IsProgramRunning(FCProgFlags::HoldAltitude) ? offset : 0.0;
-	visAPAltitudeOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPAltitudeOn_.Draw(devMesh);
-
-	trans = IsProgramRunning(FCProgFlags::HoldKEAS) ? offset : 0.0;
-	visAPKEASOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPKEASOn_.Draw(devMesh);
-
-	trans = IsProgramRunning(FCProgFlags::HoldMACH) ? offset : 0.0;
-	visAPMACHOn_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAPMACHOn_.Draw(devMesh);
-
 	return true;
 }
 
-
-bool FC::FlightComputer::LoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
+bool FC::FlightComputer::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 {
-	if (_strnicmp(key, apConfigKey_.c_str(), apConfigKey_.length()) == 0)
-	{
-		return LoadAPConfiguration(scn, configLine);
-	}
+	auto panelMesh = vessel.GetpanelMeshHandle0();
+	SURFHANDLE surfHandle = oapiGetTextureHandle(panelMesh, bm::pnl::TXIDX_SR71R_100_2DPanel_dds);
 
-	return false;
-}
+	// handle_set_class_caps our font:
+	vcFont_.surfSource = surfHandle;
+	vcFont_.charWidth = 12;
+	vcFont_.charHeight = 20;
+	vcFont_.sourceX = 4;
+	vcFont_.sourceY = 2;
+	vcFont_.blankX = 1600;
+	vcFont_.blankY = 2;
 
-
-bool FC::FlightComputer::LoadAPConfiguration(FILEHANDLE scn, const char* configLine)
-{
-	int isOn;
-	int isHoldHeading;
-	int isHoldAltitude;
-	int isHoldSpeed;
-	int isHoldMach;
-
-	sscanf_s(configLine + apConfigKey_.length(), "%d%d%d%d%d", &isOn, &isHoldHeading, &isHoldAltitude, &isHoldSpeed, &isHoldMach);
-
-	SetProgramState(FCProgFlags::AtmoActive,	(isOn == 1));
-	SetProgramState(FCProgFlags::HoldHeading,	(isHoldHeading == 1));
-	SetProgramState(FCProgFlags::HoldAltitude,	(isHoldAltitude == 1));
+	vessel.RegisterPanelArea(
+		hPanel,
+		allId_,
+//		_R(1565, 2152, 1808, 2371), //_R(1710, 95, 1950, 320),
+		bm::pnl::pnlFCScreen_RC,
+		PANEL_REDRAW_USER,
+		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
+		surfHandle);
 	
-	if (isHoldSpeed == 1)
-	{
-		auto spType = (isHoldMach == 1) ? FCProgFlags::HoldMACH : FCProgFlags::HoldKEAS;
-		SetProgramState(spType, true);
+	return true;
+}
+
+bool FC::FlightComputer::handle_redraw_panel(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
+{
+	int left = 1585;
+	int top = 2150;
+	for (int i = 0; i < DISPLAY_ROWS; i++) {
+		bco::DrawSurfaceText(left, top + (i * 20), display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
 	}
 
 	return true;
 }
 
-
-void FC::FlightComputer::SaveConfiguration(FILEHANDLE scn) const
+bool FC::FlightComputer::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
-	SaveAPConfiguration(scn);
+	std::istringstream in(line);
+	bool isOn, isHoldHeading, isHoldAltitude, isHoldSpeed, isHoldMACH;
+	if (in >> isOn >> isHoldHeading >> isHoldAltitude >> isHoldSpeed >> isHoldMACH) {
+		SetProgramState(FCProgFlags::AtmoActive,	isOn);
+		SetProgramState(FCProgFlags::HoldHeading,	isHoldHeading);
+		SetProgramState(FCProgFlags::HoldAltitude,	isHoldAltitude);
+		SetProgramState(FCProgFlags::HoldKEAS,		(isHoldSpeed && !isHoldMACH));
+		SetProgramState(FCProgFlags::HoldMACH,		(isHoldSpeed && isHoldMACH));
+	}
+
+	return true;
 }
 
-
-void FC::FlightComputer::SaveAPConfiguration(FILEHANDLE scn) const
+std::string FC::FlightComputer::handle_save_state(bco::vessel& vessel)
 {
-	char cbuf[256];
-
-	auto pwr = (IsProgramRunning(FCProgFlags::AtmoActive)) ? 1 : 0;
-	auto hd = (IsProgramRunning(FCProgFlags::HoldHeading)) ? 1 : 0;
-	auto al = (IsProgramRunning(FCProgFlags::HoldAltitude)) ? 1 : 0;
-	auto sp = (IsProgramRunning(FCProgFlags::HoldKEAS) || IsProgramRunning(FCProgFlags::HoldMACH)) ? 1 : 0;
-	auto km = (IsProgramRunning(FCProgFlags::HoldMACH)) ? 1 : 0;
-
-	sprintf_s(cbuf, "%d %d %d %d %d", pwr, hd, al, sp, km);
-
-	oapiWriteScenario_string(scn, (char*)apConfigKey_.c_str(), cbuf);
+	std::ostringstream os;
+	os << IsProgramRunning(FCProgFlags::AtmoActive)
+		<< " " << IsProgramRunning(FCProgFlags::HoldHeading)
+		<< " " << IsProgramRunning(FCProgFlags::HoldAltitude)
+		<< " " << (IsProgramRunning(FCProgFlags::HoldKEAS) || IsProgramRunning(FCProgFlags::HoldMACH))
+		<< " " << IsProgramRunning(FCProgFlags::HoldMACH);
+	
+	return os.str();
 }
-
 
 void FC::FlightComputer::PageMain()
 {
@@ -441,11 +428,9 @@ void FC::FlightComputer::PageAtmosphere()
 	MapKey(GCKey::F4,	[this] { ToggleAtmoProgram(FCProgFlags::HoldMACH); });
 	MapKey(GCKey::F10,	[this] { ToggleAtmoProgram(FCProgFlags::AtmoActive); });
 
-
 	prevRunning_ = FCProgFlags::HoldInvalid;  // Force re-eval
 	funcUpdate_ = [this] { UpdateAtmospherePage(); };
 }
-
 
 void FC::FlightComputer::UpdateAtmospherePage()
 {
@@ -463,7 +448,6 @@ void FC::FlightComputer::UpdateAtmospherePage()
 	}
 }
 
-
 void FC::FlightComputer::PageAscent()
 {
 	ClearScreen();
@@ -472,19 +456,18 @@ void FC::FlightComputer::PageAscent()
 	ClearFuncKeys();
 	MapKey(GCKey::F1, [this] { SetTargetIncDeg(GetScratchPad()); });
 
-	MapKey(GCKey::F7, [this] { GetAvionics()->SetHeading(ascentHeading_); });
-	MapKey(GCKey::F8, [this] { GetAvionics()->SetHeading(ascentHeadingAlt_); });
+	MapKey(GCKey::F7, [this] { headingSignal_.fire(ascentHeading_); });
+	MapKey(GCKey::F8, [this] { headingSignal_.fire(ascentHeadingAlt_); });
 
 	// Target cannot be less than lat.
 	double vlng, vlat, vrad;
-	OBJHANDLE hRef = GetBaseVessel()->GetEquPos(vlng, vlat, vrad);
+	OBJHANDLE hRef = vessel_.GetEquPos(vlng, vlat, vrad);
 
 	launchLatitude_ = vlat;
 	SetTargetIncDeg(DEG * launchLatitude_);
 
 	funcUpdate_ = [this] { UpdateAscentPage(); };
 }
-
 
 void FC::FlightComputer::UpdateAscentPage()
 {
@@ -497,7 +480,6 @@ void FC::FlightComputer::UpdateAscentPage()
 	isAscentPageDirty_ = false;
 }
 
-
 /**	SetTargetIncDeg
 	@param tgt Target Inclination in degrees.
 	Takes the target inclincation and sets the ascentHeading, both
@@ -506,18 +488,15 @@ void FC::FlightComputer::UpdateAscentPage()
 */
 void FC::FlightComputer::SetTargetIncDeg(double tgt)
 {
-	if (bco::CalcLaunchHeading(launchLatitude_, RAD * tgt, ascentHeading_, ascentHeadingAlt_))
-	{
+	if (bco::CalcLaunchHeading(launchLatitude_, RAD * tgt, ascentHeading_, ascentHeadingAlt_)) {
 		ascentTargetInc_ = tgt * RAD;
 	}
-	else
-	{
+	else {
 		SetScratchError("Invalid Input");
 	}
 
 	isAscentPageDirty_ = true;
 }
-
 
 /**
 	Boots the computer if needed, checks for dirty display.
@@ -525,21 +504,23 @@ void FC::FlightComputer::SetTargetIncDeg(double tgt)
 */
 void FC::FlightComputer::Update()
 {
-	if (!isRunning_)
-	{
-		if (HasPower())
-		{
+	if (!isRunning_) {
+		if (IsPowered()) {
 			Boot();
 		}
 	}
+	else {
+		if (!IsPowered()) {
+			ClearScreen();
+			isRunning_ = false;
+		}
+	}
 
-    if (isDisplayDirty_)
-    {
-        oapiVCTriggerRedrawArea(0, allId_);
+    if (isDisplayDirty_) {
+        oapiTriggerRedrawArea(0, 0, allId_);
         isDisplayDirty_ = false;
     }
 }
-
 
 void FC::FlightComputer::ClearFuncKeys()
 {
@@ -555,7 +536,6 @@ void FC::FlightComputer::ClearFuncKeys()
 	MapKey(GCKey::F10);
 }
 
-
 void FC::FlightComputer::ClearScratchPad()
 {
 	scratchKeys_.clear();
@@ -563,18 +543,15 @@ void FC::FlightComputer::ClearScratchPad()
 	SetScratchPad(0.0);
 }
 
-
 void FC::FlightComputer::SetScratchError(const char* msg)
 {
 	isScratchError_ = true;
 	DisplayLine(10, "!! %s", msg);
 }
 
-
 bool FC::FlightComputer::HandleScratchPadKey(FC::GCKey key)
 {
-	if (key == FC::GCKey::Clear)
-	{
+	if (key == FC::GCKey::Clear) {
 		ClearScratchPad();
 		isScratchError_ = false;
 		return true;
@@ -585,8 +562,7 @@ bool FC::FlightComputer::HandleScratchPadKey(FC::GCKey key)
 	auto evaluate = false;
 	double newValue = 0.0;
 
-	switch (key)
-	{
+	switch (key) {
 	case FC::GCKey::D0:
 	case FC::GCKey::D1:
 	case FC::GCKey::D2:
@@ -597,16 +573,14 @@ bool FC::FlightComputer::HandleScratchPadKey(FC::GCKey key)
 	case FC::GCKey::D7:
 	case FC::GCKey::D8:
 	case FC::GCKey::D9:
-		if (scratchKeys_.size() < 8)
-		{
+		if (scratchKeys_.size() < 8) {
 			scratchKeys_.append(std::to_string(key));
 			evaluate = true;
 		}
 		break;
 
 	case FC::GCKey::Decimal:
-		if (scratchKeys_.find('.') == std::string::npos)
-		{
+		if (scratchKeys_.find('.') == std::string::npos) {
 			scratchKeys_.append(".");
 			evaluate = true;
 		}
@@ -618,8 +592,7 @@ bool FC::FlightComputer::HandleScratchPadKey(FC::GCKey key)
 		break;
 	}
 
-	if (evaluate)
-	{
+	if (evaluate) {
 		newValue = atof(scratchKeys_.c_str());
 		if (!scratchIsPos_) newValue *= -1.0;
 

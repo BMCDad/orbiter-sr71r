@@ -1,5 +1,5 @@
 //	HUD - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -19,149 +19,63 @@
 #include "HUD.h"
 #include "SR71r_mesh.h"
 
-HUD::HUD(bco::BaseVessel* vessel, double amps)
-	: PoweredComponent(vessel, amps, 20.0)
-{
-	swSelectMode_.AddStopFunc(0.0, [this] {SwitchPositionChanged(HUD_DOCKING); });
-	swSelectMode_.AddStopFunc(0.33, [this] {SwitchPositionChanged(HUD_SURFACE); });
-	swSelectMode_.AddStopFunc(0.66, [this] {SwitchPositionChanged(HUD_ORBIT); });
-	swSelectMode_.AddStopFunc(1.0, [this] {SwitchPositionChanged(HUD_NONE); });
-	swSelectMode_.SetStep(3);
+HUD::HUD(bco::power_provider& pwr, bco::vessel& vessel) :
+    power_(pwr)
+{ 
+    power_.attach_consumer(this),
+    vessel.AddControl(&btnLightDocking_);
+    vessel.AddControl(&btnLightSurface_);
+    vessel.AddControl(&btnLightOrbit_);
+    
+    vessel.AddControl(&btnDocking_);
+    vessel.AddControl(&btnSurface_);
+    vessel.AddControl(&btnOrbit_);
+
+    btnDocking_.attach( [&]() { OnChanged(HUD_DOCKING); });
+    btnOrbit_.attach(   [&]() { OnChanged(HUD_ORBIT); });
+    btnSurface_.attach( [&]() { OnChanged(HUD_SURFACE); });
 }
 
-double HUD::CurrentDraw()
+bool HUD::handle_load_vc(bco::vessel& vessel, int vcid)
 {
-	return (HasPower() && (HUD_NONE != oapiGetHUDMode()) ? PoweredComponent::CurrentDraw() : 0.0);
-}
-
-void HUD::ChangePowerLevel(double newLevel)
-{
-	PoweredComponent::ChangePowerLevel(newLevel);
-	if (!HasPower())
-	{
-		isInternalTrigger_ = true;
-		oapiSetHUDMode(HUD_NONE);
-		isInternalTrigger_ = false;
-	}
-	else
-	{
-		swSelectMode_.SetStep(swSelectMode_.GetStep());
-	}
-}
-
-bool HUD::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
-{
-	if (_strnicmp(key, ConfigKey, 9) != 0)
-	{
-		return false;
-	}
-
-	int mode;
-
-	sscanf_s(configLine + 8, "%i", &mode);
-
-	swSelectMode_.SetStep(mode);
-	return true;
-}
-
-void HUD::SaveConfiguration(FILEHANDLE scn) const
-{
-	char cbuf[256];
-	auto mode = swSelectMode_.GetStep();
-
-	sprintf_s(cbuf, "%i", mode);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
-}
-
-
-bool HUD::LoadVC(int id)
-{
-    oapiVCRegisterArea(areaId_, PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE);
-
 	// Register HUD
 	static VCHUDSPEC huds =
 	{
-		1,							// Mesh number (VC)
-		bt_mesh::SR71rVC::HUD_id,		// mesh group
-		{ 0.0, 0.8, 15.25 },			// hud center (location)
-		0.12						// hud size
+		1,						// Mesh number (VC)
+		bm::vc::HUD_id,			// mesh group
+		{ 0.0, 0.8, 15.25 },	// hud center (location)
+		0.12					// hud size
 	};
 
-	oapiVCRegisterHUD(&huds); // HUD parameters
-
-    return true;
+	oapiVCRegisterHUD(&huds);	// HUD parameters
+	return true;
 }
-
-void HUD::SetClassCaps()
-{
-	auto vessel = GetBaseVessel();
-	swSelectMode_.Setup(vessel);
-	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
-}
-
 
 void HUD::OnHudMode(int mode)
 {
-	if (!isInternalTrigger_)
+    btnLightDocking_.set_state( mode == HUD_DOCKING);
+    btnLightSurface_.set_state( mode == HUD_SURFACE);
+    btnLightOrbit_.set_state(   mode == HUD_ORBIT);
+
+    // HUD mode is changing, if it is NOT changing to NONE, and we don't have power, turn it off.
+	if (!IsPowered())
 	{
-		// Probably change due to key.  If we don't have power,
-		// we will have to reverse the setting.  If we do, we
-		// need to update the switch.
-		if ((HUD_NONE != mode) && (!HasPower()))
-		{
-			oapiSetHUDMode(HUD_NONE);
-		}
-
-		switch (mode)
-		{
-		case HUD_NONE:
-			swSelectMode_.SetStep(3);
-			break;
-
-		case HUD_ORBIT:
-			swSelectMode_.SetStep(2);
-			break;
-
-		case HUD_SURFACE:
-			swSelectMode_.SetStep(1);
-			break;
-
-		case HUD_DOCKING:
-			swSelectMode_.SetStep(0);
-			break;
-		}
+		oapiSetHUDMode(HUD_NONE);
 	}
 }
 
-void HUD::SwitchPositionChanged(int mode)
+void HUD::OnChanged(int mode)
 {
-	if (mode == oapiGetHUDMode()) return;
-
-	isInternalTrigger_ = true;
-
-	if (GetBaseVessel()->IsCreated())
-	{
-		if (mode != HUD_NONE)
-		{
-			if (HasPower())
-			{
-				oapiSetHUDMode(mode);
-			}
-		}
-		else
-		{
-			oapiSetHUDMode(HUD_NONE);
-		}
-	}
-
-	isInternalTrigger_ = false;
+	auto currentMode = oapiGetHUDMode();
+	auto newMode = ((mode == currentMode) || !IsPowered()) ? HUD_NONE : mode;
+	oapiSetHUDMode(newMode);;
 }
 
-
-bool HUD::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void HUD::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
-    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return false;
-    auto am = GetBaseVessel()->GetAttitudeMode();
+    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
+
+    auto am = vessel.GetAttitudeMode();
 
     if (am != RCS_NONE)
     {
@@ -187,7 +101,4 @@ bool HUD::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
             break;
         }
     }
-
-
-    return true;
 }

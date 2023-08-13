@@ -18,11 +18,11 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\TextureVisual.h"
-#include "bc_orbiter\PushButtonSwitch.h"
-#include "bc_orbiter\VCRotorSwitch.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/vessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/on_off_display.h"
+#include "bc_orbiter/simple_event.h"
 
 #include "SR71r_mesh.h"
 
@@ -38,43 +38,80 @@ namespace bco = bc_orbiter;
 	Configuration:
 	The HUD mode is managed by Orbiter.
 */
-class HUD : public bco::PoweredComponent
+class HUD : 
+	  public bco::vessel_component
+	, public bco::power_consumer
+	, public bco::load_vc
+	, public bco::draw_hud
 {
 public:
-	HUD(bco::BaseVessel* vessel, double amps);
+	HUD(bco::power_provider& pwr, bco::vessel& vessel);
 
-	virtual void SetClassCaps() override;
+	bool handle_load_vc(bco::vessel& vessel, int vcid) override;
 
-	/**
-	Override to manage power based on vessel HUD state.
-	*/
-	virtual double CurrentDraw() override;
+	void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
-
-	void ChangePowerLevel(double newLevel) override;
-
-	virtual bool LoadVC(int id) override;
-
-	bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+	double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
 
 	void OnHudMode(int mode);
 
+	//bco::slot<bool>&	DockModeSlot()		{ return slotDockMode_; }
+	//bco::slot<bool>&	OrbitModeSlot()		{ return slotOrbitMode_; }
+	//bco::slot<bool>&	SurfaceModeSlot()	{ return slotSurfaceMode_; }
+
+	//bco::signal<bool>&	DockModeSignal()	{ return sigDockMode_; }
+	//bco::signal<bool>&	OrbitModeSignal()	{ return sigOrbitMode_; }
+	//bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
+
 private:
-	void SwitchPositionChanged(int mode);
+	bco::power_provider& power_;
 
+	bool IsPowered() const {	return power_.volts_available() > 24.0; }
 
-    const char*	        ConfigKey = "HUDSWITCH";
+	void OnChanged(int mode);
 
-    int hudMode_{ HUD_NONE };
-    int areaId_;
+	//bco::slot<bool> slotDockMode_;
+	//bco::slot<bool> slotOrbitMode_;
+	//bco::slot<bool> slotSurfaceMode_;
 
-	bool isInternalTrigger_{ false };
+	//bco::signal<bool> sigDockMode_;
+	//bco::signal<bool> sigOrbitMode_;
+	//bco::signal<bool> sigSurfaceMode_;
 
-	bco::VCRotorSwitch		swSelectMode_{	bt_mesh::SR71rVC::SwHUDMode_id,
-											bt_mesh::SR71rVC::SwHUDMode_location,
-											bt_mesh::SR71rVC::SwHUDSelectAxis_location,
-											(120 * RAD)
-	};
+	// *** HUD *** 
+	bco::simple_event<>		btnDocking_	{		bm::vc::vcHUDDock_loc,
+												0.01,
+												bm::pnl::pnlHUDDock_RC
+											};
+
+	bco::on_off_display		btnLightDocking_ {	bm::vc::vcHUDDock_id,
+												bm::vc::vcHUDDock_vrt,
+												bm::pnl::pnlHUDDock_id,
+												bm::pnl::pnlHUDDock_vrt,
+												0.0352
+											};
+
+	bco::simple_event<>		btnOrbit_ {			bm::vc::vcHUDOrbit_loc,
+												0.01,
+												bm::pnl::pnlHUDOrbit_RC
+											};
+
+	bco::on_off_display		btnLightOrbit_ {	bm::vc::vcHUDOrbit_id,
+												bm::vc::vcHUDOrbit_vrt,
+												bm::pnl::pnlHUDOrbit_id,
+												bm::pnl::pnlHUDOrbit_vrt,
+												0.0352
+											};
+
+	bco::simple_event<>		btnSurface_ {		bm::vc::vcHUDSURF_loc,
+												0.01,
+												bm::pnl::pnlHUDSurf_RC
+										};
+
+	bco::on_off_display		btnLightSurface_ {	bm::vc::vcHUDSURF_id,
+												bm::vc::vcHUDSURF_vrt,
+												bm::pnl::pnlHUDSurf_id,
+												bm::pnl::pnlHUDSurf_vrt,
+												0.0352
+											};
 };

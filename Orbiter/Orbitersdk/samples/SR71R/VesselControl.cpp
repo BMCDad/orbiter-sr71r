@@ -16,20 +16,27 @@
 
 #include "StdAfx.h"
 
-#include "VesselControl.h"
-
-#include "SR71r_mesh.h"
-
+//#include "VesselControl.h"
 //
-//VesselControl::VesselControl()
-//    :   prgHoldAltitude_(*this),
-//        prgHoldHeading_(*this),
-//        prgHoldKeas_(*this),
-//        prgHoldMach_(*this)
+//VesselControl::VesselControl(
+//      bco::vessel& vessel
+//    , bco::power_provider& pwr
+//    , bco::avionics_provider& ap
+//    , bco::propulsion_control& pc
+//    , bco::surface_control& sc
+//    ) :
+//      power_(pwr)
+//    , avionics_(ap)
+//    , propulsion_(pc)
+//    , surface_(sc)
+//    , prgHoldAltitude_(ap, pc, sc)
+//    , prgHoldHeading_(ap, pc, sc)
+//    , prgHoldKeas_(ap, pc, sc)
+//    , prgHoldMach_(ap, pc, sc)
 //{
 //}
 //
-//void VesselControl::Step(double simt, double simdt, double mjd)
+//void VesselControl::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 //{
 //    auto current = RunningPrograms();
 //    if (prevRunningProgs != current) UpdateProgs(current);

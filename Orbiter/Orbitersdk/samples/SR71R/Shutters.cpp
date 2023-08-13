@@ -22,73 +22,59 @@
 
 #include <assert.h>
 
-Shutters::Shutters(bco::BaseVessel * vessel) :
-	bco::Component(vessel),
-	visShuttersSideLeft_(	bt_mesh::SR71rVC::CanopyWindowInsideLeft_verts,		bt_mesh::SR71rVC::CanopyWindowInsideLeft_id, 6),
-	visShuttersSideRight_(	bt_mesh::SR71rVC::CanopyWindowSI_verts,		bt_mesh::SR71rVC::CanopyWindowSI_id, 6),
-	visShuttersFrontLeft_(	bt_mesh::SR71rVC::ForwardWindowInsideLeft_verts,		bt_mesh::SR71rVC::ForwardWindowInsideLeft_id, 3),
-	visShuttersFrontRight_(	bt_mesh::SR71rVC::WindowSFI_verts,	bt_mesh::SR71rVC::WindowSFI_id, 3)
+Shutters::Shutters(bco::vessel& vessel)
 {
-	swShutters_.OnFunction([this] {Update(); });
-	swShutters_.OffFunction([this] {Update(); });
-
-	swShutters_.SetOff();
+	vessel.AddControl(&switchShutters_);
+	switchShutters_.attach([&]() { Update(); });
 }
 
-void Shutters::SetClassCaps()
+bool Shutters::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
-    swShutters_.Setup(GetBaseVessel());
-}
+	//if (_strnicmp(key, ConfigKey, 8) != 0)
+	//{
+	//	return false;
+	//}
 
-bool Shutters::VCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	return false;
-}
+	//int isOpen;
 
-bool Shutters::LoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
-{
-	if (_strnicmp(key, ConfigKey, 8) != 0)
-	{
-		return false;
-	}
+	//sscanf_s(configLine + 8, "%i", &isOpen);
 
-	int isOpen;
-
-	sscanf_s(configLine + 8, "%i", &isOpen);
-
-	(isOpen == 1) ? swShutters_.SetOn() : swShutters_.SetOff();
+	//// TODO (isOpen == 1) ? swShutters_.SetOn() : swShutters_.SetOff();
 
 	return true;
 }
 
-void Shutters::SaveConfiguration(FILEHANDLE scn) const
+std::string Shutters::handle_save_state(bco::vessel& vessel)
 {
-	char cbuf[256];
+	//char cbuf[256];
 
-	auto state = swShutters_.IsOn() ? 1 : 0;
+	//auto state = 0; // TODO = swShutters_.IsOn() ? 1 : 0;
 
-	sprintf_s(cbuf, "%i", state);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	//sprintf_s(cbuf, "%i", state);
+	//oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	return std::string();
 }
 
 void Shutters::Update()
 {
-	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-	if (devMesh == nullptr)
-	{
-		return;
-	}
+	//auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
+	//if (devMesh == nullptr)
+	//{
+	//	return;
+	//}
 
-	auto trans = swShutters_.IsOn() ? 0.22 : 0.0;
-	visShuttersFrontLeft_.SetTranslate(_V(trans, 0.0, 0.0));
-	visShuttersFrontLeft_.Draw(devMesh);
+	//auto trans = swShutters_.IsOn() ? 0.22 : 0.0;
+	auto trans = shuttersSlot_.value() ? 0.22 : 0.0;
 
-	visShuttersFrontRight_.SetTranslate(_V(trans, 0.0, 0.0));
-	visShuttersFrontRight_.Draw(devMesh);
+	//visShuttersFrontLeft_.SetTranslate(_V(trans, 0.0, 0.0));
+	//visShuttersFrontLeft_.TranslateMesh(devMesh);
 
-	visShuttersSideLeft_.SetTranslate(_V(trans, 0.0, 0.0));
-	visShuttersSideLeft_.Draw(devMesh);
+	//visShuttersFrontRight_.SetTranslate(_V(trans, 0.0, 0.0));
+	//visShuttersFrontRight_.TranslateMesh(devMesh);
 
-	visShuttersSideRight_.SetTranslate(_V(0.0, trans, 0.0));
-	visShuttersSideRight_.Draw(devMesh);
+	//visShuttersSideLeft_.SetTranslate(_V(trans, 0.0, 0.0));
+	//visShuttersSideLeft_.TranslateMesh(devMesh);
+
+	//visShuttersSideRight_.SetTranslate(_V(0.0, trans, 0.0));
+	//visShuttersSideRight_.TranslateMesh(devMesh);
 }

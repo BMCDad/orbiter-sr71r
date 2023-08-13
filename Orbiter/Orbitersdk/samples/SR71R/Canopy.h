@@ -18,12 +18,15 @@
 
 #include "OrbiterSDK.h"
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\VCToggleSwitch.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/vessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
+#include "ShipMets.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
@@ -45,69 +48,103 @@ Configuration:
 CANOPY a b c
 a - 0/1 Power switch off/on.
 b - 0/1 Open close switch closed/open.
-c - 0.0-1.0 Current canopy position.
+c - 0.0-1.0 current canopy position.
 
+: rewrite :
+related
+on_off_input (canopy power):
+: signal canopy slot: has_power
+on_off_input (canopy open):
+: signal to canopy slot: open/close
+
+- inputs:
+:slot - has power
 */
-class Canopy : public bco::PoweredComponent
+class Canopy : 
+      public bco::vessel_component
+    , public bco::set_class_caps
+    , public bco::post_step
+    , public bco::power_consumer
+    , public bco::manage_state
 {
 public:
-    Canopy(bco::BaseVessel* vessel, double amps);
+    Canopy(bco::power_provider& pwr, bco::vessel& vessel);
 
-    virtual void SetClassCaps() override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::vessel& vessel) override;
 
-    /**
-    The draw is only active when in motion.
-    */
-    virtual double CurrentDraw() override;
+    // power_consumer
+    double amp_draw() const override { return CanopyIsMoving() ? 4.0 : 0.0; }
 
-    /**
-    Provide time steps for the animations.
-    */
-    void Step(double simt, double simdt, double mjd);
+    // post_step
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
-
-    bco::OnOffSwitch&	CanopyPowerSwitch();
-    bco::OnOffSwitch&	CanopyOpenSwitch();
-
-    double				GetCanopyState();
+    // manage_state
+    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
 
 private:
-    bool CanopyHasPower();
+    const double MIN_VOLTS = 20.0;
+    
+    bco::power_provider& power_;
+    
+    bool IsPowered() const { 
+        return 
+            (power_.volts_available() > MIN_VOLTS) &&
+            switchPower_.is_on();
+    }
+    
+    bool CanopyIsMoving() const { 
+        return 
+            IsPowered() && 
+            switchOpen_.is_on() &&
+            (animCanopy_.GetState() > 0.0) && 
+            (animCanopy_.GetState() < 1.0); 
+    }
 
-    const char*			    ConfigKeyCanopy = "CANOPY";
+    bco::animation_target		    animCanopy_     { 0.2 };
 
-    bco::Animation		    animCanopy_     {   &swCanopyOpen_, 0.2};
-    UINT                    idAnim_         { 0 };
-
-    bco::VCToggleSwitch     swCanopyPower_  {   bt_mesh::SR71rVC::SwCanopyPower_id,
-                                                bt_mesh::SR71rVC::SwCanopyPower_location,
-                                                bt_mesh::SR71rVC::PowerTopRightAxis_location
-                                            };
-
-    bco::VCToggleSwitch     swCanopyOpen_   {   bt_mesh::SR71rVC::SwCanopyOpen_id,
-                                                bt_mesh::SR71rVC::SwCanopyOpen_location,
-                                                bt_mesh::SR71rVC::DoorsRightAxis_location
-                                            };
-
-    bco::AnimationGroup     gpCanopy_       { { bt_mesh::SR71r::CanopyFO_id,
-                                                bt_mesh::SR71r::ForwardCanopyWindow_id,
-                                                bt_mesh::SR71r::CanopyFI_id,
-												bt_mesh::SR71r::CanopyWindowSI_id,
-												bt_mesh::SR71r::CanopyWindowInsideLeft_id},
-                                                bt_mesh::SR71r::CockpitAxisS_location, bt_mesh::SR71r::CockpitAxisP_location,
+    bco::animation_group     gpCanopy_       { { bm::main::CanopyFO_id,
+                                                bm::main::ForwardCanopyWindow_id,
+                                                bm::main::CanopyFI_id,
+												bm::main::CanopyWindowSI_id,
+												bm::main::CanopyWindowInsideLeft_id},
+                                                bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
                                                 (55 * RAD),
                                                 0, 1
                                             };
 
-    bco::AnimationGroup     gpCanopyVC_     { { bt_mesh::SR71rVC::CanopyFI_id,
-                                                bt_mesh::SR71rVC::CanopyFO_id,
-                                                bt_mesh::SR71rVC::CanopyWindowInsideLeft_id,
-                                                bt_mesh::SR71rVC::CanopyWindowSI_id },
-                                                bt_mesh::SR71r::CockpitAxisS_location, bt_mesh::SR71r::CockpitAxisP_location,
+    bco::animation_group     gpCanopyVC_     { { bm::vc::CanopyFI_id,
+                                                bm::vc::CanopyFO_id,
+                                                bm::vc::CanopyWindowInsideLeft_id,
+                                                bm::vc::CanopyWindowSI_id },
+                                                bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
                                                 (55 * RAD),
                                                 0, 1
+                                            };
+
+    bco::on_off_input		switchPower_    { { bm::vc::SwCanopyPower_id },
+                                                bm::vc::SwCanopyPower_loc,
+                                                bm::vc::PowerTopRightAxis_loc,
+                                                toggleOnOff,
+                                                bm::pnl::pnlPwrCanopy_id,
+                                                bm::pnl::pnlPwrCanopy_vrt,
+                                                bm::pnl::pnlPwrCanopy_RC
+                                            };
+
+    bco::on_off_input		switchOpen_     { { bm::vc::SwCanopyOpen_id },
+                                                bm::vc::SwCanopyOpen_loc,
+                                                bm::vc::DoorsRightAxis_loc, 
+                                                toggleOnOff,
+                                                bm::pnl::pnlDoorCanopy_id,
+                                                bm::pnl::pnlDoorCanopy_vrt,
+                                                bm::pnl::pnlDoorCanopy_RC
+                                            };
+
+    bco::status_display     status_ {           bm::vc::MsgLightCanopy_id,
+                                                bm::vc::MsgLightCanopy_vrt,
+                                                bm::pnl::pnlMsgLightCanopy_id,
+                                                bm::pnl::pnlMsgLightCanopy_vrt,
+                                                0.0361
                                             };
 };

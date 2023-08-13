@@ -1,5 +1,5 @@
 //	CarboBayController - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -16,88 +16,64 @@
 
 #include "StdAfx.h"
 
+#include "bc_orbiter\Tools.h"
+
 #include "Orbitersdk.h"
 #include "CargoBayController.h"
 #include "SR71r_mesh.h"
 
-
-bco::OnOffSwitch& CargoBayController::CargoBayDoorsPowerSwitch() { return swCargoPower_; }
-bco::OnOffSwitch& CargoBayController::CargoBayDoorsOpenSwitch() { return swCargoOpen_; }
-
-double CargoBayController::GetCargoBayState()
+CargoBayController::CargoBayController(bco::power_provider& pwr, bco::vessel& vessel) :
+    power_(pwr)
 {
-	return animCargoBayDoors_.GetState();
+    power_.attach_consumer(this);
+    vessel.AddControl(&switchOpen_);
+    vessel.AddControl(&switchPower_);
+    vessel.AddControl(&status_);
 }
 
-bool CargoBayController::CargoBayHasPower() 
-{ 
-	return HasPower() && swCargoPower_.IsOn(); 
-}
-
-CargoBayController::CargoBayController(bco::BaseVessel* vessel, double amps) :
-PoweredComponent(vessel, amps, 26.0)
+void CargoBayController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
-}
-
-double CargoBayController::CurrentDraw()
-{
-    return ((animCargoBayDoors_.GetState() > 0.0) && (animCargoBayDoors_.GetState() < 1.0))
-        ? PoweredComponent::CurrentDraw()
-        : 0.0;
-}
-
-void CargoBayController::Step(double simt, double simdt, double mjd)
-{
-	if (CargoBayHasPower())
-	{
-		animCargoBayDoors_.Step(swCargoOpen_.GetState(), simdt);
+	if (IsPowered()) {
+        animCargoBayDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
 	}
+
+    auto status = bco::status_display::status::off;
+    if (power_.volts_available() > MIN_VOLTS) {
+        if ((animCargoBayDoors_.GetState() > 0.0) && (animCargoBayDoors_.GetState() < 1.0)) {
+            status = bco::status_display::status::warn;
+        }
+        else {
+            if (animCargoBayDoors_.GetState() == 1.0) {
+                status = bco::status_display::status::on;
+            }
+        }
+    }
+    status_.set_state(status);
 }
 
-bool CargoBayController::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool CargoBayController::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
-    if (_strnicmp(key, ConfigKeyCargo, 8) != 0) return false;
-
-    int isOn;
-	int isOpen;
-	double state;
-
-	sscanf_s(configLine + 8, "%d%d%lf", &isOn, &isOpen, &state);
-
-	swCargoPower_.SetState((isOn == 0) ? 0.0 : 1.0);
-	swCargoOpen_.SetState((isOpen == 0) ? 0.0 : 1.0);
-	animCargoBayDoors_.SetState(state);
-    
-    // Set the actual animation to the starting state.
-    GetBaseVessel()->SetAnimationState(idCargoAnim_, state);
-
-	return true;
+    std::istringstream in(line);
+    in >> switchPower_ >> switchOpen_ >> animCargoBayDoors_;
+    vessel.SetAnimationState(animCargoBayDoors_);
+    return true;
 }
 
-void CargoBayController::SaveConfiguration(FILEHANDLE scn) const
+std::string CargoBayController::handle_save_state(bco::vessel& vessel)
 {
-	char cbuf[256];
-
-	sprintf_s(cbuf, "%d %d %lf",
-		((swCargoPower_.GetState() == 0) ? 0 : 1),
-		((swCargoOpen_.GetState() == 0) ? 0 : 1),
-		animCargoBayDoors_.GetState());
-
-	oapiWriteScenario_string(scn, (char*)ConfigKeyCargo, cbuf);
+    std::ostringstream os;
+    os << switchPower_ << " " << switchOpen_ << " " << animCargoBayDoors_;
+    return os.str();
 }
 
-void CargoBayController::SetClassCaps()
+void CargoBayController::handle_set_class_caps(bco::vessel& vessel)
 {
-    auto vessel = GetBaseVessel();
-    auto mIdx = vessel->GetMainMeshIndex();
+    auto mIdx = vessel.GetMainMeshIndex();
 
-    swCargoOpen_.Setup(vessel);
-    swCargoPower_.Setup(vessel);
-
-    idCargoAnim_ = vessel->CreateVesselAnimation(&animCargoBayDoors_, 0.01);
-    vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoLeftFront_);
-    vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoRightFront_);
-    vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoLeftMain_);
-    vessel->AddVesselAnimationComponent(idCargoAnim_, mIdx, &gpCargoRightMain_);
+    auto id = vessel.CreateVesselAnimation(&animCargoBayDoors_, 0.01);
+    animCargoBayDoors_.VesselId(id);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftFront_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightFront_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftMain_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightMain_);
 }
-

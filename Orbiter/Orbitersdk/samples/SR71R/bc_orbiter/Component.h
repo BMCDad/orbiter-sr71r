@@ -18,56 +18,80 @@
 
 namespace bc_orbiter
 {
-	class BaseVessel;
+	class vessel;
 }
 
 #include <vector>
 
 namespace bc_orbiter
 {
+	class vessel;
+
 	/**
 	Base class for modeling the behavior of a vessel's component parts.
 	*/
 	class Component
 	{
 	public:
-		Component(BaseVessel* baseVessel) : baseVessel_(baseVessel)
+		Component(vessel* baseVessel) : baseVessel_(baseVessel)
 		{}
 
 		/**
 		Override to initialize things like animations etc. Called from clbkSetClassCaps.
+		This is called once when the instance of this vessel is created.
 		*/
-		virtual void SetClassCaps() {}
+		virtual void OnSetClassCaps() {}
 		
         /**
-        Override to load component settings from the configuration file.
+        Override to load component settings from the configuration file.  Called from clbkLoadStateEx.
         */
-		virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) { return false; }
+		virtual bool OnLoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) { return false; }
 
         /**
-        Override to save component settings in the configuration file.
+        Override to save component settings in the configuration file.  Called from clbkSaveState.
         */
-		virtual void SaveConfiguration(FILEHANDLE scn) const { }
+		virtual void OnSaveConfiguration(FILEHANDLE scn) const { }
 
         /**
-        Override to setup the component Virtual Cockpit objects.
+        Override to setup the component Virtual Cockpit objects.  Called from clbkLoadVC.  This is called
+		each time the cockpit mode is set to VC.  There is no unload event, so reset type calls can be
+		called here, but any kind of allocation should not be done here.
         */
-		virtual bool LoadVC(int id) { return false; }
+		virtual bool OnLoadVC(int id) { return false; }
 
         /**
-        Override to handle mouse events.
+        Override to handle VC mouse events.  Called from clbkVCMouseEvent.  Id is the control id which is
+		the source of the event.  Event is the type of event, up, down etc.
         */
-		virtual bool MouseEvent(int id, int event) { return false; }
+		virtual bool OnVCMouseEvent(int id, int event) { return false; }
 
         /**
-        Override to handle virtual cockpit redraw events.
+        Override to handle virtual cockpit redraw events. Called from clbkVCRedrawEvent.  Called in response
+		to a 'Trigger' redraw for the given id.
         */
-		virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) { return false; }
+		virtual bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf) { return false; }
 
+		/**
+		Override to setup the 2D panel.  Called from clbkLoadPanel2D every time the 2D panel is selected.
+		Avoid allocation calls here as there is no unload event.
+		*/
+		virtual bool OnLoadPanel2D(int id, PANELHANDLE hPanel) { return false; }
 
-		BaseVessel*	GetBaseVessel() const { return baseVessel_; }
+		/**
+		Override to handle 2D panel redraw events.  Called from clbkPanelRedrawEvent.
+		*/
+		virtual bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf) { return false; }
+
+		virtual bool OnPanelMouseEvent(int id, int event) { return false; }
+
+		void SetRedrawId(int id) { redrawId_ = id; }
+		int GetRedrawId() const { return redrawId_; }
+
+		vessel*	GetBaseVessel() const { return baseVessel_; }
 
 	private:
-		BaseVessel*	baseVessel_;
+		vessel*		baseVessel_;
+
+		int redrawId_	{ 0 };
 	};
 }

@@ -18,28 +18,30 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\VCToggleSwitch.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/vessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/on_off_display.h"
 
 #include "IConsumable.h"
 #include "PowerSystem.h"
 #include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 class PowerSystem;
 
-const double OXYGEN_BURN_RATE   = 0.00025;		// 2 lbs per hour @ 100 amps.  lbs->liter 0.453, so 0.906 per hour or 0.00025 per second.
-const double HYDROGEN_BURN_RATE = 0.00004;		// 0.3 lbs per hour @ 100 amps.  
+const double OXYGEN_BURN_RATE_PER_SEC_100A = (0.2 / 3600) / 100;		// 2 lbs per hour per at 100 amps.
+const double HYDROGEN_BURN_RATE_PER_SEC_100A = (0.1 / 3600) / 100;			// 0.3 lbs per hour @ 100 amps.  
 
 namespace bco = bc_orbiter;
 
 /**	Fuel cell.
 	Models the plane's fuel cell.
 
-	The fuel cell uses oxygen and hydrogen to produce electricity.  The fuel cell requires the main curcuit
-	to be powered in order to start, but can then power itself.  It has a fixed amp draw while operating.
-	When operating the fuel call can provide 28 volts of power to the main circuit.
+	The fuel cell uses oxygen and hydrogen to produce electricity.  The fuel cell does require a 28v source to run (start up)
+	so there must be battery or external connection to start the fuel cell.  When operating it provides 28 volts of power.  
+	Resource burn rate will be dependent on the current ships amp usage, which comes from the main power system.
 
 	To Start:
 	- Connect external power to the main circuit.
@@ -57,59 +59,65 @@ namespace bco = bc_orbiter;
 		
 */
 class FuelCell : 
-	public bco::PoweredComponent
+	  public bco::vessel_component
+	, public bco::post_step
+	, public bco::power_consumer
+	, public bco::manage_state
 {
-public:
-	FuelCell(bco::BaseVessel* vessel, double amps);
+	const double MAX_VOLTS = 28.0;
+	const double MIN_VOLTS = 20.0;
+	const double AMP_DRAW =	  4.0;
 
-	virtual void SetClassCaps() override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+public:
+	FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumable& lox, bco::consumable& hydro);
 
 	/**
 		Draw down the oxygen and hydrogen levels based on the current amp load.
 	*/
-	void Step(double simt, double simdt, double mjd);
-	virtual double CurrentDraw() override;
 
-	virtual void ChangePowerLevel(double level) override
-	{
-		bco::PoweredComponent::ChangePowerLevel(level);
-		SetIsFuelCellPowerAvailable(HasPower() && swPower_.IsOn());
-	}
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
+	// power_consumer
+	double amp_draw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
 
-	bool IsFuelCellPowerAvailable()
-	{
-		return isFuelCellAvailable_; 
-	}
+	// manage_state
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::vessel& vessel) override;
 
-	double AvailablePower() { return IsFuelCellPowerAvailable() ? 27.0 : 0.0; }
-	bco::OnOffSwitch&	PowerSwitch() { return swPower_; }
-
-
-	void SetPowerSystem(	PowerSystem* ps)	{ powerSystem_ = ps; }
-	void SetOxygenSystem(	IConsumable* os)	{ oxygenSystem_ = os; }
-	void SetHydrogenSytem(	IConsumable* hs)	{ hydrogenSystem_ = hs; }
+	// Outputs
+	bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
 
 private:
+	bco::power_provider&	power_;
+	bco::consumable&		lox_;
+	bco::consumable&		hydro_;
+
+	bool IsPowered() const {
+		return 
+			switchEnabled_.is_on() &&
+			(power_.volts_available() > MIN_VOLTS); 
+	}
 
 	void SetIsFuelCellPowerAvailable(bool newValue);
 
+	bco::signal<double>	sigAvailPower_;
+
 	bool				isFuelCellAvailable_;
-	double				availablePower_;
+	double				ampDrawFactor_{ 0.0 };
 
-	PowerSystem*		powerSystem_;
-	IConsumable*		oxygenSystem_;
-	IConsumable*		hydrogenSystem_;
+	bco::on_off_input	switchEnabled_		{ { bm::vc::swFuelCellPower_id },
+												bm::vc::swFuelCellPower_loc, bm::vc::PowerTopRightAxis_loc,
+												toggleOnOff,
+												bm::pnl::pnlPwrFC_id,
+												bm::pnl::pnlPwrFC_vrt,
+												bm::pnl::pnlPwrFC_RC
+											};
 
-	const char*			ConfigKey = "FUELCELL";
-
-	// Config members:
-
-    bco::VCToggleSwitch swPower_        {   bt_mesh::SR71rVC::swFuelCellPower_id, 
-                                            bt_mesh::SR71rVC::swFuelCellPower_location,  
-                                            bt_mesh::SR71rVC::PowerTopRightAxis_location
-                                        };
+	bco::on_off_display	lightAvailable_		{
+												bm::vc::FuelCellAvailableLight_id,
+												bm::vc::FuelCellAvailableLight_vrt,
+												bm::pnl::pnlLgtFCPwrAvail_id,
+												bm::pnl::pnlLgtFCPwrAvail_vrt,
+												0.0244
+											};
 };

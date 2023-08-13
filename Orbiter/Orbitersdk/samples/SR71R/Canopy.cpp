@@ -16,84 +16,71 @@
 
 #include "StdAfx.h"
 
+#include "bc_orbiter/Tools.h"
+#include "bc_orbiter/status_display.h"
+
 #include "Orbitersdk.h"
 #include "Canopy.h"
 #include "SR71r_mesh.h"
 
-bco::OnOffSwitch& Canopy::CanopyPowerSwitch() { return swCanopyPower_; }
-bco::OnOffSwitch& Canopy::CanopyOpenSwitch() { return swCanopyOpen_; }
-
-double Canopy::GetCanopyState()
-{
-    return animCanopy_.GetState();
+Canopy::Canopy(bco::power_provider& pwr, bco::vessel& vessel) :
+    power_(pwr)
+{ 
+    power_.attach_consumer(this);
+    vessel.AddControl(&switchOpen_);
+    vessel.AddControl(&switchPower_);
+    vessel.AddControl(&status_);
 }
 
-bool Canopy::CanopyHasPower()
+void Canopy::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
-    return HasPower() && swCanopyPower_.IsOn();
-}
-
-Canopy::Canopy(bco::BaseVessel* vessel, double amps) :
-    PoweredComponent(vessel, amps, 26.0)
-{
-}
-
-double Canopy::CurrentDraw()
-{
-    return ((animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0)) 
-        ? PoweredComponent::CurrentDraw() 
-        : 0.0;
-}
-
-void Canopy::Step(double simt, double simdt, double mjd)
-{
-    if (CanopyHasPower())
-    {
-        animCanopy_.Step(swCanopyOpen_.GetState(), simdt);
+    if (IsPowered()) {
+        animCanopy_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
     }
+    /*
+        off     - no power OR closed
+        warn    - yes power AND is moving
+        on      - yes power AND open
+    */
+    auto status = bco::status_display::status::off;
+    if (power_.volts_available() > MIN_VOLTS) {
+        if ((animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0)) {
+            status = bco::status_display::status::warn;
+        }
+        else {
+            if (animCanopy_.GetState() == 1.0) {
+                status = bco::status_display::status::on;
+            }
+        }
+    }
+    status_.set_state(status);
 }
 
-bool Canopy::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool Canopy::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
-    if (_strnicmp(key, ConfigKeyCanopy, 6) != 0) return false;
-
-    int isOn;
-    int isOpen;
-    double state;
-
-    sscanf_s(configLine + 6, "%d%d%lf", &isOn, &isOpen, &state);
-
-    swCanopyPower_.SetState((isOn == 0) ? 0.0 : 1.0);
-    swCanopyOpen_.SetState((isOpen == 0) ? 0.0 : 1.0);
-    
-    animCanopy_.SetState(state);
-    GetBaseVessel()->SetAnimationState(idAnim_, state);
-
+    std::istringstream in(line);
+    in >> switchPower_;
+    in >> switchOpen_;
+    in >> animCanopy_;
+    vessel.SetAnimationState(animCanopy_);
     return true;
 }
 
-void Canopy::SaveConfiguration(FILEHANDLE scn) const
+std::string Canopy::handle_save_state(bco::vessel& vessel)
 {
-    char cbuf[256];
-
-    sprintf_s(cbuf, "%d %d %lf",
-        ((swCanopyPower_.GetState() == 0) ? 0 : 1),
-        ((swCanopyOpen_.GetState() == 0) ? 0 : 1),
-        animCanopy_.GetState());
-
-    oapiWriteScenario_string(scn, (char*)ConfigKeyCanopy, cbuf);
-}
-void Canopy::SetClassCaps()
-{
-    auto vessel = GetBaseVessel();
-    auto vcIdx = vessel->GetVCMeshIndex();
-    auto mIdx = vessel->GetMainMeshIndex();
-
-    swCanopyPower_.Setup(vessel);
-    swCanopyOpen_.Setup(vessel);
-
-    idAnim_ = vessel->CreateVesselAnimation(&animCanopy_, 0.2);
-    vessel->AddVesselAnimationComponent(idAnim_, vcIdx, &gpCanopyVC_);
-    vessel->AddVesselAnimationComponent(idAnim_, mIdx, &gpCanopy_);
+    std::ostringstream os;
+    os << switchPower_ << " " << switchOpen_ << " " << animCanopy_;
+    return os.str();
 }
 
+
+void Canopy::handle_set_class_caps(bco::vessel& vessel)
+{
+    auto vcIdx = vessel.GetVCMeshIndex();
+    auto mIdx = vessel.GetMainMeshIndex();
+
+    auto idAnim = vessel.CreateVesselAnimation(&animCanopy_, 0.2);
+    animCanopy_.VesselId(idAnim);
+    vessel.AddVesselAnimationComponent(idAnim, vcIdx, &gpCanopyVC_);
+    vessel.AddVesselAnimationComponent(idAnim, mIdx, &gpCanopy_);
+}

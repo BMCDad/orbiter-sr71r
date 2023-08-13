@@ -9,7 +9,7 @@ Rotation speed in the SR71r is about 280-300 knots.</p>
 <p>Use the thrust limiter for takeoff.  After rotation raise the landing gear, and if you are using the atmospheric autopilot to hold your heading press [1] to enable.  
 Pull back and take a fairly steep ascent angle while watching that your speed does not exceed maximum.  
 At about 40-50k feet you can enable full thrust [CTRL-1].  Continue a steep ascent until about 100k feet then level off.
-Also at about 80-100k feet enable RCS in Rotation mode.  If you are targeting RInc in Align Planes, use the [1] and [3] keys adjust heading.  
+Also at about 80-100k feet enable RCS in Rotation mode [CTRL-/].  If you are targeting RInc in Align Planes, use the [1] and [3] keys adjust heading.  
 Kill Rot [5] can also help you hold your ascent pitch.  Finally, keep an eye on the Orbit MFD so you can hit the target altitude.</p>
 
 END_HYPERDESC
@@ -76,7 +76,7 @@ SR-01:SR71r
   NAVFREQ 94 524
   APU 1
   AUTOPILOT 0 1 0 0 0 0
-  AVIONICS 1 14 0 1 0
+  AVIONICS 1 14 0 1 1
   CARGOBAY 0 0 0.000000
   CANOPY 0 0 0.000000
   FUELCELL 1

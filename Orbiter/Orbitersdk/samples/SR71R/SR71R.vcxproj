@@ -49,11 +49,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ModuleDir)\</OutDir>
-    <LibraryPath>$(VCInstallDir)UnitTest\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(VCInstallDir)UnitTest\lib;$(LibraryPath);$(VCInstallDir)Auxiliary\VS\UnitTest\lib</LibraryPath>
+    <IncludePath>$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ModuleDir)\</OutDir>
+    <IncludePath>$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(VCInstallDir)Auxiliary\VS\UnitTest\lib</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -66,6 +69,7 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <DisableSpecificWarnings>26812;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -91,6 +95,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SR71R_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>26812;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,45 +112,47 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AirBrake.h" />
-    <ClInclude Include="APU.h" />
     <ClInclude Include="Avionics.h" />
+    <ClInclude Include="AirBrake.h" />
+    <ClInclude Include="Airspeed.h" />
+    <ClInclude Include="Altimeter.h" />
+    <ClInclude Include="APU.h" />
+    <ClInclude Include="AvionBase.h" />
     <ClInclude Include="bc_orbiter\Animation.h" />
-    <ClInclude Include="bc_orbiter\BaseVessel.h" />
-    <ClInclude Include="bc_orbiter\bco.h" />
-    <ClInclude Include="bc_orbiter\Circuit.h" />
+    <ClInclude Include="bc_orbiter\panel_display.h" />
+    <ClInclude Include="bc_orbiter\pid_altitude.h" />
+    <ClInclude Include="bc_orbiter\vessel.h" />
     <ClInclude Include="bc_orbiter\Component.h" />
-    <ClInclude Include="bc_orbiter\DialSwitch.h" />
-    <ClInclude Include="bc_orbiter\EventTarget.h" />
+    <ClInclude Include="bc_orbiter\control.h" />
+    <ClInclude Include="bc_orbiter\flat_roll.h" />
+    <ClInclude Include="bc_orbiter\generic_tank.h" />
     <ClInclude Include="bc_orbiter\IAnimationState.h" />
-    <ClInclude Include="bc_orbiter\MeshVisual.h" />
     <ClInclude Include="bc_orbiter\MFDBase.h" />
-    <ClInclude Include="bc_orbiter\OnOffSwitch.h" />
-    <ClInclude Include="bc_orbiter\PoweredComponent.h" />
-    <ClInclude Include="bc_orbiter\PushButtonSwitch.h" />
-    <ClInclude Include="bc_orbiter\RotarySwitch.h" />
-    <ClInclude Include="bc_orbiter\TextureVisual.h" />
+    <ClInclude Include="bc_orbiter\on_off_display_event.h" />
+    <ClInclude Include="bc_orbiter\on_off_input.h" />
+    <ClInclude Include="bc_orbiter\on_off_display.h" />
+    <ClInclude Include="bc_orbiter\rotary_display.h" />
+    <ClInclude Include="bc_orbiter\signals.h" />
+    <ClInclude Include="bc_orbiter\simple_event.h" />
+    <ClInclude Include="bc_orbiter\status_display.h" />
     <ClInclude Include="bc_orbiter\Tools.h" />
-    <ClInclude Include="bc_orbiter\VCGauge.h" />
-    <ClInclude Include="bc_orbiter\VCRotorSwitch.h" />
-    <ClInclude Include="bc_orbiter\VCToggleSwitch.h" />
-    <ClInclude Include="bc_orbiter\Visual.h" />
     <ClInclude Include="Canopy.h" />
     <ClInclude Include="CargoBayController.h" />
     <ClInclude Include="Clock.h" />
-    <ClInclude Include="CryogenicTank.h" />
     <ClInclude Include="FlightComputer.h" />
+    <ClInclude Include="bc_orbiter\handler_interfaces.h" />
     <ClInclude Include="HoverEngines.h" />
+    <ClInclude Include="HSI.h" />
+    <ClInclude Include="HydrogenTank.h" />
     <ClInclude Include="IAvionics.h" />
     <ClInclude Include="FuelCell.h" />
-    <ClInclude Include="HydrogenSupply.h" />
     <ClInclude Include="IConsumable.h" />
     <ClInclude Include="LandingGear.h" />
-    <ClInclude Include="Lights.h" />
+    <ClInclude Include="OxygenTank.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RetroEngines.h" />
     <ClInclude Include="Shutters.h" />
-    <ClInclude Include="StatusBoard.h" />
+    <ClInclude Include="SR71r_common.h" />
     <ClInclude Include="LeftMFD.h" />
     <ClInclude Include="MfdMets.h" />
     <ClInclude Include="NavModes.h" />
@@ -153,34 +160,31 @@
     <ClInclude Include="PowerSystem.h" />
     <ClInclude Include="PropulsionController.h" />
     <ClInclude Include="LiftCoeff.h" />
-    <ClInclude Include="O2Supply.h" />
     <ClInclude Include="RCSSystem.h" />
     <ClInclude Include="RightMfd.h" />
     <ClInclude Include="ShipMets.h" />
     <ClInclude Include="SR71r_mesh.h" />
     <ClInclude Include="SR71Vessel.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="Lights.h" />
+    <ClInclude Include="bc_orbiter\transform_display.h" />
     <ClInclude Include="SurfaceController.h" />
+    <ClInclude Include="TestComponent.h" />
     <ClInclude Include="VesselControl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AirBrake.cpp" />
-    <ClCompile Include="APU.cpp" />
     <ClCompile Include="Avionics.cpp" />
+    <ClCompile Include="AirBrake.cpp" />
     <ClCompile Include="Canopy.cpp" />
     <ClCompile Include="CargoBayController.cpp" />
     <ClCompile Include="Clock.cpp" />
-    <ClCompile Include="CryogenicTank.cpp" />
     <ClCompile Include="FlightComputer.cpp" />
     <ClCompile Include="FuelCell.cpp" />
     <ClCompile Include="HoverEngines.cpp" />
     <ClCompile Include="HUD.cpp" />
-    <ClCompile Include="HydrogenSupply.cpp" />
     <ClCompile Include="LandingGear.cpp" />
     <ClCompile Include="LeftMFD.cpp" />
-    <ClCompile Include="Lights.cpp" />
     <ClCompile Include="NavModes.cpp" />
-    <ClCompile Include="O2Supply.cpp" />
     <ClCompile Include="PowerSystem.cpp" />
     <ClCompile Include="PropulsionController.cpp" />
     <ClCompile Include="LiftCoeff.cpp" />
@@ -191,7 +195,6 @@
     <ClCompile Include="SR71r.cpp" />
     <ClCompile Include="SR71Vessel.cpp" />
     <ClCompile Include="SR71Vessel_clbk.cpp" />
-    <ClCompile Include="StatusBoard.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -206,7 +209,9 @@
     <Image Include="$(OrbiterDir)\Textures\SR71_VCCockPit.dds" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\Meshes\SR71r2D.msh" />
     <None Include="Art\SR71rBody.xcf" />
+    <None Include="Art\SR71R_100_2DPanel.xcf" />
     <None Include="Art\SR71R_100_Buttons.xcf" />
     <None Include="Art\SR71R_100_GuidanceComp.xcf" />
     <None Include="Art\SR71R_100_Horizon.xcf" />

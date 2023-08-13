@@ -21,76 +21,63 @@
 #include "SR71r_mesh.h"
 
 
-FuelCell::FuelCell(bco::BaseVessel* vessel, double amps) :
-PoweredComponent(vessel, amps, 26.0),
-powerSystem_(nullptr),
-oxygenSystem_(nullptr),
-hydrogenSystem_(nullptr),
-isFuelCellAvailable_(false)
+FuelCell::FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumable& lox, bco::consumable& hydro) :
+	power_(pwr),
+	lox_(lox),
+	hydro_(hydro),
+	isFuelCellAvailable_(false)
 {
+	vessel.AddControl(&switchEnabled_);
+	vessel.AddControl(&lightAvailable_);
 }
 
-void FuelCell::Step(double simt, double simdt, double mjd)
+void FuelCell::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
-	if ((nullptr == powerSystem_) || (nullptr == oxygenSystem_) || (nullptr == hydrogenSystem_) || !(HasPower() && swPower_.IsOn()))
+	if (!IsPowered())
 	{
 		SetIsFuelCellPowerAvailable(false);
 	}
 	else
 	{
-		/*	The burn rate is figured at 100 amps per second. We need to adjust the
-			burnrate for the current amp draw and multiply by the time delta.
-			*/
-		auto ampsFactor = powerSystem_->GetAmpDraw() / 100;
-		auto oBurn = (OXYGEN_BURN_RATE * ampsFactor) * simdt;
-		auto hBurn = (HYDROGEN_BURN_RATE * ampsFactor) * simdt;
+		auto ampFac = power_.amp_load();
 
-		auto drawOxy = oxygenSystem_->Draw(oBurn);
-		auto drawHyd = hydrogenSystem_->Draw(hBurn);
+		auto isLOX = lox_.level() > 0.0;
+		auto isHYD = hydro_.level() > 0.0;
 
-		SetIsFuelCellPowerAvailable((drawOxy == oBurn) && (drawHyd == hBurn));
-	}
-}
+		if (isLOX) {
+			lox_.draw(OXYGEN_BURN_RATE_PER_SEC_100A * ampFac);
+		}
 
-double FuelCell::CurrentDraw()
-{
-	return (HasPower() && swPower_.IsOn()) ? PoweredComponent::CurrentDraw() : 0.0;
-}
+		if (isHYD) {
+			hydro_.draw(HYDROGEN_BURN_RATE_PER_SEC_100A * ampFac);
+		}
 
-void FuelCell::SetClassCaps()
-{
-    swPower_.Setup(GetBaseVessel());
-}
-
-bool FuelCell::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
-{
-	if (_strnicmp(key, ConfigKey, 8) != 0)
-	{
-		return false;
+		SetIsFuelCellPowerAvailable(isLOX && isHYD);
 	}
 
-	int state;
+	sigAvailPower_.fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
+}
 
-	sscanf_s(configLine + 8, "%i", &state);
-
-    swPower_.SetState((state == 0) ? 0.0 : 1.0);
-
+bool FuelCell::handle_load_state(bco::vessel& vessel, const std::string& line)
+{
+	std::istringstream in(line);
+	in >> switchEnabled_;
 	return true;
 }
 
-void FuelCell::SaveConfiguration(FILEHANDLE scn) const
+std::string FuelCell::handle_save_state(bco::vessel& vessel)
 {
-	char cbuf[256];
-	auto val = (swPower_.GetState() == 0.0) ? 0 : 1;
-
-	sprintf_s(cbuf, "%i", val);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	std::ostringstream os;
+	os << switchEnabled_;
+	return os.str();
 }
+
 
 void FuelCell::SetIsFuelCellPowerAvailable(bool newValue)
 {
 	if (newValue != isFuelCellAvailable_)
 	{
 		isFuelCellAvailable_ = newValue;
+		lightAvailable_.set_state(isFuelCellAvailable_);
 	}
 }

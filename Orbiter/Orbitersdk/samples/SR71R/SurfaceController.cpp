@@ -21,28 +21,16 @@
 
 #include "SR71r_mesh.h"
 
-SurfaceController::SurfaceController(bco::BaseVessel* vessel) :
-Component(vessel),
-prevHydraulicState_(0.0),
-ctrlSurfLeftAileron_(nullptr),
-ctrlSurfRightAileron_(nullptr),
-ctrlSurfLeftElevator_(nullptr),
-ctrlSurfRightElevator_(nullptr),
-ctrlSurfLeftRudder_(nullptr),
-ctrlSurfRightRudder_(nullptr),
-apu_(nullptr)
+SurfaceController::SurfaceController(bco::vessel& vessel, bco::hydraulic_provider& apu) :
+	  vessel_(vessel)
+	, apu_(apu)
 {
 }
 
-void SurfaceController::Step(double simt, double simdt, double mjd)
+void SurfaceController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
-	if (nullptr == apu_)
-	{
-		return;
-	}
-
 	// Determine if our hydro state has change, enable or disable controls.
-	auto hydPress = apu_->GetHydraulicLevel();
+	auto hydPress = apu_.level();
 	if (hydPress != prevHydraulicState_)
 	{
 		if (prevHydraulicState_ == 0.0)
@@ -58,21 +46,19 @@ void SurfaceController::Step(double simt, double simdt, double mjd)
 	}
 }
 
-void SurfaceController::SetClassCaps()
+void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
 {
-	auto vessel = GetBaseVessel();
-
 	// Left Aileron Animation
-	static UINT groupLeftAileron = bt_mesh::SR71r::LeftOuterElevon_id;
-	static VECTOR3 leftAileronAxis = bt_mesh::SR71r::AileronAxisPO_location - bt_mesh::SR71r::AileronAxisPI_location;
-	static VECTOR3 leftElevatorAxis = bt_mesh::SR71r::AileronAxisPI_location - bt_mesh::SR71r::AileronAxisPO_location;
+	static UINT groupLeftAileron = bm::main::LeftOuterElevon_id;
+	static VECTOR3 leftAileronAxis = bm::main::AileronAxisPO_loc - bm::main::AileronAxisPI_loc;
+	static VECTOR3 leftElevatorAxis = bm::main::AileronAxisPI_loc - bm::main::AileronAxisPO_loc;
 
 	normalise(leftAileronAxis);
 	static MGROUP_ROTATE animGroupLeftAileron(
 		0,
 		&groupLeftAileron,
 		1,
-		bt_mesh::SR71r::AileronAxisPI_location,
+		bm::main::AileronAxisPI_loc,
 		leftAileronAxis,
 		AILERON_RANGE);
 
@@ -81,27 +67,27 @@ void SurfaceController::SetClassCaps()
 		0,
 		&groupLeftAileron,
 		1,
-		bt_mesh::SR71r::AileronAxisPI_location,
+		bm::main::AileronAxisPI_loc,
 		leftElevatorAxis,
 		AILERON_RANGE);
 
-	anim_left_aileron_ = vessel->CreateAnimation(0.5);
-	anim_left_elevator_ = vessel->CreateAnimation(0.5);
+	anim_left_aileron_ = vessel.CreateAnimation(0.5);
+	anim_left_elevator_ = vessel.CreateAnimation(0.5);
 
-	vessel->AddAnimationComponent(anim_left_aileron_, 0, 1, &animGroupLeftAileron);
-	vessel->AddAnimationComponent(anim_left_elevator_, 0, 1, &animGroupLeftElevator);
+	vessel.AddAnimationComponent(anim_left_aileron_, 0, 1, &animGroupLeftAileron);
+	vessel.AddAnimationComponent(anim_left_elevator_, 0, 1, &animGroupLeftElevator);
 
 
 	// Right Aileron Animation
-	static UINT groupRightAileron[1] = { bt_mesh::SR71r::RightOuterElevon_id };
-	static VECTOR3 rightAileronAxis = bt_mesh::SR71r::AileronAxisSO_location - bt_mesh::SR71r::AileronAxisSI_location;
+	static UINT groupRightAileron[1] = { bm::main::RightOuterElevon_id };
+	static VECTOR3 rightAileronAxis = bm::main::AileronAxisSO_loc - bm::main::AileronAxisSI_loc;
 
 	normalise(rightAileronAxis);
 	static MGROUP_ROTATE animGroupRightAileron(
 		0,
 		groupRightAileron,
 		1,
-		bt_mesh::SR71r::AileronAxisSI_location,
+		bm::main::AileronAxisSI_loc,
 		rightAileronAxis,
 		AILERON_RANGE);
 
@@ -109,98 +95,86 @@ void SurfaceController::SetClassCaps()
 		0,
 		groupRightAileron,
 		1,
-		bt_mesh::SR71r::AileronAxisSI_location,
+		bm::main::AileronAxisSI_loc,
 		rightAileronAxis,
 		AILERON_RANGE);
 
-	anim_right_aileron_ = vessel->CreateAnimation(0.5);
-	anim_right_elevator_ = vessel->CreateAnimation(0.5);
+	anim_right_aileron_ = vessel.CreateAnimation(0.5);
+	anim_right_elevator_ = vessel.CreateAnimation(0.5);
 
-	vessel->AddAnimationComponent(anim_right_aileron_, 0, 1, &animGroupRightAileron);
-	vessel->AddAnimationComponent(anim_right_elevator_, 0, 1, &animGroupRightElevator);
+	vessel.AddAnimationComponent(anim_right_aileron_, 0, 1, &animGroupRightAileron);
+	vessel.AddAnimationComponent(anim_right_elevator_, 0, 1, &animGroupRightElevator);
 
 
 	// Left Rudder Animation
-	static UINT groupLeftRudder = bt_mesh::SR71r::LeftRudder_id;
-	static VECTOR3 leftRudderAxis = bt_mesh::SR71r::RudderAxisPB_location - bt_mesh::SR71r::RudderAxisPT_location;
+	static UINT groupLeftRudder = bm::main::LeftRudder_id;
+	static VECTOR3 leftRudderAxis = bm::main::RudderAxisPB_loc - bm::main::RudderAxisPT_loc;
 
 	normalise(leftRudderAxis);
 	static MGROUP_ROTATE animGroupLeftRudder(
 		0,
 		&groupLeftRudder,
 		1,
-		bt_mesh::SR71r::RudderAxisPB_location,
+		bm::main::RudderAxisPB_loc,
 		leftRudderAxis,
 		AILERON_RANGE);
 
 
 	// Right Rudder Animation
-	static UINT groupRightRudder = bt_mesh::SR71r::RightRudder_id;
-	static VECTOR3 rightRudderAxis = bt_mesh::SR71r::RudderAxisSB_location - bt_mesh::SR71r::RudderAxisST_location;
+	static UINT groupRightRudder = bm::main::RightRudder_id;
+	static VECTOR3 rightRudderAxis = bm::main::RudderAxisSB_loc - bm::main::RudderAxisST_loc;
 
 	normalise(rightRudderAxis);
 	static MGROUP_ROTATE animGroupRightRudder(
 		0,
 		&groupRightRudder,
 		1,
-		bt_mesh::SR71r::RudderAxisSB_location,
+		bm::main::RudderAxisSB_loc,
 		rightRudderAxis,
 		AILERON_RANGE);
 
 	// Control surface animation.
-	anim_left_rudder_ = vessel->CreateAnimation(0.5);
-	anim_right_rudder_ = vessel->CreateAnimation(0.5);
+	anim_left_rudder_ = vessel.CreateAnimation(0.5);
+	anim_right_rudder_ = vessel.CreateAnimation(0.5);
 
-	vessel->AddAnimationComponent(anim_left_rudder_, 0, 1, &animGroupLeftRudder);
-	vessel->AddAnimationComponent(anim_right_rudder_, 0, 1, &animGroupRightRudder);
-}
-
-void SurfaceController::SetAileronLevel(double level)
-{
-	GetBaseVessel()->SetControlSurfaceLevel(AIRCTRL_AILERON, level);
+	vessel.AddAnimationComponent(anim_left_rudder_, 0, 1, &animGroupLeftRudder);
+	vessel.AddAnimationComponent(anim_right_rudder_, 0, 1, &animGroupRightRudder);
 }
 
 void SurfaceController::SetRudderLevel(double level)
 {
-	GetBaseVessel()->SetControlSurfaceLevel(AIRCTRL_RUDDER, level);
-}
-
-void SurfaceController::SetElevatorLevel(double level)
-{
-	GetBaseVessel()->SetControlSurfaceLevel(AIRCTRL_ELEVATOR, level);
+	vessel_.SetControlSurfaceLevel(AIRCTRL_RUDDER, level);
 }
 
 void SurfaceController::EnableControls()
 {
-	auto vessel = GetBaseVessel();
 	// Aileron control : bank left/right.  For this we will just use the outer elevon area.
-	ctrlSurfLeftAileron_ = vessel->CreateControlSurface3(AIRCTRL_AILERON, OutboardElevonArea / 2, dClOutboard, _V(-5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_aileron_);
-	ctrlSurfRightAileron_ = vessel->CreateControlSurface3(AIRCTRL_AILERON, OutboardElevonArea / 2, dClOutboard, _V(5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 2.0, anim_right_aileron_);
+	ctrlSurfLeftAileron_ = vessel_.CreateControlSurface3(AIRCTRL_AILERON, OutboardElevonArea / 2, dClOutboard, _V(-5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_aileron_);
+	ctrlSurfRightAileron_ = vessel_.CreateControlSurface3(AIRCTRL_AILERON, OutboardElevonArea / 2, dClOutboard, _V(5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 2.0, anim_right_aileron_);
 
 	// Elevator control : pitch up/down.  For this we use the combined inner and outer area.
 	auto fullArea = OutboardElevonArea + InboardElevonArea;
 	auto fulldc = dClInboard + dClOutboard;
-	ctrlSurfLeftElevator_ = vessel->CreateControlSurface3(AIRCTRL_ELEVATOR, fullArea, fulldc, _V(-5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_elevator_);
-	ctrlSurfRightElevator_ = vessel->CreateControlSurface3(AIRCTRL_ELEVATOR, fullArea, fulldc, _V(5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_right_elevator_);
-	
+	ctrlSurfLeftElevator_ = vessel_.CreateControlSurface3(AIRCTRL_ELEVATOR, fullArea, fulldc, _V(-7.0, 0, -10.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_elevator_);
+	ctrlSurfRightElevator_ = vessel_.CreateControlSurface3(AIRCTRL_ELEVATOR, fullArea, fulldc, _V(7.0, 0, -10.0), AIRCTRL_AXIS_AUTO, 1.0, anim_right_elevator_);
+
 	// Rudder contro : yaw.
-	ctrlSurfLeftRudder_ = vessel->CreateControlSurface3(AIRCTRL_RUDDER, RudderArea, dClRudder, _V(0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_rudder_);
-	ctrlSurfRightRudder_ = vessel->CreateControlSurface3(AIRCTRL_RUDDER, RudderArea, dClRudder, _V(0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_right_rudder_);
+	ctrlSurfLeftRudder_ = vessel_.CreateControlSurface3(AIRCTRL_RUDDER, RudderArea, dClRudder, _V(0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_rudder_);
+	ctrlSurfRightRudder_ = vessel_.CreateControlSurface3(AIRCTRL_RUDDER, RudderArea, dClRudder, _V(0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_right_rudder_);
 
 	// Trim : SR-71 does not have trim tabs, or flaps.  We will use the inBoard area and generall as smaller dCl to provide finer control.
-	ctrlSurfLeftTrim_ = vessel->CreateControlSurface3(AIRCTRL_ELEVATORTRIM, InboardElevonArea, dClInboard, _V(-5.0, 0, -8.0), AIRCTRL_AXIS_XPOS, 1.0, anim_left_elevator_);
-	ctrlSurfRightTrim_ = vessel->CreateControlSurface3(AIRCTRL_ELEVATORTRIM, InboardElevonArea, dClInboard, _V(5.0, 0, -8.0), AIRCTRL_AXIS_XPOS, 1.0, anim_right_elevator_);
+	ctrlSurfLeftTrim_ = vessel_.CreateControlSurface3(AIRCTRL_ELEVATORTRIM, InboardElevonArea, dClInboard, _V(-7.0, 0, -10.0), AIRCTRL_AXIS_XPOS, 1.0, anim_left_elevator_);
+	ctrlSurfRightTrim_ = vessel_.CreateControlSurface3(AIRCTRL_ELEVATORTRIM, InboardElevonArea, dClInboard, _V(7.0, 0, -10.0), AIRCTRL_AXIS_XPOS, 1.0, anim_right_elevator_);
 }
 
 void SurfaceController::DisableControls()
 {
-	auto vessel = GetBaseVessel();
-	vessel->DelControlSurface(ctrlSurfLeftAileron_);
-	vessel->DelControlSurface(ctrlSurfRightAileron_);
-	vessel->DelControlSurface(ctrlSurfLeftElevator_);
-	vessel->DelControlSurface(ctrlSurfRightElevator_);
-	vessel->DelControlSurface(ctrlSurfLeftRudder_);
-	vessel->DelControlSurface(ctrlSurfRightRudder_);
-	vessel->DelControlSurface(ctrlSurfLeftTrim_);
-	vessel->DelControlSurface(ctrlSurfRightTrim_);
+	vessel_.DelControlSurface(ctrlSurfLeftAileron_);
+	vessel_.DelControlSurface(ctrlSurfRightAileron_);
+	vessel_.DelControlSurface(ctrlSurfLeftElevator_);
+	vessel_.DelControlSurface(ctrlSurfRightElevator_);
+	vessel_.DelControlSurface(ctrlSurfLeftRudder_);
+	vessel_.DelControlSurface(ctrlSurfRightRudder_);
+	vessel_.DelControlSurface(ctrlSurfLeftTrim_);
+	vessel_.DelControlSurface(ctrlSurfRightTrim_);
 }

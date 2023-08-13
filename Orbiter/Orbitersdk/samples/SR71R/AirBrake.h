@@ -16,10 +16,12 @@
 
 #pragma once
 
-#include "bc_orbiter\Component.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\RotarySwitch.h"
-#include "APU.h"
+#include "bc_orbiter/vessel.h"
+#include "bc_orbiter/Component.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
 
@@ -38,63 +40,88 @@ AIRBRAKE a
 a = 0.0 position, 0.0 closed, 1.0 fully open
 */
 class AirBrake :
-	public bco::Component
+	  public bco::vessel_component
+    , public bco::set_class_caps 
+    , public bco::post_step
+    , public bco::manage_state
 {
 public:
-	AirBrake(bco::BaseVessel* vessel);
+	AirBrake(bco::vessel& vessel, bco::hydraulic_provider& apu);
 
-    // *** Component ***
-	virtual void SetClassCaps() override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::vessel& vessel) override;
 
-    void Step(double simt, double simdt, double mjd);
+    // post_step
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
-    // *** AirBrake ***
-	void SetAPU(APU* apu) { apu_ = apu; }
-	bco::RotarySwitch& AirBrakeSwitch();
-	double AirBrake::GetAirBrakeState();
+    // manage_state
+    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
+
+    void IncreaseDrag() { position_ = min(1.0, position_ + 0.33); }
+    void DecreaseDrag() { position_ = max(0.0, position_ - 0.33); }
 
 private:
-	bco::RotarySwitch		airBrakeSwitch_;
-    bco::EventTarget        eventIncreaseBrake_ { bt_mesh::SR71rVC::ABTargetIncrease_location, 0.01 };
-    bco::EventTarget        eventDecreaseBrake_ { bt_mesh::SR71rVC::ABTargetDecrease_location, 0.01 };
 
-	APU*					apu_;
+    bco::hydraulic_provider& apu_;
 
 	double					dragFactor_;
+    double                  position_           { 0.0 };
 
-	const char*				ConfigKey = "AIRBRAKE";
+    // Animations:  animSurface is only active when we have hydraulic power, the external surface animations
+    //              key off of that, as well as the drag factor.  animSwitch will show the desired state regardless
+    //              of hydraulic power.  The vc and panel switches key off of that.
 
-    bco::Animation			animAirBrake_       {   &airBrakeSwitch_, 2.0 };
+    bco::animation_target   animBrakeSurface_;
+    bco::animation_target   animBrakeSwitch_    {   2.0 };
+    bco::animation_target	animAirBrake_       {   2.0 };
 
-    bco::AnimationGroup     gpBrakeHandle_      {   { bt_mesh::SR71rVC::AirBrakeLever_id },
-                                                    bt_mesh::SR71rVC::SpBrakeAxisRight_location, bt_mesh::SR71rVC::SpBrakeAxisLeft_location,
+    bco::animation_group     gpBrakeHandle_     {   { bm::vc::AirBrakeLever_id },
+                                                    bm::vc::SpBrakeAxisRight_loc, bm::vc::SpBrakeAxisLeft_loc,
                                                     (58 * RAD),
                                                     0.0, 1.0 };
 
-    bco::AnimationGroup     gpLeftTop_          {   { bt_mesh::SR71r::ElevonPIT_id },
-                                                    bt_mesh::SR71r::AirBrakeAxisPTO_location, bt_mesh::SR71r::AirBrakeAxisPTI_location,
+    bco::animation_group     gpLeftTop_         {   { bm::main::ElevonPIT_id },
+                                                    bm::main::AirBrakeAxisPTO_loc, bm::main::AirBrakeAxisPTI_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpLeftBottom_       {   { bt_mesh::SR71r::ElevonPIB_id },
-                                                    bt_mesh::SR71r::AirBrakeAxisPTI_location, bt_mesh::SR71r::AirBrakeAxisPTO_location,
+    bco::animation_group     gpLeftBottom_      {   { bm::main::ElevonPIB_id },
+                                                    bm::main::AirBrakeAxisPTI_loc, bm::main::AirBrakeAxisPTO_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpRightTop_         {   { bt_mesh::SR71r::ElevonSIT_id },
-                                                    bt_mesh::SR71r::AirBrakeAxisSTO_location, bt_mesh::SR71r::AirBrakeAxisSTI_location,
+    bco::animation_group     gpRightTop_        {   { bm::main::ElevonSIT_id },
+                                                    bm::main::AirBrakeAxisSTO_loc, bm::main::AirBrakeAxisSTI_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::AnimationGroup     gpRightBottom_      {   { bt_mesh::SR71r::ElevonSIB_id },
-                                                    bt_mesh::SR71r::AirBrakeAxisSBI_location, bt_mesh::SR71r::AirBrakeAxisSBO_location,
+    bco::animation_group     gpRightBottom_     {   { bm::main::ElevonSIB_id },
+                                                    bm::main::AirBrakeAxisSBI_loc, bm::main::AirBrakeAxisSBO_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
+                                                };
+
+    // Panel
+    const VECTOR3 sTrans { bm::pnl::pnlSpeedBrakeFull_loc - bm::pnl::pnlSpeedBrakeOff_loc };
+
+    bco::simple_event<>		btnDecreaseAirbrake_ {  bm::vc::ABTargetDecrease_loc,
+                                                    0.01,
+                                                    bm::pnl::pnlAirBrakeDecrease_RC
+                                                };
+
+    bco::simple_event<>		btnIncreaseAirbrake_ {  bm::vc::ABTargetIncrease_loc,
+                                                    0.01,
+                                                    bm::pnl::pnlAirBrakeIncrease_RC
+                                                };
+
+    bco::status_display     status_     {           bm::vc::MsgLightSpeedBrake_id,
+                                                    bm::vc::MsgLightSpeedBrake_vrt,
+                                                    bm::pnl::pnlMsgLightSpeedBrake_id,
+                                                    bm::pnl::pnlMsgLightSpeedBrake_vrt,
+                                                    0.0361
                                                 };
 };

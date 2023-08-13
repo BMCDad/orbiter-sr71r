@@ -1,5 +1,5 @@
 //	NavModes - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -17,106 +17,80 @@
 #include "StdAfx.h"
 
 #include "Orbitersdk.h"
-
-#include "bc_orbiter\BaseVessel.h"
+#include "bc_orbiter\vessel.h"
 
 #include "NavModes.h"
 #include "SR71r_mesh.h"
 
 #include <assert.h>
 
-NavModes::NavModes(bco::BaseVessel* vessel, double amps) :
-PoweredComponent(vessel, amps, 20.0),
-visKillRot_(	bt_mesh::SR71rVC::NAVMODE_KILL_ROT_verts,		bt_mesh::SR71rVC::NAVMODE_KILL_ROT_id),
-visHorzLevel_(	bt_mesh::SR71rVC::NAVMODE_HORZ_LEVEL_verts,		bt_mesh::SR71rVC::NAVMODE_HORZ_LEVEL_id),
-visProGrade_(	bt_mesh::SR71rVC::NAVMODE_PRO_GRADE_verts,		bt_mesh::SR71rVC::NAVMODE_PRO_GRADE_id),
-visRetroGrade_(	bt_mesh::SR71rVC::NAVMODE_RETRO_GRADE_verts,		bt_mesh::SR71rVC::NAVMODE_RETRO_GRADE_id),
-visNormal_(		bt_mesh::SR71rVC::NAVMODE_NORMAL_PLUS_verts,		bt_mesh::SR71rVC::NAVMODE_NORMAL_PLUS_id),
-visAntiNormal_(	bt_mesh::SR71rVC::NAVMODE_NORMAL_MINUS_verts,	bt_mesh::SR71rVC::NAVMODE_NORMAL_MINUS_id)
+NavModes::NavModes(bco::vessel& baseVessel, Avionics& avionics) :
+      baseVessel_(baseVessel)
+    , avionics_(avionics)
 {
-	// Setup our button functions, which should just be to toggle its specific mode.
-	btnKillRotation_.SetPressedFunc(	[this] { ToggleMode(NAVMODE_KILLROT); });
-	btnLevelHorizon_.SetPressedFunc(	[this] { ToggleMode(NAVMODE_HLEVEL); });
-	btnPrograde_.SetPressedFunc(		[this] { ToggleMode(NAVMODE_PROGRADE); });
-	btnRetrograde_.SetPressedFunc(		[this] { ToggleMode(NAVMODE_RETROGRADE); });
-	btnNormal_.SetPressedFunc(			[this] { ToggleMode(NAVMODE_NORMAL); });
-	btnAntiNormal_.SetPressedFunc(		[this] { ToggleMode(NAVMODE_ANTINORMAL); });
+    baseVessel_.AddControl(&btnKillRot_);
+    baseVessel_.AddControl(&btnHorzLevel_);
+    baseVessel_.AddControl(&btnAntiNorm_);
+    baseVessel_.AddControl(&btnNormal_);
+    baseVessel_.AddControl(&btnPrograde_);
+    baseVessel_.AddControl(&btnRetrograde_);
 
-    vessel->RegisterVCEventTarget(&btnKillRotation_);
-    vessel->RegisterVCEventTarget(&btnLevelHorizon_);
-    vessel->RegisterVCEventTarget(&btnPrograde_);
-    vessel->RegisterVCEventTarget(&btnRetrograde_);
-    vessel->RegisterVCEventTarget(&btnNormal_);
-    vessel->RegisterVCEventTarget(&btnAntiNormal_);
-}
+    baseVessel_.AddControl(&lightKillRot_);
+    baseVessel_.AddControl(&lightHorzLevel_);
+    baseVessel_.AddControl(&lightAntiNorm_);
+    baseVessel_.AddControl(&lightNormal_);
+    baseVessel_.AddControl(&lightPrograde_);
+    baseVessel_.AddControl(&lightRetro_);
 
-void NavModes::SetClassCaps()
-{
-	uiArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
-}
+    baseVessel_.AddControl(&pnlHudFrame_);
+    baseVessel_.AddControl(&pnlHudMode_);
+    baseVessel_.AddControl(&pnlHudMode2_);
 
-bool NavModes::LoadVC(int id)
-{
-	// Redraw event
-	oapiVCRegisterArea(uiArea_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
-	return true;
-}
-
-bool NavModes::VCRedrawEvent(int id, int event, SURFHANDLE surf)
-{
-	auto devMesh = GetBaseVessel()->GetVirtualCockpitMesh0();
-	assert(devMesh != nullptr);
-
-	auto vessel = GetBaseVessel();
-	const double offset = 0.0352;
-	double trans = 0.0;
-
-    navMode1_ = 0;
-    navMode2_ = 0;
-
-	trans = vessel->GetNavmodeState(NAVMODE_KILLROT) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_KILLROT;
-	visKillRot_.SetTranslate(_V(trans, 0.0, 0.0));
-	visKillRot_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_HLEVEL) ? offset : 0.0;
-    if (trans != 0.0) navMode2_ = NAVMODE_HLEVEL;
-	visHorzLevel_.SetTranslate(_V(trans, 0.0, 0.0));
-	visHorzLevel_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_PROGRADE) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_PROGRADE;
-    visProGrade_.SetTranslate(_V(trans, 0.0, 0.0));
-	visProGrade_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_RETROGRADE) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_RETROGRADE;
-	visRetroGrade_.SetTranslate(_V(trans, 0.0, 0.0));
-	visRetroGrade_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_NORMAL) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_NORMAL;
-	visNormal_.SetTranslate(_V(trans, 0.0, 0.0));
-	visNormal_.Draw(devMesh);
-
-	trans = vessel->GetNavmodeState(NAVMODE_ANTINORMAL) ? offset : 0.0;
-    if (trans != 0.0) navMode1_ = NAVMODE_ANTINORMAL;
-	visAntiNormal_.SetTranslate(_V(trans, 0.0, 0.0));
-	visAntiNormal_.Draw(devMesh);
-
-	return true;
+    btnKillRot_     .attach([&]() { ToggleMode(NAVMODE_KILLROT); });
+    btnHorzLevel_   .attach([&]() { ToggleMode(NAVMODE_HLEVEL); });
+    btnAntiNorm_    .attach([&]() { ToggleMode(NAVMODE_ANTINORMAL); });
+    btnNormal_      .attach([&]() { ToggleMode(NAVMODE_NORMAL); });
+    btnPrograde_    .attach([&]() { ToggleMode(NAVMODE_PROGRADE); });
+    btnRetrograde_  .attach([&]() { ToggleMode(NAVMODE_RETROGRADE); });
 }
 
 void NavModes::OnNavMode(int mode, bool active)
 {
-	Update();
+    switch (mode) {
+    case NAVMODE_ANTINORMAL:
+        lightAntiNorm_.set_state(active);
+        navMode1_ = active ? NAVMODE_ANTINORMAL : 0;
+        break;
+    case NAVMODE_HLEVEL:
+        lightHorzLevel_.set_state(active);
+        navMode2_ = active ? NAVMODE_HLEVEL : 0;
+        break;
+    case NAVMODE_KILLROT:
+        lightKillRot_.set_state(active);
+        navMode1_ = active ? NAVMODE_KILLROT : 0;
+        break;
+    case NAVMODE_NORMAL:
+        lightNormal_.set_state(active);
+        navMode1_ = active ? NAVMODE_NORMAL : 0;
+        break;
+    case NAVMODE_PROGRADE:
+        lightPrograde_.set_state(active);
+        navMode1_ = active ? NAVMODE_PROGRADE : 0;
+        break;
+    case NAVMODE_RETROGRADE:
+        lightRetro_.set_state(active);
+        navMode1_ = active ? NAVMODE_RETROGRADE : 0;
+        break;
+    }
+
+    UpdatePanel();
 }
 
 void NavModes::ToggleMode(int mode)
 {
-	if (HasPower())
+	if (avionics_.IsAeroActive())
 	{
-		GetBaseVessel()->ToggleNavmode(mode);
+        baseVessel_.ToggleNavmode(mode);
 	}
 
 	Update();
@@ -124,25 +98,21 @@ void NavModes::ToggleMode(int mode)
 
 void NavModes::Update()
 {
-	auto vessel = GetBaseVessel();
-
-	if (!HasPower())
+	if (!avionics_.IsAeroActive())
 	{
 		// Shut down all modes:
-		vessel->DeactivateNavmode(NAVMODE_KILLROT);
-		vessel->DeactivateNavmode(NAVMODE_HLEVEL);
-		vessel->DeactivateNavmode(NAVMODE_PROGRADE);
-		vessel->DeactivateNavmode(NAVMODE_RETROGRADE);
-		vessel->DeactivateNavmode(NAVMODE_NORMAL);
-		vessel->DeactivateNavmode(NAVMODE_ANTINORMAL);
+		baseVessel_.DeactivateNavmode(NAVMODE_KILLROT);
+		baseVessel_.DeactivateNavmode(NAVMODE_HLEVEL);
+		baseVessel_.DeactivateNavmode(NAVMODE_PROGRADE);
+		baseVessel_.DeactivateNavmode(NAVMODE_RETROGRADE);
+		baseVessel_.DeactivateNavmode(NAVMODE_NORMAL);
+		baseVessel_.DeactivateNavmode(NAVMODE_ANTINORMAL);
 	}
-
-	vessel->UpdateUIArea(uiArea_);
 }
 
-bool NavModes::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void NavModes::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
-    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return false;
+    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
     int xLeft = 2;
     int yTop = hps->H - 30;
 
@@ -188,6 +158,4 @@ bool NavModes::DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 
         if (navMode2_ == NAVMODE_HLEVEL) skp->Text(xLeft + 105, yTop + 1, "HLVL", 4);
     }
-
-    return true;
 }

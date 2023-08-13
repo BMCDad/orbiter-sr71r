@@ -16,8 +16,9 @@
 
 #pragma once
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\VCRotorSwitch.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/on_off_display.h"
 
 #include "SR71r_mesh.h"
 
@@ -26,52 +27,55 @@ namespace bco = bc_orbiter;
 class VESSEL3;
 
 /** RCSMode
-	
-	Configure the RCS Mode switch position.  It is possible for the switch
-	to be in teh LIN or ROT position, but the vessel is in 'None' mode.  This
-	will happen when the vessel has no power.
-
-	Configuration:
-	RCSSWITCH a
-	a - 0/1/2.  0=LIN, 1=RCS, 2=OFF
 */
 
-class RCSSystem : public bco::PoweredComponent
+class RCSSystem : 
+	  public bco::vessel_component
+	, public bco::power_consumer
 {
 public:
-	RCSSystem(bco::BaseVessel* vessel, double amps);
+	RCSSystem(bco::vessel& vessel, bco::power_provider& pwr);
 
-	virtual void SetClassCaps() override;
-
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
-
-	virtual void ChangePowerLevel(double newLevel) override;
-
-	virtual bool LoadVC(int id) override;
-
-	virtual double CurrentDraw() override;
-	
 	// Callback:
 	void OnRCSMode(int mode);
 
+	double amp_draw() const override { return IsPowered() ? 2.0 : 0.0; }
+	void on_change(double v) override { }
+
 private:
-    void SwitchPositionChanged(int mode);
+	bco::vessel&			vessel_;
+	bco::power_provider&	power_;
 
-	const char*				ConfigKey = "RCSSWITCH";
-    int						uiArea_;
+	bool IsPowered() const { return power_.volts_available() > 24; }
 
-	bool					isInternalTrigger_{ false };
+    void OnChanged(int mode);
+	void ActiveChanged(bool isActive);
 
-    //bco::TextureVisual		visRCSRot_;
-    //bco::TextureVisual		visRCSLin_;
+	bco::simple_event<>		btnLinear_{
+		bm::vc::vcRCSLin_loc,
+			0.01,
+			bm::pnl::pnlRCSLin_RC
+	};
 
-    //bco::PushButtonSwitch   btnRotation_    {bt_mesh::SR71rVC::RCS_ROT_location,     0.01};
-    //bco::PushButtonSwitch   btnLinear_      {bt_mesh::SR71rVC::RCS_LIN_location,     0.01};
+	bco::on_off_display		lightLinear_{
+		bm::vc::vcRCSLin_id,
+			bm::vc::vcRCSLin_vrt,
+			bm::pnl::pnlRCSLin_id,
+			bm::pnl::pnlRCSLin_vrt,
+			0.0352
+	};
 
-	bco::VCRotorSwitch		swSelectMode_{	bt_mesh::SR71rVC::SwRCSMode_id,
-											bt_mesh::SR71rVC::SwRCSMode_location,
-											bt_mesh::SR71rVC::SwRCSSelectAxis_location,
-											(90 * RAD)
+	bco::simple_event<>		btnRotate_{
+		bm::vc::vcRCSRot_loc,
+			0.01,
+			bm::pnl::pnlRCSRot_RC
+	};
+
+	bco::on_off_display		lightRotate_{
+		bm::vc::vcRCSRot_id,
+			bm::vc::vcRCSRot_vrt,
+			bm::pnl::pnlRCSRot_id,
+			bm::pnl::pnlRCSRot_vrt,
+			0.0352
 	};
 };

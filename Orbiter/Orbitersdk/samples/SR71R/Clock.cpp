@@ -16,47 +16,42 @@
 
 #include "StdAfx.h"
 
+#include "bc_orbiter\Tools.h"
+
 #include "Clock.h"
 #include "Orbitersdk.h"
 #include "SR71r_mesh.h"
 
 
-Clock::Clock(bco::BaseVessel * vessel) :
-	bco::Component(vessel),
+Clock::Clock(bco::vessel& vessel) :
 	startElapsedTime_(0.0),
 	startTimerTime_(0.0),
 	isTimerRunning_(false),
 	currentTimerTime_(0.0)
 {
-    switchResetElapsed_.SetPressedFunc([this] { ResetElapsed(); });
-    vessel->RegisterVCEventTarget(&switchResetElapsed_);
+	vessel.AddControl(&clockTimerMinutesHand_);
+	vessel.AddControl(&clockTimerSecondsHand_);
+	vessel.AddControl(&clockElapsedHoursHand_);
+	vessel.AddControl(&clockElapsedMinutesHand_);
+	vessel.AddControl(&clockTimerReset_);
+	vessel.AddControl(&clockElapsedReset_);
 
-    switchStopWatch_.SetPressedFunc([this] { ResetTimer(); });
-    vessel->RegisterVCEventTarget(&switchStopWatch_);
-}
-
-void Clock::SetClassCaps()
-{
-    auto vessel = GetBaseVessel();
-    
-    gaSecondHand_.Setup(vessel);
-    gaTimerMinute_.Setup(vessel);
-    gaHourHand_.Setup(vessel);
-    gaMinuteHand_.Setup(vessel);
+	clockTimerReset_.attach([&]() { ResetTimer(); });
+	clockElapsedReset_.attach([&]() { ResetElapsed(); });
 }
 
 void Clock::ResetElapsed()
 {
-    // The elapsed time is always running, when
+    // The elapsed time is always isTimerRunning, when
     // pressed the elapsed time just restarts at zero.
     startElapsedTime_ = oapiGetSimTime();
 }
 
 void Clock::ResetTimer()
 {
-    // The timer has three states; running, stopped, reset.
-    // If running, then we just stop.  If stopped we reset
-    // and if reset we start running.
+    // The timer has three states; isTimerRunning, stopped, reset.
+    // If isTimerRunning, then we just stop.  If stopped we reset
+    // and if reset we start isTimerRunning.
     if (isTimerRunning_)
     {
         isTimerRunning_ = false;
@@ -77,7 +72,7 @@ void Clock::ResetTimer()
     }
 }
 
-void Clock::Step(double simt, double simdt, double mjd)
+void Clock::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// simt is simulator time in seconds.
 	//  3600 - seconds in 60 minutes (minute hand).
@@ -85,77 +80,53 @@ void Clock::Step(double simt, double simdt, double mjd)
 
 	auto elapsedRun = simt - startElapsedTime_;
 
-	auto hourHandT =	fmod(elapsedRun, 43200) / 43200;
-	auto minHandT =		fmod(elapsedRun, 3600) / 3600;
+	
+	clockElapsedMinutesHand_.set_state(fmod((elapsedRun / 60), 60) / 60);
+	clockElapsedHoursHand_.set_state(fmod((elapsedRun / 3600), 12) / 60);
 
 	if (isTimerRunning_)
 	{
 		currentTimerTime_ = simt - startTimerTime_;
 	}
-	
-	auto secHandT =		fmod(currentTimerTime_, 60) / 60;
-	auto timerHandT =	fmod(currentTimerTime_, 3600) / 3600;
 
-    gaSecondHand_.SetState(secHandT);
-    gaTimerMinute_.SetState(timerHandT);
-    gaHourHand_.SetState(hourHandT);
-    gaMinuteHand_.SetState(minHandT);
+	clockTimerSecondsHand_.set_state(fmod(currentTimerTime_, 60) / 60);
+	clockTimerMinutesHand_.set_state(fmod((currentTimerTime_ / 60), 60) / 60);
 }
 
-bool Clock::VCRedrawEvent(int id, int event, SURFHANDLE surf)
+// [elapsedMissionTime] [isTimerRunning] [elapsedTimer]
+bool Clock::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
-	return false;
-}
+	int elapsedMission = 0;
+	int isTimerRunning = 0;
+	int elapsedTimer = 0;
 
-bool Clock::LoadConfiguration(char * key, FILEHANDLE scn, const char * configLine)
-{
-	if (_strnicmp(key, ConfigKey, 5) != 0)
-	{
-		return false;
-	}
+	std::istringstream in(line);
 
-	int elapsedMission;
-	int isTimerRunning;
-	int elapsedTimer;
+	if (in >> elapsedMission >> isTimerRunning >> elapsedTimer) {
+		auto current = oapiGetSimTime();
+		startElapsedTime_ = current - (double)elapsedMission;
 
-	sscanf_s(configLine + 5, "%i%i%i", &elapsedMission, &isTimerRunning, &elapsedTimer);
+		isTimerRunning_ = (isTimerRunning == 1);
 
-	auto current = oapiGetSimTime();
-	startElapsedTime_ = current - (double)elapsedMission;
-
-	isTimerRunning_ = (isTimerRunning == 1);
-
-	if (isTimerRunning_)
-	{
-		startTimerTime_ = current - elapsedTimer;
-	}
-	else
-	{
-		currentTimerTime_ = elapsedTimer;
+		if (isTimerRunning_)
+		{
+			startTimerTime_ = current - elapsedTimer;
+		}
+		else
+		{
+			currentTimerTime_ = elapsedTimer;
+		}
 	}
 
 	return true;
 }
 
-void Clock::SaveConfiguration(FILEHANDLE scn) const
+std::string Clock::handle_save_state(bco::vessel& vessel)
 {
-	char cbuf[256];
+	std::ostringstream os;
+
 	auto current = oapiGetSimTime();
-	auto elMission = (int)(current - startElapsedTime_);
 
-	auto elTimer = 0;
-
-	if (isTimerRunning_)
-	{
-		elTimer = (int)(current - startTimerTime_);
-	}
-	else
-	{
-		elTimer = (int)currentTimerTime_;
-	}
-	
-	auto running = isTimerRunning_ ? 1 : 0;
-
-	sprintf_s(cbuf, "%i %i %i", elMission, running, elTimer);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	os << (int)(current - startElapsedTime_) << " " << (isTimerRunning_ ? 1 : 0) << " " << (int)(current - startTimerTime_);
+	return os.str();
 }

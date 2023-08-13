@@ -18,12 +18,15 @@
 
 #include "OrbiterSDK.h"
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\VCToggleSwitch.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/vessel.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
+#include "ShipMets.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
@@ -45,78 +48,96 @@ namespace bco = bc_orbiter;
 	CARGOBAY a b c
 	a - 0/1 Power switch off/on.
 	b - 0/1 Open close switch closed/open.
-	c - 0.0-1.0 Current door position.
+	c - 0.0-1.0 current door position.
 */
-class CargoBayController : public bco::PoweredComponent
+class CargoBayController :
+      public bco::vessel_component
+    , public bco::set_class_caps
+    , public bco::post_step
+    , public bco::power_consumer
+    , public bco::manage_state
 {
 public:
-	CargoBayController(bco::BaseVessel* vessel, double amps);
+	CargoBayController(bco::power_provider& pwr, bco::vessel& vessel);
 
-	virtual void SetClassCaps() override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override { return false; }
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::vessel& vessel) override;
 
-	/**
-		We override from the base class because the calculation for this
-		is determined by which doors are currently in motion.
-	*/
-	virtual double CurrentDraw() override;
+    // power_consumer
+    double amp_draw() const override { return IsMoving() ? 4.0 : 0.0; }
 
-	/**
-		Provide time steps for the animations.
-	*/
-	void Step(double simt, double simdt, double mjd);
+    // post_step
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
+    // manage_state
+    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
 
-	// ICargoBay:
-	bco::OnOffSwitch&	CargoBayDoorsPowerSwitch();
-	bco::OnOffSwitch&	CargoBayDoorsOpenSwitch();
-
-    double				GetCargoBayState();
-
-	// Callbacks
 
 private:
-	bool CargoBayHasPower();
+    const double MIN_VOLTS = 20.0;
 
-    const char*			    ConfigKeyCargo = "CARGOBAY";
+    bco::power_provider& power_;
 
-    bco::Animation		    animCargoBayDoors_{ &swCargoOpen_, 0.01 };
+	bool IsPowered() const {
+        return
+            (power_.volts_available() > MIN_VOLTS) &&
+            switchPower_.is_on();
+    }
 
-    UINT idCargoAnim_{ 0 };
+    bool IsMoving() const {
+        return 
+            IsPowered() &&
+            (animCargoBayDoors_.GetState() > 0.0) && 
+            (animCargoBayDoors_.GetState() < 1.0); 
+    }
 
-    bco::VCToggleSwitch     swCargoPower_       {   bt_mesh::SR71rVC::SwCargoPower_id,
-                                                    bt_mesh::SR71rVC::SwCargoPower_location, 
-                                                    bt_mesh::SR71rVC::PowerTopRightAxis_location
-                                                };
+    bco::animation_target		    animCargoBayDoors_{ 0.01 };
 
-    bco::VCToggleSwitch     swCargoOpen_        {   bt_mesh::SR71rVC::SwCargoOpen_id,
-                                                    bt_mesh::SR71rVC::SwCargoOpen_location,
-                                                    bt_mesh::SR71rVC::DoorsRightAxis_location
-                                                };
-
-    bco::AnimationGroup     gpCargoLeftFront_   {   { bt_mesh::SR71r::BayDoorPF_id },
-                                                    bt_mesh::SR71r::Bay1AxisPA_location, bt_mesh::SR71r::Bay1AxisPF_location,
+    bco::animation_group     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
+                                                    bm::main::Bay1AxisPA_loc, bm::main::Bay1AxisPF_loc,
                                                     (160 * RAD),
                                                     0.51, 0.74
                                                 };
 
-    bco::AnimationGroup     gpCargoRightFront_  {   { bt_mesh::SR71r::BayDoorSF_id },
-                                                    bt_mesh::SR71r::Bay1AxisSF_location, bt_mesh::SR71r::Bay1AxisSA_location,
+    bco::animation_group     gpCargoRightFront_  {   { bm::main::BayDoorSF_id },
+                                                    bm::main::Bay1AxisSF_loc, bm::main::Bay1AxisSA_loc,
                                                     (160 * RAD),
                                                     0.76, 1.0
                                                 };
 
-    bco::AnimationGroup     gpCargoLeftMain_    {   { bt_mesh::SR71r::BayDoorPA_id },
-                                                    bt_mesh::SR71r::Bay2AxisPA_location, bt_mesh::SR71r::Bay2AxisPF_location,
+    bco::animation_group     gpCargoLeftMain_    {   { bm::main::BayDoorPA_id },
+                                                    bm::main::Bay2AxisPA_loc, bm::main::Bay2AxisPF_loc,
                                                     (160 * RAD),
                                                     0.0, 0.24
                                                 };
 
-    bco::AnimationGroup     gpCargoRightMain_   {   { bt_mesh::SR71r::BayDoorSA_id },
-                                                    bt_mesh::SR71r::Bay2AxisSF_location, bt_mesh::SR71r::Bay2AxisSA_location,
+    bco::animation_group     gpCargoRightMain_   {   { bm::main::BayDoorSA_id },
+                                                    bm::main::Bay2AxisSF_loc, bm::main::Bay2AxisSA_loc,
                                                     (160 * RAD),
                                                     0.26, 0.49
+                                                };
+
+    bco::on_off_input		switchPower_        { { bm::vc::SwCargoPower_id },
+                                                    bm::vc::SwCargoPower_loc, bm::vc::PowerTopRightAxis_loc,
+                                                    toggleOnOff,
+                                                    bm::pnl::pnlPwrCargo_id,
+                                                    bm::pnl::pnlPwrCargo_vrt,
+                                                    bm::pnl::pnlPwrCargo_RC
+                                                };
+
+    bco::on_off_input		switchOpen_         { { bm::vc::SwCargoOpen_id },
+                                                    bm::vc::SwCargoOpen_loc, bm::vc::DoorsRightAxis_loc,
+                                                    toggleOnOff,
+                                                    bm::pnl::pnlDoorCargo_id,
+                                                    bm::pnl::pnlDoorCargo_vrt,
+                                                    bm::pnl::pnlDoorCargo_RC
+                                                };
+
+    bco::status_display     status_     {           bm::vc::MsgLightBay_id,
+                                                    bm::vc::MsgLightBay_vrt,
+                                                    bm::pnl::pnlMsgLightBay_id,
+                                                    bm::pnl::pnlMsgLightBay_vrt,
+                                                    0.0361
                                                 };
 };

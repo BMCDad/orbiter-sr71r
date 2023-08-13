@@ -19,95 +19,80 @@
 #include "AirBrake.h"
 #include "SR71r_mesh.h"
 
-AirBrake::AirBrake(bco::BaseVessel* vessel) :
-	Component(vessel),
-	apu_(nullptr),
-	dragFactor_(0.0)
+AirBrake::AirBrake(bco::vessel& vessel, bco::hydraulic_provider& apu) :
+	dragFactor_(0.0),
+	apu_(apu)
 {
-	airBrakeSwitch_.AddStopFunc(0.0,    [] { });
-	airBrakeSwitch_.AddStopFunc(0.33,   [] { });
-	airBrakeSwitch_.AddStopFunc(0.66,   [] { });
-	airBrakeSwitch_.AddStopFunc(1.0,    [] { });
+	vessel.AddControl(&btnDecreaseAirbrake_);
+	vessel.AddControl(&btnIncreaseAirbrake_);
+	vessel.AddControl(&status_);
 
-    eventIncreaseBrake_.SetLeftMouseDownFunc([this] {airBrakeSwitch_.Increment(); });
-    vessel->RegisterVCEventTarget(&eventIncreaseBrake_);
-
-    eventDecreaseBrake_.SetLeftMouseDownFunc([this] {airBrakeSwitch_.Decrement(); });
-    vessel->RegisterVCEventTarget(&eventDecreaseBrake_);
+	btnIncreaseAirbrake_.attach([&]() { IncreaseDrag(); });
+	btnDecreaseAirbrake_.attach([&]() { DecreaseDrag(); });
 }
 
-
-bco::RotarySwitch& AirBrake::AirBrakeSwitch()
-{
-	return airBrakeSwitch_;
-}
-
-double AirBrake::GetAirBrakeState()
-{
-	return animAirBrake_.GetState();
-}
-
-void AirBrake::Step(double simt, double simdt, double mjd)
+void AirBrake::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Note:  The animAirBrake can only move if there is hydraulic power, that
 	// is the actual air brake animation.  The animAirBrakeHandle_ is the air brake
 	// handle in the cockpit and can move regardless of power, therefore it must
 	// always get a piece of the time step.
 
-	if ((nullptr != apu_) && (apu_->GetHydraulicLevel() > 0.8))
+	if (apu_.level() > 0.8)
 	{
-		animAirBrake_.Step(airBrakeSwitch_.GetState(), simdt);
+		animAirBrake_.Step(position_, simdt);
 	}
+
+	animBrakeSwitch_.Step(position_, simdt);
 
 	// Update drag.
 	dragFactor_ = animAirBrake_.GetState();
 //	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
+
+	// This needs to be put into a switch statement eventually
+	bco::TranslateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_vrt, sTrans * animBrakeSwitch_.GetState());
+
+	status_.set_state(
+		dragFactor_ > 0.05 
+		?	bco::status_display::status::warn 
+		:	bco::status_display::status::off);
 }
 
-bool AirBrake::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
+bool AirBrake::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
-	if (_strnicmp(key, ConfigKey, 4) != 0)
-	{
-		return false;
-	}
+	// [a b] : a: air brake switch position.   b: air brake actual position (they can differ)
 
-	int step;
-
-	sscanf_s(configLine + 8, "%i", &step);
-
-	airBrakeSwitch_.SetStep(step);
-	animAirBrake_.SetState(airBrakeSwitch_.GetPosition());
-
+	std::istringstream in(line);
+	in >> position_ >> animAirBrake_;
+	
+	vessel.SetAnimationState(animAirBrake_);
 	return true;
 }
 
-void AirBrake::SaveConfiguration(FILEHANDLE scn) const
+std::string AirBrake::handle_save_state(bco::vessel& vessel)
 {
-	char cbuf[256];
-	auto val = airBrakeSwitch_.GetStep();
-
-	sprintf_s(cbuf, "%i", val);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
+	std::ostringstream os;
+	os << position_ << " " << animAirBrake_;
+	return os.str();
 }
 
-void AirBrake::SetClassCaps()
+void AirBrake::handle_set_class_caps(bco::vessel& vessel)
 {
-    auto vessel = GetBaseVessel();
-    auto vcIdx = vessel->GetVCMeshIndex();
-    auto exIdx = vessel->GetMainMeshIndex();
+	// Setup VC animation
+	auto vcIdx = vessel.GetVCMeshIndex();
+	auto aid = vessel.CreateVesselAnimation(&animBrakeSwitch_, 2.0);
+	animBrakeSurface_.VesselId(aid);
+    vessel.AddVesselAnimationComponent(aid, vcIdx, &gpBrakeHandle_);
 
-    auto aid = vessel->CreateVesselAnimation(&airBrakeSwitch_, 2.0);
-
-    vessel->AddVesselAnimationComponent(aid, vcIdx, &gpBrakeHandle_);
-
-   
-    aid = vessel->CreateVesselAnimation(&animAirBrake_, 0.4);
-    
-    vessel->AddVesselAnimationComponent(aid, exIdx, &gpLeftTop_);
-    vessel->AddVesselAnimationComponent(aid, exIdx, &gpLeftBottom_);
-    vessel->AddVesselAnimationComponent(aid, exIdx, &gpRightTop_);
-    vessel->AddVesselAnimationComponent(aid, exIdx, &gpRightBottom_);
+	// Setup external animation   
+	auto exIdx = vessel.GetMainMeshIndex();
+	aid = vessel.CreateVesselAnimation(&animAirBrake_, 0.4);
+    vessel.AddVesselAnimationComponent(aid, exIdx, &gpLeftTop_);
+    vessel.AddVesselAnimationComponent(aid, exIdx, &gpLeftBottom_);
+    vessel.AddVesselAnimationComponent(aid, exIdx, &gpRightTop_);
+    vessel.AddVesselAnimationComponent(aid, exIdx, &gpRightBottom_);
+	animAirBrake_.VesselId(aid);
 
 	// Setup drag.
-	GetBaseVessel()->CreateVariableDragElement(animAirBrake_.GetStatePtr(), 10.0, bt_mesh::SR71r::BrakeDragPoint_location);
+	vessel.CreateVariableDragElement(animAirBrake_.GetStatePtr(), 10.0, bm::main::BrakeDragPoint_loc);
 }

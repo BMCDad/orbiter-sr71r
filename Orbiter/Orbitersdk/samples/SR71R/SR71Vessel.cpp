@@ -21,123 +21,52 @@
 #include "ShipMets.h"
 
 SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) : 
-bco::BaseVessel(hvessel, flightmodel),
-meshVirtualCockpit_(nullptr),
-apu_(                   this,   APU_AMPS),
-//autoPilot_(             this,   AUTOP_AMPS),
-avionics_(              this,   AVIONICS_AMPS),
-cargoBayController_(    this,   CARGO_AMPS),
-canopy_(                this,   CANOPY_AMPS),
-fuelCell_(              this,   FUELCELL_AMPS),
-headsUpDisplay_(        this,   HUD_AMPS),
-hydrogenTank_(          this,   HYDRO_SUPPLY),
-landingGear_(           this),
-mfdLeft_(               this,   MFD_AMPS),
-mfdRight_(              this,   MFD_AMPS),
-navModes_(              this,   NAV_AMPS),
-oxygenTank_(            this,   O2_SUPPLY),
-powerSystem_(           this),
-propulsionController_(  this,   PROPULS_AMPS),
-rcsSystem_(             this,   RCS_AMPS),
-surfaceControl_(        this),
-statusBoard_(           this,   STATUS_AMPS),
-airBrake_(              this),
-lights_(                this,   LIGHTS_AMPS),
-clock_(                 this),
-shutters_(              this),
-computer_(              this,   COMPUTER_AMPS),
-hoverEngines_(          this,   HOVER_AMPS),
-retroEngines_(          this,   RETRO_AMPS)
+	bco::vessel(hvessel, flightmodel),
+	meshVirtualCockpit_(nullptr)
 {
-	RegisterComponent(&apu_);
-	RegisterComponent(&avionics_);
-	RegisterComponent(&cargoBayController_);
-    RegisterComponent(&canopy_);
-	RegisterComponent(&fuelCell_);
-	RegisterComponent(&headsUpDisplay_);
-	RegisterComponent(&hydrogenTank_);
-	RegisterComponent(&landingGear_);
-	RegisterComponent(&mfdLeft_);
-	RegisterComponent(&mfdRight_);
-	RegisterComponent(&navModes_);
-	RegisterComponent(&oxygenTank_);
-	RegisterComponent(&powerSystem_);
-	RegisterComponent(&propulsionController_);
-	RegisterComponent(&rcsSystem_);
-	RegisterComponent(&surfaceControl_);
-	RegisterComponent(&statusBoard_);
-	RegisterComponent(&airBrake_);
-	RegisterComponent(&lights_);
-	RegisterComponent(&clock_);
-	RegisterComponent(&shutters_);
-	RegisterComponent(&computer_);
-    RegisterComponent(&hoverEngines_);
-    RegisterComponent(&retroEngines_);
-}
+	AddComponent(&avionics_);
+	AddComponent(&airBrake_);
+	AddComponent(&airspeed_);
+	AddComponent(&altimeter_);
+	AddComponent(&apu_);
+	AddComponent(&canopy_);
+	AddComponent(&cargobay_);
+	AddComponent(&clock_);
+	AddComponent(&fuelCell_);
+	AddComponent(&headsUpDisplay_);
+	AddComponent(&hoverEngines_);
+	AddComponent(&hydrogenTank_);
+	AddComponent(&hsi_);
+	AddComponent(&landingGear_);
+	AddComponent(&navModes_);
+	AddComponent(&oxygenTank_);
+	AddComponent(&propulsion_);
+	AddComponent(&powerSystem_);
+	AddComponent(&retroEngines_);
+	AddComponent(&lights_);
 
+	AddComponent(&mfdLeft_);
+	AddComponent(&mfdRight_);
+	AddComponent(&computer_);
+	AddComponent(&surfaceCtrl_);
+
+	// Fuel cell					// A signal can drive more then one slot
+	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
+
+	bco::connect( propulsion_.MainFuelLevelSignal(),		apu_.FuelLevelSlot());
+
+	// RCS
+
+	// ...which in turn drive the HSI course and heading
+	bco::connect( avionics_.SetCourseSignal(),				hsi_.SetCourseSlot());
+	bco::connect( avionics_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
+	bco::connect( avionics_.SetHeadingSignal(),				computer_.HeadingSlot());
+	bco::connect( computer_.HeadingSignal(),				avionics_.SetHeadingSlot());
+			// ...which drives the course and heading needle and wheels.
+}
 
 SR71Vessel::~SR71Vessel()
 {
-}
-
-void SR71Vessel::SetupVesselComponents()
-{
-	// Setup surface controller:
-	surfaceControl_.SetAPU(&apu_);
-
-	// APU
-	apu_.SetPropulsionControl(&propulsionController_);
-
-	// Landing gear
-	landingGear_.SetAPU(&apu_);
-
-	// Fuelcell
-	fuelCell_.SetHydrogenSytem(&hydrogenTank_);
-	fuelCell_.SetOxygenSystem(&oxygenTank_);
-	fuelCell_.SetPowerSystem(&powerSystem_);
-
-	// Status board
-	statusBoard_.SetCargoBay(&cargoBayController_);
-	statusBoard_.SetAvionics(&avionics_);
-	statusBoard_.SetPower(&powerSystem_);
-	statusBoard_.SetPropulsion(&propulsionController_);
-	statusBoard_.SetAPU(&apu_);
-	statusBoard_.SetAirBrake(&airBrake_);
-    statusBoard_.SetHover(&hoverEngines_);
-    statusBoard_.SetRetro(&retroEngines_);
-    statusBoard_.SetCanopy(&canopy_);
-
-	// Airbrake
-	airBrake_.SetAPU(&apu_);
-
-    // Flight Computer
-    computer_.SetAvionics(&avionics_);
-	computer_.SetSurfaceControl(&surfaceControl_);
-	computer_.SetPropulsionControl(&propulsionController_);
-
-
-
-	// Setup power and add powered devices:
-	powerSystem_.SetFuelCell(&fuelCell_);
-
-	powerSystem_.AddMainCircuitDevice(&avionics_);
-	powerSystem_.AddMainCircuitDevice(&headsUpDisplay_);
-	powerSystem_.AddMainCircuitDevice(&rcsSystem_);
-	powerSystem_.AddMainCircuitDevice(&navModes_);
-	powerSystem_.AddMainCircuitDevice(&mfdLeft_);
-	powerSystem_.AddMainCircuitDevice(&mfdRight_);
-	powerSystem_.AddMainCircuitDevice(&cargoBayController_);
-    powerSystem_.AddMainCircuitDevice(&canopy_);
-	powerSystem_.AddMainCircuitDevice(&apu_);
-	powerSystem_.AddMainCircuitDevice(&fuelCell_);
-	powerSystem_.AddMainCircuitDevice(&statusBoard_);
-	powerSystem_.AddMainCircuitDevice(&propulsionController_);
-	powerSystem_.AddMainCircuitDevice(&lights_);
-	powerSystem_.AddMainCircuitDevice(&computer_);
-    powerSystem_.AddMainCircuitDevice(&hoverEngines_);
-    powerSystem_.AddMainCircuitDevice(&retroEngines_);
-    powerSystem_.AddMainCircuitDevice(&oxygenTank_);
-    powerSystem_.AddMainCircuitDevice(&hydrogenTank_);
 }
 
 void SR71Vessel::SetupAerodynamics()
@@ -161,4 +90,3 @@ void SR71Vessel::SetupAerodynamics()
 		HORZ_WING_AREA,
 		HORZ_WING_AR);
 }
-

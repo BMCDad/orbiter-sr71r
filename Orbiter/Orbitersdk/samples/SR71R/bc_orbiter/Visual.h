@@ -44,13 +44,6 @@ namespace bc_orbiter
 
 		virtual ~Visual() = default;
 
-
-		/**	Draw
-		Called to update the visual.  Implementing class needs to define how the visual
-		will be manipulated.
-		*/
-		virtual void Draw(DEVMESHHANDLE devMesh) = 0;
-
 		/** SetAngle.
 		Directly set the angle to use.
 		*/

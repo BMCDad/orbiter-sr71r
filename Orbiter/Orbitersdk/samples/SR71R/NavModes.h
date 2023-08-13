@@ -16,11 +16,12 @@
 
 #pragma
 
-#include "bc_orbiter\bco.h"
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\PushButtonSwitch.h"
-#include "bc_orbiter\TextureVisual.h"
+#include "bc_orbiter/vessel.h"
+#include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/on_off_display.h"
+#include "bc_orbiter/panel_display.h"
 
+#include "Avionics.h"
 #include "SR71r_mesh.h"
 
 #include <vector>
@@ -31,44 +32,64 @@ namespace bco = bc_orbiter;
 /**
 Models the nav mode selector function.
 */
-class NavModes : public bco::PoweredComponent
+class NavModes :
+	  public bco::vessel_component
+	, public bco::draw_hud
+	, public bco::post_step
 {
 public:
-	NavModes(bco::BaseVessel* vessel, double amps);
+	NavModes(bco::vessel& baseVessel, Avionics& avionics);
 
-	virtual void SetClassCaps() override;
-
-	virtual bool LoadVC(int id) override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-
-	/**
-		Respond to vessel clbkNavMode call by updating the nav mode status ports.
-	*/
+	// These overrides come directly from SR71Vessel callbacks.
 	void OnNavMode(int mode, bool active);
+	void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
-    bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+		if (oapiCockpitMode() != COCKPIT_PANELS) return;
+		UpdatePanel(); 
+	}
+
 protected:
 	void Update();
 
+	void UpdatePanel() { 
+		pnlHudFrame_.set_position(((navMode1_ + navMode2_) == 0) ? 1 : 0); 
+		pnlHudMode_.set_position(navMode1_);
+		pnlHudMode2_.set_position(navMode2_);
+	}
 private:
+	bco::vessel&	baseVessel_;
+	Avionics&		avionics_;
+
 	void ToggleMode(int mode);
 
-	int						uiArea_;
+	int		vcUIArea_{ 0 };
+	int		panelUIArea_{ 0 };
+	int		navMode1_{ 0 };	// HUD nav left area
+	int		navMode2_{ 0 };	// HUD nav right area
 
-    int                     navMode1_{ 0 };
-    int                     navMode2_{ 0 };
+	// ***  NAV MODES  *** //
+	using evt = bco::simple_event<int>;
+	using dsp = bco::on_off_display;
+	const double rad = 0.01;		// hit radius
+	const double ofs = 0.0352;		// tex offset
 
-    bco::PushButtonSwitch	btnKillRotation_    { bt_mesh::SR71rVC::NAVMODE_KILL_ROT_location,       0.01 };
-    bco::PushButtonSwitch	btnLevelHorizon_    { bt_mesh::SR71rVC::NAVMODE_HORZ_LEVEL_location,     0.01 };
-    bco::PushButtonSwitch	btnPrograde_        { bt_mesh::SR71rVC::NAVMODE_PRO_GRADE_location,      0.01 };
-    bco::PushButtonSwitch	btnRetrograde_      { bt_mesh::SR71rVC::NAVMODE_RETRO_GRADE_location,    0.01 };
-    bco::PushButtonSwitch	btnNormal_          { bt_mesh::SR71rVC::NAVMODE_NORMAL_PLUS_location,    0.01 };
-    bco::PushButtonSwitch	btnAntiNormal_      { bt_mesh::SR71rVC::NAVMODE_NORMAL_MINUS_location,   0.01 };
+	evt	btnKillRot_		{ bm::vc::vcNavKillRot_loc,		rad, bm::pnl::pnlNavKillrot_RC,		NAVMODE_KILLROT		};
+	evt	btnHorzLevel_	{ bm::vc::vcNavHorzLvl_loc,		rad, bm::pnl::pnlNavHorzLvl_RC,		NAVMODE_HLEVEL		};
+	evt	btnPrograde_	{ bm::vc::vcNavProGrade_loc,	rad, bm::pnl::pnlNavPrograde_RC,	NAVMODE_PROGRADE	};
+	evt	btnRetrograde_	{ bm::vc::vcNavRetro_loc,		rad, bm::pnl::pnlNavRetro_RC,		NAVMODE_RETROGRADE	};
+	evt	btnNormal_		{ bm::vc::vcNavNorm_loc,		rad, bm::pnl::pnlNavNorm_RC,		NAVMODE_NORMAL		};
+	evt	btnAntiNorm_	{ bm::vc::vcNavAntiNorm_loc,	rad, bm::pnl::pnlNavAntiNorm_RC,	NAVMODE_ANTINORMAL	};
 
-	bco::TextureVisual		visKillRot_;
-	bco::TextureVisual		visHorzLevel_;
-	bco::TextureVisual		visProGrade_;
-	bco::TextureVisual		visRetroGrade_;
-	bco::TextureVisual		visNormal_;
-	bco::TextureVisual		visAntiNormal_;
+	dsp	lightKillRot_	{ bm::vc::vcNavKillRot_id,	bm::vc::vcNavKillRot_vrt,	bm::pnl::pnlNavKillrot_id,	bm::pnl::pnlNavKillrot_vrt,		ofs	};
+	dsp	lightHorzLevel_	{ bm::vc::vcNavHorzLvl_id,	bm::vc::vcNavHorzLvl_vrt,	bm::pnl::pnlNavHorzLvl_id,	bm::pnl::pnlNavHorzLvl_vrt,		ofs	};
+	dsp	lightPrograde_	{ bm::vc::vcNavProGrade_id,	bm::vc::vcNavProGrade_vrt,	bm::pnl::pnlNavPrograde_id,	bm::pnl::pnlNavPrograde_vrt,	ofs	};
+	dsp	lightRetro_		{ bm::vc::vcNavRetro_id,	bm::vc::vcNavRetro_vrt,		bm::pnl::pnlNavRetro_id,	bm::pnl::pnlNavRetro_vrt,		ofs	};
+	dsp	lightNormal_	{ bm::vc::vcNavNorm_id,		bm::vc::vcNavNorm_vrt,		bm::pnl::pnlNavNorm_id,		bm::pnl::pnlNavNorm_vrt,		ofs	};
+	dsp	lightAntiNorm_	{ bm::vc::vcNavAntiNorm_id,	bm::vc::vcNavAntiNorm_vrt,	bm::pnl::pnlNavAntiNorm_id,	bm::pnl::pnlNavAntiNorm_vrt,	ofs	};
+
+	// 2D panel mini-hud
+	bco::panel_display	pnlHudFrame_	{ bm::pnl::pnlHUDNavTile_id,	bm::pnl::pnlHUDNavTile_vrt,		0.0610 };
+	bco::panel_display	pnlHudMode_		{ bm::pnl::pnlHUDNavText_id,	bm::pnl::pnlHUDNavText_vrt,		0.0305 };
+	bco::panel_display	pnlHudMode2_	{ bm::pnl::pnlHUDNavText2_id,	bm::pnl::pnlHUDNavText2_vrt,	0.0305 };
 };

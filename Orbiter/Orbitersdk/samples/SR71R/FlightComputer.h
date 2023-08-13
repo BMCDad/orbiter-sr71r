@@ -79,14 +79,13 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\Tools.h"
+#include "bc_orbiter/handler_interfaces.h"
+#include "bc_orbiter/control.h"
+#include "bc_orbiter/simple_event.h"
+#include "bc_orbiter/panel_display.h"
 
-#include "SR71r_mesh.h"
-#include "IAvionics.h"
-#include "PropulsionController.h"
-#include "SurfaceController.h"
 #include "VesselControl.h"
+#include "SR71r_mesh.h"
 
 #include <map>
 #include <functional>
@@ -95,7 +94,7 @@
 #include <algorithm>
 
 namespace bco = bc_orbiter;
-namespace mvc = bt_mesh::SR71rVC;
+namespace mvc = bm::vc;
 
 namespace FC
 {
@@ -108,7 +107,8 @@ namespace FC
 		Enter,
 		Previous, Next,
 		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10,
-		Home
+		HUD,
+		Menu
 	};
 
 	enum FCProg
@@ -135,8 +135,13 @@ namespace FC
 	
     */
     class FlightComputer :
-        public bco::PoweredComponent,
-		public IVesselControl
+          public bco::vessel_component
+		, public bco::power_consumer
+		, public bco::post_step
+		, public bco::manage_state
+		, public bco::draw_hud
+		, public bco::load_vc
+		, public bco::load_panel
     {
 		using KeyFunc = std::function<void()>;
 
@@ -144,30 +149,30 @@ namespace FC
         const static int DISPLAY_COLS = 20;
         const static int DISPLAY_ROWS = 11;
 
-        FlightComputer(bco::BaseVessel* vessel, double amps);
+        FlightComputer(
+			  bco::vessel& vessel
+			, bco::power_provider& pwr);
 
-		void Step(double simt, double simdt, double mjd);
+		// power_consumer
+		double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
 
-		bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+		// post_step
+		void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+		
+		// draw_hud
+		void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-		// Component overrides:
-        void SetClassCaps() override;
-		bool MouseEvent(int id, int event) override;
-		bool LoadVC(int id) override;
-		bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-		bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-		void SaveConfiguration(FILEHANDLE scn) const override;
+		// manage_state
+		bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+		std::string handle_save_state(bco::vessel& vessel) override;
 
+		// load_vc
+		virtual bool handle_load_vc(bco::vessel& vessel, int vcid) override;
+		virtual bool handle_redraw_vc(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
 
-		// PoweredComponent overrides:
-		void ChangePowerLevel(double newLevel) override;
-        double CurrentDraw() override;
-
-		bco::PushButtonSwitch   APMainButton()		const { return swAPMain_; }
-		bco::PushButtonSwitch   APHeadingButton()	const { return swAPHeading_; }
-		bco::PushButtonSwitch   APAltitudeButton()	const { return swAPHAltitude_; }
-		bco::PushButtonSwitch   APKEASButton()		const { return swAPKEAS_; }
-		bco::PushButtonSwitch   APMACHButton()		const { return swAPMACH_; }
+		// load_panel
+		virtual bool handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
+		virtual bool handle_redraw_panel(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
 
         // Computer interface
 		void ClearScreen();
@@ -177,16 +182,6 @@ namespace FC
         int DisplayRows() { return DISPLAY_ROWS; }
 		double GetScratchPad();
 		void SetScratchPad(double value);
-
-        // Input:
-		void SetAvionics(IAvionics* av)						{ avionics_ = av; }
-        void SetPropulsionControl(PropulsionController* p)	{ propulsionControl_ = p; }
-        void SetSurfaceControl(SurfaceController* s)		{ surfaceController_ = s; }
-
-		// IVesselControl
-		IAvionics*              GetAvionics()               const override { return avionics_; }
-		PropulsionController*   GetPropulsionController()   const override { return propulsionControl_; }
-		SurfaceController*      GetSurfaceController()      const override { return surfaceController_; }
 
 		// Page Functions
 		void PageMain();
@@ -212,12 +207,23 @@ namespace FC
 		double launchLatitude_{ 0.0 };
 		bool isAscentPageDirty_{ true };
 
+		bco::slot<double>&		HeadingSlot()	{ return headingSlot_; }
+		bco::signal<double>&	HeadingSignal()	{ return headingSignal_; }
+
+		void ToggleProgram(FCProgFlags prog) { ToggleAtmoProgram(prog); }
     private:
 		void Update();
 		void Boot();
 
-		bool LoadAPConfiguration(FILEHANDLE scn, const char* configLine);
-		void SaveAPConfiguration(FILEHANDLE scn) const;
+		bco::power_provider&		power_;
+		bco::vessel&				vessel_;
+
+		bool IsPowered() const {
+			return power_.volts_available() > 24.0;
+		}
+
+		bco::slot<double>			headingSlot_;
+		bco::signal<double>			headingSignal_;
 
 		std::string					configKey_{ "COMPUTER" };
 		std::string					apConfigKey_{ "AUTOPILOT" };
@@ -244,43 +250,8 @@ namespace FC
 			"                   "
 		};
 
-		std::map<int, FC::GCKey>	mapKey_;            // Map the mouse event id to the key.
-		std::vector<FC::GCKey>      keyBuffer_;
-
-        // Map the key to the location.  This is used during LoadVC
-        // to register mouse event id with a key.
-        std::map<FC::GCKey, VECTOR3>  mapKeyLocation_
-        {
-            { FC::GCKey::D0,        mvc::GCKey0_location},
-            { FC::GCKey::D1,        mvc::GCKey1_location },
-            { FC::GCKey::D2,        mvc::GCKey2_location },
-            { FC::GCKey::D3,        mvc::GCKey3_location },
-            { FC::GCKey::D4,        mvc::GCKey4_location },
-            { FC::GCKey::D5,        mvc::GCKey5_location },
-            { FC::GCKey::D6,        mvc::GCKey6_location },
-            { FC::GCKey::D7,        mvc::GCKey7_location },
-            { FC::GCKey::D8,        mvc::GCKey8_location },
-            { FC::GCKey::D9,        mvc::GCKey9_location },
-            { FC::GCKey::Clear,     mvc::GCKeyClear_location },
-            { FC::GCKey::Decimal,   mvc::GCKeyDecimal_location },
-            { FC::GCKey::Enter,     mvc::GCKeyEnter_location },
-            { FC::GCKey::Next,      mvc::GCKeyNext_location },
-            { FC::GCKey::Previous,  mvc::GCKeyPrev_location },
-            { FC::GCKey::PlusMinus, mvc::GCKeyPlusMinus_location },
-            { FC::GCKey::F1,        mvc::GCKeyFunc1_location },
-            { FC::GCKey::F2,        mvc::GCKeyFunc2_location },
-            { FC::GCKey::F3,        mvc::GCKeyFunc3_location },
-            { FC::GCKey::F4,        mvc::GCKeyFunc4_location },
-            { FC::GCKey::F5,        mvc::GCKeyFunc5_location },
-            { FC::GCKey::F6,        mvc::GCKeyFunc6_location },
-            { FC::GCKey::F7,        mvc::GCKeyFunc7_location },
-            { FC::GCKey::F8,        mvc::GCKeyFunc8_location },
-            { FC::GCKey::F9,        mvc::GCKeyFunc9_location },
-            { FC::GCKey::F10,       mvc::GCKeyFunc10_location },
-			{ FC::GCKey::Home,		mvc::GCKeyHome_location }
-        };
-
-		std::map<FC::GCKey, KeyFunc> mapKeyFunc_;
+		std::vector<FC::GCKey>			keyBuffer_;
+		std::map<FC::GCKey, KeyFunc>	mapKeyFunc_;
 
 		void MapKey(FC::GCKey key, KeyFunc fn) { mapKeyFunc_[key] = fn; }
 		void MapKey(FC::GCKey key) { mapKeyFunc_[key] = []{}; }
@@ -302,21 +273,21 @@ namespace FC
 				runningPrograms_ & ~pid;
 		}
 
-		void UpdateProg(FCProgFlags current, FCProgFlags pid)
+		void UpdateProg(bco::vessel& vessel, FCProgFlags current, FCProgFlags pid)
 		{
 			if ((current & pid) != (prevRunningProgs & pid))
 			{
 				auto prog = mapPrograms_[pid];
-				(current & pid) != FCProgFlags::None ? prog->Start() : prog->Stop();
+				(current & pid) != FCProgFlags::None ? prog->start(vessel) : prog->stop(vessel);
 			}
 		}
 
-		void UpdateProgs(FCProgFlags current)
+		void UpdateProgs(bco::vessel& vessel, FCProgFlags current)
 		{
-			UpdateProg(current, FCProgFlags::HoldAltitude);
-			UpdateProg(current, FCProgFlags::HoldHeading);
-			UpdateProg(current, FCProgFlags::HoldKEAS);
-			UpdateProg(current, FCProgFlags::HoldMACH);
+			UpdateProg(vessel, current, FCProgFlags::HoldAltitude);
+			UpdateProg(vessel, current, FCProgFlags::HoldHeading);
+			UpdateProg(vessel, current, FCProgFlags::HoldKEAS);
+			UpdateProg(vessel, current, FCProgFlags::HoldMACH);
 		}
 
 		constexpr bool IsProgramRunning(FCProgFlags pid) const { return (runningPrograms_ & pid) == pid; }
@@ -327,7 +298,10 @@ namespace FC
 
 			if ((pid == FCProgFlags::HoldKEAS) && (IsProgramRunning(pid)))	SetProgramState(FCProgFlags::HoldMACH, false);
 			if ((pid == FCProgFlags::HoldMACH) && (IsProgramRunning(pid)))	SetProgramState(FCProgFlags::HoldKEAS, false);
+			isDisplayDirty_ = true;
 		}
+
+		double setHeading_{ 0.0 };
 
 		FCProgFlags					runningPrograms_{ FCProgFlags::None };
 		FCProgFlags					prevRunningProgs{ FCProgFlags::None };
@@ -337,11 +311,7 @@ namespace FC
 		HoldKeasProgram				prgHoldKeas_;
 		HoldMachProgram				prgHoldMach_;
 		
-		PropulsionController*		propulsionControl_;
-		IAvionics*					avionics_;
-		SurfaceController*			surfaceController_;
-
-		std::map<FCProgFlags, ControlProgram*>     mapPrograms_
+		std::map<FCProgFlags, control_program*>     mapPrograms_
 		{
 			{FCProgFlags::HoldAltitude,    &prgHoldAltitude_},
 			{FCProgFlags::HoldHeading,     &prgHoldHeading_},
@@ -349,20 +319,52 @@ namespace FC
 			{FCProgFlags::HoldMACH,        &prgHoldMach_ }
 		};
 
-		// Auto pilot panel
-		bco::TextureVisual		visAPMainOn_;
-		bco::PushButtonSwitch   swAPMain_{ bt_mesh::SR71rVC::SwAPMain_location, 0.01 };
+		bco::simple_event<> gcKey0_			{ bm::vc::GCKey0_loc,			0.01, bm::pnl::pnlGCKey0_RC };
+		bco::simple_event<> gcKey1_			{ bm::vc::GCKey1_loc,			0.01, bm::pnl::pnlGCKey1_RC };
+		bco::simple_event<> gcKey2_			{ bm::vc::GCKey2_loc,			0.01, bm::pnl::pnlGCKey2_RC };
+		bco::simple_event<> gcKey3_			{ bm::vc::GCKey3_loc,			0.01, bm::pnl::pnlGCKey3_RC };
+		bco::simple_event<> gcKey4_			{ bm::vc::GCKey4_loc,			0.01, bm::pnl::pnlGCKey4_RC };
+		bco::simple_event<> gcKey5_			{ bm::vc::GCKey5_loc,			0.01, bm::pnl::pnlGCKey5_RC };
+		bco::simple_event<> gcKey6_			{ bm::vc::GCKey6_loc,			0.01, bm::pnl::pnlGCKey6_RC };
+		bco::simple_event<> gcKey7_			{ bm::vc::GCKey7_loc,			0.01, bm::pnl::pnlGCKey7_RC };
+		bco::simple_event<> gcKey8_			{ bm::vc::GCKey8_loc,			0.01, bm::pnl::pnlGCKey8_RC };
+		bco::simple_event<> gcKey9_			{ bm::vc::GCKey9_loc,			0.01, bm::pnl::pnlGCKey9_RC };
 		
-		bco::TextureVisual		visAPHeadingOn_;
-		bco::PushButtonSwitch   swAPHeading_{ bt_mesh::SR71rVC::SwAPHeading_location, 0.01 };
+		bco::simple_event<> gcKeyClear_		{ bm::vc::GCKeyClear_loc,		0.01, bm::pnl::pnlGCKeyClear_RC };
+		bco::simple_event<> gcKeyDecimal_	{ bm::vc::GCKeyDecimal_loc,	0.01, bm::pnl::pnlGCKeyDecimal_RC };
+		bco::simple_event<> gcKeyEnter_		{ bm::vc::GCKeyEnter_loc,		0.01, bm::pnl::pnlGCKeyEnter_RC };
+		bco::simple_event<> gcKeyHUD_		{ bm::vc::GCKeyHUD_loc,		0.01, bm::pnl::pnlGCKeyHud_RC };
+		bco::simple_event<> gcKeyNext_		{ bm::vc::GCKeyNext_loc,		0.01, bm::pnl::pnlGCKeyNext_RC };
+		bco::simple_event<> gcKeyPlusMinus_	{ bm::vc::GCKeyPlusMinus_loc,	0.01, bm::pnl::pnlGCKeyPlusMinus_RC };
+		bco::simple_event<> gcKeyPrev_		{ bm::vc::GCKeyPrev_loc,		0.01, bm::pnl::pnlGCKeyPrev_RC };
+		bco::simple_event<> gcKeyMenu_		{ bm::vc::GCKeyHome_loc,		0.01, bm::pnl::pnlGCKeyMenu_RC };
+		
+		bco::simple_event<> gcKeyF1_		{ bm::vc::GCKeyFunc1_loc,		0.01, bm::pnl::pnlGCKeyFunc1_RC };
+		bco::simple_event<> gcKeyF2_		{ bm::vc::GCKeyFunc2_loc,		0.01, bm::pnl::pnlGCKeyFunc2_RC };
+		bco::simple_event<> gcKeyF3_		{ bm::vc::GCKeyFunc3_loc,		0.01, bm::pnl::pnlGCKeyFunc3_RC };
+		bco::simple_event<> gcKeyF4_		{ bm::vc::GCKeyFunc4_loc,		0.01, bm::pnl::pnlGCKeyFunc4_RC };
+		bco::simple_event<> gcKeyF5_		{ bm::vc::GCKeyFunc5_loc,		0.01, bm::pnl::pnlGCKeyFunc5_RC };
+		bco::simple_event<> gcKeyF6_		{ bm::vc::GCKeyFunc6_loc,		0.01, bm::pnl::pnlGCKeyFunc6_RC };
+		bco::simple_event<> gcKeyF7_		{ bm::vc::GCKeyFunc7_loc,		0.01, bm::pnl::pnlGCKeyFunc7_RC };
+		bco::simple_event<> gcKeyF8_		{ bm::vc::GCKeyFunc8_loc,		0.01, bm::pnl::pnlGCKeyFunc8_RC };
+		bco::simple_event<> gcKeyF9_		{ bm::vc::GCKeyFunc9_loc,		0.01, bm::pnl::pnlGCKeyFunc9_RC };
+		bco::simple_event<> gcKeyF10_		{ bm::vc::GCKeyFunc10_loc,		0.01, bm::pnl::pnlGCKeyFunc10_RC };
 
-		bco::TextureVisual		visAPAltitudeOn_;
-		bco::PushButtonSwitch   swAPHAltitude_{ bt_mesh::SR71rVC::SwAPAltitude_location, 0.01 };
+		bco::simple_event<>	apBtnMain_		{ bm::vc::SwAPMain_loc,		0.01, bm::pnl::pnlAPMain_RC };
+		bco::simple_event<>	apBtnHeading_	{ bm::vc::SwAPHeading_loc,		0.01, bm::pnl::pnlAPHeading_RC };
+		bco::simple_event<>	apBtnAltitude_	{ bm::vc::SwAPAltitude_loc,	0.01, bm::pnl::pnlAPAltitude_RC };
+		bco::simple_event<>	apBtnKEAS_		{ bm::vc::SwAPKEAS_loc,		0.01, bm::pnl::pnlAPKEAS_RC };
+		bco::simple_event<>	apBtnMACH_		{ bm::vc::SwAPMACH_loc,		0.01, bm::pnl::pnlAPMACH_RC };
 
-		bco::TextureVisual		visAPKEASOn_;
-		bco::PushButtonSwitch   swAPKEAS_{ bt_mesh::SR71rVC::SwAPKEAS_location, 0.01 };
-
-		bco::TextureVisual		visAPMACHOn_;
-		bco::PushButtonSwitch   swAPMACH_{ bt_mesh::SR71rVC::SwAPMACH_location, 0.01 };
-    };
+		bco::on_off_display	apDspMain_		{ bm::vc::SwAPMain_id,		bm::vc::SwAPMain_vrt,		bm::pnl::pnlAPMain_id,		bm::pnl::pnlAPMain_vrt,	  0.0352	};
+		bco::on_off_display	apDspHeading_	{ bm::vc::SwAPHeading_id,	bm::vc::SwAPHeading_vrt,	bm::pnl::pnlAPHeading_id,	bm::pnl::pnlAPHeading_vrt,  0.0352	};
+		bco::on_off_display	apDspAltitude_	{ bm::vc::SwAPAltitude_id,	bm::vc::SwAPAltitude_vrt,	bm::pnl::pnlAPAltitude_id,	bm::pnl::pnlAPAltitude_vrt, 0.0352	};
+		bco::on_off_display	apDspKEAS_		{ bm::vc::SwAPKEAS_id,		bm::vc::SwAPKEAS_vrt,		bm::pnl::pnlAPKEAS_id,		bm::pnl::pnlAPKEAS_vrt,	  0.0352	};
+		bco::on_off_display	apDspMACH_		{ bm::vc::SwAPMACH_id,		bm::vc::SwAPMACH_vrt,		bm::pnl::pnlAPMACH_id,		bm::pnl::pnlAPMACH_vrt,	  0.0352	};
+	
+		bco::panel_display	pnlHUDTile_		{ bm::pnl::pnlHUDFCTile_id,		bm::pnl::pnlHUDFCTile_vrt,  0.0914 };
+		bco::panel_display	pnlHUDText1_	{ bm::pnl::pnlHUDFCText1_id,	bm::pnl::pnlHUDFCText1_vrt, 0.0305 };
+		bco::panel_display	pnlHUDText2_	{ bm::pnl::pnlHUDFCText2_id,	bm::pnl::pnlHUDFCText2_vrt, 0.0305 };
+		bco::panel_display	pnlHUDText3_	{ bm::pnl::pnlHUDFCText3_id,	bm::pnl::pnlHUDFCText3_vrt, 0.0305 };
+};
 }

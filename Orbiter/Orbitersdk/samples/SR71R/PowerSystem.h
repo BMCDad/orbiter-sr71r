@@ -16,17 +16,15 @@
 
 #pragma once
 
-#include "bc_orbiter\PoweredComponent.h"
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\Circuit.h"
-#include "bc_orbiter\TextureVisual.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\IAnimationState.h"
-#include "bc_orbiter\VCGauge.h"
-#include "bc_orbiter\VCToggleSwitch.h"
+#include "bc_orbiter/signals.h"
+#include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/on_off_display.h"
+#include "bc_orbiter/rotary_display.h"
+#include "bc_orbiter/status_display.h"
 
 #include "FuelCell.h"
 #include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 #include <map>
 
@@ -35,125 +33,145 @@ namespace bco = bc_orbiter;
 class FuelCell;
 
 /**	Power System
-	Models the main power circuit for the ship.  Contains a 'Circuit' class which all of 
-	the powered components of the ship are attached to.  At each step the circuit is queried
-	to determine what the current amp draw is.  Changes to the power availability are also
-	communicated to the components via the circuit.
+	Manages the connections and distribution of the three main power sources:
+	- External connection (ship is stopped or docked)
+	- Fuelcell
+	- Battery
+	Allows the pilot to select the power source to use, and monitors voltage availability and consumption.
 
-	Three energy sources are available:
-	- External: when parked on the ground.
-	- Fuel cell:
-	- Backup battery: <not imlemented>
-		Battery - 50 amp hour should last 40 minutes with nothing on.
-
-	Enable power:
-	To enable power you need to attach an available power source to the main circuit.  For
-	external and fuel cell, there is an 'AVAIL' light that will come on when that power
-	source is available.  The backup battery will engage with the main power switch is on 
-	but no power source is attached to the main circuit.  The [BATT] light will illuminate
-	in the message panel when power is being drawn off of the backup battery.
-
-	Configuration:
-	POWER a b c d e
-	a - Main power switch			0/1 - 0ff/on.
-	b - External power attached		0/1 - off/attached.
-	c - Fuel cell attached			0/1 - off/attached.
-	d - Buss voltage				double 27.0
-	e - Battery level				double (0 - 1)
+	What a powered component needs to do:
+	Hook a reciever slot up to the VoltLevelSignal() and an amp signal up to the AmpDrawSlot().
+	On a change to the receiver slot, check that the new voltage level is adequate.
+	On each step, report through the amp signal the current amp usage for that component.
 */
-class PowerSystem :	public bco::PoweredComponent,
-	public bco::IAnimationState
+class PowerSystem :	
+	  public bco::vessel_component
+	, public bco::power_provider
+	, public bco::post_step
+	, public bco::manage_state
 {
 public:
-	PowerSystem(bco::BaseVessel* vessel);
+	PowerSystem(bco::vessel& vessel);
 
-	virtual void SetClassCaps() override;
-	virtual bool LoadVC(int id) override;
-	virtual bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-	virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	virtual void SaveConfiguration(FILEHANDLE scn) const override;
+	// post_step
+	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override
+	{
+		double draw = 0.0;
 
-	void Step(double simt, double simdt, double mjd);
+		for each (auto & c in consumers_) {
+			draw += c->amp_draw();
+		}
 
-    void PostCreation();
+		ampDraw_ = fmin(draw, AMP_OVERLOAD);
+		gaugePowerAmps_.set_state(ampDraw_ / AMP_OVERLOAD);
+		Update(vessel);
+	}
 
-	void AddMainCircuitDevice(bco::PoweredComponent* device);
+	// manage_state
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::vessel& vessel) override;
 
-	bool IsExternalSourceAvailable()				{ return fabs(FULL_POWER - powerExternal_) < 5.0; }
-	bool IsExternalSourceConnected()				{ return IsExternalSourceAvailable() && swConnectExternal_.IsOn(); }
+	// Fuelcell:
+	bco::slot<double>&		FuelCellAvailablePowerSlot()	{ return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
 
-	bool IsFuelCellAvailable();
-	bool IsFuelCellConnected();
+	void attach_consumer(bco::power_consumer* consumer) override {
+		consumers_.push_back(consumer);
+	}
 
-	bool IsBatteryPower()							{ return isBatteryDraw_; }
-
-	double GetVoltsLevel()							{ return mainCircuit_.GetVoltLevel(); }
-	double GetAmpDraw()								{ return mainCircuit_.GetTotalAmps(); }
-
-	double AmpNeedlePosition()	const   			{ return mainCircuit_.GetTotalAmps() / 90; }
-	double VoltNeedlePosition() const				{ return mainCircuit_.GetVoltLevel() / 30; }
-
-	void SetFuelCell(FuelCell* fc)                  { fuelCell_ = fc; }
-
-	// Animation state
-	virtual double GetState() const override { return AmpNeedlePosition(); }
-
+	double volts_available() const override { return prevVolts_; }
+	double amp_load() const override { return ampDraw_; }
 
 private:
+	void Update(bco::vessel& vessel);
+
 	const double			FULL_POWER		=  28.0;
 	const double			USEABLE_POWER	=  24.0;
 	const double			AMP_OVERLOAD	= 100.0;
 
-	void Update();
+	std::vector<bco::power_consumer*>  consumers_;
 
-	int						areaId_;
+	bco::signal<bool>		signalIsDrawingBattery_;
+	bco::slot<double>		slotFuelCellAvailablePower_;
 
-	bco::Circuit			mainCircuit_;
-
-	// Power ports:
-	double					powerExternal_;
-	FuelCell*				fuelCell_;
-	const char*				ConfigKey = "POWER";
-
-	double					voltMeterPosition_;
-	bool					isBatteryDraw_;
+	double					ampDraw_{ 0.0 };			// Collects the total amps drawn during a step.
 	double					batteryLevel_;
-	double					prevTime_;
-	double					prevAvailPower_;
+	bool					isDrawingBattery_{ false };
+	double					prevStep_{ 0.0 };	
+	double					prevVolts_{ -1.0 };
 
-	bco::TextureVisual	    externAvailLight_;
-	bco::TextureVisual	    externConnectedLight_;
-	bco::TextureVisual	    fuelCellAvailLight_;
-	bco::TextureVisual	    fuelCellConnectedLight_;
+	bco::on_off_input		switchEnabled	{ { bm::vc::swMainPower_id },
+												bm::vc::swMainPower_loc, bm::vc::PowerTopRightAxis_loc,
+												toggleOnOff,
+												bm::pnl::pnlPwrMain_id,
+												bm::pnl::pnlPwrMain_vrt,
+												bm::pnl::pnlPwrMain_RC
+											};
 
+	bco::on_off_input		switchConnectExternal_ {
+												{ bm::vc::swConnectExternalPower_id },
+												bm::vc::swConnectExternalPower_loc, bm::vc::PowerBottomRightAxis_loc,
+												toggleOnOff,
+												bm::pnl::pnlPwrExtBus_id,
+												bm::pnl::pnlPwrExtBus_vrt,
+												bm::pnl::pnlPwrExtBus_RC
+											};
 
-    bco::VCToggleSwitch     swPower_                    {   bt_mesh::SR71rVC::swMainPower_id, 
-                                                            bt_mesh::SR71rVC::swMainPower_location, 
-                                                            bt_mesh::SR71rVC::PowerTopRightAxis_location 
-                                                        };
+	bco::on_off_input		switchConnectFuelCell_ {
+												{ bm::vc::swConnectFuelCell_id },
+												bm::vc::swConnectFuelCell_loc, bm::vc::PowerBottomRightAxis_loc,
+												toggleOnOff,
+												bm::pnl::pnlPwrFCBus_id,
+												bm::pnl::pnlPwrFCBus_vrt,
+												bm::pnl::pnlPwrFCBus_RC
+											};
 
-    bco::VCToggleSwitch     swConnectExternal_          {   bt_mesh::SR71rVC::swConnectExternalPower_id,     
-                                                            bt_mesh::SR71rVC::swConnectExternalPower_location, 
-                                                            bt_mesh::SR71rVC::PowerBottomRightAxis_location 
-                                                        };
+	bco::on_off_display		lightFuelCellConnected_ {
+												bm::vc::FuelCellConnectedLight_id,
+												bm::vc::FuelCellConnectedLight_vrt,
+												bm::pnl::pnlLgtFCPwrOn_id,
+												bm::pnl::pnlLgtFCPwrOn_vrt,
+												0.0244
+											};
 
-    bco::VCToggleSwitch     swConnectFuelCell_          {   bt_mesh::SR71rVC::swConnectFuelCell_id, 
-                                                            bt_mesh::SR71rVC::swConnectFuelCell_location, 
-                                                            bt_mesh::SR71rVC::PowerBottomRightAxis_location 
-                                                        };
+	bco::on_off_display		lightExternalAvail_ {
+												bm::vc::ExtAvailableLight_id,
+												bm::vc::ExtAvailableLight_vrt,
+												bm::pnl::pnlLgtExtPwrAvail_id,
+												bm::pnl::pnlLgtExtPwrAvail_vrt,
+												0.0244
+											};
 
-    bco::VCGauge            gaugePowerVolt_				{  {bt_mesh::SR71rVC::gaugeVoltMeter_id },
-                                                            bt_mesh::SR71rVC::VoltMeterFrontAxis_location,   
-															bt_mesh::SR71rVC::gaugeVoltMeter_location,
-                                                            (120 * RAD), 
-                                                            0.2
-                                                        };
+	bco::on_off_display		lightExternalConnected_ {
+												bm::vc::ExtConnectedLight_id,
+												bm::vc::ExtConnectedLight_vrt,
+												bm::pnl::pnlLgtExtPwrOn_id,
+												bm::pnl::pnlLgtExtPwrOn_vrt,
+												0.0244
+											};
 
-	bco::VCGauge            gaugePowerAmp_				{ { bt_mesh::SR71rVC::gaugeAmpMeter_id },
-															bt_mesh::SR71rVC::gaugeAmpMeter_location,
-															bt_mesh::SR71rVC::VoltMeterFrontAxis_location,
-															(120 * RAD),
-															0.2
-														};
+	bco::rotary_display_target	gaugePowerVolts_{
+												{ bm::vc::gaugeVoltMeter_id },
+												bm::vc::gaugeVoltMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
+												bm::pnl::pnlVoltMeter_id,
+												bm::pnl::pnlVoltMeter_vrt,
+												-(120 * RAD),
+												0.2
+											};
 
+	bco::rotary_display_target	gaugePowerAmps_{
+												{ bm::vc::gaugeAmpMeter_id },
+												bm::vc::gaugeAmpMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
+												bm::pnl::pnlAmpMeter_id,
+												bm::pnl::pnlAmpMeter_vrt,
+												(120 * RAD),	// Clockwise
+												0.2
+											};
+
+	bco::status_display			statusBattery_ {
+												bm::vc::MsgLightBattery_id,
+												bm::vc::MsgLightBattery_vrt,
+												bm::pnl::pnlMsgLightBattery_id,
+												bm::pnl::pnlMsgLightBattery_vrt,
+												0.0361
+											};
 };

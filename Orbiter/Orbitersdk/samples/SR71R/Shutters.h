@@ -16,40 +16,44 @@
 
 #pragma once
 
-#include "bc_orbiter\Component.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\TextureVisual.h"
-#include "bc_orbiter\VCToggleSwitch.h"
+#include "bc_orbiter/Component.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/vessel.h"
+#include "bc_orbiter/signals.h"
+#include "bc_orbiter/on_off_input.h"
 
 #include "SR71r_mesh.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
-class Shutters : public bco::Component
+class Shutters : 
+	public bco::vessel_component,
+	public bco::manage_state
 {
 public:
-	Shutters(bco::BaseVessel* vessel);
+	Shutters(bco::vessel& vessel);
 
-	// Component
-	void SetClassCaps() override;
-	bool VCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-	bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-	void SaveConfiguration(FILEHANDLE scn) const override;
+	// manage_state
+	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+	std::string handle_save_state(bco::vessel& vessel) override;
+
+	bco::slot<bool>& ShuttersSlot() { return shuttersSlot_; }
 
 private:
 	void Update();
 
+	bco::slot<bool>		shuttersSlot_;
+
 	const char*				ConfigKey = "SHUTTERS";
 
-    bco::VCToggleSwitch     swShutters_     {   bt_mesh::SR71rVC::swShutter_id, 
-                                                bt_mesh::SR71rVC::swShutter_location, 
-                                                bt_mesh::SR71rVC::DoorsRightAxis_location
-                                            };
-
-	bco::TextureVisual		visShuttersSideLeft_;
-	bco::TextureVisual		visShuttersSideRight_;
-
-	bco::TextureVisual		visShuttersFrontLeft_;
-	bco::TextureVisual		visShuttersFrontRight_;
+	// ***  Shutters  *** //
+	bco::on_off_input		switchShutters_{		// Open close shutters
+		{ bm::vc::swShutter_id },
+			bm::vc::swShutter_loc, bm::vc::DoorsRightAxis_loc,
+			toggleOnOff,
+			bm::pnl::pnlScreenSwitch_id,
+			bm::pnl::pnlScreenSwitch_vrt,
+			bm::pnl::pnlScreenSwitch_RC
+	};
 };

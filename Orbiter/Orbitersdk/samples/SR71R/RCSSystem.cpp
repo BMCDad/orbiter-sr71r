@@ -1,5 +1,5 @@
 //	RCSSystem - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2023  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -16,83 +16,34 @@
 
 #include "StdAfx.h"
 
-#include "RCSSystem.h"
 #include "Orbitersdk.h"
+#include "bc_orbiter/vessel.h"
+#include "bc_orbiter/Tools.h"
+
+#include "RCSSystem.h"
 #include "SR71r_mesh.h"
 
 
-RCSSystem::RCSSystem(bco::BaseVessel* vessel, double amps) :
-PoweredComponent(vessel, amps, 20.0)
-{
-	swSelectMode_.AddStopFunc(0.0, [this] {SwitchPositionChanged(RCS_LIN); });
-	swSelectMode_.AddStopFunc(0.5, [this] {SwitchPositionChanged(RCS_ROT); });
-	swSelectMode_.AddStopFunc(1.0, [this] {SwitchPositionChanged(RCS_NONE); });
-	swSelectMode_.SetStep(2);
+RCSSystem::RCSSystem(bco::vessel& vessel, bco::power_provider& pwr) :
+	vessel_(vessel),
+	power_(pwr)
+{ 
+	vessel_.AddControl(&btnLinear_);
+	vessel_.AddControl(&btnRotate_);
+	vessel_.AddControl(&lightLinear_);
+	vessel_.AddControl(&lightRotate_);
+
+	btnLinear_.attach([&]() { OnChanged(RCS_LIN); });
+	btnRotate_.attach([&]() { OnChanged(RCS_ROT); });
 }
 
-
-void RCSSystem::SetClassCaps()
+void RCSSystem::ActiveChanged(bool isActive)
 {
-	auto vessel = GetBaseVessel();
-	swSelectMode_.Setup(vessel);
-    
-	uiArea_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
-}
-
-bool RCSSystem::LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine)
-{
-	if (_strnicmp(key, ConfigKey, 9) != 0)
-	{
-		return false;
-	}
-
-	int mode;
-
-	sscanf_s(configLine + 8, "%i", &mode);
-
-	swSelectMode_.SetStep(mode);
-	return true;
-}
-
-void RCSSystem::SaveConfiguration(FILEHANDLE scn) const
-{
-	char cbuf[256];
-	auto mode = swSelectMode_.GetStep();
-
-	sprintf_s(cbuf, "%i", mode);
-	oapiWriteScenario_string(scn, (char*)ConfigKey, cbuf);
-}
-
-
-double RCSSystem::CurrentDraw()
-{
-    return (GetBaseVessel()->GetAttitudeMode() == RCS_NONE) ? 0.0 : PoweredComponent::CurrentDraw();
-}
-
-bool RCSSystem::LoadVC(int id)
-{
-    // Redraw event
-    oapiVCRegisterArea(uiArea_, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
-    return true;
-}
-
-void RCSSystem::ChangePowerLevel(double newLevel)
-{
-	PoweredComponent::ChangePowerLevel(newLevel);
-	if (!HasPower())
-	{
-		isInternalTrigger_ = true;
-
-		if (GetBaseVessel()->IsCreated())
+	if (!isActive) {
+		if (vessel_.IsCreated())
 		{
-			GetBaseVessel()->SetAttitudeMode(RCS_NONE);
+			vessel_.SetAttitudeMode(RCS_NONE);
 		}
-
-		isInternalTrigger_ = false;
-	}
-	else
-	{
-		swSelectMode_.SetStep(swSelectMode_.GetStep());
 	}
 }
 
@@ -100,53 +51,23 @@ void RCSSystem::ChangePowerLevel(double newLevel)
 // Callback:
 void RCSSystem::OnRCSMode(int mode)
 {
-	if (!isInternalTrigger_)
+	if ((RCS_NONE != mode) && (!IsPowered()))
 	{
-		// Probably change due to key.  If we don't have power,
-		// we will have to reverse the setting.  If we do, we
-		// need to update the switch.
-		if ((RCS_NONE != mode) && (!HasPower()))
-		{
-			GetBaseVessel()->SetAttitudeMode(RCS_NONE);
-		}
-
-		switch (mode)
-		{
-		case RCS_NONE:
-			swSelectMode_.SetStep(2);
-			break;
-
-		case RCS_ROT:
-			swSelectMode_.SetStep(1);
-			break;
-
-		case RCS_LIN:
-			swSelectMode_.SetStep(0);
-			break;
-		}
+		vessel_.SetAttitudeMode(RCS_NONE);
+		lightLinear_.set_state(false);
+		lightRotate_.set_state(false);
+	}
+	else {
+		lightLinear_.set_state(mode == RCS_LIN);
+		lightRotate_.set_state(mode == RCS_ROT);
 	}
 }
 
-void RCSSystem::SwitchPositionChanged(int mode)
+void RCSSystem::OnChanged(int mode)
 {
-	if (mode == GetBaseVessel()->GetAttitudeMode()) return;
+	if (!vessel_.IsCreated()) return;
 
-	isInternalTrigger_ = true;
-
-	if (GetBaseVessel()->IsCreated())
-	{
-		if (mode != RCS_NONE)
-		{
-			if (HasPower())
-			{
-				GetBaseVessel()->SetAttitudeMode(mode);
-			}
-		}
-		else
-		{
-			GetBaseVessel()->SetAttitudeMode(RCS_NONE);
-		}
-	}
-
-	isInternalTrigger_ = false;
+	auto currentMode = vessel_.GetAttitudeMode();
+	auto newMode = (mode == currentMode) ? RCS_NONE : mode;
+	vessel_.SetAttitudeMode(newMode);
 }

@@ -20,15 +20,15 @@
 
 static const DWORD ntdvtx_geardown = 9;
 static TOUCHDOWNVTX tdvtx_geardown[ntdvtx_geardown] = {
-    { bt_mesh::SR71r::LandingTouchF_location,    1e6, 1e5, 1.6, 0.1 },      // front
-    { bt_mesh::SR71r::LandingTouchS_location,    1e6, 1e5, 3.0, 0.2 },      // right back
-    { bt_mesh::SR71r::LandingTouchP_location,    1e6, 1e5, 3.0, 0.2 },      // left back
-    { bt_mesh::SR71r::TPNose_location,           1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPHood_location,           1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPRudder_location,         1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPTail_location,           1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPWingS_location,          1e7, 1e5, 3.0 },
-    { bt_mesh::SR71r::TPWingP_location,          1e7, 1e5, 3.0 }
+    { bm::main::LandingTouchF_loc,    1e6, 1e5, 1.6, 0.1 },      // front
+    { bm::main::LandingTouchS_loc,    1e6, 1e5, 3.0, 0.2 },      // right back
+    { bm::main::LandingTouchP_loc,    1e6, 1e5, 3.0, 0.2 },      // left back
+    { bm::main::TPNose_loc,           1e7, 1e5, 3.0 },
+    { bm::main::TPHood_loc,           1e7, 1e5, 3.0 },
+    { bm::main::TPRudder_loc,         1e7, 1e5, 3.0 },
+    { bm::main::TPTail_loc,           1e7, 1e5, 3.0 },
+    { bm::main::TPWingS_loc,          1e7, 1e5, 3.0 },
+    { bm::main::TPWingP_loc,          1e7, 1e5, 3.0 }
 };
 
 
@@ -41,46 +41,46 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 	// You use these mesh handles to the AddMesh the meshes and set how they will be viewed.
 	// If you ever need this handle again, call oapiLoadMeshGlobal with the same name and it
 	// we be returned, the mesh will not be reloaded.
-	auto mainGlobalMesh = oapiLoadMeshGlobal(SR71r_MESH_NAME);
+	auto mainGlobalMesh = oapiLoadMeshGlobal(bm::main::MESH_NAME);
 	mainMeshIndex_ = AddMesh(mainGlobalMesh);
 	SetMeshVisibilityMode(mainMeshIndex_, MESHVIS_EXTERNAL);
     SetMainMeshIndex(mainMeshIndex_);  // The index will be needed when adding animations to the mesh.
 
 	// In case of the VC mesh we hold on to the mesh handle as it will be needed to get the texture
 	// that will be modified for things like MFD font painting.
-	vcMeshHandle_ = oapiLoadMeshGlobal(SR71rVC_MESH_NAME);
+	vcMeshHandle_ = oapiLoadMeshGlobal(bm::vc::MESH_NAME);
 	auto idx = AddMesh(vcMeshHandle_);
 	SetMeshVisibilityMode(idx, MESHVIS_VC);
 	SetVCMeshIndex0(idx);
 	SetVCMeshHandle0(vcMeshHandle_);
 
-	// Setup ship metrics:
+	// Load 2D Panel:
+	auto panelMeshHandle = oapiLoadMeshGlobal(bm::pnl::MESH_NAME);
+	SetPanelMeshHandle0(panelMeshHandle);
+	
+		// Setup ship metrics:
 	SetSize(SHIP_SIZE);
 	SetEmptyMass(EMPTY_MASS);
 	SetPMI(PMI);
 	SetCrossSections(CROSSSECTIONS);
 	SetRotDrag(ROTDRAG);
-
-	SetDockParams(bt_mesh::SR71r::DockingPort_location, _V(0, 1, 0), _V(0, 0, 1));
-	
+	SetDockParams(bm::main::DockingPort_loc, _V(0, 1, 0), _V(0, 0, 1));
     SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
     SetNosewheelSteering(true);
-
-
 	SetNosewheelSteering(true);
 
 	// Setups:
-	SetupVesselComponents();
-
 	SetupAerodynamics();
-
-	SetCameraOffset(bt_mesh::SR71r::PilotPOV_location);
+	SetCameraOffset(bm::main::PilotPOV_loc);
 
     // Propellent, move to setup method:
     CreateMainPropellant(MAX_FUEL);
     CreateRcsPropellant(MAX_RCS_FUEL);
 
-	bco::BaseVessel::clbkSetClassCaps(cfg);
+	// Controls that live in vessel : must come before the baseVessel call.
+	AddControl(&statusDock_);
+
+	bco::vessel::clbkSetClassCaps(cfg);
 
 	SetMaxWheelbrakeForce(4e5);
 }
@@ -96,7 +96,7 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 		switch (key)
 		{
 		case OAPI_KEY_B:
-			airBrake_.AirBrakeSwitch().Decrement();
+			airBrake_.DecreaseDrag();
 			return 1;
 		}
 	}
@@ -106,38 +106,38 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 			return 1;
 		
 		case OAPI_KEY_B:
-			airBrake_.AirBrakeSwitch().Increment();
+			airBrake_.IncreaseDrag();
 			return 1;
 
 		case OAPI_KEY_1:
-			propulsionController_.ThrustLimitSwitch().Toggle();
+			propulsion_.ToggleThrustLimit();
 			return 1;
 		}
 	}
 	else {
 		switch (key) {
 		case OAPI_KEY_G:  // "operate landing gear"
-			landingGear_.LandingGearSwitch().Toggle();
+			landingGear_.Toggle();
 			return 1;
 
 		case OAPI_KEY_1:	// Main auto pilot toggle.
-			computer_.APMainButton().Push();
+			computer_.ToggleProgram(FCProgFlags::AtmoActive);
 			return 1;
 
 		case OAPI_KEY_2:	// Toggle hold heading
-			computer_.APHeadingButton().Push();
+			computer_.ToggleProgram(FCProgFlags::HoldHeading);
 			return 1;
 
 		case OAPI_KEY_3:
-			computer_.APAltitudeButton().Push();
+			computer_.ToggleProgram(FCProgFlags::HoldAttitude);
 			return 1;
 
 		case OAPI_KEY_4:
-			computer_.APKEASButton().Push();
+			computer_.ToggleProgram(FCProgFlags::HoldKEAS);
 			return 1;
 
 		case OAPI_KEY_5:
-			computer_.APMACHButton().Push();
+			computer_.ToggleProgram(FCProgFlags::HoldMACH);
 			return 1;
 
 		//case OAPI_KEY_6:
@@ -156,7 +156,7 @@ bool SR71Vessel::clbkLoadVC(int id)
 		_V(-0.1, 0.0, 0.0), 0.0, 0.0,
 		_V(0.1, 0.0, 0.0), 0.0, 0.0);
 
-	return BaseVessel::clbkLoadVC(id);
+	return vessel::clbkLoadVC(id);
 }
 
 void SR71Vessel::clbkHUDMode(int mode)
@@ -166,7 +166,7 @@ void SR71Vessel::clbkHUDMode(int mode)
 
 void SR71Vessel::clbkRCSMode(int mode)
 {
-	rcsSystem_.OnRCSMode(mode);
+	rcs_.OnRCSMode(mode);
 }
 
 void SR71Vessel::clbkNavMode(int mode, bool active)
@@ -182,45 +182,87 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
-	apu_.Step(simt, simdt, mjd);
-	avionics_.Step(simt, simdt, mjd);
-	cargoBayController_.Step(simt, simdt, mjd);
-    canopy_.Step(simt, simdt, mjd);
-	fuelCell_.Step(simt, simdt, mjd);
-	hydrogenTank_.Step(simt, simdt, mjd);
-	landingGear_.Step(simt, simdt, mjd);
-	oxygenTank_.Step(simt, simdt, mjd);
-	powerSystem_.Step(simt, simdt, mjd);
-	propulsionController_.Step(simt, simdt, mjd);
-	surfaceControl_.Step(simt, simdt, mjd);
-	statusBoard_.Step(simt, simdt, mjd);
-	airBrake_.Step(simt, simdt, mjd);
-	lights_.Step(simt, simdt, mjd);
-	clock_.Step(simt, simdt, mjd);
-	computer_.Step(simt, simdt, mjd);
-    hoverEngines_.Step(simt, simdt, mjd);
-    retroEngines_.Step(simt, simdt, mjd);
+    vessel::clbkPostStep(simt, simdt, mjd);
 
-    BaseVessel::clbkPostStep(simt, simdt, mjd);
-}
-
-bool SR71Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
-{
-	headsUpDisplay_.DrawHUD(mode, hps, skp);
-    landingGear_.DrawHUD(mode, hps, skp);
-//    autoPilot_.DrawHUD(mode, hps, skp);
-	computer_.DrawHUD(mode, hps, skp);
-    navModes_.DrawHUD(mode, hps, skp);
-    propulsionController_.DrawHUD(mode, hps, skp);
-    hoverEngines_.DrawHUD(mode, hps, skp);
-    retroEngines_.DrawHUD(mode, hps, skp);
-
-	return VESSEL3::clbkDrawHUD(mode, hps, skp);
+	statusDock_.set_state( DockingStatus(0) == 1 ? bco::status_display::status::on : bco::status_display::status::off);
 }
 
 void SR71Vessel::clbkPostCreation()
 {
-	BaseVessel::clbkPostCreation();
+	vessel::clbkPostCreation();
+}
 
-    powerSystem_.PostCreation();
+bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
+{
+	/*	Panel definition tasks (panel 0):
+	*	viewW is the width of the Orbiter window (view port).
+	*	viewH is the height of the Orbiter window (view port).  These values are used to scale the panel.
+	*
+		- SetPanelBackground
+		- MFD setup
+		- SetPanelScale
+		- Set neighbours: oapiSetPanelNeighbours (-1,-1,1,-1);
+		- SetCameraDefaultDirection (_V(0,0,1)); // forward
+		- oapiCameraSetCockpitDir (0,0);
+
+		Other panels referenced from oapiSetPanelNeighbours will come through this call those ids.
+	*/
+
+	/*
+	* Orbiter expects the mesh size to be
+	*/
+	SetPanelBackground(
+		hPanel,
+		0,
+		0,
+		GetpanelMeshHandle0(),					// Handle to the panel mesh.
+		(DWORD)bm::pnl::MainPanel_Width,		// Panel mesh width (mesh units)
+		(DWORD)bm::pnl::MainPanel_Height,		// Panel mesh height (mesh units)
+		(DWORD)bm::pnl::MainPanel_Height / 5,	// Baseline (adjust to move panel)
+		PANEL_ATTACH_BOTTOM | PANEL_MOVEOUT_BOTTOM);
+
+	// Example: viewW = 3000 and panel width = 2000 (panel too small), defscale becomes (3000/2000) = 1.5 to fit the window.
+	//			viewW = 1000 and panel width = 2000 (panel too big), defscale becomes (1000/2000) = .5 shrink panel to fit.
+	double defscale = (double)viewW / bm::pnl::MainPanel_Width;
+	double extscale = max(defscale, 1.0);
+	SetPanelScaling(hPanel, defscale, extscale);
+
+	return vessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
+}
+
+void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
+{
+	char* line;
+
+	while (oapiReadScenario_nextline(scn, line))
+	{
+		bool handled = false;
+		std::istringstream ps(line);
+		std::string key;
+		ps >> key;
+		std::string configLine;
+		std::getline(ps >> std::ws, configLine);
+
+		auto eh = mapStateManagement_.find(key);
+		if (eh != mapStateManagement_.end()) {
+			eh->second->handle_load_state(*this, configLine);
+			handled = true;
+		}
+
+		if (!handled) {
+			ParseScenarioLineEx(line, vs);
+		}
+	}
+}
+
+void SR71Vessel::clbkSaveState(FILEHANDLE scn)
+{
+	VESSEL3::clbkSaveState(scn);	// Save default state.
+
+	for (auto& p : mapStateManagement_) {
+		oapiWriteScenario_string(
+			scn, 
+			(char*)p.first.c_str(), 
+			(char*)p.second->handle_save_state(*this).c_str());
+	}
 }

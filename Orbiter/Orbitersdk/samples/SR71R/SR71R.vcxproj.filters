@@ -66,16 +66,7 @@
     <ClInclude Include="SR71r_mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="O2Supply.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="FuelCell.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Avionics.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="SurfaceController.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="PropulsionController.h">
@@ -111,12 +102,6 @@
     <ClInclude Include="IConsumable.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="HydrogenSupply.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="StatusBoard.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="MfdMets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -127,12 +112,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AirBrake.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="CryogenicTank.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Lights.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Clock.h">
@@ -162,62 +141,95 @@
     <ClInclude Include="bc_orbiter\Animation.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\BaseVessel.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\bco.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\Circuit.h">
+    <ClInclude Include="bc_orbiter\vessel.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\Component.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\DialSwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\EventTarget.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\IAnimationState.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\MeshVisual.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\MFDBase.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\OnOffSwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\PoweredComponent.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\PushButtonSwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\RotarySwitch.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="bc_orbiter\TextureVisual.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="bc_orbiter\Tools.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\VCGauge.h">
+    <ClInclude Include="bc_orbiter\signals.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\VCRotorSwitch.h">
+    <ClInclude Include="bc_orbiter\on_off_display.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\VCToggleSwitch.h">
+    <ClInclude Include="bc_orbiter\on_off_input.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\Visual.h">
+    <ClInclude Include="bc_orbiter\control.h">
       <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\rotary_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\on_off_display_event.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\simple_event.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Avionics.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Altimeter.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AvionBase.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\transform_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\flat_roll.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="TestComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HSI.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Airspeed.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\generic_tank.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="SR71r_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HydrogenTank.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="OxygenTank.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\status_display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\handler_interfaces.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceController.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\pid_altitude.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\panel_display.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -236,16 +248,7 @@
     <ClCompile Include="PropulsionController.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="SurfaceController.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
     <ClCompile Include="PowerSystem.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="APU.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="Avionics.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="CargoBayController.cpp">
@@ -257,16 +260,10 @@
     <ClCompile Include="NavModes.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="O2Supply.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
     <ClCompile Include="RCSSystem.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="LandingGear.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="HydrogenSupply.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="FuelCell.cpp">
@@ -278,19 +275,10 @@
     <ClCompile Include="RightMfd.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="StatusBoard.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AirBrake.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="CryogenicTank.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="Lights.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="Clock.cpp">
@@ -312,6 +300,12 @@
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="Canopy.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Avionics.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceController.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -426,6 +420,12 @@
     </None>
     <None Include="$(OrbiterDir)\Meshes\SR71rVC.msh">
       <Filter>Meshes</Filter>
+    </None>
+    <None Include="..\..\..\Meshes\SR71r2D.msh">
+      <Filter>Meshes</Filter>
+    </None>
+    <None Include="Art\SR71R_100_2DPanel.xcf">
+      <Filter>Art</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -17,71 +17,104 @@
 #pragma once
 
 #include "Orbitersdk.h"
-#include "bc_orbiter\OnOffSwitch.h"
-#include "bc_orbiter\Animation.h"
-#include "bc_orbiter\VCToggleSwitch.h"
-#include "bc_orbiter\PoweredComponent.h"
+#include "bc_orbiter/Animation.h"
+#include "bc_orbiter/vessel.h"
+#include "bc_orbiter/on_off_input.h"
+#include "bc_orbiter/status_display.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
+#include "ShipMets.h"
+#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
-class HoverEngines : public bco::PoweredComponent
+class HoverEngines : 
+      public bco::vessel_component
+    , public bco::power_consumer
+    , public bco::post_step
+    , public bco::set_class_caps
+    , public bco::draw_hud
+    , public bco::manage_state
 {
 public:
-    HoverEngines(bco::BaseVessel* vessel, double amps);
+    HoverEngines(bco::power_provider& pwr, bco::vessel& vessel);
 
-    virtual double CurrentDraw() override;
-    virtual void SetClassCaps() override;
-    virtual bool LoadConfiguration(char* key, FILEHANDLE scn, const char* configLine) override;
-    virtual void SaveConfiguration(FILEHANDLE scn) const override;
+    // set_class_caps
+    void handle_set_class_caps(bco::vessel& vessel) override;
 
-	void Step(double simt, double simdt, double mjd);
+    // power_consumer
+    double amp_draw() const override { return IsMoving() ? 4.0 : 0.0; }
 
-    double GetHoverDoorsState() { return animHoverDoors_.GetState(); }
-    bool DrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+    // post_step
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+
+    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+
+    // manage_state
+    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
 
 private:
+    const double MIN_VOLTS = 20.0;
+
+    bco::power_provider& power_;
+    bco::vessel& vessel_;
+
+    bool IsPowered() const { 
+        return 
+            power_.volts_available() > MIN_VOLTS; 
+    }
+    
+    bool IsMoving() const { 
+        return 
+            IsPowered() &&
+            (animHoverDoors_.GetState() > 0.0) && 
+            (animHoverDoors_.GetState() < 1.0); 
+    }
 
     void EnableHover(bool isEnabled);
 
+    THRUSTER_HANDLE         hoverThrustHandles_[3];
 
-    THRUSTER_HANDLE     hoverThrustHandles_[3];
+    bco::animation_target   animHoverDoors_ {   0.2};
 
-    const char*	        ConfigKey = "HOVER";
-
-    int                 hoverMouseId_;
-
-
-    bco::VCToggleSwitch     swOpen_ {   bt_mesh::SR71rVC::swHoverDoor_id, 
-                                        bt_mesh::SR71rVC::swHoverDoor_location,  
-                                        bt_mesh::SR71rVC::DoorsRightAxis_location
-                                    };
-
-    bco::Animation          animHoverDoors_ {   &swOpen_, 0.2};
-
-    bco::AnimationGroup     gpFrontLeft_    {   { bt_mesh::SR71r::HoverDoorPF_id },
-                                                bt_mesh::SR71r::HoverDoorAxisPFF_location, bt_mesh::SR71r::HoverDoorAxisPFA_location,
+    bco::animation_group    gpFrontLeft_    {   { bm::main::HoverDoorPF_id },
+                                                bm::main::HoverDoorAxisPFF_loc, bm::main::HoverDoorAxisPFA_loc,
                                                 (140 * RAD),
                                                 0, 1
                                             };
         
-    bco::AnimationGroup     gpFrontRight_   {   { bt_mesh::SR71r::HoverDoorSF_id },
-                                                bt_mesh::SR71r::HoverDoorAxisSFA_location, bt_mesh::SR71r::HoverDoorAxisSFF_location,
+    bco::animation_group    gpFrontRight_   {   { bm::main::HoverDoorSF_id },
+                                                bm::main::HoverDoorAxisSFA_loc, bm::main::HoverDoorAxisSFF_loc,
                                                 (140 * RAD),
                                                 0, 1
                                             };
 
-    bco::AnimationGroup     gpLeft_         {   { bt_mesh::SR71r::HoverDoorPA_id } ,
-                                                bt_mesh::SR71r::HoverDoorAxisPF_location, bt_mesh::SR71r::HoverDoorAxisPA_location,
+    bco::animation_group    gpLeft_         {   { bm::main::HoverDoorPA_id } ,
+                                                bm::main::HoverDoorAxisPF_loc, bm::main::HoverDoorAxisPA_loc,
                                                 (100 * RAD),
                                                 0, 1
                                             };
 
-    bco::AnimationGroup     gpRight_        {   { bt_mesh::SR71r::HoverDoorSA_id } ,
-                                                bt_mesh::SR71r::HoverDoorAxisSA_location, bt_mesh::SR71r::HoverDoorAxisSF_location, 
+    bco::animation_group    gpRight_        {   { bm::main::HoverDoorSA_id } ,
+                                                bm::main::HoverDoorAxisSA_loc, bm::main::HoverDoorAxisSF_loc, 
                                                 (100 * RAD),
                                                 0, 1
+                                            };
+
+    bco::on_off_input		switchOpen_     { { bm::vc::swHoverDoor_id },
+                                                bm::vc::swHoverDoor_loc, bm::vc::DoorsRightAxis_loc,
+                                                toggleOnOff,
+                                                bm::pnl::pnlDoorHover_id,
+                                                bm::pnl::pnlDoorHover_vrt,
+                                                bm::pnl::pnlDoorHover_RC
+                                        };
+
+    bco::status_display     status_ {           bm::vc::MsgLightHover_id,
+                                                bm::vc::MsgLightHover_vrt,
+                                                bm::pnl::pnlMsgLightHover_id,
+                                                bm::pnl::pnlMsgLightHover_vrt,
+                                                0.0361
                                             };
 };
