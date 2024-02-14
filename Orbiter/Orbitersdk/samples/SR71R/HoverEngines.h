@@ -30,40 +30,40 @@
 namespace bco = bc_orbiter;
 
 class HoverEngines : 
-      public bco::vessel_component
-    , public bco::power_consumer
-    , public bco::post_step
-    , public bco::set_class_caps
-    , public bco::draw_hud
-    , public bco::manage_state
+      public bco::VesselComponent
+    , public bco::PowerConsumer
+    , public bco::HandlesPostStep
+    , public bco::HandlesSetClassCaps
+    , public bco::HandlesDrawHud
+    , public bco::HandlesState
 {
 public:
-    HoverEngines(bco::power_provider& pwr, bco::vessel& vessel);
+    HoverEngines(bco::PowerProvider& pwr, bco::vessel& vessel);
 
     // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) override;
+    void HandleSetClassCaps(bco::vessel& vessel) override;
 
     // power_consumer
-    double amp_draw() const override { return IsMoving() ? 4.0 : 0.0; }
+    double AmpDraw() const override { return IsMoving() ? 4.0 : 0.0; }
 
     // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
     // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::vessel& vessel) override;
 
 private:
     const double MIN_VOLTS = 20.0;
 
-    bco::power_provider& power_;
+    bco::PowerProvider& power_;
     bco::vessel& vessel_;
 
     bool IsPowered() const { 
         return 
-            power_.volts_available() > MIN_VOLTS; 
+            power_.VoltsAvailable() > MIN_VOLTS; 
     }
     
     bool IsMoving() const { 
@@ -79,25 +79,25 @@ private:
 
     bco::animation_target   animHoverDoors_ {   0.2};
 
-    bco::animation_group    gpFrontLeft_    {   { bm::main::HoverDoorPF_id },
+    bco::AnimationGroup    gpFrontLeft_    {   { bm::main::HoverDoorPF_id },
                                                 bm::main::HoverDoorAxisPFF_loc, bm::main::HoverDoorAxisPFA_loc,
                                                 (140 * RAD),
                                                 0, 1
                                             };
         
-    bco::animation_group    gpFrontRight_   {   { bm::main::HoverDoorSF_id },
+    bco::AnimationGroup    gpFrontRight_   {   { bm::main::HoverDoorSF_id },
                                                 bm::main::HoverDoorAxisSFA_loc, bm::main::HoverDoorAxisSFF_loc,
                                                 (140 * RAD),
                                                 0, 1
                                             };
 
-    bco::animation_group    gpLeft_         {   { bm::main::HoverDoorPA_id } ,
+    bco::AnimationGroup    gpLeft_         {   { bm::main::HoverDoorPA_id } ,
                                                 bm::main::HoverDoorAxisPF_loc, bm::main::HoverDoorAxisPA_loc,
                                                 (100 * RAD),
                                                 0, 1
                                             };
 
-    bco::animation_group    gpRight_        {   { bm::main::HoverDoorSA_id } ,
+    bco::AnimationGroup    gpRight_        {   { bm::main::HoverDoorSA_id } ,
                                                 bm::main::HoverDoorAxisSA_loc, bm::main::HoverDoorAxisSF_loc, 
                                                 (100 * RAD),
                                                 0, 1

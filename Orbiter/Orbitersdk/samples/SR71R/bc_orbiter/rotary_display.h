@@ -35,9 +35,9 @@ namespace bc_orbiter {
     */
     template<typename Tanim>
     class rotary_display : 
-          public control
-        , public vc_animation
-        , public panel_animation
+          public Control
+        , public VCAnimation
+        , public PanelAnimation
     {
     public:
         rotary_display(
@@ -48,7 +48,7 @@ namespace bc_orbiter {
             double angle,
             double speed)
             : 
-            control(-1),       // id not used for gauges.
+            Control(-1),       // id not used for gauges.
             vcAnimGroup_(
                 { vcAnimGroupIds },
                 vcLocation, vcAxisLocation,
@@ -62,10 +62,10 @@ namespace bc_orbiter {
         }
 
         // vc_animation
-        animation_group*     vc_animation_group() override { return &vcAnimGroup_; }
+        AnimationGroup*     VCAnimationGroup() override { return &vcAnimGroup_; }
 //        IAnimationState*    vc_animation_state() override { return this; }
-        double              vc_animation_speed() const override { return animSpeed_; }
-        double vc_step(double simdt) override {
+        double              VCAnimationSpeed() const override { return animSpeed_; }
+        double VCStep(double simdt) override {
             anim_.Step(state_, simdt);
             return anim_.GetState();
         }
@@ -74,7 +74,7 @@ namespace bc_orbiter {
 //        double GetState() const { return state_; }
 
         // panel_animation
-        void panel_step(MESHHANDLE mesh, double simdt) override {
+        void PanelStep(MESHHANDLE mesh, double simdt) override {
             anim_.Step(state_, simdt);
             RotateMesh(mesh, pnlGroup_, pnlVerts_, (anim_.GetState() * -angle_));
         }
@@ -84,7 +84,7 @@ namespace bc_orbiter {
         }
 
     private:
-        animation_group	vcAnimGroup_;
+        AnimationGroup	vcAnimGroup_;
         double          animSpeed_{ 0.0 };
         UINT			pnlGroup_{ 0 };
         const NTVERTEX* pnlVerts_;

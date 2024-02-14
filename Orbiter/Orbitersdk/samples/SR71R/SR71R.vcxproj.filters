@@ -75,7 +75,7 @@
     <ClInclude Include="HUD.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="RCSSystem.h">
+    <ClInclude Include="reaction_control_system.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="NavModes.h">
@@ -138,13 +138,13 @@
     <ClInclude Include="Canopy.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\Animation.h">
+    <ClInclude Include="bc_orbiter\animation.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\vessel.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="bc_orbiter\Component.h">
+    <ClInclude Include="bc_orbiter\component.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="bc_orbiter\IAnimationState.h">
@@ -231,6 +231,12 @@
     <ClInclude Include="bc_orbiter\panel_display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bc_orbiter\on_off_vc_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="bc_orbiter\on_off_panel_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">
@@ -260,7 +266,7 @@
     <ClCompile Include="NavModes.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="RCSSystem.cpp">
+    <ClCompile Include="reaction_control_system.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="LandingGear.cpp">

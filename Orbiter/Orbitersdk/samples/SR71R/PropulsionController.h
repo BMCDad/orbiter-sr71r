@@ -81,35 +81,35 @@ e = 0/1 Dump pump is active.
 */
 
 class PropulsionController : 
-	  public bco::vessel_component
-	, public bco::set_class_caps
-	, public bco::power_consumer
-	, public bco::post_step
-	, public bco::manage_state
-	, public bco::draw_hud
+	  public bco::VesselComponent
+	, public bco::HandlesSetClassCaps
+	, public bco::PowerConsumer
+	, public bco::HandlesPostStep
+	, public bco::HandlesState
+	, public bco::HandlesDrawHud
 {
 public:
-	PropulsionController(bco::power_provider& pwr, bco::vessel& vessel);
+	PropulsionController(bco::PowerProvider& pwr, bco::vessel& vessel);
 
 	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
 	// power_consumer
-	double amp_draw() const { return (isFilling_ ? 4.0 : 0.0) + (isRCSFilling_ ? 4.0 : 0.0); }
+	double AmpDraw() const override { return (isFilling_ ? 4.0 : 0.0) + (isRCSFilling_ ? 4.0 : 0.0); }
 
 	// set_class_caps
-	void handle_set_class_caps(bco::vessel& vessel) override;
+	void HandleSetClassCaps(bco::vessel& vessel) override;
 
 	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::vessel& vessel) override;
 
 	// draw_hud
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
 	double GetVesselMainThrustLevel();
-	void SetVesselMainThrustLevel(double level);
-    void SetAttitudeRotLevel(bco::Axis axis, double level);
+	void SetVesselMainThrustLevel(double Level);
+    void SetAttitudeRotLevel(bco::Axis axis, double Level);
 	double CurrentMaxThrust() { return maxThrustLevel_; }
 
 	bco::signal<double>&	MainFuelLevelSignal() { return signalMainFuelLevel_; }
@@ -118,9 +118,9 @@ public:
 
 private:
 	bco::vessel&		vessel_;
-	bco::power_provider&	power_;
+	bco::PowerProvider&	power_;
 
-	bool IsPowered() { return power_.volts_available() > 24.0; }
+	bool IsPowered() { return power_.VoltsAvailable() > 24.0; }
 
 	bco::signal<double>		signalMainFuelLevel_;
 

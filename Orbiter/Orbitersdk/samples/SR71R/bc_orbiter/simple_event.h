@@ -29,9 +29,9 @@ namespace bc_orbiter {
 	*/
 	template<typename T=bool>
 	class simple_event :
-		public control,
-		public vc_event_target,
-		public panel_event_target,
+		public Control,
+		public VCEventTarget,
+		public PanelEventTarget,
 		public signaller 
 	{
 	public:
@@ -41,7 +41,7 @@ namespace bc_orbiter {
 			const RECT& pnlRect,
 			T data = T()
 		) :
-			control(-1),
+			Control(-1),
 			vcLocation_(vcLocation),
 			vcRadius_(vcRadius),
 			pnlRect_(pnlRect),
@@ -49,18 +49,18 @@ namespace bc_orbiter {
 		{ }
 
 		// vc_event_target
-		VECTOR3				vc_event_location()			override { return vcLocation_; }
-		double				vc_event_radius()			override { return vcRadius_; }
-		int					vc_mouse_flags()			override { return PANEL_MOUSE_LBDOWN; }
-		int					vc_redraw_flags()			override { return PANEL_REDRAW_NEVER; }
+		VECTOR3				VCEventLocation()			override { return vcLocation_; }
+		double				VCEventRadius()			override { return vcRadius_; }
+		int					VCMouseFlags()			override { return PANEL_MOUSE_LBDOWN; }
+		int					VCRedrawFlags()			override { return PANEL_REDRAW_NEVER; }
 
 		// panel_event_target
-		RECT				panel_rect()				override { return pnlRect_; }
-		int					panel_mouse_flags()			override { return PANEL_MOUSE_LBDOWN; }
-		int					panel_redraw_flags()		override { return PANEL_REDRAW_NEVER; }
+		RECT				PanelRect()				override { return pnlRect_; }
+		int					PanelMouseFlags()			override { return PANEL_MOUSE_LBDOWN; }
+		int					PanelRedrawFlags()		override { return PANEL_REDRAW_NEVER; }
 
 		// event_target
-		bool on_event(int id, int event) override {
+		bool OnEvent(int id, int event) override {
 			signal_.fire(data_);		// Remove eventually
 			fire();
 			return true;

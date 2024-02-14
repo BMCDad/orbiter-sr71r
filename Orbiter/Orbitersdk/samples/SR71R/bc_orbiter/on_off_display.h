@@ -31,9 +31,9 @@ namespace bc_orbiter {
 	The state of the UI is control via a slot input.
 	**/
 	class on_off_display : 
-		  public control
-		, public vc_event_target
-		, public panel_event_target 
+		  public Control
+		, public VCEventTarget
+		, public PanelEventTarget 
 	{
 	public:
 		on_off_display(
@@ -43,7 +43,7 @@ namespace bc_orbiter {
 			, const NTVERTEX* pnlVerts
 			, double offset
 		) :
-			  control(-1)
+			  Control(-1)
 			, vcGroupId_(vcGroupId)
 			, vcVerts_(vcVerts)
 			, pnlGroupId_(pnlGroupId)
@@ -52,7 +52,7 @@ namespace bc_orbiter {
 		{
 		}
 
-			void on_vc_redraw(DEVMESHHANDLE vcMesh) override {
+			void OnVCRedraw(DEVMESHHANDLE vcMesh) override {
 				NTVERTEX* delta = new NTVERTEX[4];
 
 				TransformUV2d(
@@ -72,18 +72,18 @@ namespace bc_orbiter {
 				delete[] delta;
 			}
 
-			void on_panel_redraw(MESHHANDLE meshPanel) override {
+			void OnPanelRedraw(MESHHANDLE meshPanel) override {
 				DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, state_, offset_);
 			}
 
-			int vc_mouse_flags() { return PANEL_MOUSE_IGNORE; }
-			int vc_redraw_flags() { return PANEL_REDRAW_USER; }
-			int panel_mouse_flags() { return PANEL_MOUSE_IGNORE; }
-			int panel_redraw_flags() { return PANEL_REDRAW_USER; }
+			int VCMouseFlags() { return PANEL_MOUSE_IGNORE; }
+			int VCRedrawFlags() { return PANEL_REDRAW_USER; }
+			int PanelMouseFlags() { return PANEL_MOUSE_IGNORE; }
+			int PanelRedrawFlags() { return PANEL_REDRAW_USER; }
 
 			void set_state(bool s) { 
 				state_ = s;
-				oapiTriggerRedrawArea(0, 0, get_id());
+				oapiTriggerRedrawArea(0, 0, GetId());
 			}
 
 	private:

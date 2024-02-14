@@ -28,15 +28,15 @@
 namespace bco = bc_orbiter;
 
 class Shutters : 
-	public bco::vessel_component,
-	public bco::manage_state
+	public bco::VesselComponent,
+	public bco::HandlesState
 {
 public:
 	Shutters(bco::vessel& vessel);
 
 	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::vessel& vessel) override;
 
 	bco::slot<bool>& ShuttersSlot() { return shuttersSlot_; }
 

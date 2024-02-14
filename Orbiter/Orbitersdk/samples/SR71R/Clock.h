@@ -27,19 +27,19 @@
 namespace bco = bc_orbiter;
 
 class Clock : 
-    public bco::vessel_component, 
-    public bco::post_step, 
-    public bco::manage_state
+    public bco::VesselComponent, 
+    public bco::HandlesPostStep, 
+    public bco::HandlesState
 {
 public:
 	Clock(bco::vessel& vessel);
 
     // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
 	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::vessel& vessel) override;
 
 private:
     void ResetElapsed();

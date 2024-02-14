@@ -72,7 +72,7 @@ void Clock::ResetTimer()
     }
 }
 
-void Clock::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void Clock::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// simt is simulator time in seconds.
 	//  3600 - seconds in 60 minutes (minute hand).
@@ -94,7 +94,7 @@ void Clock::handle_post_step(bco::vessel& vessel, double simt, double simdt, dou
 }
 
 // [elapsedMissionTime] [isTimerRunning] [elapsedTimer]
-bool Clock::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool Clock::HandleLoadState(bco::vessel& vessel, const std::string& line)
 {
 	int elapsedMission = 0;
 	int isTimerRunning = 0;
@@ -121,7 +121,7 @@ bool Clock::handle_load_state(bco::vessel& vessel, const std::string& line)
 	return true;
 }
 
-std::string Clock::handle_save_state(bco::vessel& vessel)
+std::string Clock::HandleSaveState(bco::vessel& vessel)
 {
 	std::ostringstream os;
 

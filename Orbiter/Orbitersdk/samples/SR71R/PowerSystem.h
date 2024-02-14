@@ -45,41 +45,41 @@ class FuelCell;
 	On each step, report through the amp signal the current amp usage for that component.
 */
 class PowerSystem :	
-	  public bco::vessel_component
-	, public bco::power_provider
-	, public bco::post_step
-	, public bco::manage_state
+	  public bco::VesselComponent
+	, public bco::PowerProvider
+	, public bco::HandlesPostStep
+	, public bco::HandlesState
 {
 public:
 	PowerSystem(bco::vessel& vessel);
 
 	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override
 	{
-		double draw = 0.0;
+		double Draw = 0.0;
 
 		for each (auto & c in consumers_) {
-			draw += c->amp_draw();
+			Draw += c->AmpDraw();
 		}
 
-		ampDraw_ = fmin(draw, AMP_OVERLOAD);
+		ampDraw_ = fmin(Draw, AMP_OVERLOAD);
 		gaugePowerAmps_.set_state(ampDraw_ / AMP_OVERLOAD);
 		Update(vessel);
 	}
 
 	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::vessel& vessel) override;
 
 	// Fuelcell:
 	bco::slot<double>&		FuelCellAvailablePowerSlot()	{ return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
 
-	void attach_consumer(bco::power_consumer* consumer) override {
+	void AttachConsumer(bco::PowerConsumer* consumer) override {
 		consumers_.push_back(consumer);
 	}
 
-	double volts_available() const override { return prevVolts_; }
-	double amp_load() const override { return ampDraw_; }
+	double VoltsAvailable() const override { return prevVolts_; }
+	double AmpLoad() const override { return ampDraw_; }
 
 private:
 	void Update(bco::vessel& vessel);
@@ -88,7 +88,7 @@ private:
 	const double			USEABLE_POWER	=  24.0;
 	const double			AMP_OVERLOAD	= 100.0;
 
-	std::vector<bco::power_consumer*>  consumers_;
+	std::vector<bco::PowerConsumer*>  consumers_;
 
 	bco::signal<bool>		signalIsDrawingBattery_;
 	bco::slot<double>		slotFuelCellAvailablePower_;

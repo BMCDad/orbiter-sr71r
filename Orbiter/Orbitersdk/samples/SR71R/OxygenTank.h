@@ -33,7 +33,7 @@ class OxygenTank :
 	public bco::generic_tank
 {
 public:
-	OxygenTank(bco::power_provider& pwr, bco::vessel& vessel) :
+	OxygenTank(bco::PowerProvider& pwr, bco::vessel& vessel) :
 		bco::generic_tank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE)
 	{
 		vessel.AddControl(&gaugeLevel_);
@@ -52,8 +52,8 @@ public:
 	void UpdateIsFilling(bool b) override { btnLightFill_.set_state(b); }
 	void UpdateIsAvailable(bool b) override { lightAvailable_.set_state(b); }
 
-	double amp_draw() const override {
-		return generic_tank::amp_draw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
+	double AmpDraw() const override {
+		return generic_tank::AmpDraw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
 	}
 
 private:

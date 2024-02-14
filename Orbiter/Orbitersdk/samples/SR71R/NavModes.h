@@ -33,18 +33,18 @@ namespace bco = bc_orbiter;
 Models the nav mode selector function.
 */
 class NavModes :
-	  public bco::vessel_component
-	, public bco::draw_hud
-	, public bco::post_step
+	  public bco::VesselComponent
+	, public bco::HandlesDrawHud
+	, public bco::HandlesPostStep
 {
 public:
 	NavModes(bco::vessel& baseVessel, Avionics& avionics);
 
 	// These overrides come directly from SR71Vessel callbacks.
 	void OnNavMode(int mode, bool active);
-	void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+	void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		if (oapiCockpitMode() != COCKPIT_PANELS) return;
 		UpdatePanel(); 
 	}

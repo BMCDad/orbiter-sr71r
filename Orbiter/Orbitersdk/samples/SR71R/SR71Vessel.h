@@ -17,7 +17,7 @@
 #include "SR71r_common.h"
 #include "PropulsionController.h"
 #include "HUD.h"
-#include "RCSSystem.h"
+#include "reaction_control_system.h"
 #include "NavModes.h"
 #include "PowerSystem.h"
 #include "LeftMFD.h"
@@ -101,7 +101,7 @@ private:
 	NavModes				navModes_		{ *this, avionics_ };
 	Clock					clock_			{ *this };
 	Shutters				shutters_		{ *this };
-	RCSSystem				rcs_			{ *this, powerSystem_ };
+  ReactionControlSystem rcs_ { *this, powerSystem_ };
 	Lights					lights_			{ *this, powerSystem_ };
 	PropulsionController	propulsion_		{ powerSystem_, *this };
 	Canopy					canopy_			{ powerSystem_, *this };
@@ -118,7 +118,7 @@ private:
 
 
 	// Map components that handle config state with a key for that component.
-	std::map <std::string, bco::manage_state*>		mapStateManagement_{
+	std::map <std::string, bco::HandlesState*>		mapStateManagement_{
 		  { "AIRBRAKE",		&airBrake_		}		// [a b]		: (a)Switch position,  (b)Brake position
 		, { "APU",			&apu_			}		// [a]			: (a)Enabled switch
 		, { "AVIONICS",		&avionics_		}		// [a b c d e]	: (a)Set course, (b)Set heading, (c)power, (d)Mode switch[1=atmo], (c)Nav select

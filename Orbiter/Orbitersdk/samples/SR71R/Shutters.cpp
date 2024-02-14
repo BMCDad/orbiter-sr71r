@@ -28,7 +28,7 @@ Shutters::Shutters(bco::vessel& vessel)
 	switchShutters_.attach([&]() { Update(); });
 }
 
-bool Shutters::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool Shutters::HandleLoadState(bco::vessel& vessel, const std::string& line)
 {
 	//if (_strnicmp(key, ConfigKey, 8) != 0)
 	//{
@@ -44,7 +44,7 @@ bool Shutters::handle_load_state(bco::vessel& vessel, const std::string& line)
 	return true;
 }
 
-std::string Shutters::handle_save_state(bco::vessel& vessel)
+std::string Shutters::HandleSaveState(bco::vessel& vessel)
 {
 	//char cbuf[256];
 

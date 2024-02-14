@@ -24,7 +24,7 @@ namespace mvc = bm::vc;
 
 FC::FlightComputer::FlightComputer(
 	  bco::vessel& vessel
-	, bco::power_provider& pwr)
+	, bco::PowerProvider& pwr)
 	:
 	  power_(pwr)
 	, vessel_(vessel)
@@ -114,7 +114,7 @@ FC::FlightComputer::FlightComputer(
 	vessel.RegisterPanelComponent(allId_, this);
 }
 
-void FC::FlightComputer::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void FC::FlightComputer::HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
 	if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 
@@ -193,7 +193,7 @@ void FC::FlightComputer::Boot()
 	isRunning_ = true;
 }
 
-void FC::FlightComputer::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void FC::FlightComputer::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Handle low lever computer stuff, boot etc.
 	Update();
@@ -298,7 +298,7 @@ void FC::FlightComputer::SetScratchPad(double value)
 	DisplayLine(10, "[%10.2f]       ", scratchValue_);
 }
 
-bool FC::FlightComputer::handle_load_vc(bco::vessel& vessel, int vcid)
+bool FC::FlightComputer::HandleLoacVC(bco::vessel& vessel, int vcid)
 {
     auto vcMeshHandle = vessel.GetVCMeshHandle0();
     assert(vcMeshHandle != nullptr);
@@ -325,7 +325,7 @@ bool FC::FlightComputer::handle_load_vc(bco::vessel& vessel, int vcid)
     return true;
 }
 
-bool FC::FlightComputer::handle_redraw_vc(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
+bool FC::FlightComputer::HandleRedrawVC(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++) {
 		bco::DrawSurfaceText(0, i * 20, display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
@@ -334,7 +334,7 @@ bool FC::FlightComputer::handle_redraw_vc(bco::vessel& vessel, int id, int event
 	return true;
 }
 
-bool FC::FlightComputer::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
+bool FC::FlightComputer::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 {
 	auto panelMesh = vessel.GetpanelMeshHandle0();
 	SURFHANDLE surfHandle = oapiGetTextureHandle(panelMesh, bm::pnl::TXIDX_SR71R_100_2DPanel_dds);
@@ -360,7 +360,7 @@ bool FC::FlightComputer::handle_load_panel(bco::vessel& vessel, int id, PANELHAN
 	return true;
 }
 
-bool FC::FlightComputer::handle_redraw_panel(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
+bool FC::FlightComputer::HandleRedrawPanel(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
 {
 	int left = 1585;
 	int top = 2150;
@@ -371,7 +371,7 @@ bool FC::FlightComputer::handle_redraw_panel(bco::vessel& vessel, int id, int ev
 	return true;
 }
 
-bool FC::FlightComputer::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool FC::FlightComputer::HandleLoadState(bco::vessel& vessel, const std::string& line)
 {
 	std::istringstream in(line);
 	bool isOn, isHoldHeading, isHoldAltitude, isHoldSpeed, isHoldMACH;
@@ -386,7 +386,7 @@ bool FC::FlightComputer::handle_load_state(bco::vessel& vessel, const std::strin
 	return true;
 }
 
-std::string FC::FlightComputer::handle_save_state(bco::vessel& vessel)
+std::string FC::FlightComputer::HandleSaveState(bco::vessel& vessel)
 {
 	std::ostringstream os;
 	os << IsProgramRunning(FCProgFlags::AtmoActive)

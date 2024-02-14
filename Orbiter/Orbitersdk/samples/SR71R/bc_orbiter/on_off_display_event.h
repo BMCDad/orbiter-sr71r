@@ -30,7 +30,7 @@ namespace bc_orbiter {
 	'x' axis 'offset' amount to move from OFF to ON.
 	The state of the UI is control via a slot input.
 	**/
-	class on_off_display_event : public control, public vc_event_target, public panel_event_target {
+	class on_off_display_event : public Control, public VCEventTarget, public PanelEventTarget {
 	public:
 		on_off_display_event(
 			int ctrlId,
@@ -43,7 +43,7 @@ namespace bc_orbiter {
 			const RECT& pnlRect,
 			double offset)
 			:
-			control(ctrlId),
+			Control(ctrlId),
 			vcGroupId_(vcGroupId),
 			vcLocation_(vcLocation),
 			vcVerts_(vcVerts),
@@ -55,18 +55,18 @@ namespace bc_orbiter {
 			slotState_([&](double v) {
 			if (state_ != v) {
 				state_ = v;
-				oapiTriggerRedrawArea(0, 0, get_id());
+				oapiTriggerRedrawArea(0, 0, GetId());
 			}})
 		{
 		}
 
 			// vc_event_target
 			VECTOR3&	vc_event_loc()	override { return vcLocation_; }
-			int			vc_mouse_flags()	override { return PANEL_MOUSE_LBDOWN; }
-			int			vc_redraw_flags()	override { return PANEL_REDRAW_USER; }
-			double		vc_event_radius()	override { return vcRadius_; }
+			int			VCMouseFlags()	override { return PANEL_MOUSE_LBDOWN; }
+			int			VCRedrawFlags()	override { return PANEL_REDRAW_USER; }
+			double		VCEventRadius()	override { return vcRadius_; }
 
-			void		on_vc_redraw(DEVMESHHANDLE vcMesh) override {
+			void		OnVCRedraw(DEVMESHHANDLE vcMesh) override {
 				NTVERTEX* delta = new NTVERTEX[4];
 
 				TransformUV2d(
@@ -87,15 +87,15 @@ namespace bc_orbiter {
 			}
 
 			// panel_event_target
-			void on_panel_redraw(MESHHANDLE meshPanel) override {
+			void OnPanelRedraw(MESHHANDLE meshPanel) override {
 				DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, state_, offset_);
 			}
-			RECT& panel_rect()			override { return pnlRect_; }
-			int panel_mouse_flags()		override { return PANEL_MOUSE_LBDOWN; }
-			int panel_redraw_flags()	override { return PANEL_REDRAW_USER; }
+			RECT& PanelRect()			override { return pnlRect_; }
+			int PanelMouseFlags()		override { return PANEL_MOUSE_LBDOWN; }
+			int PanelRedrawFlags()	override { return PANEL_REDRAW_USER; }
 
 			// event_target
-			bool on_event() override {
+			bool OnEvent() override {
 				// Note: Event here does not alter state, that comes from the slot.
 				// State is only altered through the slot.
 

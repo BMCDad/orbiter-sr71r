@@ -26,8 +26,8 @@
 namespace bco = bc_orbiter;
 
 class Airspeed :
-	  public bco::vessel_component
-	, public bco::post_step 
+	  public bco::VesselComponent
+	, public bco::HandlesPostStep 
 {
 public:
 
@@ -55,7 +55,7 @@ public:
 	~Airspeed() {}
 
 	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		double  keas			= 0.0;		// equivalent airspeed, shows in TDI
 		double  kias			= 0.0;		// indicated, shows as dial.
 		double  mach			= 0.0;		// shows in TDI and as a dial

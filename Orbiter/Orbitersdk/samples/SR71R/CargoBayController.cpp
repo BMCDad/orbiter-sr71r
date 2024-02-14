@@ -22,23 +22,23 @@
 #include "CargoBayController.h"
 #include "SR71r_mesh.h"
 
-CargoBayController::CargoBayController(bco::power_provider& pwr, bco::vessel& vessel) :
+CargoBayController::CargoBayController(bco::PowerProvider& pwr, bco::vessel& vessel) :
     power_(pwr)
 {
-    power_.attach_consumer(this);
+    power_.AttachConsumer(this);
     vessel.AddControl(&switchOpen_);
     vessel.AddControl(&switchPower_);
     vessel.AddControl(&status_);
 }
 
-void CargoBayController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void CargoBayController::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	if (IsPowered()) {
-        animCargoBayDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
+        animCargoBayDoors_.Step(switchOpen_.IsOn() ? 1.0 : 0.0, simdt);
 	}
 
     auto status = bco::status_display::status::off;
-    if (power_.volts_available() > MIN_VOLTS) {
+    if (power_.VoltsAvailable() > MIN_VOLTS) {
         if ((animCargoBayDoors_.GetState() > 0.0) && (animCargoBayDoors_.GetState() < 1.0)) {
             status = bco::status_display::status::warn;
         }
@@ -51,7 +51,7 @@ void CargoBayController::handle_post_step(bco::vessel& vessel, double simt, doub
     status_.set_state(status);
 }
 
-bool CargoBayController::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool CargoBayController::HandleLoadState(bco::vessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchPower_ >> switchOpen_ >> animCargoBayDoors_;
@@ -59,14 +59,14 @@ bool CargoBayController::handle_load_state(bco::vessel& vessel, const std::strin
     return true;
 }
 
-std::string CargoBayController::handle_save_state(bco::vessel& vessel)
+std::string CargoBayController::HandleSaveState(bco::vessel& vessel)
 {
     std::ostringstream os;
     os << switchPower_ << " " << switchOpen_ << " " << animCargoBayDoors_;
     return os.str();
 }
 
-void CargoBayController::handle_set_class_caps(bco::vessel& vessel)
+void CargoBayController::HandleSetClassCaps(bco::vessel& vessel)
 {
     auto mIdx = vessel.GetMainMeshIndex();
 

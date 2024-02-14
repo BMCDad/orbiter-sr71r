@@ -59,43 +59,43 @@ namespace bco = bc_orbiter;
 		
 */
 class FuelCell : 
-	  public bco::vessel_component
-	, public bco::post_step
-	, public bco::power_consumer
-	, public bco::manage_state
+	  public bco::VesselComponent
+	, public bco::HandlesPostStep
+	, public bco::PowerConsumer
+	, public bco::HandlesState
 {
 	const double MAX_VOLTS = 28.0;
 	const double MIN_VOLTS = 20.0;
 	const double AMP_DRAW =	  4.0;
 
 public:
-	FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumable& lox, bco::consumable& hydro);
+	FuelCell(bco::PowerProvider& pwr, bco::vessel& vessel, bco::Consumable& lox, bco::Consumable& hydro);
 
 	/**
 		Draw down the oxygen and hydrogen levels based on the current amp load.
 	*/
 
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
 	// power_consumer
-	double amp_draw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
+	double AmpDraw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
 
 	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::vessel& vessel) override;
 
 	// Outputs
 	bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
 
 private:
-	bco::power_provider&	power_;
-	bco::consumable&		lox_;
-	bco::consumable&		hydro_;
+	bco::PowerProvider&	power_;
+	bco::Consumable&		lox_;
+	bco::Consumable&		hydro_;
 
 	bool IsPowered() const {
 		return 
-			switchEnabled_.is_on() &&
-			(power_.volts_available() > MIN_VOLTS); 
+			switchEnabled_.IsOn() &&
+			(power_.VoltsAvailable() > MIN_VOLTS); 
 	}
 
 	void SetIsFuelCellPowerAvailable(bool newValue);

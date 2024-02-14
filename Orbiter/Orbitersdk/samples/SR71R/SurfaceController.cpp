@@ -21,16 +21,16 @@
 
 #include "SR71r_mesh.h"
 
-SurfaceController::SurfaceController(bco::vessel& vessel, bco::hydraulic_provider& apu) :
+SurfaceController::SurfaceController(bco::vessel& vessel, bco::HydraulicProvider& apu) :
 	  vessel_(vessel)
 	, apu_(apu)
 {
 }
 
-void SurfaceController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void SurfaceController::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Determine if our hydro state has change, enable or disable controls.
-	auto hydPress = apu_.level();
+	auto hydPress = apu_.Level();
 	if (hydPress != prevHydraulicState_)
 	{
 		if (prevHydraulicState_ == 0.0)
@@ -46,7 +46,7 @@ void SurfaceController::handle_post_step(bco::vessel& vessel, double simt, doubl
 	}
 }
 
-void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
+void SurfaceController::HandleSetClassCaps(bco::vessel& vessel)
 {
 	// Left Aileron Animation
 	static UINT groupLeftAileron = bm::main::LeftOuterElevon_id;
@@ -141,9 +141,9 @@ void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
 	vessel.AddAnimationComponent(anim_right_rudder_, 0, 1, &animGroupRightRudder);
 }
 
-void SurfaceController::SetRudderLevel(double level)
+void SurfaceController::SetRudderLevel(double Level)
 {
-	vessel_.SetControlSurfaceLevel(AIRCTRL_RUDDER, level);
+	vessel_.SetControlSurfaceLevel(AIRCTRL_RUDDER, Level);
 }
 
 void SurfaceController::EnableControls()

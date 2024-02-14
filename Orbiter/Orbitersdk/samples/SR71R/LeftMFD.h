@@ -28,20 +28,20 @@ namespace bco = bc_orbiter;
 
 class LeftMFD : 
 	  public bco::MFDBase
-	, public bco::set_class_caps
-	, public bco::load_vc
-	, public bco::load_panel
+	, public bco::HandlesSetClassCaps
+	, public bco::HandlesVCLoading
+	, public bco::HandlesPanelLoading
 {
 public:
-	LeftMFD(bco::power_provider& pwr, bco::vessel* vessel);
+	LeftMFD(bco::PowerProvider& pwr, bco::vessel* vessel);
 
-	virtual void handle_set_class_caps(bco::vessel& vessel) override;
+	virtual void HandleSetClassCaps(bco::vessel& vessel) override;
 
 	// load_vc
-	bool handle_load_vc(bco::vessel& vessel, int vcid) override;
+	bool HandleLoacVC(bco::vessel& vessel, int vcid) override;
 	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf);
 
-	bool handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
+	bool HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
 	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf);
 
 private:

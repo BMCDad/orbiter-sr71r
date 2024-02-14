@@ -39,19 +39,19 @@ namespace bco = bc_orbiter;
 	The HUD mode is managed by Orbiter.
 */
 class HUD : 
-	  public bco::vessel_component
-	, public bco::power_consumer
-	, public bco::load_vc
-	, public bco::draw_hud
+	  public bco::VesselComponent
+	, public bco::PowerConsumer
+	, public bco::HandlesVCLoading
+	, public bco::HandlesDrawHud
 {
 public:
-	HUD(bco::power_provider& pwr, bco::vessel& vessel);
+	HUD(bco::PowerProvider& pwr, bco::vessel& vessel);
 
-	bool handle_load_vc(bco::vessel& vessel, int vcid) override;
+	bool HandleLoacVC(bco::vessel& vessel, int vcid) override;
 
-	void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+	void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-	double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
+	double AmpDraw() const override { return IsPowered() ? 4.0 : 0.0; }
 
 	void OnHudMode(int mode);
 
@@ -64,9 +64,9 @@ public:
 	//bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
 
 private:
-	bco::power_provider& power_;
+	bco::PowerProvider& power_;
 
-	bool IsPowered() const {	return power_.volts_available() > 24.0; }
+	bool IsPowered() const {	return power_.VoltsAvailable() > 24.0; }
 
 	void OnChanged(int mode);
 

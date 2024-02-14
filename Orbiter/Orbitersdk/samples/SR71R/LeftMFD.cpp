@@ -22,12 +22,12 @@
 
 #include <assert.h>
 
-LeftMFD::LeftMFD(bco::power_provider& pwr, bco::vessel* vessel) :
+LeftMFD::LeftMFD(bco::PowerProvider& pwr, bco::vessel* vessel) :
 bco::MFDBase(pwr, vessel, MFD_LEFT, 4.0)
 {
 }
 
-void LeftMFD::handle_set_class_caps(bco::vessel& vessel)
+void LeftMFD::HandleSetClassCaps(bco::vessel& vessel)
 {
 	for (auto& a : data_)
 	{
@@ -39,7 +39,7 @@ void LeftMFD::handle_set_class_caps(bco::vessel& vessel)
 	AssignMenu(GetBaseVessel()->GetIdForComponent(this));
 }
 
-bool LeftMFD::handle_load_vc(bco::vessel& vessel, int vcid)
+bool LeftMFD::HandleLoacVC(bco::vessel& vessel, int vcid)
 {
 	auto vcMeshHandle = vessel.GetVCMeshHandle0();
 	assert(vcMeshHandle != nullptr);
@@ -115,7 +115,7 @@ bool LeftMFD::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 	return true;
 }
 
-bool LeftMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
+bool LeftMFD::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 {
 	auto panelMesh = vessel.GetpanelMeshHandle0();
 

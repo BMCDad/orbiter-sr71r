@@ -19,10 +19,10 @@
 #include "HUD.h"
 #include "SR71r_mesh.h"
 
-HUD::HUD(bco::power_provider& pwr, bco::vessel& vessel) :
+HUD::HUD(bco::PowerProvider& pwr, bco::vessel& vessel) :
     power_(pwr)
 { 
-    power_.attach_consumer(this),
+    power_.AttachConsumer(this),
     vessel.AddControl(&btnLightDocking_);
     vessel.AddControl(&btnLightSurface_);
     vessel.AddControl(&btnLightOrbit_);
@@ -36,7 +36,7 @@ HUD::HUD(bco::power_provider& pwr, bco::vessel& vessel) :
     btnSurface_.attach( [&]() { OnChanged(HUD_SURFACE); });
 }
 
-bool HUD::handle_load_vc(bco::vessel& vessel, int vcid)
+bool HUD::HandleLoacVC(bco::vessel& vessel, int vcid)
 {
 	// Register HUD
 	static VCHUDSPEC huds =
@@ -71,7 +71,7 @@ void HUD::OnChanged(int mode)
 	oapiSetHUDMode(newMode);;
 }
 
-void HUD::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void HUD::HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 

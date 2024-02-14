@@ -135,13 +135,13 @@ namespace FC
 	
     */
     class FlightComputer :
-          public bco::vessel_component
-		, public bco::power_consumer
-		, public bco::post_step
-		, public bco::manage_state
-		, public bco::draw_hud
-		, public bco::load_vc
-		, public bco::load_panel
+          public bco::VesselComponent
+		, public bco::PowerConsumer
+		, public bco::HandlesPostStep
+		, public bco::HandlesState
+		, public bco::HandlesDrawHud
+		, public bco::HandlesVCLoading
+		, public bco::HandlesPanelLoading
     {
 		using KeyFunc = std::function<void()>;
 
@@ -151,28 +151,28 @@ namespace FC
 
         FlightComputer(
 			  bco::vessel& vessel
-			, bco::power_provider& pwr);
+			, bco::PowerProvider& pwr);
 
 		// power_consumer
-		double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
+		double AmpDraw() const override { return IsPowered() ? 4.0 : 0.0; }
 
 		// post_step
-		void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+		void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 		
 		// draw_hud
-		void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+		void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
 		// manage_state
-		bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-		std::string handle_save_state(bco::vessel& vessel) override;
+		bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+		std::string HandleSaveState(bco::vessel& vessel) override;
 
 		// load_vc
-		virtual bool handle_load_vc(bco::vessel& vessel, int vcid) override;
-		virtual bool handle_redraw_vc(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
+		virtual bool HandleLoacVC(bco::vessel& vessel, int vcid) override;
+		virtual bool HandleRedrawVC(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
 
 		// load_panel
-		virtual bool handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
-		virtual bool handle_redraw_panel(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
+		virtual bool HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
+		virtual bool HandleRedrawPanel(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
 
         // Computer interface
 		void ClearScreen();
@@ -215,11 +215,11 @@ namespace FC
 		void Update();
 		void Boot();
 
-		bco::power_provider&		power_;
+		bco::PowerProvider&		power_;
 		bco::vessel&				vessel_;
 
 		bool IsPowered() const {
-			return power_.volts_available() > 24.0;
+			return power_.VoltsAvailable() > 24.0;
 		}
 
 		bco::slot<double>			headingSlot_;

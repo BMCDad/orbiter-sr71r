@@ -23,7 +23,7 @@
 namespace bco = bc_orbiter;
 
 class AvionBase :
-	public bco::vessel_component {
+	public bco::VesselComponent {
 
 public:
 	AvionBase() :

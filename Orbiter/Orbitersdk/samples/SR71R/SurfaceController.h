@@ -48,20 +48,20 @@ namespace bco = bc_orbiter;
 	surfaces are disabled.
 */
 class SurfaceController : 
-	  public bco::vessel_component
-	, public bco::set_class_caps
-	, public bco::post_step
+	  public bco::VesselComponent
+	, public bco::HandlesSetClassCaps
+	, public bco::HandlesPostStep
 {
 public:
-	SurfaceController(bco::vessel& vessel, bco::hydraulic_provider& apu);
+	SurfaceController(bco::vessel& vessel, bco::HydraulicProvider& apu);
 
 	// set_class_caps
-	void handle_set_class_caps(bco::vessel& vessel) override;
+	void HandleSetClassCaps(bco::vessel& vessel) override;
 
 	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
-	void SetRudderLevel(double level);
+	void SetRudderLevel(double Level);
 
 private:
 	bco::vessel&	vessel_;
@@ -86,5 +86,5 @@ private:
 	CTRLSURFHANDLE	ctrlSurfLeftTrim_		{ nullptr };
 	CTRLSURFHANDLE	ctrlSurfRightTrim_		{ nullptr };
 
-	bco::hydraulic_provider& apu_;
+	bco::HydraulicProvider& apu_;
 };

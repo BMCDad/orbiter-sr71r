@@ -22,15 +22,15 @@
 namespace bc_orbiter {
 
     class panel_display :
-        public control,
-        public panel_animation {
+        public Control,
+        public PanelAnimation {
     public:
         panel_display(
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
             double offset)
             :
-            control(0),       // id not used
+            Control(0),       // id not used
             pnlGroup_(pnlGroupId),
             pnlVerts_(pnlVerts),
             offset_(offset)
@@ -38,7 +38,7 @@ namespace bc_orbiter {
         }
 
         // panel_animation
-        void panel_step(MESHHANDLE mesh, double simdt) override {
+        void PanelStep(MESHHANDLE mesh, double simdt) override {
             //            RotateMesh<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, angle_);
             TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, 0.0, vecTrans_);
         }

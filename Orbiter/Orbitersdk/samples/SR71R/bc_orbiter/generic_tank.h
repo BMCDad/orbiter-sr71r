@@ -34,37 +34,37 @@ namespace bc_orbiter {
 
 	*/
 	class generic_tank :
-		  public vessel_component
-		, public post_step
-		, public power_consumer
-		, public manage_state
-		, public consumable
+		  public VesselComponent
+		, public HandlesPostStep
+		, public PowerConsumer
+		, public HandlesState
+		, public Consumable
 	{
 	public:
-		generic_tank(power_provider& pwr, double capacity, double fillRate) :
+		generic_tank(PowerProvider& pwr, double capacity, double fillRate) :
 			  power_(pwr)
 			, capacity_(capacity)
 			, fillRate_(fillRate) 
 		{
-			power_.attach_consumer(this);
+			power_.AttachConsumer(this);
 		}
 
 		// consumable
-		double level() const override { return current_ / capacity_; }
+		double Level() const override { return current_ / capacity_; }
 
-		double draw(double amount) override {
+		double Draw(double amount) override {
 			auto draw_amount = max(0.0, min(current_, amount));
 			SetNewCurrentLevel(current_ - draw_amount);
 			return draw_amount;
 		}
 
 		// power_consumable
-		double amp_draw() const override { 
+		double AmpDraw() const override { 
 			return (IsPowered() && isFilling_) ? AMPS_PUMP : 0.0;
 		}
 
 		// post_step
-		virtual void handle_post_step(vessel& vessel, double simt, double simdt, double mjd) override {
+		virtual void HandlePostStep(vessel& vessel, double simt, double simdt, double mjd) override {
 			auto tD = simt - prevTime_;
 
 			if (fabs(tD) > 0.2)
@@ -89,7 +89,7 @@ namespace bc_orbiter {
 		}
 
 		// manage_state
-		bool handle_load_state(vessel& vessel, const std::string& line) override {
+		bool HandleLoadState(vessel& vessel, const std::string& line) override {
 			// [a b]  :  [current_quantity fillPumpOn]
 
 			std::istringstream in(line);
@@ -106,7 +106,7 @@ namespace bc_orbiter {
 			return true;
 		}
 
-		std::string handle_save_state(vessel& vessel) override {
+		std::string HandleSaveState(vessel& vessel) override {
 			std::ostringstream os;
 			os << current_ << " " << isFilling_;
 			return os.str();
@@ -115,7 +115,7 @@ namespace bc_orbiter {
 	protected:
 		bool IsPowered() const {
 			return
-				power_.volts_available() > VOLTS_MIN;
+				power_.VoltsAvailable() > VOLTS_MIN;
 		}
 
 		void FillTank(double amount) {
@@ -153,7 +153,7 @@ namespace bc_orbiter {
 		virtual void UpdateIsAvailable(bool b) {};
 
 	private:
-		power_provider&			power_;
+		PowerProvider&			power_;
 
 		const double			VOLTS_MIN = 24.0;
 		const double			AMPS_PUMP = 4.0;

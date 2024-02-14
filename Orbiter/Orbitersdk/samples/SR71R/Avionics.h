@@ -30,27 +30,27 @@
 namespace bco = bc_orbiter;
 
 class Avionics :
-	  public bco::vessel_component
-	, public bco::post_step
-	, public bco::manage_state
-	, public bco::power_consumer
+	  public bco::VesselComponent
+	, public bco::HandlesPostStep
+	, public bco::HandlesState
+	, public bco::PowerConsumer
 {
 
 public:
 	enum AvionMode { AvionAtmo, AvionExo };
 
-	Avionics(bco::vessel& vessel, bco::power_provider& pwr);
+	Avionics(bco::vessel& vessel, bco::PowerProvider& pwr);
 	~Avionics() {}
 
 	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
 	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::vessel& vessel) override;
 
 	// power_consumer
-	double amp_draw() const { return IsPowered() ? 6.0 : 0.0; }
+	double AmpDraw() const override { return IsPowered() ? 6.0 : 0.0; }
 
 	void SetCourse(double s);
 	void SetHeading(double s);
@@ -70,9 +70,9 @@ public:
 	bco::signal<double>&	AOASignal()				{ return aoaSignal_; }
 
 private:
-	bco::power_provider&	power_;
+	bco::PowerProvider&	power_;
 
-	bool IsPowered() const { return switchAvionPower_.is_on() && (power_.volts_available() > 24.0); }
+	bool IsPowered() const { return switchAvionPower_.IsOn() && (power_.VoltsAvailable() > 24.0); }
 
 	bool		isAeroDataActive_;
 	bool		isAtmoMode_;

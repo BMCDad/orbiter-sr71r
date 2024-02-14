@@ -40,31 +40,31 @@ class VESSEL;
 	b = 0.0 position
 */
 class LandingGear : 
-    public bco::vessel_component
-    , public bco::set_class_caps
-    , public bco::post_step
-    , public bco::manage_state
-    , public bco::draw_hud
+    public bco::VesselComponent
+    , public bco::HandlesSetClassCaps
+    , public bco::HandlesPostStep
+    , public bco::HandlesState
+    , public bco::HandlesDrawHud
 {
 public:
-	LandingGear(bco::vessel& vessel, bco::hydraulic_provider& apu);
+	LandingGear(bco::vessel& vessel, bco::HydraulicProvider& apu);
 
     // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) override;
+    void HandleSetClassCaps(bco::vessel& vessel) override;
 
     // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
     // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::vessel& vessel) override;
 
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
     void Toggle() { position_ = (position_ == 0.0) ? 1.0 : 0.0; }
 private:
 
-    bco::hydraulic_provider& apu_;
+    bco::HydraulicProvider& apu_;
 
     double                  position_{ 0.0 };
 
@@ -79,26 +79,26 @@ private:
     UINT                    idAnim_             { 0 };
 
     // VC Animations
-    bco::animation_group     lgHandle_           {   {bm::vc::LGHandle_id },
+    bco::AnimationGroup     lgHandle_           {   {bm::vc::LGHandle_id },
                                                     bm::vc::LGHandle_loc, bm::vc::LGHandleAxis_loc, 
                                                     (40 * RAD),
                                                     0.0, 1.0
                                                 };
 
     // External:
-    bco::animation_group     gpRightFrontDoor_   {   { bm::main::LGDoorSF_id },
+    bco::AnimationGroup     gpRightFrontDoor_   {   { bm::main::LGDoorSF_id },
                                                     bm::main::LGFRBackPivot_loc, bm::main::LGFRFrontPivot_loc,
                                                     (90 * RAD),
                                                     0.0, 0.3 
                                                 };
 
-    bco::animation_group     gpLeftFrontDoor_    {   { bm::main::LGDoorPF_id },
+    bco::AnimationGroup     gpLeftFrontDoor_    {   { bm::main::LGDoorPF_id },
                                                     bm::main::LGFLFrontPivot_loc, bm::main::LGFLBackPivot_loc, 		
                                                     (90 * RAD),
                                                     0.0, 0.3 
                                                 };
 
-    bco::animation_group     gpFrontGear_        {   { bm::main::LGFrontArm_id,
+    bco::AnimationGroup     gpFrontGear_        {   { bm::main::LGFrontArm_id,
                                                       bm::main::LGFrontAxel_id,
                                                       bm::main::LGCrossF_id,
                                                       bm::main::LGFrontLeftWheel_id,
@@ -108,25 +108,25 @@ private:
                                                     0.2, 1.0 
                                                 };
 
-    bco::animation_group     gpLeftOuterDoor_    {   { bm::main::LGDoorPO_id },
+    bco::AnimationGroup     gpLeftOuterDoor_    {   { bm::main::LGDoorPO_id },
                                                     bm::main::LGDoorAxisPOA_loc, bm::main::LGDoorAxisPOF_loc,
                                                     (-100 * RAD),
                                                     0.1, 1.0
                                                 };
 
-    bco::animation_group     gpLeftInnerDoor_    {   { bm::main::LGDoorPI_id },
+    bco::AnimationGroup     gpLeftInnerDoor_    {   { bm::main::LGDoorPI_id },
                                                     bm::main::LGDoorAxisPIA_loc, bm::main::LGDoorAxisPIF_loc,
                                                     (100 * RAD),
                                                     0.0, 0.3
                                                 };
 
-    bco::animation_group     gpLeftGearUpper_    {   { bm::main::LGLArm_id },
+    bco::AnimationGroup     gpLeftGearUpper_    {   { bm::main::LGLArm_id },
                                                     bm::main::LGCrossAxisPA_loc, bm::main::LGCrossAxisPF_loc,
                                                     (-90 * RAD),
                                                     0.2, 1.0
                                                 };
 
-    bco::animation_group     gpLeftGearLower_    {   { bm::main::LGLFork_id,
+    bco::AnimationGroup     gpLeftGearLower_    {   { bm::main::LGLFork_id,
                                                       bm::main::LGLWheel1_id,
                                                       bm::main::LGLWheel2_id,
                                                       bm::main::LGLWheel3_id },
@@ -134,25 +134,25 @@ private:
                                                     0.5, 0.8
                                                 };
 
-    bco::animation_group     gpRightOuterDoor_   {   { bm::main::LGDoorSO_id },
+    bco::AnimationGroup     gpRightOuterDoor_   {   { bm::main::LGDoorSO_id },
                                                     bm::main::LGDoorAxisSOA_loc, bm::main::LGDoorAxisSOF_loc,
                                                     (100 * RAD),
                                                     0.2, 1.0
                                                 };
 
-    bco::animation_group     gpRightInnerDoor_   {   { bm::main::LGDoorSI_id },
+    bco::AnimationGroup     gpRightInnerDoor_   {   { bm::main::LGDoorSI_id },
                                                     bm::main::LGDoorAxisSIA_loc, bm::main::LGDoorAxisSIF_loc,
                                                     (-100 * RAD),
                                                     0.0, 0.3
                                                 };
 
-    bco::animation_group     gpRightGearUpper_   {   { bm::main::LGRArm_id },
+    bco::AnimationGroup     gpRightGearUpper_   {   { bm::main::LGRArm_id },
                                                     bm::main::LGCrossAxisSA_loc, bm::main::LGCrossAxisSF_loc,
                                                     (90 * RAD),
                                                     0.2, 1.0
                                                 };
 
-    bco::animation_group     gpRightGearLower_   {   { bm::main::LGRFork_id, 
+    bco::AnimationGroup     gpRightGearLower_   {   { bm::main::LGRFork_id, 
                                                       bm::main::LGRWheel1_id, 
                                                       bm::main::LGRWheel2_id, 
                                                       bm::main::LGRWheel3_id },

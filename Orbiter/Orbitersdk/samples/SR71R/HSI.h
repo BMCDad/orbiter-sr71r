@@ -28,8 +28,8 @@
 namespace bco = bc_orbiter;
 
 class HSI :
-	public bco::vessel_component,
-	public bco::post_step {
+	public bco::VesselComponent,
+	public bco::HandlesPostStep {
 
 public:
 
@@ -59,7 +59,7 @@ public:
 	~HSI() {}
 
 	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		double		yaw			= 0.0;
 		double		rotHdg		= 0.0;
 		double		rotCrs		= 0.0;

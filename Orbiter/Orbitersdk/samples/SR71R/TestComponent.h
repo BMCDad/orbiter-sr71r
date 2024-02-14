@@ -27,7 +27,7 @@ class VESSEL3;
 /** RCSMode
 */
 
-class TestComponent : public bco::vessel_component
+class TestComponent : public bco::VesselComponent
 {
 public:
 	TestComponent() :

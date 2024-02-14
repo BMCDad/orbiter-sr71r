@@ -23,19 +23,19 @@
 #include "Canopy.h"
 #include "SR71r_mesh.h"
 
-Canopy::Canopy(bco::power_provider& pwr, bco::vessel& vessel) :
+Canopy::Canopy(bco::PowerProvider& pwr, bco::vessel& vessel) :
     power_(pwr)
 { 
-    power_.attach_consumer(this);
+    power_.AttachConsumer(this);
     vessel.AddControl(&switchOpen_);
     vessel.AddControl(&switchPower_);
     vessel.AddControl(&status_);
 }
 
-void Canopy::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void Canopy::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
-        animCanopy_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
+        animCanopy_.Step(switchOpen_.IsOn() ? 1.0 : 0.0, simdt);
     }
     /*
         off     - no power OR closed
@@ -43,7 +43,7 @@ void Canopy::handle_post_step(bco::vessel& vessel, double simt, double simdt, do
         on      - yes power AND open
     */
     auto status = bco::status_display::status::off;
-    if (power_.volts_available() > MIN_VOLTS) {
+    if (power_.VoltsAvailable() > MIN_VOLTS) {
         if ((animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0)) {
             status = bco::status_display::status::warn;
         }
@@ -56,7 +56,7 @@ void Canopy::handle_post_step(bco::vessel& vessel, double simt, double simdt, do
     status_.set_state(status);
 }
 
-bool Canopy::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool Canopy::HandleLoadState(bco::vessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchPower_;
@@ -66,7 +66,7 @@ bool Canopy::handle_load_state(bco::vessel& vessel, const std::string& line)
     return true;
 }
 
-std::string Canopy::handle_save_state(bco::vessel& vessel)
+std::string Canopy::HandleSaveState(bco::vessel& vessel)
 {
     std::ostringstream os;
     os << switchPower_ << " " << switchOpen_ << " " << animCanopy_;
@@ -74,7 +74,7 @@ std::string Canopy::handle_save_state(bco::vessel& vessel)
 }
 
 
-void Canopy::handle_set_class_caps(bco::vessel& vessel)
+void Canopy::HandleSetClassCaps(bco::vessel& vessel)
 {
     auto vcIdx = vessel.GetVCMeshIndex();
     auto mIdx = vessel.GetMainMeshIndex();

@@ -21,7 +21,7 @@
 #include "SR71r_mesh.h"
 
 
-FuelCell::FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumable& lox, bco::consumable& hydro) :
+FuelCell::FuelCell(bco::PowerProvider& pwr, bco::vessel& vessel, bco::Consumable& lox, bco::Consumable& hydro) :
 	power_(pwr),
 	lox_(lox),
 	hydro_(hydro),
@@ -31,7 +31,7 @@ FuelCell::FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumabl
 	vessel.AddControl(&lightAvailable_);
 }
 
-void FuelCell::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void FuelCell::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	if (!IsPowered())
 	{
@@ -39,17 +39,17 @@ void FuelCell::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 	}
 	else
 	{
-		auto ampFac = power_.amp_load();
+		auto ampFac = power_.AmpLoad();
 
-		auto isLOX = lox_.level() > 0.0;
-		auto isHYD = hydro_.level() > 0.0;
+		auto isLOX = lox_.Level() > 0.0;
+		auto isHYD = hydro_.Level() > 0.0;
 
 		if (isLOX) {
-			lox_.draw(OXYGEN_BURN_RATE_PER_SEC_100A * ampFac);
+			lox_.Draw(OXYGEN_BURN_RATE_PER_SEC_100A * ampFac);
 		}
 
 		if (isHYD) {
-			hydro_.draw(HYDROGEN_BURN_RATE_PER_SEC_100A * ampFac);
+			hydro_.Draw(HYDROGEN_BURN_RATE_PER_SEC_100A * ampFac);
 		}
 
 		SetIsFuelCellPowerAvailable(isLOX && isHYD);
@@ -58,14 +58,14 @@ void FuelCell::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 	sigAvailPower_.fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
 }
 
-bool FuelCell::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool FuelCell::HandleLoadState(bco::vessel& vessel, const std::string& line)
 {
 	std::istringstream in(line);
 	in >> switchEnabled_;
 	return true;
 }
 
-std::string FuelCell::handle_save_state(bco::vessel& vessel)
+std::string FuelCell::HandleSaveState(bco::vessel& vessel)
 {
 	std::ostringstream os;
 	os << switchEnabled_;

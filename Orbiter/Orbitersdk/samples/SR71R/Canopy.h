@@ -61,50 +61,50 @@ on_off_input (canopy open):
 :slot - has power
 */
 class Canopy : 
-      public bco::vessel_component
-    , public bco::set_class_caps
-    , public bco::post_step
-    , public bco::power_consumer
-    , public bco::manage_state
+      public bco::VesselComponent
+    , public bco::HandlesSetClassCaps
+    , public bco::HandlesPostStep
+    , public bco::PowerConsumer
+    , public bco::HandlesState
 {
 public:
-    Canopy(bco::power_provider& pwr, bco::vessel& vessel);
+    Canopy(bco::PowerProvider& pwr, bco::vessel& vessel);
 
     // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) override;
+    void HandleSetClassCaps(bco::vessel& vessel) override;
 
     // power_consumer
-    double amp_draw() const override { return CanopyIsMoving() ? 4.0 : 0.0; }
+    double AmpDraw() const override { return CanopyIsMoving() ? 4.0 : 0.0; }
 
     // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
 
     // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::vessel& vessel) override;
 
 private:
     const double MIN_VOLTS = 20.0;
     
-    bco::power_provider& power_;
+    bco::PowerProvider& power_;
     
     bool IsPowered() const { 
         return 
-            (power_.volts_available() > MIN_VOLTS) &&
-            switchPower_.is_on();
+            (power_.VoltsAvailable() > MIN_VOLTS) &&
+            switchPower_.IsOn();
     }
     
     bool CanopyIsMoving() const { 
         return 
             IsPowered() && 
-            switchOpen_.is_on() &&
+            switchOpen_.IsOn() &&
             (animCanopy_.GetState() > 0.0) && 
             (animCanopy_.GetState() < 1.0); 
     }
 
     bco::animation_target		    animCanopy_     { 0.2 };
 
-    bco::animation_group     gpCanopy_       { { bm::main::CanopyFO_id,
+    bco::AnimationGroup     gpCanopy_       { { bm::main::CanopyFO_id,
                                                 bm::main::ForwardCanopyWindow_id,
                                                 bm::main::CanopyFI_id,
 												bm::main::CanopyWindowSI_id,
@@ -114,7 +114,7 @@ private:
                                                 0, 1
                                             };
 
-    bco::animation_group     gpCanopyVC_     { { bm::vc::CanopyFI_id,
+    bco::AnimationGroup     gpCanopyVC_     { { bm::vc::CanopyFI_id,
                                                 bm::vc::CanopyFO_id,
                                                 bm::vc::CanopyWindowInsideLeft_id,
                                                 bm::vc::CanopyWindowSI_id },

@@ -21,24 +21,24 @@
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
 
-HoverEngines::HoverEngines(bco::power_provider& pwr, bco::vessel& vessel) :
+HoverEngines::HoverEngines(bco::PowerProvider& pwr, bco::vessel& vessel) :
     power_(pwr),
     vessel_(vessel)
 {
-    power_.attach_consumer(this);
+    power_.AttachConsumer(this);
     animHoverDoors_.SetTargetFunction([this] { EnableHover(true); });
     vessel.AddControl(&switchOpen_);
     vessel.AddControl(&status_);
 }
 
-void HoverEngines::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void HoverEngines::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
-        animHoverDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
+        animHoverDoors_.Step(switchOpen_.IsOn() ? 1.0 : 0.0, simdt);
     }
 
     auto status = bco::status_display::status::off;
-    if (power_.volts_available() > MIN_VOLTS) {
+    if (power_.VoltsAvailable() > MIN_VOLTS) {
         if ((animHoverDoors_.GetState() > 0.0) && (animHoverDoors_.GetState() < 1.0)) {
             status = bco::status_display::status::warn;
         }
@@ -51,7 +51,7 @@ void HoverEngines::handle_post_step(bco::vessel& vessel, double simt, double sim
     status_.set_state(status);
 }
 
-void HoverEngines::handle_set_class_caps(bco::vessel& vessel)
+void HoverEngines::HandleSetClassCaps(bco::vessel& vessel)
 {
     auto vcIdx = vessel.GetVCMeshIndex();
     auto mIdx = vessel.GetMainMeshIndex();
@@ -108,7 +108,7 @@ void HoverEngines::handle_set_class_caps(bco::vessel& vessel)
     vessel.AddVesselAnimationComponent(aid, mIdx, &gpRight_);
 }
 
-bool HoverEngines::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool HoverEngines::HandleLoadState(bco::vessel& vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchOpen_ >> animHoverDoors_;
@@ -116,7 +116,7 @@ bool HoverEngines::handle_load_state(bco::vessel& vessel, const std::string& lin
     return true;
 }
 
-std::string HoverEngines::handle_save_state(bco::vessel& vessel)
+std::string HoverEngines::HandleSaveState(bco::vessel& vessel)
 {
     std::ostringstream os;
     os << switchOpen_ << " " << animHoverDoors_;
@@ -142,7 +142,7 @@ void HoverEngines::EnableHover(bool isEnabled)
     }
 }
 
-void HoverEngines::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void HoverEngines::HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 

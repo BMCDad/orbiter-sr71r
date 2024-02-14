@@ -27,9 +27,9 @@ namespace bc_orbiter {
 	A four state status display control intended for the status display panel.
 	**/
 	class status_display :
-		public control
-		, public vc_event_target
-		, public panel_event_target
+		public Control
+		, public VCEventTarget
+		, public PanelEventTarget
 	{
 	public:
 		enum status {
@@ -46,7 +46,7 @@ namespace bc_orbiter {
 			, const NTVERTEX* pnlVerts
 			, double offset
 		) :
-			control(-1)
+			Control(-1)
 			, vcGroupId_(vcGroupId)
 			, vcVerts_(vcVerts)
 			, pnlGroupId_(pnlGroupId)
@@ -55,7 +55,7 @@ namespace bc_orbiter {
 		{
 		}
 
-		void on_vc_redraw(DEVMESHHANDLE vcMesh) override {
+		void OnVCRedraw(DEVMESHHANDLE vcMesh) override {
 			NTVERTEX* delta = new NTVERTEX[4];
 
 			TransformUV2d(
@@ -75,18 +75,18 @@ namespace bc_orbiter {
 			delete[] delta;
 		}
 
-		void on_panel_redraw(MESHHANDLE meshPanel) override {
+		void OnPanelRedraw(MESHHANDLE meshPanel) override {
 			DrawPanelOffset(meshPanel, pnlGroupId_, pnlVerts_, offset_ * state_);
 		}
 
-		int vc_mouse_flags() { return PANEL_MOUSE_IGNORE; }
-		int vc_redraw_flags() { return PANEL_REDRAW_USER; }
-		int panel_mouse_flags() { return PANEL_MOUSE_IGNORE; }
-		int panel_redraw_flags() { return PANEL_REDRAW_USER; }
+		int VCMouseFlags() { return PANEL_MOUSE_IGNORE; }
+		int VCRedrawFlags() { return PANEL_REDRAW_USER; }
+		int PanelMouseFlags() { return PANEL_MOUSE_IGNORE; }
+		int PanelRedrawFlags() { return PANEL_REDRAW_USER; }
 
 		void set_state(status s) {
 			state_ = s;
-			oapiTriggerRedrawArea(0, 0, get_id());
+			oapiTriggerRedrawArea(0, 0, GetId());
 		}
 
 	private:

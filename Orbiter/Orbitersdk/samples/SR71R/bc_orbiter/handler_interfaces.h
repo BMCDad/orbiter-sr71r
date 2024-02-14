@@ -23,94 +23,99 @@
 
 namespace bc_orbiter {
 
-	class vessel;		// forward declare.
+class vessel;		// forward declare.
 
-	/**
-	vessel_component
-	Every component managed by vessel must derive from vessel_component.
-	*/
-	struct vessel_component
-	{
-	public:
-		virtual ~vessel_component() = default;
-	};
+/**
+  VesselComponent
+  Every component managed by vessel must derive from vessel_component.
+*/
+class VesselComponent {
+ public:
+  virtual ~VesselComponent() = default;
+};
 
-	/**
-	set_class_caps
-	Indicates the class participates in setClassCaps.  The class must implement the
-	call void handle_set_class_caps(vessel&).
-	*/
-	struct set_class_caps {
-		virtual void handle_set_class_caps(vessel& vessel) = 0;
-		virtual ~set_class_caps() {};
-	};
+/**
+  HandlesSetClassCaps
+  Indicates the class participates in setClassCaps.  The class must implement the
+  call void handle_set_class_caps(vessel&).
+*/
+class HandlesSetClassCaps {
+ public:
+  virtual void HandleSetClassCaps(vessel& vessel) = 0;
+  virtual ~HandlesSetClassCaps() {};
+};
 
-	/**
-	post_step
-	Indicates the class participates in postStep callbacks.  The class must implement
-	the post step handler.
-	*/
-	struct post_step {
-		virtual void handle_post_step(vessel& vessel, double simt, double simdt, double mjd) = 0;
-		virtual ~post_step() {};
-	};
+/**
+  post_step
+  Indicates the class participates in postStep callbacks.  The class must implement
+  the post step handler.
+*/
+class HandlesPostStep {
+ public:
+  virtual void HandlePostStep(vessel& vessel, double simt, double simdt, double mjd) = 0;
+  virtual ~HandlesPostStep() {};
+};
 
-	/**
-	draw_hud
-	Indicates the class participates in clbkDrawHud.  The class must implement the call
-	handle_draw_hud(vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp).
-	*/
-	struct draw_hud {
-		virtual void handle_draw_hud(vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) = 0;
-		virtual ~draw_hud() {};
-	};
+/**
+  draw_hud
+  Indicates the class participates in clbkDrawHud.  The class must implement the call
+  handle_draw_hud(vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp).
+*/
+class HandlesDrawHud {
+ public:
+  virtual void HandleDrawHUD(vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) = 0;
+  virtual ~HandlesDrawHud() {};
+};
 
-	/**
-	manage_state
-	Indicates the class can provide its internal state as a string, and that it can take that string back
-	in order to set the internal state.  The string provided should be appropriate for use in an Orbiter
-	config file, but does not provide the key, which will be provided by whatever is actually managing the config.
-	*/
-	struct manage_state {
-		/**
-		handle_load_state
-		param line A single line of text representing the state.
-		return true if the state was succesfully restored.
-		*/
-		virtual bool handle_load_state(vessel& vessel, const std::string& line) = 0;
+/**
+  manage_state
+  Indicates the class can provide its internal state as a string, and that it can take that string back
+  in order to set the internal state.  The string provided should be appropriate for use in an Orbiter
+  config file, but does not provide the key, which will be provided by whatever is actually managing the config.
+*/
+class HandlesState {
+ public:
+  /**
+    handle_load_state
+    param line A single line of text representing the state.
+    return true if the state was succesfully restored.
+  */
+  virtual bool HandleLoadState(vessel& vessel, const std::string& line) = 0;
 
-		/**
-		handle_save
-		Return a single string that represents the internal state of the component.
-				*/
-		virtual std::string handle_save_state(vessel& vessel) = 0;
+  /**
+    handle_save
+    Return a single string that represents the internal state of the component.
+  */
+  virtual std::string HandleSaveState(vessel& vessel) = 0;
 
-		virtual ~manage_state() {};
-	};
+  virtual ~HandlesState() {};
+};
 
-	/**
-	load_vc
-	Indicates the class has special handling when loading a virtual cockpit.
-	*/
-	struct load_vc {
-		/**
-		handle_load_vc
-		Do work required to setup vc components.
-		*/
-		virtual bool handle_load_vc(vessel& vessel, int vcid) = 0;
-		virtual bool handle_redraw_vc(vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
-		virtual bool handle_mouse_vc(vessel& vessel, int id, int event) { return false; }
-		virtual ~load_vc() {};
-	};
+/**
+  load_vc
+  Indicates the class has special handling when loading a virtual cockpit.
+*/
+class HandlesVCLoading {
+ public:
+  /**
+    handle_load_vc
+    Do work required to setup vc components.
+  */
+  virtual bool HandleLoacVC(vessel& vessel, int vcid) = 0;
+  virtual bool HandleRedrawVC(vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
+  virtual bool HandleMouseVC(vessel& vessel, int id, int event) { return false; }
+  virtual ~HandlesVCLoading() {};
+};
 
-	/**
-	load_panel
-	Indicates the class has special handling when load a 2D panel.
-	*/
-	struct load_panel {
-		virtual bool handle_load_panel(vessel& vessel, int id, PANELHANDLE hPanel) = 0;
-		virtual bool handle_redraw_panel(vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
-		virtual bool handle_mouse_panel(vessel& vessel, int id, int event) { return false; }
-		virtual ~load_panel() {};
-	};
+/**
+  load_panel
+  Indicates the class has special handling when load a 2D panel.
+*/
+class HandlesPanelLoading {
+ public:
+  virtual bool HandleLoadPanel(vessel& vessel, int id, PANELHANDLE hPanel) = 0;
+  virtual bool HandleRedrawPanel(vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
+  virtual bool HandleMousePanel(vessel& vessel, int id, int event) { return false; }
+  virtual ~HandlesPanelLoading() {};
+};
 };

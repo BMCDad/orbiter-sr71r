@@ -51,32 +51,32 @@ class VESSEL3;
 	None.
 */
 class APU : 
-	public bco::vessel_component,
-	public bco::post_step,
-	public bco::power_consumer,
-	public bco::manage_state,
-	public bco::hydraulic_provider
+	public bco::VesselComponent,
+	public bco::HandlesPostStep,
+	public bco::PowerConsumer,
+	public bco::HandlesState,
+	public bco::HydraulicProvider
 {
 public:
-	APU(bco::vessel& vessel, bco::power_provider& pwr) :
+	APU(bco::vessel& vessel, bco::PowerProvider& pwr) :
 		power_(pwr)
 	{
-		power_.attach_consumer(this);
+		power_.AttachConsumer(this);
 		vessel.AddControl(&switchEnabled_);
 		vessel.AddControl(&gaugeAPULevel_);
 		vessel.AddControl(&status_);
 	}
 
-	double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
+	double AmpDraw() const override { return IsPowered() ? 5.0 : 0.0; }
 
 	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override {
+	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override {
 		std::stringstream in(line);
 		in >> switchEnabled_;
 		return true;
 	}
 
-	std::string handle_save_state(bco::vessel& vessel) override
+	std::string HandleSaveState(bco::vessel& vessel) override
 	{
 		std::ostringstream os;
 		os << switchEnabled_;
@@ -84,10 +84,10 @@ public:
 	}
 
 	// haudralic_provider
-	double level() const override { return level_; }
+	double Level() const override { return level_; }
 
 	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		bool hasFuel = false;
 
 		if (!IsPowered()) {
@@ -119,12 +119,12 @@ public:
 	bco::slot<double>&		FuelLevelSlot()			{ return slotFuelLevel_; }
 
 private:
-	bco::power_provider&	power_;
+	bco::PowerProvider&	power_;
 
 	bool IsPowered() const {
 		return 
-			switchEnabled_.is_on() &&
-			(power_.volts_available() > 24.0);
+			switchEnabled_.IsOn() &&
+			(power_.VoltsAvailable() > 24.0);
 	}
 
 	double					level_{ 0.0 };

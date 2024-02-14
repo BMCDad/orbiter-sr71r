@@ -118,11 +118,13 @@
     <ClInclude Include="Altimeter.h" />
     <ClInclude Include="APU.h" />
     <ClInclude Include="AvionBase.h" />
-    <ClInclude Include="bc_orbiter\Animation.h" />
+    <ClInclude Include="bc_orbiter\animation.h" />
+    <ClInclude Include="bc_orbiter\on_off_panel_display.h" />
     <ClInclude Include="bc_orbiter\panel_display.h" />
     <ClInclude Include="bc_orbiter\pid_altitude.h" />
+    <ClInclude Include="bc_orbiter\on_off_vc_display.h" />
     <ClInclude Include="bc_orbiter\vessel.h" />
-    <ClInclude Include="bc_orbiter\Component.h" />
+    <ClInclude Include="bc_orbiter\component.h" />
     <ClInclude Include="bc_orbiter\control.h" />
     <ClInclude Include="bc_orbiter\flat_roll.h" />
     <ClInclude Include="bc_orbiter\generic_tank.h" />
@@ -160,7 +162,7 @@
     <ClInclude Include="PowerSystem.h" />
     <ClInclude Include="PropulsionController.h" />
     <ClInclude Include="LiftCoeff.h" />
-    <ClInclude Include="RCSSystem.h" />
+    <ClInclude Include="reaction_control_system.h" />
     <ClInclude Include="RightMfd.h" />
     <ClInclude Include="ShipMets.h" />
     <ClInclude Include="SR71r_mesh.h" />
@@ -188,7 +190,7 @@
     <ClCompile Include="PowerSystem.cpp" />
     <ClCompile Include="PropulsionController.cpp" />
     <ClCompile Include="LiftCoeff.cpp" />
-    <ClCompile Include="RCSSystem.cpp" />
+    <ClCompile Include="reaction_control_system.cpp" />
     <ClCompile Include="RetroEngines.cpp" />
     <ClCompile Include="RightMfd.cpp" />
     <ClCompile Include="Shutters.cpp" />

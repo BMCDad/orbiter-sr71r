@@ -28,8 +28,8 @@
 namespace bco = bc_orbiter;
 
 class Altimeter :
-	public bco::vessel_component,
-	public bco::post_step {
+	public bco::VesselComponent,
+	public bco::HandlesPostStep {
 
 public:
 
@@ -53,7 +53,7 @@ public:
 
 
 	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override {
 		double altFeet = 0.0;
 		if (avionics_.IsAeroActive()) {
 			auto altMode = avionics_.IsAeroAtmoMode() ? AltitudeMode::ALTMODE_GROUND : AltitudeMode::ALTMODE_MEANRAD;

@@ -25,27 +25,27 @@ namespace bc_orbiter
 {
 	class MFDBase : 
 		public Component,
-		public vessel_component,
-		public power_consumer
+		public VesselComponent,
+		public PowerConsumer
 	{
 	public:
-		MFDBase(power_provider& pwr, vessel* vessel, int mfdId, double amps) :
+		MFDBase(PowerProvider& pwr, vessel* vessel, int mfdId, double amps) :
 			Component(vessel),
 			power_(pwr),
 			mfdId_(mfdId),
 			vessel_(*vessel)
 		{
-			power_.attach_consumer(this);
+			power_.AttachConsumer(this);
 		}
 
 		// power_consumer
-		double amp_draw() const { 
+		double AmpDraw() const override { 
 			return 
 				(IsPowered() && (oapiGetMFDMode(mfdId_) != MFD_NONE)) 
 				? 4.0 : 0.0; 
 		}
 
-		void on_change(double v) {
+		void OnChange(double v) {
 			if (!IsPowered()) { oapiOpenMFD(MFD_NONE, mfdId_); }
 		}
 
@@ -72,11 +72,11 @@ namespace bc_orbiter
 //		virtual double CurrentDraw() override;
 
 	protected:
-		power_provider& power_;
+		PowerProvider& power_;
 		vessel& vessel_;
 
 		bool IsPowered() const { 
-			return (power_.volts_available() > 24.0);
+			return (power_.VoltsAvailable() > 24.0);
 		} // power_.volts_available() > 24.0; }
 
 		void Update();

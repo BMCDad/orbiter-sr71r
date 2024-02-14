@@ -48,11 +48,11 @@ namespace bc_orbiter {
 	that can be reused for many control. A bank of switches for example.
 	*/
 	class on_off_input :
-		  public control
-		, public vc_animation
-		, public vc_event_target
-		, public panel_event_target
-		, public one_way_switch
+		  public Control
+		, public VCAnimation
+		, public VCEventTarget
+		, public PanelEventTarget
+		, public OneWaySwitch
 		, public signaller
 	{
 	public:
@@ -78,47 +78,46 @@ namespace bc_orbiter {
 			animVC_(vcData_.animSpeed)
 		{ }
 
-		bool IsOn() const { return state_; }
-		bool is_on() const override { return state_; }
+		bool IsOn() const override { return state_; }
 
 		// vc_animation
-		animation_group*		vc_animation_group()		override { return &vcAnimGroup_; }
-		double				vc_animation_speed() const	override { return vcData_.animSpeed; }
-		double vc_step(double simdt) override {
+		AnimationGroup*		VCAnimationGroup()		override { return &vcAnimGroup_; }
+		double				VCAnimationSpeed() const	override { return vcData_.animSpeed; }
+		double VCStep(double simdt) override {
 			animVC_.Step(state_ ? 1.0 : 0.0, simdt);
 			return animVC_.GetState();
 		}
 
 		// vc_event_target
-		VECTOR3				vc_event_location()			override { return vcAnimGroup_.location_; }
-		double				vc_event_radius()			override { return vcData_.hitRadius; }
-		int					vc_mouse_flags()			override { return vcData_.vcMouseFlags; }
-		int					vc_redraw_flags()			override { return vcData_.vcRedrawFlags; }
+		VECTOR3				VCEventLocation()			override { return vcAnimGroup_.Location(); }
+		double				VCEventRadius()			override { return vcData_.hitRadius; }
+		int					VCMouseFlags()			override { return vcData_.vcMouseFlags; }
+		int					VCRedrawFlags()			override { return vcData_.vcRedrawFlags; }
 
 		// panel_event_target
-		RECT				panel_rect()				override { return pnlRect_; }
-		int					panel_mouse_flags()			override { return vcData_.pnlMouseFlags; }
-		int					panel_redraw_flags()		override { return vcData_.pnlRedrawFlags; }
+		RECT				PanelRect()				override { return pnlRect_; }
+		int					PanelMouseFlags()			override { return vcData_.pnlMouseFlags; }
+		int					PanelRedrawFlags()		override { return vcData_.pnlRedrawFlags; }
 
-		void on_panel_redraw(MESHHANDLE meshPanel) override {
+		void OnPanelRedraw(MESHHANDLE meshPanel) override {
 			DrawPanelOnOff(meshPanel, pnlGroup_, pnlVerts_, IsOn(), pnlOffset_);
 		}
 
 		// event_target
-		bool on_event(int id, int event) override {
+		bool OnEvent(int id, int event) override {
 			state_ = !state_;
 			fire();
 			return true;
 		}
 
-		void attach_on_change(const std::function<void()>& func) override {
+		void AttachOnChange(const std::function<void()>& func) override {
 			attach(func);
 		}
 
 		void toggle_state() {
 			state_ = !state_;
 			fire();
-			oapiTriggerRedrawArea(0, 0, get_id());
+			oapiTriggerRedrawArea(0, 0, GetId());
 		}
 
 		friend std::istream& operator>>(std::istream& input, on_off_input& obj) {
@@ -139,7 +138,7 @@ namespace bc_orbiter {
 		}
 
 	private:
-		animation_group		vcAnimGroup_;
+		AnimationGroup		vcAnimGroup_;
 		bool				state_{ false };
 		on_off_input_meta	vcData_;
 		UINT				pnlGroup_;

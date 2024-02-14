@@ -28,9 +28,9 @@ namespace bc_orbiter {
     * The texture transforms in the 'v' or 'y' axis.  This can be parameterized if needed.
     */
     class flat_roll :
-          public control
-        , public vc_tex_animation
-        , public panel_animation {
+          public Control
+        , public VCTextureAnimation
+        , public PanelAnimation {
     public:
         flat_roll(
               const UINT vcGroupId
@@ -39,7 +39,7 @@ namespace bc_orbiter {
             , const NTVERTEX* pnlVerts
             , const double texOffset)
             :
-              control(0)
+              Control(0)
             , vcGroup_(vcGroupId)
             , vcVerts_(vcVerts)
             , pnlGroup_(pnlGroupId)
@@ -47,14 +47,14 @@ namespace bc_orbiter {
             , texOffset_(texOffset)
         { }
 
-        void vc_step(DEVMESHHANDLE mesh, double simdt) override {
+        void VCStep(DEVMESHHANDLE mesh, double simdt) override {
             anim_.Step(target_state_, simdt);
             vecTrans_.y = texOffset_ * anim_.GetState();
             TransformUV<DEVMESHHANDLE>(mesh, vcGroup_, vcVerts_, 0.0, vecTrans_);
         }
 
         // panel_animation
-        void panel_step(MESHHANDLE mesh, double simdt) override {
+        void PanelStep(MESHHANDLE mesh, double simdt) override {
             anim_.Step(target_state_, simdt);
             vecTrans_.y = texOffset_ * anim_.GetState();
             TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, 0.0, vecTrans_);
