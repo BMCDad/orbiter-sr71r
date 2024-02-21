@@ -16,63 +16,50 @@
 
 #pragma once
 
-#include "Control.h"
+#include "control.h"
+#include "signals.h"
 
 namespace bc_orbiter {
 
-	/**
-	* simple_event
-	* Provides a simple event only control.  No state is retained, and no UI change is made.
-	* For the VC, a VECTOR position and hit radius are required.  For panel, a RECT is required.
-	* The simple event is template driven and can specify the type of signal to fire, and the data fired.
-	* This can be an id or data structure.
-	*/
-	template<typename T=bool>
-	class simple_event :
-		public Control,
-		public VCEventTarget,
-		public PanelEventTarget,
-		public signaller 
-	{
-	public:
-		simple_event(
-			const VECTOR3& vcLocation,
-			double vcRadius,
-			const RECT& pnlRect,
-			T data = T()
-		) :
-			Control(-1),
-			vcLocation_(vcLocation),
-			vcRadius_(vcRadius),
-			pnlRect_(pnlRect),
-			data_(data)
-		{ }
+/**
+* simple_event
+* Provides a simple event only control.  No state is retained, and no UI change is made.
+* For the VC, a VECTOR position and hit radius are required.  For panel, a RECT is required.
+* The simple event is template driven and can specify the type of signal to fire, and the data fired.
+* This can be an id or data structure.
+*/
+template<typename T=bool>
 
-		// vc_event_target
-		VECTOR3				VCEventLocation()			override { return vcLocation_; }
-		double				VCEventRadius()			override { return vcRadius_; }
-		int					VCMouseFlags()			override { return PANEL_MOUSE_LBDOWN; }
-		int					VCRedrawFlags()			override { return PANEL_REDRAW_NEVER; }
+class SimpleEvent : public Control, public VCEventTarget, public PanelEventTarget, public Signaller {
+ public:
+  SimpleEvent(const VECTOR3& vcLocation, double vcRadius, const RECT& pnlRect, T data = T()) :
+    Control(-1), vcLocation_(vcLocation), vcRadius_(vcRadius), pnlRect_(pnlRect), data_(data) { }
 
-		// panel_event_target
-		RECT				PanelRect()				override { return pnlRect_; }
-		int					PanelMouseFlags()			override { return PANEL_MOUSE_LBDOWN; }
-		int					PanelRedrawFlags()		override { return PANEL_REDRAW_NEVER; }
+  // vc_event_target
+  VECTOR3 VCEventLocation() override { return vcLocation_; }
+  double VCEventRadius() override { return vcRadius_; }
+  int VCMouseFlags() override { return PANEL_MOUSE_LBDOWN; }
+  int VCRedrawFlags() override { return PANEL_REDRAW_NEVER; }
 
-		// event_target
-		bool OnEvent(int id, int event) override {
-			signal_.fire(data_);		// Remove eventually
-			fire();
-			return true;
-		}
+  // panel_event_target
+  RECT PanelRect() override { return pnlRect_; }
+  int PanelMouseFlags() override { return PANEL_MOUSE_LBDOWN; }
+  int PanelRedrawFlags() override { return PANEL_REDRAW_NEVER; }
 
-		// signal
-		signal<T>& Signal() { return signal_; }
-	private:
-		T				data_;
-		VECTOR3			vcLocation_;
-		double			vcRadius_;
-		RECT			pnlRect_;
-		signal<T>		signal_;
-	};
+  // event_target
+  bool OnEvent(int id, int event) override {
+//    signal_.Fire(data_);		// Remove eventually
+    Fire();
+    return true;
+  }
+
+//  Signal<T>& GetSignal() { return signal_; }
+ private:
+  T data_;
+  VECTOR3 vcLocation_;
+  double vcRadius_;
+  RECT pnlRect_;
+//  bc_orbiter::Signal<T> signal_;
+//  Signal<T> signal_;
+};
 }

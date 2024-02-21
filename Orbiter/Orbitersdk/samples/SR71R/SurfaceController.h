@@ -53,18 +53,18 @@ class SurfaceController :
 	, public bco::HandlesPostStep
 {
 public:
-	SurfaceController(bco::vessel& vessel, bco::HydraulicProvider& apu);
+	SurfaceController(bco::Vessel& Vessel, bco::HydraulicProvider& apu);
 
 	// set_class_caps
-	void HandleSetClassCaps(bco::vessel& vessel) override;
+	void HandleSetClassCaps(bco::Vessel& Vessel) override;
 
 	// post_step
-	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+	void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override;
 
 	void SetRudderLevel(double Level);
 
 private:
-	bco::vessel&	vessel_;
+	bco::Vessel&	vessel_;
 	void EnableControls();
 	void DisableControls();
 

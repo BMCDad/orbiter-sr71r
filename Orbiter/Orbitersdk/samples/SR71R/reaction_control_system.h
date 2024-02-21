@@ -27,7 +27,7 @@ class VESSEL3;
 
 class ReactionControlSystem : public bc_orbiter::VesselComponent, public bc_orbiter::PowerConsumer {
  public:
-  ReactionControlSystem(bc_orbiter::vessel& vessel, bc_orbiter::PowerProvider& pwr);
+  ReactionControlSystem(bc_orbiter::Vessel& Vessel, bc_orbiter::PowerProvider& pwr);
 
   // Callback:
   void OnRCSMode(int mode);
@@ -42,16 +42,16 @@ class ReactionControlSystem : public bc_orbiter::VesselComponent, public bc_orbi
 
   const double kTexOffset = 0.0352;
 
-  bc_orbiter::vessel& vessel_;
+  bc_orbiter::Vessel& vessel_;
   bc_orbiter::PowerProvider& power_;
 
-  bc_orbiter::signal<bool> sig_linear_;
-  bc_orbiter::simple_event<> btnLinear_ { bm::vc::vcRCSLin_loc, 0.01, bm::pnl::pnlRCSLin_RC };
+  bc_orbiter::Signal<bool> sig_linear_;
+  bc_orbiter::SimpleEvent<> btnLinear_ { bm::vc::vcRCSLin_loc, 0.01, bm::pnl::pnlRCSLin_RC };
   bc_orbiter::OnOffPanelDisplay pnl_lightLinear_ { bm::pnl::pnlRCSLin_id, bm::pnl::pnlRCSLin_vrt, kTexOffset, sig_linear_ };
   bc_orbiter::OnOffVCDisplay vc_lightLinear_ { bm::vc::vcRCSLin_id, bm::vc::vcRCSLin_vrt, kTexOffset, sig_linear_ };
 
-  bc_orbiter::signal<bool> sig_rotate_;
-  bc_orbiter::simple_event<> btnRotate_ { bm::vc::vcRCSRot_loc, 0.01, bm::pnl::pnlRCSRot_RC };
+  bc_orbiter::Signal<bool> sig_rotate_;
+  bc_orbiter::SimpleEvent<> btnRotate_ { bm::vc::vcRCSRot_loc, 0.01, bm::pnl::pnlRCSRot_RC };
   bc_orbiter::OnOffPanelDisplay pnl_lightRotate_ { bm::pnl::pnlRCSRot_id, bm::pnl::pnlRCSRot_vrt, kTexOffset, sig_rotate_ };
   bc_orbiter::OnOffVCDisplay vc_lightRotate_ { bm::vc::vcRCSRot_id, bm::vc::vcRCSRot_vrt, kTexOffset, sig_rotate_ };
 };

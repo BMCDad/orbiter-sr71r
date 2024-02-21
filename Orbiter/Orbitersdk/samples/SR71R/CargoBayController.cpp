@@ -22,16 +22,16 @@
 #include "CargoBayController.h"
 #include "SR71r_mesh.h"
 
-CargoBayController::CargoBayController(bco::PowerProvider& pwr, bco::vessel& vessel) :
+CargoBayController::CargoBayController(bco::PowerProvider& pwr, bco::Vessel& Vessel) :
     power_(pwr)
 {
     power_.AttachConsumer(this);
-    vessel.AddControl(&switchOpen_);
-    vessel.AddControl(&switchPower_);
-    vessel.AddControl(&status_);
+    Vessel.AddControl(&switchOpen_);
+    Vessel.AddControl(&switchPower_);
+    Vessel.AddControl(&status_);
 }
 
-void CargoBayController::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
+void CargoBayController::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd)
 {
 	if (IsPowered()) {
         animCargoBayDoors_.Step(switchOpen_.IsOn() ? 1.0 : 0.0, simdt);
@@ -51,29 +51,29 @@ void CargoBayController::HandlePostStep(bco::vessel& vessel, double simt, double
     status_.set_state(status);
 }
 
-bool CargoBayController::HandleLoadState(bco::vessel& vessel, const std::string& line)
+bool CargoBayController::HandleLoadState(bco::Vessel& Vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchPower_ >> switchOpen_ >> animCargoBayDoors_;
-    vessel.SetAnimationState(animCargoBayDoors_);
+    Vessel.SetAnimationState(animCargoBayDoors_);
     return true;
 }
 
-std::string CargoBayController::HandleSaveState(bco::vessel& vessel)
+std::string CargoBayController::HandleSaveState(bco::Vessel& Vessel)
 {
     std::ostringstream os;
     os << switchPower_ << " " << switchOpen_ << " " << animCargoBayDoors_;
     return os.str();
 }
 
-void CargoBayController::HandleSetClassCaps(bco::vessel& vessel)
+void CargoBayController::HandleSetClassCaps(bco::Vessel& Vessel)
 {
-    auto mIdx = vessel.GetMainMeshIndex();
+    auto mIdx = Vessel.GetMainMeshIndex();
 
-    auto id = vessel.CreateVesselAnimation(&animCargoBayDoors_, 0.01);
+    auto id = Vessel.CreateVesselAnimation(&animCargoBayDoors_, 0.01);
     animCargoBayDoors_.VesselId(id);
-    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftFront_);
-    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightFront_);
-    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftMain_);
-    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightMain_);
+    Vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftFront_);
+    Vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightFront_);
+    Vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftMain_);
+    Vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightMain_);
 }

@@ -33,17 +33,17 @@ The state of the UI is control via a slot input.
 class OnOffPanelDisplay : public Control, public PanelEventTarget
 {
   public:
-  OnOffPanelDisplay(const UINT pnlGroupId, const NTVERTEX* pnlVerts, double offset, signal<bool>& sig) : 
+  OnOffPanelDisplay(const UINT pnlGroupId, const NTVERTEX* pnlVerts, double offset, Signal<bool>& sig) : 
       Control(-1),
       pnlGroupId_(pnlGroupId),
       pnlVerts_(pnlVerts),
       offset_(offset),
       sl_state_([&](bool v) { oapiTriggerRedrawArea(0, 0, GetId()); }) {	
-    sig.attach(sl_state_);
+    sig.Attach(sl_state_);
   }
 
   void OnPanelRedraw(MESHHANDLE meshPanel) override {
-    DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, sl_state_.value(), offset_);
+    DrawPanelOnOff(meshPanel, pnlGroupId_, pnlVerts_, sl_state_.Value(), offset_);
   }
 
   int PanelMouseFlags() { return PANEL_MOUSE_IGNORE; }  // visual only, no mouse input.
@@ -53,6 +53,6 @@ class OnOffPanelDisplay : public Control, public PanelEventTarget
   UINT pnlGroupId_;
   const NTVERTEX* pnlVerts_;
   double offset_{ 0.0 };
-  slot<bool> sl_state_;
+  Slot<bool> sl_state_;
 };
 } // namespace bc_orbiter

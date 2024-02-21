@@ -21,7 +21,7 @@
 #include "ShipMets.h"
 
 SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) : 
-	bco::vessel(hvessel, flightmodel),
+	bco::Vessel(hvessel, flightmodel),
 	meshVirtualCockpit_(nullptr)
 {
 	AddComponent(&avionics_);
@@ -51,17 +51,17 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	AddComponent(&surfaceCtrl_);
 
 	// Fuel cell					// A signal can drive more then one slot
-	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
+	bco::Connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
 
-	bco::connect( propulsion_.MainFuelLevelSignal(),		apu_.FuelLevelSlot());
+	bco::Connect( propulsion_.MainFuelLevelSignal(),		apu_.FuelLevelSlot());
 
 	// RCS
 
 	// ...which in turn drive the HSI course and heading
-	bco::connect( avionics_.SetCourseSignal(),				hsi_.SetCourseSlot());
-	bco::connect( avionics_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
-	bco::connect( avionics_.SetHeadingSignal(),				computer_.HeadingSlot());
-	bco::connect( computer_.HeadingSignal(),				avionics_.SetHeadingSlot());
+	bco::Connect( avionics_.SetCourseSignal(),				hsi_.SetCourseSlot());
+	bco::Connect( avionics_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
+	bco::Connect( avionics_.SetHeadingSignal(),				computer_.HeadingSlot());
+	bco::Connect( computer_.HeadingSignal(),				avionics_.SetHeadingSlot());
 			// ...which drives the course and heading needle and wheels.
 }
 

@@ -19,24 +19,24 @@
 #include "HUD.h"
 #include "SR71r_mesh.h"
 
-HUD::HUD(bco::PowerProvider& pwr, bco::vessel& vessel) :
+HUD::HUD(bco::PowerProvider& pwr, bco::Vessel& Vessel) :
     power_(pwr)
 { 
     power_.AttachConsumer(this),
-    vessel.AddControl(&btnLightDocking_);
-    vessel.AddControl(&btnLightSurface_);
-    vessel.AddControl(&btnLightOrbit_);
+    Vessel.AddControl(&btnLightDocking_);
+    Vessel.AddControl(&btnLightSurface_);
+    Vessel.AddControl(&btnLightOrbit_);
     
-    vessel.AddControl(&btnDocking_);
-    vessel.AddControl(&btnSurface_);
-    vessel.AddControl(&btnOrbit_);
+    Vessel.AddControl(&btnDocking_);
+    Vessel.AddControl(&btnSurface_);
+    Vessel.AddControl(&btnOrbit_);
 
-    btnDocking_.attach( [&]() { OnChanged(HUD_DOCKING); });
-    btnOrbit_.attach(   [&]() { OnChanged(HUD_ORBIT); });
-    btnSurface_.attach( [&]() { OnChanged(HUD_SURFACE); });
+    btnDocking_.Attach( [&]() { OnChanged(HUD_DOCKING); });
+    btnOrbit_.Attach(   [&]() { OnChanged(HUD_ORBIT); });
+    btnSurface_.Attach( [&]() { OnChanged(HUD_SURFACE); });
 }
 
-bool HUD::HandleLoacVC(bco::vessel& vessel, int vcid)
+bool HUD::HandleLoacVC(bco::Vessel& Vessel, int vcid)
 {
 	// Register HUD
 	static VCHUDSPEC huds =
@@ -71,11 +71,11 @@ void HUD::OnChanged(int mode)
 	oapiSetHUDMode(newMode);;
 }
 
-void HUD::HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void HUD::HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 
-    auto am = vessel.GetAttitudeMode();
+    auto am = Vessel.GetAttitudeMode();
 
     if (am != RCS_NONE)
     {

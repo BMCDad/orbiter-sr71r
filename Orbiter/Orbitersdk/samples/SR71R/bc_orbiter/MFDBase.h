@@ -29,11 +29,11 @@ namespace bc_orbiter
 		public PowerConsumer
 	{
 	public:
-		MFDBase(PowerProvider& pwr, vessel* vessel, int mfdId, double amps) :
-			Component(vessel),
+		MFDBase(PowerProvider& pwr, Vessel* Vessel, int mfdId, double amps) :
+			Component(Vessel),
 			power_(pwr),
 			mfdId_(mfdId),
-			vessel_(*vessel)
+			vessel_(*Vessel)
 		{
 			power_.AttachConsumer(this);
 		}
@@ -73,7 +73,7 @@ namespace bc_orbiter
 
 	protected:
 		PowerProvider& power_;
-		vessel& vessel_;
+		Vessel& vessel_;
 
 		bool IsPowered() const { 
 			return (power_.VoltsAvailable() > 24.0);

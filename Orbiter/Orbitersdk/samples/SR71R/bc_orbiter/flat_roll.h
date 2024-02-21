@@ -13,64 +13,50 @@
 //
 //	You should have received a copy of the GNU General Public License
 //	along with this program.If not, see <http://www.gnu.org/licenses/>.
-
 #pragma once
-
-#include "control.h"
 
 #include <functional>
 
+#include "OrbiterAPI.h"
+
+#include "control.h"
+#include "animation.h"
+
 namespace bc_orbiter {
 
-    /**
-    * flat_roll
-    * Transforms the UV values of a texture in a loop to achieve the effect of a barrel number wheel.
-    * The texture transforms in the 'v' or 'y' axis.  This can be parameterized if needed.
-    */
-    class flat_roll :
-          public Control
-        , public VCTextureAnimation
-        , public PanelAnimation {
-    public:
-        flat_roll(
-              const UINT vcGroupId
-            , const NTVERTEX* vcVerts
-            , const UINT pnlGroupId
-            , const NTVERTEX* pnlVerts
-            , const double texOffset)
-            :
-              Control(0)
-            , vcGroup_(vcGroupId)
-            , vcVerts_(vcVerts)
-            , pnlGroup_(pnlGroupId)
-            , pnlVerts_(pnlVerts)
-            , texOffset_(texOffset)
-        { }
+/**
+* flat_roll
+* Transforms the UV values of a texture in a loop to achieve the effect of a barrel number wheel.
+* The texture transforms in the 'v' or 'y' axis.  This can be parameterized if needed.
+*/
+class FlatRoll : public Control, public VCTextureAnimation, public PanelAnimation {
+public:
+    FlatRoll(const UINT vcGroupId , const NTVERTEX* vcVerts, const UINT pnlGroupId, const NTVERTEX* pnlVerts, const double texOffset) :
+        Control(0), vcGroup_(vcGroupId), vcVerts_(vcVerts), pnlGroup_(pnlGroupId), pnlVerts_(pnlVerts), texOffset_(texOffset) { }
 
-        void VCStep(DEVMESHHANDLE mesh, double simdt) override {
-            anim_.Step(target_state_, simdt);
-            vecTrans_.y = texOffset_ * anim_.GetState();
-            TransformUV<DEVMESHHANDLE>(mesh, vcGroup_, vcVerts_, 0.0, vecTrans_);
-        }
+    void VCStep(DEVMESHHANDLE mesh, double simdt) override {
+      anim_.Step(target_state_, simdt);
+      vecTrans_.y = texOffset_ * anim_.GetState();
+      TransformUV<DEVMESHHANDLE>(mesh, vcGroup_, vcVerts_, 0.0, vecTrans_);
+    }
 
-        // panel_animation
-        void PanelStep(MESHHANDLE mesh, double simdt) override {
-            anim_.Step(target_state_, simdt);
-            vecTrans_.y = texOffset_ * anim_.GetState();
-            TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, 0.0, vecTrans_);
-            //            sprintf(oapiDebugString(), "T: %+4.4f  Anim: %+4.4f  Slot: %+4.4f", target_state_, anim_.GetState(), (double)slotTransform_.value());
-        }
+    // panel_animation
+    void PanelStep(MESHHANDLE mesh, double simdt) override {
+      anim_.Step(target_state_, simdt);
+      vecTrans_.y = texOffset_ * anim_.GetState();
+      TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, 0.0, vecTrans_);
+    }
 
-        void set_position(double pos) { target_state_ = floor(pos) / 10; }
+    void SetPosition(double pos) { target_state_ = floor(pos) / 10; }
 
-    private:
-        double          target_state_{ 0.0 };
-        double          texOffset_{ 0.0 };
-        animation_wrap  anim_{ 1.0 };
-        VECTOR3         vecTrans_{ 0.0, 0.0, 0.0 };
-        UINT			pnlGroup_{ 0 };
-        const NTVERTEX* pnlVerts_{ nullptr };
-        UINT			vcGroup_{ 0 };
-        const NTVERTEX* vcVerts_{ nullptr };
-    };
-}
+private:
+    double target_state_{ 0.0 };
+    double texOffset_{ 0.0 };
+    animation_wrap anim_{ 1.0 };
+    VECTOR3 vecTrans_{ 0.0, 0.0, 0.0 };
+    UINT pnlGroup_{ 0 };
+    const NTVERTEX* pnlVerts_{ nullptr };
+    UINT vcGroup_{ 0 };
+    const NTVERTEX* vcVerts_{ nullptr };
+};
+} // namespace bc_orbiter

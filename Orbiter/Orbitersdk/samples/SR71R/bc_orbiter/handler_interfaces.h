@@ -23,7 +23,7 @@
 
 namespace bc_orbiter {
 
-class vessel;		// forward declare.
+class Vessel;		// forward declare.
 
 /**
   VesselComponent
@@ -41,7 +41,7 @@ class VesselComponent {
 */
 class HandlesSetClassCaps {
  public:
-  virtual void HandleSetClassCaps(vessel& vessel) = 0;
+  virtual void HandleSetClassCaps(Vessel& Vessel) = 0;
   virtual ~HandlesSetClassCaps() {};
 };
 
@@ -52,7 +52,7 @@ class HandlesSetClassCaps {
 */
 class HandlesPostStep {
  public:
-  virtual void HandlePostStep(vessel& vessel, double simt, double simdt, double mjd) = 0;
+  virtual void HandlePostStep(Vessel& Vessel, double simt, double simdt, double mjd) = 0;
   virtual ~HandlesPostStep() {};
 };
 
@@ -63,7 +63,7 @@ class HandlesPostStep {
 */
 class HandlesDrawHud {
  public:
-  virtual void HandleDrawHUD(vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) = 0;
+  virtual void HandleDrawHUD(Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) = 0;
   virtual ~HandlesDrawHud() {};
 };
 
@@ -80,13 +80,13 @@ class HandlesState {
     param line A single line of text representing the state.
     return true if the state was succesfully restored.
   */
-  virtual bool HandleLoadState(vessel& vessel, const std::string& line) = 0;
+  virtual bool HandleLoadState(Vessel& Vessel, const std::string& line) = 0;
 
   /**
     handle_save
     Return a single string that represents the internal state of the component.
   */
-  virtual std::string HandleSaveState(vessel& vessel) = 0;
+  virtual std::string HandleSaveState(Vessel& Vessel) = 0;
 
   virtual ~HandlesState() {};
 };
@@ -101,9 +101,9 @@ class HandlesVCLoading {
     handle_load_vc
     Do work required to setup vc components.
   */
-  virtual bool HandleLoacVC(vessel& vessel, int vcid) = 0;
-  virtual bool HandleRedrawVC(vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
-  virtual bool HandleMouseVC(vessel& vessel, int id, int event) { return false; }
+  virtual bool HandleLoacVC(Vessel& Vessel, int vcid) = 0;
+  virtual bool HandleRedrawVC(Vessel& Vessel, int id, int event, SURFHANDLE surf) { return false; }
+  virtual bool HandleMouseVC(Vessel& Vessel, int id, int event) { return false; }
   virtual ~HandlesVCLoading() {};
 };
 
@@ -113,9 +113,9 @@ class HandlesVCLoading {
 */
 class HandlesPanelLoading {
  public:
-  virtual bool HandleLoadPanel(vessel& vessel, int id, PANELHANDLE hPanel) = 0;
-  virtual bool HandleRedrawPanel(vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
-  virtual bool HandleMousePanel(vessel& vessel, int id, int event) { return false; }
+  virtual bool HandleLoadPanel(Vessel& Vessel, int id, PANELHANDLE hPanel) = 0;
+  virtual bool HandleRedrawPanel(Vessel& Vessel, int id, int event, SURFHANDLE surf) { return false; }
+  virtual bool HandleMousePanel(Vessel& Vessel, int id, int event) { return false; }
   virtual ~HandlesPanelLoading() {};
 };
 };

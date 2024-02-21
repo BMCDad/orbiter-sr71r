@@ -89,40 +89,40 @@ class PropulsionController :
 	, public bco::HandlesDrawHud
 {
 public:
-	PropulsionController(bco::PowerProvider& pwr, bco::vessel& vessel);
+	PropulsionController(bco::PowerProvider& pwr, bco::Vessel& Vessel);
 
 	// post_step
-	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+	void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override;
 
 	// power_consumer
 	double AmpDraw() const override { return (isFilling_ ? 4.0 : 0.0) + (isRCSFilling_ ? 4.0 : 0.0); }
 
 	// set_class_caps
-	void HandleSetClassCaps(bco::vessel& vessel) override;
+	void HandleSetClassCaps(bco::Vessel& Vessel) override;
 
 	// manage_state
-	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
-	std::string HandleSaveState(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::Vessel& Vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::Vessel& Vessel) override;
 
 	// draw_hud
-    void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
 	double GetVesselMainThrustLevel();
 	void SetVesselMainThrustLevel(double Level);
     void SetAttitudeRotLevel(bco::Axis axis, double Level);
 	double CurrentMaxThrust() { return maxThrustLevel_; }
 
-	bco::signal<double>&	MainFuelLevelSignal() { return signalMainFuelLevel_; }
+	bco::Signal<double>&	MainFuelLevelSignal() { return signalMainFuelLevel_; }
 
 	void ToggleThrustLimit() { switchThrustLimit_.toggle_state(); }
 
 private:
-	bco::vessel&		vessel_;
+	bco::Vessel&		vessel_;
 	bco::PowerProvider&	power_;
 
 	bool IsPowered() { return power_.VoltsAvailable() > 24.0; }
 
-	bco::signal<double>		signalMainFuelLevel_;
+	bco::Signal<double>		signalMainFuelLevel_;
 
 	double DrawMainFuel(double amount);
 	double FillMainFuel(double amount);
@@ -219,7 +219,7 @@ private:
 	};
 
 	// Load FUEL pump
-	bco::simple_event<>		btnFuelValveOpen_{
+	bco::SimpleEvent<>		btnFuelValveOpen_{
 		bm::vc::FuelValveOpenSwitch_loc,
 			0.01,
 			bm::pnl::pnlFuelValveSwitch_RC
@@ -234,7 +234,7 @@ private:
 	};
 
 	// Load RCS pump
-	bco::simple_event<>		btnRCSValveOpen_{
+	bco::SimpleEvent<>		btnRCSValveOpen_{
 		bm::vc::RCSValveOpenSwitch_loc,
 			0.01,
 			bm::pnl::pnlRCSValveSwitch_RC

@@ -25,7 +25,7 @@
 
 namespace bco = bc_orbiter;
 
-ReactionControlSystem::ReactionControlSystem(bco::vessel& vessel, bco::PowerProvider& pwr) : vessel_(vessel), power_(pwr) {
+ReactionControlSystem::ReactionControlSystem(bco::Vessel& Vessel, bco::PowerProvider& pwr) : vessel_(Vessel), power_(pwr) {
   vessel_.AddControl(&btnLinear_);
   vessel_.AddControl(&btnRotate_);
   vessel_.AddControl(&pnl_lightLinear_);
@@ -33,8 +33,8 @@ ReactionControlSystem::ReactionControlSystem(bco::vessel& vessel, bco::PowerProv
   vessel_.AddControl(&pnl_lightRotate_);
   vessel_.AddControl(&vc_lightRotate_);
 
-  btnLinear_.attach([&]() { OnChanged(RCS_LIN); });
-  btnRotate_.attach([&]() { OnChanged(RCS_ROT); });
+  btnLinear_.Attach([&]() { OnChanged(RCS_LIN); });
+  btnRotate_.Attach([&]() { OnChanged(RCS_ROT); });
 }
 
 void ReactionControlSystem::ActiveChanged(bool isActive) {
@@ -48,12 +48,12 @@ void ReactionControlSystem::ActiveChanged(bool isActive) {
 void ReactionControlSystem::OnRCSMode(int mode) {
   if ((RCS_NONE != mode) && (!IsPowered())) {
     vessel_.SetAttitudeMode(RCS_NONE);
-    sig_linear_.fire(false);
-    sig_rotate_.fire(false);
+    sig_linear_.Fire(false);
+    sig_rotate_.Fire(false);
   }
   else {
-    sig_linear_.fire(mode == RCS_LIN);
-    sig_rotate_.fire(mode == RCS_ROT);
+    sig_linear_.Fire(mode == RCS_LIN);
+    sig_rotate_.Fire(mode == RCS_ROT);
   }
 }
 

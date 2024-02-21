@@ -33,15 +33,15 @@ class HydrogenTank :
 	public bco::generic_tank
 {
 public:
-	HydrogenTank(bco::PowerProvider& pwr, bco::vessel& vessel) :
+	HydrogenTank(bco::PowerProvider& pwr, bco::Vessel& Vessel) :
 		bco::generic_tank(pwr, HYDRO_SUPPLY, HYDROGEN_FILL_RATE)
 	{
-		vessel.AddControl(&gaugeLevel_);
-		vessel.AddControl(&lightAvailable_);
-		vessel.AddControl(&btnFill_);
-		vessel.AddControl(&btnLightFill_);
+		Vessel.AddControl(&gaugeLevel_);
+		Vessel.AddControl(&lightAvailable_);
+		Vessel.AddControl(&btnFill_);
+		Vessel.AddControl(&btnLightFill_);
 
-		btnFill_.attach([&]() { ToggleFilling(); });
+		btnFill_.Attach([&]() { ToggleFilling(); });
 	}
 
 	void UpdateLevel(double l) override { gaugeLevel_.set_state(l); }
@@ -69,7 +69,7 @@ private:
 														0.0244
 													};
 
-	bco::simple_event<>				btnFill_		{	bm::vc::LH2ValveOpenSwitch_loc,
+	bco::SimpleEvent<>				btnFill_		{	bm::vc::LH2ValveOpenSwitch_loc,
 														0.01,
 														bm::pnl::pnlLH2Switch_RC
 													};

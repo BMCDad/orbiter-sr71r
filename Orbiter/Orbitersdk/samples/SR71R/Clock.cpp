@@ -23,21 +23,21 @@
 #include "SR71r_mesh.h"
 
 
-Clock::Clock(bco::vessel& vessel) :
+Clock::Clock(bco::Vessel& Vessel) :
 	startElapsedTime_(0.0),
 	startTimerTime_(0.0),
 	isTimerRunning_(false),
 	currentTimerTime_(0.0)
 {
-	vessel.AddControl(&clockTimerMinutesHand_);
-	vessel.AddControl(&clockTimerSecondsHand_);
-	vessel.AddControl(&clockElapsedHoursHand_);
-	vessel.AddControl(&clockElapsedMinutesHand_);
-	vessel.AddControl(&clockTimerReset_);
-	vessel.AddControl(&clockElapsedReset_);
+	Vessel.AddControl(&clockTimerMinutesHand_);
+	Vessel.AddControl(&clockTimerSecondsHand_);
+	Vessel.AddControl(&clockElapsedHoursHand_);
+	Vessel.AddControl(&clockElapsedMinutesHand_);
+	Vessel.AddControl(&clockTimerReset_);
+	Vessel.AddControl(&clockElapsedReset_);
 
-	clockTimerReset_.attach([&]() { ResetTimer(); });
-	clockElapsedReset_.attach([&]() { ResetElapsed(); });
+	clockTimerReset_.Attach([&]() { ResetTimer(); });
+	clockElapsedReset_.Attach([&]() { ResetElapsed(); });
 }
 
 void Clock::ResetElapsed()
@@ -72,7 +72,7 @@ void Clock::ResetTimer()
     }
 }
 
-void Clock::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
+void Clock::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd)
 {
 	// simt is simulator time in seconds.
 	//  3600 - seconds in 60 minutes (minute hand).
@@ -94,7 +94,7 @@ void Clock::HandlePostStep(bco::vessel& vessel, double simt, double simdt, doubl
 }
 
 // [elapsedMissionTime] [isTimerRunning] [elapsedTimer]
-bool Clock::HandleLoadState(bco::vessel& vessel, const std::string& line)
+bool Clock::HandleLoadState(bco::Vessel& Vessel, const std::string& line)
 {
 	int elapsedMission = 0;
 	int isTimerRunning = 0;
@@ -103,14 +103,14 @@ bool Clock::HandleLoadState(bco::vessel& vessel, const std::string& line)
 	std::istringstream in(line);
 
 	if (in >> elapsedMission >> isTimerRunning >> elapsedTimer) {
-		auto current = oapiGetSimTime();
-		startElapsedTime_ = current - (double)elapsedMission;
+		auto Current = oapiGetSimTime();
+		startElapsedTime_ = Current - (double)elapsedMission;
 
 		isTimerRunning_ = (isTimerRunning == 1);
 
 		if (isTimerRunning_)
 		{
-			startTimerTime_ = current - elapsedTimer;
+			startTimerTime_ = Current - elapsedTimer;
 		}
 		else
 		{
@@ -121,12 +121,12 @@ bool Clock::HandleLoadState(bco::vessel& vessel, const std::string& line)
 	return true;
 }
 
-std::string Clock::HandleSaveState(bco::vessel& vessel)
+std::string Clock::HandleSaveState(bco::Vessel& Vessel)
 {
 	std::ostringstream os;
 
-	auto current = oapiGetSimTime();
+	auto Current = oapiGetSimTime();
 
-	os << (int)(current - startElapsedTime_) << " " << (isTimerRunning_ ? 1 : 0) << " " << (int)(current - startTimerTime_);
+	os << (int)(Current - startElapsedTime_) << " " << (isTimerRunning_ ? 1 : 0) << " " << (int)(Current - startTimerTime_);
 	return os.str();
 }

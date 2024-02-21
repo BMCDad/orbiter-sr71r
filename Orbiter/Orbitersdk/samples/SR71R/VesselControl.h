@@ -82,9 +82,9 @@ struct IVesselControl
 struct control_program
 {
     virtual void set_target(double t) = 0;
-    virtual void start(bco::vessel& vessel) = 0;
-    virtual void stop(bco::vessel& vessel) = 0;
-    virtual void step(bco::vessel& vessel, double simt, double simdt, double mjd) = 0;
+    virtual void start(bco::Vessel& Vessel) = 0;
+    virtual void stop(bco::Vessel& Vessel) = 0;
+    virtual void step(bco::Vessel& Vessel, double simt, double simdt, double mjd) = 0;
 };
 
 class HoldHeadingProgram : public control_program
@@ -98,13 +98,13 @@ public:
 
 	void set_target(double target) override { target_ = target; }
 
-    void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
+    void step(bco::Vessel& Vessel, double simt, double simdt, double mjd) override
     {
 		// GetHeading will return a value between 0 and PI2 (0 - 360 in degrees)
-        auto currentYaw     = vessel.GetHeading();
+        auto currentYaw     = Vessel.AvGetHeading();
 
 		// Bank will return between -PI2 to PI2
-        auto currentBank    = vessel.GetBank();
+        auto currentBank    = Vessel.AvGetBank();
 
         // Find the delta heading from target.  This is also called the 'error'.
 		// When the target is to the left of current, the error is negative.  The
@@ -137,15 +137,15 @@ public:
         if (deltaBank > 1) deltaBank = 1;
         if (deltaBank < -1) deltaBank = -1;
 
-        vessel.SetAileronLevel(-deltaBank);
+        Vessel.SetAileronLevel(-deltaBank);
 //        sprintf(oapiDebugString(), "Hold heading ON - Target: %.2f, deltaBank: %.2f", target * DEG, deltaBank);
     }
 
-    void start(bco::vessel& vessel) override {}
+    void start(bco::Vessel& Vessel) override {}
 
-    void stop(bco::vessel& vessel) override
+    void stop(bco::Vessel& Vessel) override
     {
-        vessel.SetAileronLevel(0.0);
+        Vessel.SetAileronLevel(0.0);
     }
 };
 
@@ -194,12 +194,12 @@ public:
 
 	void set_target(double t) override { target_ = t; }
 
-    void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
+    void step(bco::Vessel& Vessel, double simt, double simdt, double mjd) override
     {
-        auto currentAltitude = vessel.GetAltitude();
+        auto currentAltitude = Vessel.AvGetAltitude();
         auto altError = target_ - currentAltitude;
 
-        auto vertSpeed = vessel.GetVerticalSpeed();
+        auto vertSpeed = Vessel.AvGetVerticalSpeed();
 
         auto targetClimb = 0.0;
 
@@ -225,18 +225,18 @@ public:
             ctrlLevel = (climbError > 0) ? 1.0 : -1.0;
         }
 
-        vessel.SetAileronLevel(ctrlLevel / 2);
+        Vessel.SetAileronLevel(ctrlLevel / 2);
     }
 
-    void stop(bco::vessel& vessel) override
+    void stop(bco::Vessel& Vessel) override
     {
-        vessel.SetElevatorLevel(0.0);
+        Vessel.SetElevatorLevel(0.0);
     }
 
-	void start(bco::vessel& vessel) override
+	void start(bco::Vessel& Vessel) override
 	{
-        vessel.SetElevatorLevel(0.0);
-        target_ = vessel.GetAltitude();
+        Vessel.SetElevatorLevel(0.0);
+        target_ = Vessel.AvGetAltitude();
         pid_.reset(target_, kp, ki, kd);
 	}
 };
@@ -252,10 +252,10 @@ public:
 
 	void set_target(double t) override { target_ = t; }
 
-    void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
+    void step(bco::Vessel& Vessel, double simt, double simdt, double mjd) override
     {
-        auto currentKeas    = vessel.GetKEAS();
-        auto thLevel        = vessel.GetMainThrustLevel();
+        auto currentKeas    = Vessel.AvGetKEAS();
+        auto thLevel        = Vessel.GetMainThrustLevel();
 
         auto accel          = (currentKeas - prevAtmoKeas_) / simdt;
         prevAtmoKeas_       = currentKeas;
@@ -263,17 +263,17 @@ public:
         auto dspd           = target_ - currentKeas;
         auto dThrot         = (dspd - accel) * simdt;
 
-        vessel.SetMainThrustLevel(thLevel + dThrot);
+        Vessel.SetMainThrustLevel(thLevel + dThrot);
     }
 
-    void stop(bco::vessel& vessel) override
+    void stop(bco::Vessel& Vessel) override
     {
         prevAtmoKeas_ = -1.0;
     }
 
-	void start(bco::vessel& vessel) override
+	void start(bco::Vessel& Vessel) override
 	{
-        target_ = vessel.GetKEAS();
+        target_ = Vessel.AvGetKEAS();
 	}
 };
 
@@ -288,11 +288,11 @@ public:
 
 	void set_target(double t) override { target_ = t; }
 
-    void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
+    void step(bco::Vessel& Vessel, double simt, double simdt, double mjd) override
     {
-        double mach         = vessel.GetMach();
+        double mach         = Vessel.AvGetMach();
         
-        auto thLevel        = vessel.GetMainThrustLevel();
+        auto thLevel        = Vessel.GetMainThrustLevel();
 
         auto currentMach    = mach;
         auto accel          = (currentMach - prevAtmoMach_) / simdt;
@@ -301,17 +301,17 @@ public:
 		auto dspd			= target_ -currentMach;
         auto dThrot         = (dspd - accel) * simdt;
 
-        vessel.SetMainThrustLevel(thLevel + dThrot);
+        Vessel.SetMainThrustLevel(thLevel + dThrot);
     }
 
-    void stop(bco::vessel& vessel) override
+    void stop(bco::Vessel& Vessel) override
     {
         prevAtmoMach_ = -1.0;
     }
 
-	void start(bco::vessel& vessel) override
+	void start(bco::Vessel& Vessel) override
 	{
-        double mach = vessel.GetMach();
+        double mach = Vessel.AvGetMach();
 		target_ = mach;
 	}
 };
@@ -329,7 +329,7 @@ public:
 
 	void set_target(double t) override { targetAOA_ = t; }
 
-    void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
+    void step(bco::Vessel& Vessel, double simt, double simdt, double mjd) override
     {
         // Pitch range is between 90 (up) and -90 (down).  A positive pitch rate
         // pitches up, and a negative rate down unless we are upside down (abs(bank) > 90),
@@ -337,7 +337,7 @@ public:
 
         // Start by finding the error (eP) by subtracting the actual from the 
         // target pitch.
-        auto pitch = vessel.GetPitch();
+        auto pitch = Vessel.AvGetPitch();
         auto eP = targetAOA_ - pitch;
 
         // Example: target = -10, actual = -20:  -10 - -20 = eP of 10.
@@ -347,7 +347,7 @@ public:
 
         // We should never get a value outside of abs(180) so we don't need to 
         // check for rollover errors.
-        auto bank = vessel.GetBank();
+        auto bank = Vessel.AvGetBank();
 
         // Determine if we are 'up' which is bank < 90.
         auto updn = (fabs(bank) < (90 * RAD)) ? 1 : -1;
@@ -372,21 +372,21 @@ public:
         tRate = tRate * updn;
 
         VECTOR3 v;
-        vessel.GetAngularVelocity(v);
+        Vessel.AvGetAngularVelocity(v);
 
         // Find the rate error.
         auto eRate = tRate - v.x;
 
         auto Level = (eRate / MAX_ROT_RATE);
 
-        vessel.SetAttitudeRotation(bco::Axis::Pitch, Level);
+        Vessel.SetAttitudeRotation(bco::Axis::Pitch, Level);
     }
 
-    void start(bco::vessel& vessel) override {}
+    void start(bco::Vessel& Vessel) override {}
 
-    void stop(bco::vessel& vessel) override
+    void stop(bco::Vessel& Vessel) override
     {
-        vessel.SetAttitudeRotation(bco::Axis::Pitch, 0.0);
+        Vessel.SetAttitudeRotation(bco::Axis::Pitch, 0.0);
     }
 };
 

@@ -32,18 +32,18 @@ class Shutters :
 	public bco::HandlesState
 {
 public:
-	Shutters(bco::vessel& vessel);
+	Shutters(bco::Vessel& Vessel);
 
 	// manage_state
-	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
-	std::string HandleSaveState(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::Vessel& Vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::Vessel& Vessel) override;
 
-	bco::slot<bool>& ShuttersSlot() { return shuttersSlot_; }
+	bco::Slot<bool>& ShuttersSlot() { return shuttersSlot_; }
 
 private:
 	void Update();
 
-	bco::slot<bool>		shuttersSlot_;
+	bco::Slot<bool>		shuttersSlot_;
 
 	const char*				ConfigKey = "SHUTTERS";
 

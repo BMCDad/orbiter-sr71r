@@ -47,7 +47,7 @@
 #include <map>
 
 
-class SR71Vessel : public bco::vessel
+class SR71Vessel : public bco::Vessel
 {
 public:
 	SR71Vessel(OBJHANDLE hvessel, int flightmodel);

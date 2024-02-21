@@ -21,7 +21,8 @@
 #include <memory>
 
 #include "OrbiterAPI.h"
-#include "IAnimationState.h"
+
+#include "animation_state.h"
 
 namespace bc_orbiter {
 class AnimationGroup {
@@ -39,7 +40,8 @@ class AnimationGroup {
   AnimationGroup(std::initializer_list<UINT> const& grp, const VECTOR3& translate, double start, double stop) :
       group_(grp),
       start_(start),
-      stop_(stop) {
+      stop_(stop),
+      location_({ 0.0, 0.0,0.0 }) {
     transform_ = std::make_unique<MGROUP_TRANSLATE>(0, group_.data(), group_.size(), translate);
   }
  
@@ -183,11 +185,11 @@ Class to manage vessel animations.  Supports adding rotation and translation gro
 animation_target
 */
 template <typename T = StateUpdateDirect>
-class animation_base : public Animation, public IAnimationState {
+class animation_base : public Animation, public AnimationState {
  public:
   animation_base() {}
 
-  animation_base(IAnimationState* state, double speed, func_target_achieved func = nullptr) : stateProvider_(state), funcTarget_(func) {
+  animation_base(AnimationState* state, double speed, func_target_achieved func = nullptr) : stateProvider_(state), funcTarget_(func) {
     updateState_.speed_ = speed;
   }
 
@@ -270,7 +272,7 @@ class animation_base : public Animation, public IAnimationState {
 
   StateUpdate updateState_;
   func_target_achieved funcTarget_;
-  IAnimationState* stateProvider_{ nullptr };
+  AnimationState* stateProvider_{ nullptr };
   UINT vesselId_{ 0 };
 };
 

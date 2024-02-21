@@ -150,29 +150,29 @@ namespace FC
         const static int DISPLAY_ROWS = 11;
 
         FlightComputer(
-			  bco::vessel& vessel
+			  bco::Vessel& Vessel
 			, bco::PowerProvider& pwr);
 
 		// power_consumer
 		double AmpDraw() const override { return IsPowered() ? 4.0 : 0.0; }
 
 		// post_step
-		void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+		void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override;
 		
 		// draw_hud
-		void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+		void HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
 		// manage_state
-		bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
-		std::string HandleSaveState(bco::vessel& vessel) override;
+		bool HandleLoadState(bco::Vessel& Vessel, const std::string& line) override;
+		std::string HandleSaveState(bco::Vessel& Vessel) override;
 
 		// load_vc
-		virtual bool HandleLoacVC(bco::vessel& vessel, int vcid) override;
-		virtual bool HandleRedrawVC(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
+		virtual bool HandleLoacVC(bco::Vessel& Vessel, int vcid) override;
+		virtual bool HandleRedrawVC(bco::Vessel& Vessel, int id, int event, SURFHANDLE surf) override;
 
 		// load_panel
-		virtual bool HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
-		virtual bool HandleRedrawPanel(bco::vessel& vessel, int id, int event, SURFHANDLE surf) override;
+		virtual bool HandleLoadPanel(bco::Vessel& Vessel, int id, PANELHANDLE hPanel) override;
+		virtual bool HandleRedrawPanel(bco::Vessel& Vessel, int id, int event, SURFHANDLE surf) override;
 
         // Computer interface
 		void ClearScreen();
@@ -181,7 +181,7 @@ namespace FC
         int DisplayCols() { return DISPLAY_COLS; }
         int DisplayRows() { return DISPLAY_ROWS; }
 		double GetScratchPad();
-		void SetScratchPad(double value);
+		void SetScratchPad(double Value);
 
 		// Page Functions
 		void PageMain();
@@ -207,8 +207,8 @@ namespace FC
 		double launchLatitude_{ 0.0 };
 		bool isAscentPageDirty_{ true };
 
-		bco::slot<double>&		HeadingSlot()	{ return headingSlot_; }
-		bco::signal<double>&	HeadingSignal()	{ return headingSignal_; }
+		bco::Slot<double>&		HeadingSlot()	{ return headingSlot_; }
+		bco::Signal<double>&	HeadingSignal()	{ return headingSignal_; }
 
 		void ToggleProgram(FCProgFlags prog) { ToggleAtmoProgram(prog); }
     private:
@@ -216,14 +216,14 @@ namespace FC
 		void Boot();
 
 		bco::PowerProvider&		power_;
-		bco::vessel&				vessel_;
+		bco::Vessel&				vessel_;
 
 		bool IsPowered() const {
 			return power_.VoltsAvailable() > 24.0;
 		}
 
-		bco::slot<double>			headingSlot_;
-		bco::signal<double>			headingSignal_;
+		bco::Slot<double>			headingSlot_;
+		bco::Signal<double>			headingSignal_;
 
 		std::string					configKey_{ "COMPUTER" };
 		std::string					apConfigKey_{ "AUTOPILOT" };
@@ -273,21 +273,21 @@ namespace FC
 				runningPrograms_ & ~pid;
 		}
 
-		void UpdateProg(bco::vessel& vessel, FCProgFlags current, FCProgFlags pid)
+		void UpdateProg(bco::Vessel& Vessel, FCProgFlags Current, FCProgFlags pid)
 		{
-			if ((current & pid) != (prevRunningProgs & pid))
+			if ((Current & pid) != (prevRunningProgs & pid))
 			{
 				auto prog = mapPrograms_[pid];
-				(current & pid) != FCProgFlags::None ? prog->start(vessel) : prog->stop(vessel);
+				(Current & pid) != FCProgFlags::None ? prog->start(Vessel) : prog->stop(Vessel);
 			}
 		}
 
-		void UpdateProgs(bco::vessel& vessel, FCProgFlags current)
+		void UpdateProgs(bco::Vessel& Vessel, FCProgFlags Current)
 		{
-			UpdateProg(vessel, current, FCProgFlags::HoldAltitude);
-			UpdateProg(vessel, current, FCProgFlags::HoldHeading);
-			UpdateProg(vessel, current, FCProgFlags::HoldKEAS);
-			UpdateProg(vessel, current, FCProgFlags::HoldMACH);
+			UpdateProg(Vessel, Current, FCProgFlags::HoldAltitude);
+			UpdateProg(Vessel, Current, FCProgFlags::HoldHeading);
+			UpdateProg(Vessel, Current, FCProgFlags::HoldKEAS);
+			UpdateProg(Vessel, Current, FCProgFlags::HoldMACH);
 		}
 
 		constexpr bool IsProgramRunning(FCProgFlags pid) const { return (runningPrograms_ & pid) == pid; }
@@ -319,42 +319,42 @@ namespace FC
 			{FCProgFlags::HoldMACH,        &prgHoldMach_ }
 		};
 
-		bco::simple_event<> gcKey0_			{ bm::vc::GCKey0_loc,			0.01, bm::pnl::pnlGCKey0_RC };
-		bco::simple_event<> gcKey1_			{ bm::vc::GCKey1_loc,			0.01, bm::pnl::pnlGCKey1_RC };
-		bco::simple_event<> gcKey2_			{ bm::vc::GCKey2_loc,			0.01, bm::pnl::pnlGCKey2_RC };
-		bco::simple_event<> gcKey3_			{ bm::vc::GCKey3_loc,			0.01, bm::pnl::pnlGCKey3_RC };
-		bco::simple_event<> gcKey4_			{ bm::vc::GCKey4_loc,			0.01, bm::pnl::pnlGCKey4_RC };
-		bco::simple_event<> gcKey5_			{ bm::vc::GCKey5_loc,			0.01, bm::pnl::pnlGCKey5_RC };
-		bco::simple_event<> gcKey6_			{ bm::vc::GCKey6_loc,			0.01, bm::pnl::pnlGCKey6_RC };
-		bco::simple_event<> gcKey7_			{ bm::vc::GCKey7_loc,			0.01, bm::pnl::pnlGCKey7_RC };
-		bco::simple_event<> gcKey8_			{ bm::vc::GCKey8_loc,			0.01, bm::pnl::pnlGCKey8_RC };
-		bco::simple_event<> gcKey9_			{ bm::vc::GCKey9_loc,			0.01, bm::pnl::pnlGCKey9_RC };
+		bco::SimpleEvent<> gcKey0_			{ bm::vc::GCKey0_loc,			0.01, bm::pnl::pnlGCKey0_RC };
+		bco::SimpleEvent<> gcKey1_			{ bm::vc::GCKey1_loc,			0.01, bm::pnl::pnlGCKey1_RC };
+		bco::SimpleEvent<> gcKey2_			{ bm::vc::GCKey2_loc,			0.01, bm::pnl::pnlGCKey2_RC };
+		bco::SimpleEvent<> gcKey3_			{ bm::vc::GCKey3_loc,			0.01, bm::pnl::pnlGCKey3_RC };
+		bco::SimpleEvent<> gcKey4_			{ bm::vc::GCKey4_loc,			0.01, bm::pnl::pnlGCKey4_RC };
+		bco::SimpleEvent<> gcKey5_			{ bm::vc::GCKey5_loc,			0.01, bm::pnl::pnlGCKey5_RC };
+		bco::SimpleEvent<> gcKey6_			{ bm::vc::GCKey6_loc,			0.01, bm::pnl::pnlGCKey6_RC };
+		bco::SimpleEvent<> gcKey7_			{ bm::vc::GCKey7_loc,			0.01, bm::pnl::pnlGCKey7_RC };
+		bco::SimpleEvent<> gcKey8_			{ bm::vc::GCKey8_loc,			0.01, bm::pnl::pnlGCKey8_RC };
+		bco::SimpleEvent<> gcKey9_			{ bm::vc::GCKey9_loc,			0.01, bm::pnl::pnlGCKey9_RC };
 		
-		bco::simple_event<> gcKeyClear_		{ bm::vc::GCKeyClear_loc,		0.01, bm::pnl::pnlGCKeyClear_RC };
-		bco::simple_event<> gcKeyDecimal_	{ bm::vc::GCKeyDecimal_loc,	0.01, bm::pnl::pnlGCKeyDecimal_RC };
-		bco::simple_event<> gcKeyEnter_		{ bm::vc::GCKeyEnter_loc,		0.01, bm::pnl::pnlGCKeyEnter_RC };
-		bco::simple_event<> gcKeyHUD_		{ bm::vc::GCKeyHUD_loc,		0.01, bm::pnl::pnlGCKeyHud_RC };
-		bco::simple_event<> gcKeyNext_		{ bm::vc::GCKeyNext_loc,		0.01, bm::pnl::pnlGCKeyNext_RC };
-		bco::simple_event<> gcKeyPlusMinus_	{ bm::vc::GCKeyPlusMinus_loc,	0.01, bm::pnl::pnlGCKeyPlusMinus_RC };
-		bco::simple_event<> gcKeyPrev_		{ bm::vc::GCKeyPrev_loc,		0.01, bm::pnl::pnlGCKeyPrev_RC };
-		bco::simple_event<> gcKeyMenu_		{ bm::vc::GCKeyHome_loc,		0.01, bm::pnl::pnlGCKeyMenu_RC };
+		bco::SimpleEvent<> gcKeyClear_		{ bm::vc::GCKeyClear_loc,		0.01, bm::pnl::pnlGCKeyClear_RC };
+		bco::SimpleEvent<> gcKeyDecimal_	{ bm::vc::GCKeyDecimal_loc,	0.01, bm::pnl::pnlGCKeyDecimal_RC };
+		bco::SimpleEvent<> gcKeyEnter_		{ bm::vc::GCKeyEnter_loc,		0.01, bm::pnl::pnlGCKeyEnter_RC };
+		bco::SimpleEvent<> gcKeyHUD_		{ bm::vc::GCKeyHUD_loc,		0.01, bm::pnl::pnlGCKeyHud_RC };
+		bco::SimpleEvent<> gcKeyNext_		{ bm::vc::GCKeyNext_loc,		0.01, bm::pnl::pnlGCKeyNext_RC };
+		bco::SimpleEvent<> gcKeyPlusMinus_	{ bm::vc::GCKeyPlusMinus_loc,	0.01, bm::pnl::pnlGCKeyPlusMinus_RC };
+		bco::SimpleEvent<> gcKeyPrev_		{ bm::vc::GCKeyPrev_loc,		0.01, bm::pnl::pnlGCKeyPrev_RC };
+		bco::SimpleEvent<> gcKeyMenu_		{ bm::vc::GCKeyHome_loc,		0.01, bm::pnl::pnlGCKeyMenu_RC };
 		
-		bco::simple_event<> gcKeyF1_		{ bm::vc::GCKeyFunc1_loc,		0.01, bm::pnl::pnlGCKeyFunc1_RC };
-		bco::simple_event<> gcKeyF2_		{ bm::vc::GCKeyFunc2_loc,		0.01, bm::pnl::pnlGCKeyFunc2_RC };
-		bco::simple_event<> gcKeyF3_		{ bm::vc::GCKeyFunc3_loc,		0.01, bm::pnl::pnlGCKeyFunc3_RC };
-		bco::simple_event<> gcKeyF4_		{ bm::vc::GCKeyFunc4_loc,		0.01, bm::pnl::pnlGCKeyFunc4_RC };
-		bco::simple_event<> gcKeyF5_		{ bm::vc::GCKeyFunc5_loc,		0.01, bm::pnl::pnlGCKeyFunc5_RC };
-		bco::simple_event<> gcKeyF6_		{ bm::vc::GCKeyFunc6_loc,		0.01, bm::pnl::pnlGCKeyFunc6_RC };
-		bco::simple_event<> gcKeyF7_		{ bm::vc::GCKeyFunc7_loc,		0.01, bm::pnl::pnlGCKeyFunc7_RC };
-		bco::simple_event<> gcKeyF8_		{ bm::vc::GCKeyFunc8_loc,		0.01, bm::pnl::pnlGCKeyFunc8_RC };
-		bco::simple_event<> gcKeyF9_		{ bm::vc::GCKeyFunc9_loc,		0.01, bm::pnl::pnlGCKeyFunc9_RC };
-		bco::simple_event<> gcKeyF10_		{ bm::vc::GCKeyFunc10_loc,		0.01, bm::pnl::pnlGCKeyFunc10_RC };
+		bco::SimpleEvent<> gcKeyF1_		{ bm::vc::GCKeyFunc1_loc,		0.01, bm::pnl::pnlGCKeyFunc1_RC };
+		bco::SimpleEvent<> gcKeyF2_		{ bm::vc::GCKeyFunc2_loc,		0.01, bm::pnl::pnlGCKeyFunc2_RC };
+		bco::SimpleEvent<> gcKeyF3_		{ bm::vc::GCKeyFunc3_loc,		0.01, bm::pnl::pnlGCKeyFunc3_RC };
+		bco::SimpleEvent<> gcKeyF4_		{ bm::vc::GCKeyFunc4_loc,		0.01, bm::pnl::pnlGCKeyFunc4_RC };
+		bco::SimpleEvent<> gcKeyF5_		{ bm::vc::GCKeyFunc5_loc,		0.01, bm::pnl::pnlGCKeyFunc5_RC };
+		bco::SimpleEvent<> gcKeyF6_		{ bm::vc::GCKeyFunc6_loc,		0.01, bm::pnl::pnlGCKeyFunc6_RC };
+		bco::SimpleEvent<> gcKeyF7_		{ bm::vc::GCKeyFunc7_loc,		0.01, bm::pnl::pnlGCKeyFunc7_RC };
+		bco::SimpleEvent<> gcKeyF8_		{ bm::vc::GCKeyFunc8_loc,		0.01, bm::pnl::pnlGCKeyFunc8_RC };
+		bco::SimpleEvent<> gcKeyF9_		{ bm::vc::GCKeyFunc9_loc,		0.01, bm::pnl::pnlGCKeyFunc9_RC };
+		bco::SimpleEvent<> gcKeyF10_		{ bm::vc::GCKeyFunc10_loc,		0.01, bm::pnl::pnlGCKeyFunc10_RC };
 
-		bco::simple_event<>	apBtnMain_		{ bm::vc::SwAPMain_loc,		0.01, bm::pnl::pnlAPMain_RC };
-		bco::simple_event<>	apBtnHeading_	{ bm::vc::SwAPHeading_loc,		0.01, bm::pnl::pnlAPHeading_RC };
-		bco::simple_event<>	apBtnAltitude_	{ bm::vc::SwAPAltitude_loc,	0.01, bm::pnl::pnlAPAltitude_RC };
-		bco::simple_event<>	apBtnKEAS_		{ bm::vc::SwAPKEAS_loc,		0.01, bm::pnl::pnlAPKEAS_RC };
-		bco::simple_event<>	apBtnMACH_		{ bm::vc::SwAPMACH_loc,		0.01, bm::pnl::pnlAPMACH_RC };
+		bco::SimpleEvent<>	apBtnMain_		{ bm::vc::SwAPMain_loc,		0.01, bm::pnl::pnlAPMain_RC };
+		bco::SimpleEvent<>	apBtnHeading_	{ bm::vc::SwAPHeading_loc,		0.01, bm::pnl::pnlAPHeading_RC };
+		bco::SimpleEvent<>	apBtnAltitude_	{ bm::vc::SwAPAltitude_loc,	0.01, bm::pnl::pnlAPAltitude_RC };
+		bco::SimpleEvent<>	apBtnKEAS_		{ bm::vc::SwAPKEAS_loc,		0.01, bm::pnl::pnlAPKEAS_RC };
+		bco::SimpleEvent<>	apBtnMACH_		{ bm::vc::SwAPMACH_loc,		0.01, bm::pnl::pnlAPMACH_RC };
 
 		bco::on_off_display	apDspMain_		{ bm::vc::SwAPMain_id,		bm::vc::SwAPMain_vrt,		bm::pnl::pnlAPMain_id,		bm::pnl::pnlAPMain_vrt,	  0.0352	};
 		bco::on_off_display	apDspHeading_	{ bm::vc::SwAPHeading_id,	bm::vc::SwAPHeading_vrt,	bm::pnl::pnlAPHeading_id,	bm::pnl::pnlAPHeading_vrt,  0.0352	};

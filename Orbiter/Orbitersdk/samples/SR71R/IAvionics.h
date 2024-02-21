@@ -21,8 +21,8 @@
 class IAvionics
 {
 public:
-    virtual double GetPitch() const = 0;								// Angle(rad) in reference to local horizon.
-    virtual double GetBank() const = 0;									// Angle(rad) in reference to local horizon.
+    virtual double AvGetPitch() const = 0;								// Angle(rad) in reference to local horizon.
+    virtual double AvGetBank() const = 0;									// Angle(rad) in reference to local horizon.
     virtual double GetAltitudeFeet(AltitudeMode mode) const = 0;		// In reference to current surface.
     virtual double GetRawAltitude() const = 0;							// Altitude(m) reference to current surface mean radius.
     virtual double GetVertSpeedFPM() const = 0;							// Vert. speed(f) reference to local horizon.
@@ -32,7 +32,7 @@ public:
     virtual double GetDynamicPressure() const = 0;						// Dynamic air pressure at vessel.
     virtual double GetAngleOfAttack() const = 0;						// Angle of attack(RAD)
     virtual double GetAirSpeedKeas() const = 0;							// Airspeed KEAS
-    virtual double GetHeading() const = 0;								// Yaw(rad) in reference to the local horizon.
+    virtual double AvGetHeading() const = 0;								// Yaw(rad) in reference to the local horizon.
     virtual double GetGForces() const = 0;								// current G forces on vessel.
     virtual double GetSetHeading()const = 0;							// current setting of the 'heading' bug.
     virtual double GetTrimLevel() const = 0;							// current setting of trim level.

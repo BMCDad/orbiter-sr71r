@@ -17,21 +17,21 @@
 #pragma once
 
 namespace bc_orbiter {
-  class vessel;
+  class Vessel;
 }
 
 #include <vector>
 
 namespace bc_orbiter
 {
-class vessel;
+class Vessel;
 
 /**
   Base class for modeling the behavior of a vessel's component parts.
 */
 class Component {
  public:
-  Component(vessel* baseVessel) : baseVessel_(baseVessel) {}
+  Component(Vessel* baseVessel) : baseVessel_(baseVessel) {}
 
   /**
     Override to initialize things like animations etc. Called from clbkSetClassCaps.
@@ -84,10 +84,10 @@ class Component {
   void SetRedrawId(int id) { redrawId_ = id; }
   int GetRedrawId() const { return redrawId_; }
 
-  vessel*	GetBaseVessel() const { return baseVessel_; }
+  Vessel*	GetBaseVessel() const { return baseVessel_; }
 
  private:
-  vessel*		baseVessel_;
+  Vessel*		baseVessel_;
 
   int redrawId_	{ 0 };
 };

@@ -45,11 +45,11 @@ class HUD :
 	, public bco::HandlesDrawHud
 {
 public:
-	HUD(bco::PowerProvider& pwr, bco::vessel& vessel);
+	HUD(bco::PowerProvider& pwr, bco::Vessel& Vessel);
 
-	bool HandleLoacVC(bco::vessel& vessel, int vcid) override;
+	bool HandleLoacVC(bco::Vessel& Vessel, int vcid) override;
 
-	void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+	void HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
 	double AmpDraw() const override { return IsPowered() ? 4.0 : 0.0; }
 
@@ -79,7 +79,7 @@ private:
 	//bco::signal<bool> sigSurfaceMode_;
 
 	// *** HUD *** 
-	bco::simple_event<>		btnDocking_	{		bm::vc::vcHUDDock_loc,
+	bco::SimpleEvent<>		btnDocking_	{		bm::vc::vcHUDDock_loc,
 												0.01,
 												bm::pnl::pnlHUDDock_RC
 											};
@@ -91,7 +91,7 @@ private:
 												0.0352
 											};
 
-	bco::simple_event<>		btnOrbit_ {			bm::vc::vcHUDOrbit_loc,
+	bco::SimpleEvent<>		btnOrbit_ {			bm::vc::vcHUDOrbit_loc,
 												0.01,
 												bm::pnl::pnlHUDOrbit_RC
 											};
@@ -103,7 +103,7 @@ private:
 												0.0352
 											};
 
-	bco::simple_event<>		btnSurface_ {		bm::vc::vcHUDSURF_loc,
+	bco::SimpleEvent<>		btnSurface_ {		bm::vc::vcHUDSURF_loc,
 												0.01,
 												bm::pnl::pnlHUDSurf_RC
 										};

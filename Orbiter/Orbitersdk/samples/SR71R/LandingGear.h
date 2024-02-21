@@ -47,19 +47,19 @@ class LandingGear :
     , public bco::HandlesDrawHud
 {
 public:
-	LandingGear(bco::vessel& vessel, bco::HydraulicProvider& apu);
+	LandingGear(bco::Vessel& Vessel, bco::HydraulicProvider& apu);
 
     // set_class_caps
-    void HandleSetClassCaps(bco::vessel& vessel) override;
+    void HandleSetClassCaps(bco::Vessel& Vessel) override;
 
     // post_step
-    void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override;
 
     // manage_state
-    bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
-    std::string HandleSaveState(bco::vessel& vessel) override;
+    bool HandleLoadState(bco::Vessel& Vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::Vessel& Vessel) override;
 
-    void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
     void Toggle() { position_ = (position_ == 0.0) ? 1.0 : 0.0; }
 private:
@@ -163,12 +163,12 @@ private:
     const VECTOR3 sTrans{ bm::pnl::pnlLandingGearKnobDown_loc - bm::pnl::pnlLandingGearKnobUp_loc };
 
     // *** LANDING GEAR *** //
-    bco::simple_event<>		btnRaiseGear_       {   bm::vc::GearLeverUpTarget_loc,
+    bco::SimpleEvent<>		btnRaiseGear_       {   bm::vc::GearLeverUpTarget_loc,
                                                     0.01,
                                                     bm::pnl::pnlLandingGearUp_RC
                                                 };
 
-    bco::simple_event<>		btnLowerGear_       {   bm::vc::GearLeverDownTarget_loc,
+    bco::SimpleEvent<>		btnLowerGear_       {   bm::vc::GearLeverDownTarget_loc,
                                                     0.01,
                                                     bm::pnl::pnlLandingGearDown_RC
     };

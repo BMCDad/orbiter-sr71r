@@ -64,12 +64,12 @@ namespace bc_orbiter {
 		}
 
 		// post_step
-		virtual void HandlePostStep(vessel& vessel, double simt, double simdt, double mjd) override {
+		virtual void HandlePostStep(Vessel& Vessel, double simt, double simdt, double mjd) override {
 			auto tD = simt - prevTime_;
 
 			if (fabs(tD) > 0.2)
 			{
-				isExternal_ = vessel.IsStoppedOrDocked();
+				isExternal_ = Vessel.IsStoppedOrDocked();
 				if (isExternal_ && IsPowered()) {
 					//sigIsAvailable_.fire(true);
 					UpdateIsAvailable(true);
@@ -89,7 +89,7 @@ namespace bc_orbiter {
 		}
 
 		// manage_state
-		bool HandleLoadState(vessel& vessel, const std::string& line) override {
+		bool HandleLoadState(Vessel& Vessel, const std::string& line) override {
 			// [a b]  :  [current_quantity fillPumpOn]
 
 			std::istringstream in(line);
@@ -106,7 +106,7 @@ namespace bc_orbiter {
 			return true;
 		}
 
-		std::string HandleSaveState(vessel& vessel) override {
+		std::string HandleSaveState(Vessel& Vessel) override {
 			std::ostringstream os;
 			os << current_ << " " << isFilling_;
 			return os.str();
@@ -158,7 +158,7 @@ namespace bc_orbiter {
 		const double			VOLTS_MIN = 24.0;
 		const double			AMPS_PUMP = 4.0;
 
-		signal<bool>			sigIsFilling_;
+		Signal<bool>			sigIsFilling_;
 
 		bool					isFilling_	{ false };
 		bool					isExternal_	{ false };

@@ -51,10 +51,10 @@ class PowerSystem :
 	, public bco::HandlesState
 {
 public:
-	PowerSystem(bco::vessel& vessel);
+	PowerSystem(bco::Vessel& Vessel);
 
 	// post_step
-	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override
+	void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override
 	{
 		double Draw = 0.0;
 
@@ -64,15 +64,15 @@ public:
 
 		ampDraw_ = fmin(Draw, AMP_OVERLOAD);
 		gaugePowerAmps_.set_state(ampDraw_ / AMP_OVERLOAD);
-		Update(vessel);
+		Update(Vessel);
 	}
 
 	// manage_state
-	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
-	std::string HandleSaveState(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::Vessel& Vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::Vessel& Vessel) override;
 
 	// Fuelcell:
-	bco::slot<double>&		FuelCellAvailablePowerSlot()	{ return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
+	bco::Slot<double>&		FuelCellAvailablePowerSlot()	{ return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
 
 	void AttachConsumer(bco::PowerConsumer* consumer) override {
 		consumers_.push_back(consumer);
@@ -82,7 +82,7 @@ public:
 	double AmpLoad() const override { return ampDraw_; }
 
 private:
-	void Update(bco::vessel& vessel);
+	void Update(bco::Vessel& Vessel);
 
 	const double			FULL_POWER		=  28.0;
 	const double			USEABLE_POWER	=  24.0;
@@ -90,8 +90,8 @@ private:
 
 	std::vector<bco::PowerConsumer*>  consumers_;
 
-	bco::signal<bool>		signalIsDrawingBattery_;
-	bco::slot<double>		slotFuelCellAvailablePower_;
+	bco::Signal<bool>		signalIsDrawingBattery_;
+	bco::Slot<double>		slotFuelCellAvailablePower_;
 
 	double					ampDraw_{ 0.0 };			// Collects the total amps drawn during a step.
 	double					batteryLevel_;

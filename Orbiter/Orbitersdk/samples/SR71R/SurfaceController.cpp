@@ -21,13 +21,13 @@
 
 #include "SR71r_mesh.h"
 
-SurfaceController::SurfaceController(bco::vessel& vessel, bco::HydraulicProvider& apu) :
-	  vessel_(vessel)
+SurfaceController::SurfaceController(bco::Vessel& Vessel, bco::HydraulicProvider& apu) :
+	  vessel_(Vessel)
 	, apu_(apu)
 {
 }
 
-void SurfaceController::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
+void SurfaceController::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd)
 {
 	// Determine if our hydro state has change, enable or disable controls.
 	auto hydPress = apu_.Level();
@@ -46,7 +46,7 @@ void SurfaceController::HandlePostStep(bco::vessel& vessel, double simt, double 
 	}
 }
 
-void SurfaceController::HandleSetClassCaps(bco::vessel& vessel)
+void SurfaceController::HandleSetClassCaps(bco::Vessel& Vessel)
 {
 	// Left Aileron Animation
 	static UINT groupLeftAileron = bm::main::LeftOuterElevon_id;
@@ -71,11 +71,11 @@ void SurfaceController::HandleSetClassCaps(bco::vessel& vessel)
 		leftElevatorAxis,
 		AILERON_RANGE);
 
-	anim_left_aileron_ = vessel.CreateAnimation(0.5);
-	anim_left_elevator_ = vessel.CreateAnimation(0.5);
+	anim_left_aileron_ = Vessel.CreateAnimation(0.5);
+	anim_left_elevator_ = Vessel.CreateAnimation(0.5);
 
-	vessel.AddAnimationComponent(anim_left_aileron_, 0, 1, &animGroupLeftAileron);
-	vessel.AddAnimationComponent(anim_left_elevator_, 0, 1, &animGroupLeftElevator);
+	Vessel.AddAnimationComponent(anim_left_aileron_, 0, 1, &animGroupLeftAileron);
+	Vessel.AddAnimationComponent(anim_left_elevator_, 0, 1, &animGroupLeftElevator);
 
 
 	// Right Aileron Animation
@@ -99,11 +99,11 @@ void SurfaceController::HandleSetClassCaps(bco::vessel& vessel)
 		rightAileronAxis,
 		AILERON_RANGE);
 
-	anim_right_aileron_ = vessel.CreateAnimation(0.5);
-	anim_right_elevator_ = vessel.CreateAnimation(0.5);
+	anim_right_aileron_ = Vessel.CreateAnimation(0.5);
+	anim_right_elevator_ = Vessel.CreateAnimation(0.5);
 
-	vessel.AddAnimationComponent(anim_right_aileron_, 0, 1, &animGroupRightAileron);
-	vessel.AddAnimationComponent(anim_right_elevator_, 0, 1, &animGroupRightElevator);
+	Vessel.AddAnimationComponent(anim_right_aileron_, 0, 1, &animGroupRightAileron);
+	Vessel.AddAnimationComponent(anim_right_elevator_, 0, 1, &animGroupRightElevator);
 
 
 	// Left Rudder Animation
@@ -134,11 +134,11 @@ void SurfaceController::HandleSetClassCaps(bco::vessel& vessel)
 		AILERON_RANGE);
 
 	// Control surface animation.
-	anim_left_rudder_ = vessel.CreateAnimation(0.5);
-	anim_right_rudder_ = vessel.CreateAnimation(0.5);
+	anim_left_rudder_ = Vessel.CreateAnimation(0.5);
+	anim_right_rudder_ = Vessel.CreateAnimation(0.5);
 
-	vessel.AddAnimationComponent(anim_left_rudder_, 0, 1, &animGroupLeftRudder);
-	vessel.AddAnimationComponent(anim_right_rudder_, 0, 1, &animGroupRightRudder);
+	Vessel.AddAnimationComponent(anim_left_rudder_, 0, 1, &animGroupLeftRudder);
+	Vessel.AddAnimationComponent(anim_right_rudder_, 0, 1, &animGroupRightRudder);
 }
 
 void SurfaceController::SetRudderLevel(double Level)

@@ -21,113 +21,110 @@
 
 namespace bc_orbiter {
 
-	/**
-	* slot
-	* Receives a notification from a signal when the signal changes.  Used
-	* along with the signal class to facilitate communication between components.
-	*/
-	template<typename T>
-	class slot {
-	public:
-		slot(const std::function<void(T)> func = [](T v) {})
-			:
-			func_(func)
-		{}
+/**
+* Slot
+* Receives a notification from a signal when the signal changes.  Used
+* along with the signal class to facilitate communication between components.
+*/
+template<typename T>
+class Slot {
+ public:
+  Slot(const std::function<void(T)> func = [](T v) {}) : func_(func) {}
 
-		virtual ~slot() {}
+  virtual ~Slot() {}
 
-		void notify(T value) {
-			if (dirty_ || (value != value_)) {
-				dirty_ = false;
-				value_ = value;
-				if (nullptr != func_) func_(value_);
-			}
-		}
+  void Notify(T Value) {
+    if (dirty_ || (Value != value_)) {
+      dirty_ = false;
+      value_ = Value;
+      if (nullptr != func_) func_(value_);
+    }
+  }
 
-		T value() const { return value_; }
-		void set() { dirty_ = true; }
-	private:
-		bool	dirty_{ true };
-		T		value_	{ };
-		
-		const std::function<void(T)> func_{ nullptr };
-	};
+  T Value() const { return value_; }
+  void Set() { dirty_ = true; }
 
-	/**
-	* signal
-	* Along with slot, provides a means to pass events between components.
-	*/
-	template<typename T>
-	class signal {
-	public:
-		signal() = default;
-		virtual ~signal() = default;
+ private:
+  bool	dirty_{ true };
+  T value_ { };
 
-		void attach(slot<T>& sl) {
-			slots_.emplace_back(&sl);
-		}
+  const std::function<void(T)> func_{ nullptr };
+};
 
-		void fire(const T& val) {
-			value_ = val;
-			for (const auto& s : slots_) {
-				s->notify(val);
-			}
-		}
+/**
+* signal
+* Along with slot, provides a means to pass events between components.
+*/
+template<typename T>
+class Signal {
+ public:
+  Signal() = default;
+  virtual ~Signal() = default;
 
-		T current() const {
-			return value_;
-		}
+  void Attach(Slot<T>& sl) {
+    slots_.emplace_back(&sl);
+  }
 
-		void update(T val) {	// Update value without firing event (config)
-			value_ = val;
-		}
+  void Fire(const T& val) {
+    value_ = val;
+    for (const auto& s : slots_) {
+      s->Notify(val);
+    }
+  }
 
-		friend std::istream& operator>>(std::istream& input, signal<T>& obj) {
-			if (input) {
-				T value;
-				input >> value;
-				obj.fire(value);
-			}
+  T Current() const {
+    return value_;
+  }
 
-			return input;
-		}
+  void Update(T val) {	// Update value without firing event (config)
+    value_ = val;
+  }
 
-		friend std::ostream& operator<<(std::ostream& output, signal<T>& obj) {
-			output << obj.value_;
-			return output;
-		}
+  friend std::istream& operator>>(std::istream& input, Signal<T>& obj) {
+    if (input) {
+      T Value;
+      input >> Value;
+      obj.Fire(Value);
+    }
 
-	private:
-		std::vector<slot<T>*> slots_;
-		T value_{};
-	};
+    return input;
+  }
 
-	/**
-	* signal
-	* Along with slot, provides a means to pass events between components.
-	*/
-	class signaller {
-	public:
-		signaller() = default;
-		virtual ~signaller() = default;
+  friend std::ostream& operator<<(std::ostream& output, Signal<T>& obj) {
+    output << obj.value_;
+    return output;
+  }
 
-		void attach(const std::function<void()> sl) {
-			funcs_.emplace_back(sl);
-		}
+ private:
+  std::vector<Slot<T>*> slots_;
+  T value_{};
+};
 
-		void fire() {
-			for (const auto& s : funcs_) {
-				s();
-			}
-		}
+/**
+* signal
+* Along with slot, provides a means to pass events between components.
+*/
+class Signaller {
+ public:
+  Signaller() = default;
+  virtual ~Signaller() = default;
 
-	private:
-		std::vector<std::function<void()>> funcs_;
-	};
+  void Attach(const std::function<void()> sl) {
+    funcs_.emplace_back(sl);
+  }
 
-	template<typename TSignal, typename TSlot>
-	void connect(TSignal& sig, TSlot& slot)
-	{
-		sig.attach(slot);
-	}
+  void Fire() {
+    for (const auto& s : funcs_) {
+      s();
+    }
+  }
+
+private:
+  std::vector<std::function<void()>> funcs_;
+};
+
+template<typename TSignal, typename TSlot>
+void Connect(TSignal& sig, TSlot& Slot) {
+  sig.Attach(Slot);
+}
 }

@@ -35,23 +35,23 @@ class Lights :
 {
 
 public:
-	Lights(bco::vessel& vessel, bco::PowerProvider& pwr)
+	Lights(bco::Vessel& Vessel, bco::PowerProvider& pwr)
 		:
 		power_(pwr)
 	{
-		switchStrobeLights_.AttachOnChange([&]() { update(); });
-		switchBeaconLights_.AttachOnChange([&]() { update(); });
-		switchNavigationLights_.AttachOnChange([&]() { update(); });
+		switchStrobeLights_.AttachOnChange([&]() { Update(); });
+		switchBeaconLights_.AttachOnChange([&]() { Update(); });
+		switchNavigationLights_.AttachOnChange([&]() { Update(); });
 
 		power_.AttachConsumer(this);
 		
-		vessel.AddControl(&switchStrobeLights_);
-		vessel.AddControl(&switchBeaconLights_);
-		vessel.AddControl(&switchNavigationLights_);
+		Vessel.AddControl(&switchStrobeLights_);
+		Vessel.AddControl(&switchBeaconLights_);
+		Vessel.AddControl(&switchNavigationLights_);
 	}
 
 	// power_consumer
-	void OnChange(double v) override { update(); }
+	void OnChange(double v) override { Update(); }
 	double AmpDraw() const override { 
 		auto total = 0.0;
 		total += switchStrobeLights_.IsOn() ? 4.0 : 0.0;
@@ -61,20 +61,20 @@ public:
 	}
 
 	// set_class_caps
-	void HandleSetClassCaps(bco::vessel& vessel) override {
-		vessel.AddBeacon(&specStrobeLeft_);
-		vessel.AddBeacon(&specStrobeRight_);
+	void HandleSetClassCaps(bco::Vessel& Vessel) override {
+		Vessel.AddBeacon(&specStrobeLeft_);
+		Vessel.AddBeacon(&specStrobeRight_);
 		
-		vessel.AddBeacon(&specBeaconTop_);
-		vessel.AddBeacon(&specBeaconBottom_);
+		Vessel.AddBeacon(&specBeaconTop_);
+		Vessel.AddBeacon(&specBeaconBottom_);
 		
-		vessel.AddBeacon(&specNavLeft_);
-		vessel.AddBeacon(&specNavRear_);
-		vessel.AddBeacon(&specNavRight_);
+		Vessel.AddBeacon(&specNavLeft_);
+		Vessel.AddBeacon(&specNavRear_);
+		Vessel.AddBeacon(&specNavRight_);
 	}
 
 	// manage_state
-	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override {
+	bool HandleLoadState(bco::Vessel& Vessel, const std::string& line) override {
 		// sscanf_s(configLine + 6, "%i%i%i%i", &nav, &beacon, &strobe, &dock);
 		double dock; // not used.
 		std::istringstream in(line);
@@ -82,7 +82,7 @@ public:
 		return true;
 	}
 
-	std::string HandleSaveState(bco::vessel& vessel) override {
+	std::string HandleSaveState(bco::Vessel& Vessel) override {
 		std::ostringstream os;
 		os << switchNavigationLights_ << " " << switchBeaconLights_ << " " << switchStrobeLights_ << 0;
 		return os.str();
@@ -92,7 +92,7 @@ private:
 
 	bco::PowerProvider& power_;
 
-	void update() {
+	void Update() {
 		auto power = (power_.VoltsAvailable() > 25.0);
 
 		auto strob = switchStrobeLights_.IsOn() && power;

@@ -31,7 +31,7 @@ DLLCLBK VESSEL *ovcInit(OBJHANDLE hvessel, int flightmodel)
 // --------------------------------------------------------------
 // Vessel cleanup
 // --------------------------------------------------------------
-DLLCLBK void ovcExit(VESSEL *vessel)
+DLLCLBK void ovcExit(VESSEL *Vessel)
 {
-	if (vessel) delete (SR71Vessel*)vessel;
+	if (Vessel) delete (SR71Vessel*)Vessel;
 }

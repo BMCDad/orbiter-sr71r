@@ -33,15 +33,15 @@ class LeftMFD :
 	, public bco::HandlesPanelLoading
 {
 public:
-	LeftMFD(bco::PowerProvider& pwr, bco::vessel* vessel);
+	LeftMFD(bco::PowerProvider& pwr, bco::Vessel* Vessel);
 
-	virtual void HandleSetClassCaps(bco::vessel& vessel) override;
+	virtual void HandleSetClassCaps(bco::Vessel& Vessel) override;
 
 	// load_vc
-	bool HandleLoacVC(bco::vessel& vessel, int vcid) override;
+	bool HandleLoacVC(bco::Vessel& Vessel, int vcid) override;
 	bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf);
 
-	bool HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
+	bool HandleLoadPanel(bco::Vessel& Vessel, int id, PANELHANDLE hPanel) override;
 	bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf);
 
 private:

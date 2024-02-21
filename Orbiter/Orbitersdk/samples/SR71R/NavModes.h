@@ -38,13 +38,13 @@ class NavModes :
 	, public bco::HandlesPostStep
 {
 public:
-	NavModes(bco::vessel& baseVessel, Avionics& avionics);
+	NavModes(bco::Vessel& baseVessel, Avionics& avionics);
 
 	// These overrides come directly from SR71Vessel callbacks.
 	void OnNavMode(int mode, bool active);
-	void HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+	void HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
-	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+	void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override {
 		if (oapiCockpitMode() != COCKPIT_PANELS) return;
 		UpdatePanel(); 
 	}
@@ -53,12 +53,12 @@ protected:
 	void Update();
 
 	void UpdatePanel() { 
-		pnlHudFrame_.set_position(((navMode1_ + navMode2_) == 0) ? 1 : 0); 
-		pnlHudMode_.set_position(navMode1_);
-		pnlHudMode2_.set_position(navMode2_);
+		pnlHudFrame_.SetPosition(((navMode1_ + navMode2_) == 0) ? 1 : 0); 
+		pnlHudMode_.SetPosition(navMode1_);
+		pnlHudMode2_.SetPosition(navMode2_);
 	}
 private:
-	bco::vessel&	baseVessel_;
+	bco::Vessel&	baseVessel_;
 	Avionics&		avionics_;
 
 	void ToggleMode(int mode);
@@ -69,7 +69,7 @@ private:
 	int		navMode2_{ 0 };	// HUD nav right area
 
 	// ***  NAV MODES  *** //
-	using evt = bco::simple_event<int>;
+	using evt = bco::SimpleEvent<int>;
 	using dsp = bco::on_off_display;
 	const double rad = 0.01;		// hit radius
 	const double ofs = 0.0352;		// tex offset

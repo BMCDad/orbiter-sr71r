@@ -31,32 +31,32 @@ class TestComponent : public bco::VesselComponent
 {
 public:
 	TestComponent() :
-		slotIncrement_([&](bool v) {Increment(); slotIncrement_.set(); }),
-		slotDecrement_([&](bool v) {Decrement(); slotDecrement_.set(); })
+		slotIncrement_([&](bool v) {Increment(); slotIncrement_.Set(); }),
+		slotDecrement_([&](bool v) {Decrement(); slotDecrement_.Set(); })
 	{}
 
-	bco::slot<bool>& IncrementSlot() { return slotIncrement_; }
-	bco::slot<bool>& DecrementSlot() { return slotDecrement_; }
+	bco::Slot<bool>& IncrementSlot() { return slotIncrement_; }
+	bco::Slot<bool>& DecrementSlot() { return slotDecrement_; }
 
-	bco::signal<int>& ValueSignal() { return sigValue_; }
+	bco::Signal<int>& ValueSignal() { return sigValue_; }
 
 private:
 
 	void Increment() {
 		value_++;
 		if (value_ > 9) value_ = 0;
-		sigValue_.fire(value_);
+		sigValue_.Fire(value_);
 	}
 
 	void Decrement() {
 		value_--;
 		if (value_ < 0) value_ = 9;
-		sigValue_.fire(value_);
+		sigValue_.Fire(value_);
 	}
 
 	int					value_{ 0 };
-	bco::slot<bool>		slotIncrement_;
-	bco::slot<bool>		slotDecrement_;
+	bco::Slot<bool>		slotIncrement_;
+	bco::Slot<bool>		slotDecrement_;
 
-	bco::signal<int>	sigValue_;
+	bco::Signal<int>	sigValue_;
 };

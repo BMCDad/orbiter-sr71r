@@ -23,98 +23,98 @@
 namespace mvc = bm::vc;
 
 FC::FlightComputer::FlightComputer(
-	  bco::vessel& vessel
+	  bco::Vessel& Vessel
 	, bco::PowerProvider& pwr)
 	:
 	  power_(pwr)
-	, vessel_(vessel)
+	, vessel_(Vessel)
 	, headingSlot_([&](double v) { prgHoldHeading_.set_target(v); })
 {
-	vessel.AddControl(&gcKey0_);		
-	vessel.AddControl(&gcKey1_);		
-	vessel.AddControl(&gcKey2_);		
-	vessel.AddControl(&gcKey3_);		
-	vessel.AddControl(&gcKey4_);		
-	vessel.AddControl(&gcKey5_);		
-	vessel.AddControl(&gcKey6_);		
-	vessel.AddControl(&gcKey7_);		
-	vessel.AddControl(&gcKey8_);		
-	vessel.AddControl(&gcKey9_);		
-	vessel.AddControl(&gcKeyClear_);	
-	vessel.AddControl(&gcKeyDecimal_);
-	vessel.AddControl(&gcKeyEnter_);
-	vessel.AddControl(&gcKeyHUD_);
-	vessel.AddControl(&gcKeyNext_);
-	vessel.AddControl(&gcKeyPlusMinus_);
-	vessel.AddControl(&gcKeyPrev_);
-	vessel.AddControl(&gcKeyF1_);
-	vessel.AddControl(&gcKeyF2_);
-	vessel.AddControl(&gcKeyF3_);
-	vessel.AddControl(&gcKeyF4_);
-	vessel.AddControl(&gcKeyF5_);
-	vessel.AddControl(&gcKeyF6_);
-	vessel.AddControl(&gcKeyF7_);
-	vessel.AddControl(&gcKeyF8_);
-	vessel.AddControl(&gcKeyF9_);
-	vessel.AddControl(&gcKeyF10_);
+	Vessel.AddControl(&gcKey0_);		
+	Vessel.AddControl(&gcKey1_);		
+	Vessel.AddControl(&gcKey2_);		
+	Vessel.AddControl(&gcKey3_);		
+	Vessel.AddControl(&gcKey4_);		
+	Vessel.AddControl(&gcKey5_);		
+	Vessel.AddControl(&gcKey6_);		
+	Vessel.AddControl(&gcKey7_);		
+	Vessel.AddControl(&gcKey8_);		
+	Vessel.AddControl(&gcKey9_);		
+	Vessel.AddControl(&gcKeyClear_);	
+	Vessel.AddControl(&gcKeyDecimal_);
+	Vessel.AddControl(&gcKeyEnter_);
+	Vessel.AddControl(&gcKeyHUD_);
+	Vessel.AddControl(&gcKeyNext_);
+	Vessel.AddControl(&gcKeyPlusMinus_);
+	Vessel.AddControl(&gcKeyPrev_);
+	Vessel.AddControl(&gcKeyF1_);
+	Vessel.AddControl(&gcKeyF2_);
+	Vessel.AddControl(&gcKeyF3_);
+	Vessel.AddControl(&gcKeyF4_);
+	Vessel.AddControl(&gcKeyF5_);
+	Vessel.AddControl(&gcKeyF6_);
+	Vessel.AddControl(&gcKeyF7_);
+	Vessel.AddControl(&gcKeyF8_);
+	Vessel.AddControl(&gcKeyF9_);
+	Vessel.AddControl(&gcKeyF10_);
 
-	vessel.AddControl(&apBtnMain_);
-	vessel.AddControl(&apBtnHeading_);
-	vessel.AddControl(&apBtnAltitude_);
-	vessel.AddControl(&apBtnKEAS_);
-	vessel.AddControl(&apBtnMACH_);
+	Vessel.AddControl(&apBtnMain_);
+	Vessel.AddControl(&apBtnHeading_);
+	Vessel.AddControl(&apBtnAltitude_);
+	Vessel.AddControl(&apBtnKEAS_);
+	Vessel.AddControl(&apBtnMACH_);
 	
-	vessel.AddControl(&apDspMain_);
-	vessel.AddControl(&apDspHeading_);
-	vessel.AddControl(&apDspAltitude_);
-	vessel.AddControl(&apDspKEAS_);
-	vessel.AddControl(&apDspMACH_);
+	Vessel.AddControl(&apDspMain_);
+	Vessel.AddControl(&apDspHeading_);
+	Vessel.AddControl(&apDspAltitude_);
+	Vessel.AddControl(&apDspKEAS_);
+	Vessel.AddControl(&apDspMACH_);
 
-	vessel.AddControl(&pnlHUDTile_);
-	vessel.AddControl(&pnlHUDText1_);
-	vessel.AddControl(&pnlHUDText2_);
-	vessel.AddControl(&pnlHUDText3_);
+	Vessel.AddControl(&pnlHUDTile_);
+	Vessel.AddControl(&pnlHUDText1_);
+	Vessel.AddControl(&pnlHUDText2_);
+	Vessel.AddControl(&pnlHUDText3_);
 
-	gcKey0_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D0); });
-	gcKey1_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D1); });
-	gcKey2_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D2); });
-	gcKey3_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D3); });
-	gcKey4_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D4); });
-	gcKey5_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D5); });
-	gcKey6_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D6); });
-	gcKey7_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D7); });
-	gcKey8_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D8); });
-	gcKey9_			.attach([&]() { keyBuffer_.push_back(FC::GCKey::D9); });
-	gcKeyClear_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Clear); });
-	gcKeyDecimal_	.attach([&]() { keyBuffer_.push_back(FC::GCKey::Decimal); });
-	gcKeyEnter_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Enter); });
-	gcKeyHUD_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::HUD); });
-	gcKeyNext_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Next); });
-	gcKeyPlusMinus_	.attach([&]() { keyBuffer_.push_back(FC::GCKey::PlusMinus); });
-	gcKeyPrev_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::Previous); });
-	gcKeyF1_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F1); });
-	gcKeyF2_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F2); });
-	gcKeyF3_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F3); });
-	gcKeyF4_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F4); });
-	gcKeyF5_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F5); });
-	gcKeyF6_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F6); });
-	gcKeyF7_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F7); });
-	gcKeyF8_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F8); });
-	gcKeyF9_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F9); });
-	gcKeyF10_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F10); });
+	gcKey0_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D0); });
+	gcKey1_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D1); });
+	gcKey2_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D2); });
+	gcKey3_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D3); });
+	gcKey4_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D4); });
+	gcKey5_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D5); });
+	gcKey6_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D6); });
+	gcKey7_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D7); });
+	gcKey8_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D8); });
+	gcKey9_			.Attach([&]() { keyBuffer_.push_back(FC::GCKey::D9); });
+	gcKeyClear_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::Clear); });
+	gcKeyDecimal_	.Attach([&]() { keyBuffer_.push_back(FC::GCKey::Decimal); });
+	gcKeyEnter_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::Enter); });
+	gcKeyHUD_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::HUD); });
+	gcKeyNext_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::Next); });
+	gcKeyPlusMinus_	.Attach([&]() { keyBuffer_.push_back(FC::GCKey::PlusMinus); });
+	gcKeyPrev_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::Previous); });
+	gcKeyF1_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F1); });
+	gcKeyF2_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F2); });
+	gcKeyF3_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F3); });
+	gcKeyF4_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F4); });
+	gcKeyF5_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F5); });
+	gcKeyF6_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F6); });
+	gcKeyF7_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F7); });
+	gcKeyF8_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F8); });
+	gcKeyF9_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F9); });
+	gcKeyF10_		.Attach([&]() { keyBuffer_.push_back(FC::GCKey::F10); });
 
-	apBtnMain_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::AtmoActive); });
-	apBtnHeading_	.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldHeading); });
-	apBtnAltitude_	.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldAltitude); });
-	apBtnKEAS_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldKEAS); });
-	apBtnMACH_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldMACH); });
+	apBtnMain_		.Attach([&]() { ToggleAtmoProgram(FCProgFlags::AtmoActive); });
+	apBtnHeading_	.Attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldHeading); });
+	apBtnAltitude_	.Attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldAltitude); });
+	apBtnKEAS_		.Attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldKEAS); });
+	apBtnMACH_		.Attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldMACH); });
 	
-	allId_ = vessel.GetControlId();
-	vessel.RegisterVCComponent(allId_, this);
-	vessel.RegisterPanelComponent(allId_, this);
+	allId_ = Vessel.GetControlId();
+	Vessel.RegisterVCComponent(allId_, this);
+	Vessel.RegisterPanelComponent(allId_, this);
 }
 
-void FC::FlightComputer::HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void FC::FlightComputer::HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
 	if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 
@@ -193,7 +193,7 @@ void FC::FlightComputer::Boot()
 	isRunning_ = true;
 }
 
-void FC::FlightComputer::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
+void FC::FlightComputer::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd)
 {
 	// Handle low lever computer stuff, boot etc.
 	Update();
@@ -210,7 +210,7 @@ void FC::FlightComputer::HandlePostStep(bco::vessel& vessel, double simt, double
 
 	// Give control programs simulator time.
 	//vesselCtrl_.Step(simt, simdt, mjd);
-	if (prevRunningProgs != runningPrograms_) UpdateProgs(vessel, runningPrograms_);
+	if (prevRunningProgs != runningPrograms_) UpdateProgs(Vessel, runningPrograms_);
 
 	auto atmoOn = IsProgramRunning(FCProgFlags::AtmoActive);
 	auto isHoldAlt = (atmoOn && IsProgramRunning(FCProgFlags::HoldAltitude));
@@ -218,15 +218,15 @@ void FC::FlightComputer::HandlePostStep(bco::vessel& vessel, double simt, double
 	auto isHoldKEAS = (atmoOn && IsProgramRunning(FCProgFlags::HoldKEAS));
 	auto isHoldMACH = (atmoOn && IsProgramRunning(FCProgFlags::HoldMACH));
 
-	if (isHoldAlt)	prgHoldAltitude_.step(vessel, simt, simdt, mjd);
-	if (isHoldHdg)	prgHoldHeading_.step(vessel, simt, simdt, mjd);
-	if (isHoldKEAS)	prgHoldKeas_.step(vessel, simt, simdt, mjd);
-	if (isHoldMACH)	prgHoldMach_.step(vessel, simt, simdt, mjd);
+	if (isHoldAlt)	prgHoldAltitude_.step(Vessel, simt, simdt, mjd);
+	if (isHoldHdg)	prgHoldHeading_.step(Vessel, simt, simdt, mjd);
+	if (isHoldKEAS)	prgHoldKeas_.step(Vessel, simt, simdt, mjd);
+	if (isHoldMACH)	prgHoldMach_.step(Vessel, simt, simdt, mjd);
 
-	pnlHUDTile_.set_position(atmoOn ? 0 : 1);
-	pnlHUDText1_.set_position(isHoldHdg ? 1 : 0);
-	pnlHUDText2_.set_position(isHoldAlt ? 2 : 0);
-	pnlHUDText3_.set_position((isHoldKEAS || isHoldMACH) ? (isHoldKEAS ? 3 : 4) : 0);
+	pnlHUDTile_.SetPosition(atmoOn ? 0 : 1);
+	pnlHUDText1_.SetPosition(isHoldHdg ? 1 : 0);
+	pnlHUDText2_.SetPosition(isHoldAlt ? 2 : 0);
+	pnlHUDText3_.SetPosition((isHoldKEAS || isHoldMACH) ? (isHoldKEAS ? 3 : 4) : 0);
 	
 	prevRunningProgs = runningPrograms_;
 
@@ -292,15 +292,15 @@ double FC::FlightComputer::GetScratchPad()
 	return temp;
 }
 
-void FC::FlightComputer::SetScratchPad(double value)
+void FC::FlightComputer::SetScratchPad(double Value)
 {
-	scratchValue_ = value;
+	scratchValue_ = Value;
 	DisplayLine(10, "[%10.2f]       ", scratchValue_);
 }
 
-bool FC::FlightComputer::HandleLoacVC(bco::vessel& vessel, int vcid)
+bool FC::FlightComputer::HandleLoacVC(bco::Vessel& Vessel, int vcid)
 {
-    auto vcMeshHandle = vessel.GetVCMeshHandle0();
+    auto vcMeshHandle = Vessel.GetVCMeshHandle0();
     assert(vcMeshHandle != nullptr);
 
     SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
@@ -325,7 +325,7 @@ bool FC::FlightComputer::HandleLoacVC(bco::vessel& vessel, int vcid)
     return true;
 }
 
-bool FC::FlightComputer::HandleRedrawVC(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
+bool FC::FlightComputer::HandleRedrawVC(bco::Vessel& Vessel, int id, int event, SURFHANDLE surf)
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++) {
 		bco::DrawSurfaceText(0, i * 20, display_[i], bco::DrawTextFormat::Left, surf, vcFont_);
@@ -334,9 +334,9 @@ bool FC::FlightComputer::HandleRedrawVC(bco::vessel& vessel, int id, int event, 
 	return true;
 }
 
-bool FC::FlightComputer::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
+bool FC::FlightComputer::HandleLoadPanel(bco::Vessel& Vessel, int id, PANELHANDLE hPanel)
 {
-	auto panelMesh = vessel.GetpanelMeshHandle0();
+	auto panelMesh = Vessel.GetpanelMeshHandle0();
 	SURFHANDLE surfHandle = oapiGetTextureHandle(panelMesh, bm::pnl::TXIDX_SR71R_100_2DPanel_dds);
 
 	// handle_set_class_caps our font:
@@ -348,7 +348,7 @@ bool FC::FlightComputer::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDL
 	vcFont_.blankX = 1600;
 	vcFont_.blankY = 2;
 
-	vessel.RegisterPanelArea(
+	Vessel.RegisterPanelArea(
 		hPanel,
 		allId_,
 //		_R(1565, 2152, 1808, 2371), //_R(1710, 95, 1950, 320),
@@ -360,7 +360,7 @@ bool FC::FlightComputer::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDL
 	return true;
 }
 
-bool FC::FlightComputer::HandleRedrawPanel(bco::vessel& vessel, int id, int event, SURFHANDLE surf)
+bool FC::FlightComputer::HandleRedrawPanel(bco::Vessel& Vessel, int id, int event, SURFHANDLE surf)
 {
 	int left = 1585;
 	int top = 2150;
@@ -371,7 +371,7 @@ bool FC::FlightComputer::HandleRedrawPanel(bco::vessel& vessel, int id, int even
 	return true;
 }
 
-bool FC::FlightComputer::HandleLoadState(bco::vessel& vessel, const std::string& line)
+bool FC::FlightComputer::HandleLoadState(bco::Vessel& Vessel, const std::string& line)
 {
 	std::istringstream in(line);
 	bool isOn, isHoldHeading, isHoldAltitude, isHoldSpeed, isHoldMACH;
@@ -386,7 +386,7 @@ bool FC::FlightComputer::HandleLoadState(bco::vessel& vessel, const std::string&
 	return true;
 }
 
-std::string FC::FlightComputer::HandleSaveState(bco::vessel& vessel)
+std::string FC::FlightComputer::HandleSaveState(bco::Vessel& Vessel)
 {
 	std::ostringstream os;
 	os << IsProgramRunning(FCProgFlags::AtmoActive)
@@ -456,8 +456,8 @@ void FC::FlightComputer::PageAscent()
 	ClearFuncKeys();
 	MapKey(GCKey::F1, [this] { SetTargetIncDeg(GetScratchPad()); });
 
-	MapKey(GCKey::F7, [this] { headingSignal_.fire(ascentHeading_); });
-	MapKey(GCKey::F8, [this] { headingSignal_.fire(ascentHeadingAlt_); });
+	MapKey(GCKey::F7, [this] { headingSignal_.Fire(ascentHeading_); });
+	MapKey(GCKey::F8, [this] { headingSignal_.Fire(ascentHeadingAlt_); });
 
 	// Target cannot be less than lat.
 	double vlng, vlat, vrad;

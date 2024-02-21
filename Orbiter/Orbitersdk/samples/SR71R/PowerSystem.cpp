@@ -22,22 +22,22 @@
 
 #include <assert.h>
 
-PowerSystem::PowerSystem(bco::vessel& vessel) :
+PowerSystem::PowerSystem(bco::Vessel& Vessel) :
 	batteryLevel_(1.0),			// Always available for now.
 	slotFuelCellAvailablePower_([&](double v) { })
 {
-	vessel.AddControl(&switchEnabled);
-	vessel.AddControl(&switchConnectExternal_);
-	vessel.AddControl(&switchConnectFuelCell_);
-	vessel.AddControl(&lightFuelCellConnected_);
-	vessel.AddControl(&lightExternalAvail_);
-	vessel.AddControl(&lightExternalConnected_);
-	vessel.AddControl(&gaugePowerAmps_);
-	vessel.AddControl(&gaugePowerVolts_);
-	vessel.AddControl(&statusBattery_);
+	Vessel.AddControl(&switchEnabled);
+	Vessel.AddControl(&switchConnectExternal_);
+	Vessel.AddControl(&switchConnectFuelCell_);
+	Vessel.AddControl(&lightFuelCellConnected_);
+	Vessel.AddControl(&lightExternalAvail_);
+	Vessel.AddControl(&lightExternalConnected_);
+	Vessel.AddControl(&gaugePowerAmps_);
+	Vessel.AddControl(&gaugePowerVolts_);
+	Vessel.AddControl(&statusBattery_);
 }
 
-bool PowerSystem::HandleLoadState(bco::vessel& vessel, const std::string& line)
+bool PowerSystem::HandleLoadState(bco::Vessel& Vessel, const std::string& line)
 {
 	// sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
 	double volt, bl; // Not used, but we read them.
@@ -47,7 +47,7 @@ bool PowerSystem::HandleLoadState(bco::vessel& vessel, const std::string& line)
 	return true;
 }
 
-std::string PowerSystem::HandleSaveState(bco::vessel& vessel)
+std::string PowerSystem::HandleSaveState(bco::Vessel& Vessel)
 {
 	std::stringstream ss;
 	ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_ << " 0.0 0.0";
@@ -59,14 +59,14 @@ std::string PowerSystem::HandleSaveState(bco::vessel& vessel)
 //	mainCircuit_.AddDevice(device);
 //}
 
-void PowerSystem::Update(bco::vessel& vessel)
+void PowerSystem::Update(bco::Vessel& Vessel)
 {
 	/* Power system update:
 	*	Determine if we have a power source available and how much it provides.
 	*	Check the current amp total and determine if we have an overload.
 	*	Report the voltage available signal so components know what they have to work with.
 	*/
-	auto externalConnected = vessel.IsStoppedOrDocked();
+	auto externalConnected = Vessel.IsStoppedOrDocked();
 	lightExternalAvail_.set_state(externalConnected);
 
 	// handle connected power
@@ -78,7 +78,7 @@ void PowerSystem::Update(bco::vessel& vessel)
 	lightExternalConnected_.set_state(availExternal > USEABLE_POWER);
 
 	// handle fuelcell power
-	auto availFuelCell = switchConnectFuelCell_.IsOn() ? slotFuelCellAvailablePower_.value() : 0.0;
+	auto availFuelCell = switchConnectFuelCell_.IsOn() ? slotFuelCellAvailablePower_.Value() : 0.0;
 	lightFuelCellConnected_.set_state(availFuelCell > USEABLE_POWER);
 
 	// handle battery power

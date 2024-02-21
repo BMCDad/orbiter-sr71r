@@ -22,429 +22,399 @@
 #include <sstream>
 #include <string>
 
-#include "Animation.h"
-#include "Component.h"
-#include "Control.h"
-#include "handler_interfaces.h"
-#include "IAnimationState.h"
 #include "Orbitersdk.h"
+
+#include "animation.h"
+#include "component.h"
+#include "control.h"
+#include "handler_interfaces.h"
+#include "animation_state.h"
 #include "signals.h"
 
-namespace bc_orbiter
-{
-	class Component;
+namespace bc_orbiter {
+  class Component;
 }
 
-namespace bc_orbiter
-{
-	/**
-	Base class for Orbiter vessels.
-	*/
-    class vessel : 
-		  public VESSEL4
-		, public AvionicsProvider
-		, public PropulsionControl
-    {
-    public:
-        vessel(OBJHANDLE hvessel, int flightmodel);
+namespace bc_orbiter {
+/**
+Base class for Orbiter vessels.
+*/
+class Vessel : public VESSEL4, public AvionicsProvider, public PropulsionControl {
+ public:
+  Vessel(OBJHANDLE hvessel, int flightmodel);
+  virtual ~Vessel() {}
 
-		// clbk overrides:
-		virtual bool clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
-		virtual bool clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) override;
-		virtual bool clbkLoadVC(int id) override;
-		virtual bool clbkPanelMouseEvent(int id, int event, int mx, int my) override;
-		virtual bool clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context) override;
-		virtual void clbkPostCreation() override;
-        virtual void clbkPostStep(double simt, double simdt, double mjd) override;
-		virtual void clbkSetClassCaps(FILEHANDLE cfg) override;
-		virtual bool clbkVCMouseEvent(int id, int event, VECTOR3 &p) override;
-		virtual bool clbkVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
-		virtual void clbkVisualCreated(VISHANDLE visHandle, int refCount) override;
-		virtual void clbkVisualDestroyed(VISHANDLE vis, int refcount) override;
+  // clbk overrides:
+  virtual bool clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+  virtual bool clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) override;
+  virtual bool clbkLoadVC(int id) override;
+  virtual bool clbkPanelMouseEvent(int id, int event, int mx, int my) override;
+  virtual bool clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context) override;
+  virtual void clbkPostCreation() override;
+  virtual void clbkPostStep(double simt, double simdt, double mjd) override;
+  virtual void clbkSetClassCaps(FILEHANDLE cfg) override;
+  virtual bool clbkVCMouseEvent(int id, int event, VECTOR3 &p) override;
+  virtual bool clbkVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
+  virtual void clbkVisualCreated(VISHANDLE visHandle, int refCount) override;
+  virtual void clbkVisualDestroyed(VISHANDLE vis, int refcount) override;
 
-		virtual ~vessel() {}
+  DEVMESHHANDLE GetVirtualCockpitMesh0() { return meshVirtualCockpit0_; }
+  MESHHANDLE GetVCMeshHandle0() { return vcMeshHandle0_; }
+  void SetVCMeshHandle0(MESHHANDLE mh) { vcMeshHandle0_ = mh; }
+  void SetVCMeshIndex0(int index) { vcIndex0_ = index; }
+  void SetMainMeshIndex(int index) { mainIndex_ = index; }
+  UINT GetVCMeshIndex() const { return vcIndex0_; }
+  UINT GetMainMeshIndex() const { return mainIndex_; }
+  void SetPanelMeshHandle0(MESHHANDLE mh)	{ panelMeshHandle0_ = mh; }
+  MESHHANDLE GetpanelMeshHandle0() const { return panelMeshHandle0_; }
 
-		DEVMESHHANDLE   GetVirtualCockpitMesh0()			{ return meshVirtualCockpit0_; }
-        MESHHANDLE      GetVCMeshHandle0()					{ return vcMeshHandle0_; }
-        void            SetVCMeshHandle0(MESHHANDLE mh)		{ vcMeshHandle0_    = mh; }
-		void            SetVCMeshIndex0(int index)			{ vcIndex0_         = index; }
-        void            SetMainMeshIndex(int index)			{ mainIndex_        = index; }
-        UINT            GetVCMeshIndex() const				{ return vcIndex0_; }
+  bool IsStoppedOrDocked();
+  bool IsCreated() { return isCreated_; }
+  void CreateMainPropellant(double max)	{ mainPropellant_ = CreatePropellantResource(max); }
+  void CreateRcsPropellant(double max) { rcsPropellant_ = CreatePropellantResource(max); }
 
-		UINT            GetMainMeshIndex() const			{ return mainIndex_; }
-		void			SetPanelMeshHandle0(MESHHANDLE mh)	{ panelMeshHandle0_ = mh; }
-		MESHHANDLE		GetpanelMeshHandle0() const			{ return panelMeshHandle0_; }
+  PROPELLANT_HANDLE MainPropellant() const { return mainPropellant_; }
+  PROPELLANT_HANDLE RcsPropellant() const { return rcsPropellant_; }
 
-		bool			IsStoppedOrDocked();
-		bool			IsCreated()							{ return isCreated_; }
-        void			CreateMainPropellant(double max)	{ mainPropellant_ = CreatePropellantResource(max); }
-        void			CreateRcsPropellant(double max)		{ rcsPropellant_ = CreatePropellantResource(max); }
+  /**
+    Creates an animation and registers it with the base vessel.  animation_target registered
+    with the base class automatically receive part of the PostStep time processing.
+    @param target IAnimationState object that will control the animation state.
+    @param speed The speed of the animation.
+    @param func The function to call when the animation hits its target state.
+  */
+  template<typename AT=animation_target>
+  UINT CreateVesselAnimation(AnimationState* target, double speed = 1.0, func_target_achieved func = nullptr) {
+    auto animId = VESSEL3::CreateAnimation(0.0);
+    animations_[animId] = std::make_unique<AT>(target, speed, func);
+    return animId;
+  }
 
-        PROPELLANT_HANDLE MainPropellant() const			{ return mainPropellant_; }
-        PROPELLANT_HANDLE RcsPropellant() const				{ return rcsPropellant_; }
+  /**
+    Adds an animation group to an existing animation.  See CreateVesselAnimation.
+    @param animId The animation id returned from CreateVesselAnimation.
+    @param meshIdx The mesh index to animate.
+    @param trans The mesh transformation.
+    @param parent The parent group if any.
+  */
+  ANIMATIONCOMPONENT_HANDLE AddVesselAnimationComponent(UINT animId, UINT meshIdx, AnimationGroup* transform, ANIMATIONCOMPONENT_HANDLE parent = nullptr) {
+    ANIMATIONCOMPONENT_HANDLE result = nullptr;
+    auto eh = animations_.find(animId);
 
-        /**
-        Creates an animation and registers it with the base vessel.  animation_target registered
-		with the base class automatically receive part of the PostStep time processing.
-        @param target IAnimationState object that will control the animation state.
-        @param speed The speed of the animation.
-        @param func The function to call when the animation hits its target state.
-        */
-        template<typename AT=animation_target>
-        UINT CreateVesselAnimation(IAnimationState* target, double speed = 1.0, func_target_achieved func = nullptr)
-        {
-            auto animId = VESSEL3::CreateAnimation(0.0);
+    if (eh != animations_.end()) {
+      transform->SetMeshIndex(meshIdx);
+      result = VESSEL3::AddAnimationComponent(animId, transform->Start(), transform->Stop(), transform->Transform(), parent);
+    }
 
-            animations_[animId] = std::make_unique<AT>(target, speed, func);
-            return animId;
-        }
+    return result;
+  }
 
-        /**
-        Adds an animation group to an existing animation.  See CreateVesselAnimation.
-        @param animId The animation id returned from CreateVesselAnimation.
-        @param meshIdx The mesh index to animate.
-        @param trans The mesh transformation.
-        @param parent The parent group if any.
-        */
-        ANIMATIONCOMPONENT_HANDLE AddVesselAnimationComponent(UINT animId, UINT meshIdx, AnimationGroup* transform, ANIMATIONCOMPONENT_HANDLE parent = nullptr) {
-          ANIMATIONCOMPONENT_HANDLE result = nullptr;
-
-          auto eh = animations_.find(animId);
-
-          if (eh != animations_.end()) {
-            transform->SetMeshIndex(meshIdx);
-            result = VESSEL3::AddAnimationComponent(animId, transform->Start(), transform->Stop(), transform->Transform(), parent);
-          }
-
-          return result;
-        }
-
-    /**
+  /**
     Sets the state of an animation directly.  Call this when an animation
     should immediatly reflect the desired state and not move to it over time.
     For example when loading the state from a configuration file.
     @param id The animation id to set.
     @param state The state to set the animation to.
-    */
-    void SetAnimationState(const animation_target& anim) {
-      auto eh = animations_.find(anim.VesselId());
-      if (eh != animations_.end())	eh->second->SetState(anim.GetState());
-    }
+  */
+  void SetAnimationState(const animation_target& anim) {
+    auto eh = animations_.find(anim.VesselId());
+    if (eh != animations_.end())	eh->second->SetState(anim.GetState());
+  }
 
-		int GetIdForComponent(Component* comp)
-		{
-			auto id = ++nextEventId_;
-			idComponentMap_[id] = comp;
-			return id;
-		}
+  int GetIdForComponent(Component* comp)
+  {
+    auto id = ++nextEventId_;
+    idComponentMap_[id] = comp;
+    return id;
+  }
 
-		int GetControlId() { return ++nextEventId_; }
+  int GetControlId() { return ++nextEventId_; }
 
-		void AddControl(Control* ctrl) { 
-			if (ctrl->GetId() == -1) ctrl->SetId(GetControlId());
-			controls_.push_back(ctrl); 
-		}
+  void AddControl(Control* ctrl) { 
+    if (ctrl->GetId() == -1) ctrl->SetId(GetControlId());
+    controls_.push_back(ctrl); 
+  }
 
-		void AddComponent(VesselComponent* c) { components_.push_back(c); }
+  void AddComponent(VesselComponent* c) { components_.push_back(c); }
 
-		// Clean this up later when Component goes away
-		void RegisterVCComponent(int id, HandlesVCLoading* vc) {
-			map_vc_component_[id] = vc;
-		}
+  // Clean this up later when Component goes away
+  void RegisterVCComponent(int id, HandlesVCLoading* vc) {
+    map_vc_component_[id] = vc;
+  }
 
-		void RegisterPanelComponent(int id, HandlesPanelLoading* pnl) {
-			map_panel_component_[id] = pnl;
-		}
+  void RegisterPanelComponent(int id, HandlesPanelLoading* pnl) {
+    map_panel_component_[id] = pnl;
+  }
 
-		// avionics_provider
-		double GetAltitude() const				override { return this->GetAltitude(); }
-		void   GetAngularVelocity(VECTOR3& v)	override { this->GetAngularVel(v); }
-		double GetBank() const					override { return this->GetBank(); }
-		double GetHeading() const				override { return this->GetYaw(); }
-		double GetKEAS() const					override { return GetVesselKeas(this); }
-		double GetMach() const					override { return this->GetMachNumber(); }
-		double GetPitch() const				override { return this->GetPitch(); }
-		double GetVerticalSpeed() const		override { return GetVerticalSpeedFPM(this); }
+  // avionics_provider
+  double AvGetAltitude() const override { return this->GetAltitude(); }
+  void AvGetAngularVelocity(VECTOR3& v) override { this->GetAngularVel(v); }
+  double AvGetBank() const override { return this->GetBank(); }
+  double AvGetHeading() const override { return this->GetYaw(); }
+  double AvGetKEAS() const override { return GetVesselKeas(this); }
+  double AvGetMach() const override { return this->GetMachNumber(); }
+  double AvGetPitch() const override { return this->GetPitch(); }
+  double AvGetVerticalSpeed() const override { return GetVerticalSpeedFPM(this); }
 
-		// propulsion_control
-		double GetMainThrustLevel() const	override { return this->GetThrusterGroupLevel(THGROUP_MAIN); }
-		void   SetMainThrustLevel(double l)	override { this->SetThrusterGroupLevel(THGROUP_MAIN, l); }
-		void   SetAttitudeRotation(Axis axis, double Level) override { this->SetAttitudeRotLevel((int)axis, Level); }
+  // propulsion_control
+  double GetMainThrustLevel() const	override { return this->GetThrusterGroupLevel(THGROUP_MAIN); }
+  void SetMainThrustLevel(double l)	override { this->SetThrusterGroupLevel(THGROUP_MAIN, l); }
+  void SetAttitudeRotation(Axis axis, double Level) override { this->SetAttitudeRotLevel((int)axis, Level); }
 
-		// surface_control
-		void SetAileronLevel(double l)		{ this->SetControlSurfaceLevel(AIRCTRL_AILERON, l); }
-		void SetElevatorLevel(double l)		{ this->SetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM, l); }
+  // surface_control
+  void SetAileronLevel(double l) { this->SetControlSurfaceLevel(AIRCTRL_AILERON, l); }
+  void SetElevatorLevel(double l) { this->SetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM, l); }
 
-	private:
+ private:
 
-		std::vector<Control*>							controls_;
-		std::map<int, VCEventTarget*>					map_vc_targets_;
-		std::map<int, PanelEventTarget*>				map_panel_targets_;
-		std::vector<PanelAnimation*>					panel_animations_;
-		std::vector<VCTextureAnimation*>					vc_texture_animations_;
-		std::map<int, VCAnimation*>					map_vc_animations_;
+  std::vector<Control*> controls_;
+  std::map<int, VCEventTarget*> map_vc_targets_;
+  std::map<int, PanelEventTarget*> map_panel_targets_;
+  std::vector<PanelAnimation*> panel_animations_;
+  std::vector<VCTextureAnimation*> vc_texture_animations_;
+  std::map<int, VCAnimation*> map_vc_animations_;
 
-		std::vector<VesselComponent*>					components_;
-		std::vector<HandlesPostStep*>							post_step_components_;
-		std::vector<HandlesSetClassCaps*>					set_class_caps_components_;
-		std::vector<HandlesDrawHud*>							draw_hud_components_;
-		std::vector<HandlesVCLoading*>							load_vc_components_;
-		std::vector<HandlesPanelLoading*>						load_panel_components_;
-		std::map<int, HandlesVCLoading*>							map_vc_component_;
-		std::map<int, HandlesPanelLoading*>						map_panel_component_;
+  std::vector<VesselComponent*> components_;
+  std::vector<HandlesPostStep*> post_step_components_;
+  std::vector<HandlesSetClassCaps*> set_class_caps_components_;
+  std::vector<HandlesDrawHud*> draw_hud_components_;
+  std::vector<HandlesVCLoading*> load_vc_components_;
+  std::vector<HandlesPanelLoading*> load_panel_components_;
+  std::map<int, HandlesVCLoading*> map_vc_component_;
+  std::map<int, HandlesPanelLoading*> map_panel_component_;
 
-		std::map<int, Component*>						idComponentMap_;		// still used by MFDs.  Need to figure that out, then we can get rid of Component
-		std::map<UINT, std::unique_ptr<Animation>>     animations_;
-		
-		int					nextEventId_				{ 0 };
-		bool				isCreated_					{ false };	// Set true after clbkPostCreation
-		VISHANDLE			visualHandle_				{ nullptr };
-		DEVMESHHANDLE		meshVirtualCockpit0_		{ nullptr };
-		MESHHANDLE			vcMeshHandle0_				{ nullptr };
-		MESHHANDLE			panelMeshHandle0_			{ nullptr };
-		UINT				vcIndex0_					{ 0 };
-		UINT                mainIndex_					{ 0 };
-		VESSELSTATUS2		vesselStatus_;
+  std::map<int, Component*> idComponentMap_;    // still used by MFDs.  Need to figure that out, then we can get rid of Component
+  std::map<UINT, std::unique_ptr<Animation>> animations_;
 
-		// Propellent (multiple components need this on setup, so put it in the vessel class)
-		PROPELLANT_HANDLE	mainPropellant_				{ nullptr };
-		PROPELLANT_HANDLE	rcsPropellant_				{ nullptr };
-	};
+  int nextEventId_ { 0 };
+  bool isCreated_ { false }; // Set true after clbkPostCreation
+  VISHANDLE visualHandle_ { nullptr };
+  DEVMESHHANDLE meshVirtualCockpit0_ { nullptr };
+  MESHHANDLE vcMeshHandle0_ { nullptr };
+  MESHHANDLE panelMeshHandle0_ { nullptr };
+  UINT vcIndex0_ { 0 };
+  UINT mainIndex_ { 0 };
+  VESSELSTATUS2 vesselStatus_;
 
-	inline vessel::vessel(OBJHANDLE hvessel, int flightmodel) :
-		VESSEL4(hvessel, flightmodel)
-	{
-		// handle_set_class_caps vessel status.
-		memset(&vesselStatus_, 0, sizeof(vesselStatus_));
-		vesselStatus_.version = 2;
-	}
+  // Propellent (multiple components need this on setup, so put it in the vessel class)
+  PROPELLANT_HANDLE	mainPropellant_ { nullptr };
+  PROPELLANT_HANDLE	rcsPropellant_ { nullptr };
+};
 
-	inline bool vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
-	{
-		for (auto& ps : draw_hud_components_) {
-			ps->HandleDrawHUD(*this, mode, hps, skp);
-		}
-
-		VESSEL3::clbkDrawHUD(mode, hps, skp);
-		return true;
-	}
-
-	inline bool vessel::clbkLoadVC(int id)
-	{
-		// Handle controls with load vc requirements.
-		for each (auto & vc in map_vc_targets_) {
-			oapiVCRegisterArea(
-				vc.first,							// Area ID
-				vc.second->VCRedrawFlags(),		// PANEL_REDRAW_*
-				vc.second->VCMouseFlags());		// PANEL_MOUSE_*
-
-			oapiVCSetAreaClickmode_Spherical(
-				vc.first,							// Area ID
-				vc.second->VCEventLocation(),
-				vc.second->VCEventRadius());
-		}
-
-		// handle vessel components that require load vc.
-		for each (auto & vc in load_vc_components_) {
-			vc->HandleLoacVC(*this, id);
-		}
-
-		return true;
-	}
-
-	inline void vessel::clbkSetClassCaps(FILEHANDLE cfg)
-	{
-		// set_class_caps will flesh out to a more general 'component' list (non-ui/control intities)
-		for each (auto & cc in components_) {
-			if (auto* ac = dynamic_cast<HandlesPostStep*		>(cc))	post_step_components_.push_back(ac);
-			if (auto* ac = dynamic_cast<HandlesSetClassCaps*	>(cc))	set_class_caps_components_.push_back(ac);
-			if (auto* ac = dynamic_cast<HandlesDrawHud*		>(cc))	draw_hud_components_.push_back(ac);
-			if (auto* ac = dynamic_cast<HandlesVCLoading*		>(cc))	load_vc_components_.push_back(ac);
-			if (auto* ac = dynamic_cast<HandlesPanelLoading*		>(cc))	load_panel_components_.push_back(ac);
-		}
-
-    // Handle controls that need initialization.
-    for each (auto & vc in controls_) {
-      if (auto* c = dynamic_cast<VCAnimation*>(vc)) {
-        auto aid = VESSEL3::CreateAnimation(0);
-        auto trans = c->VCAnimationGroup();
-        trans->SetMeshIndex(GetVCMeshIndex());
-        VESSEL3::AddAnimationComponent(aid, trans->Start(), trans->Stop(), trans->Transform());
-        map_vc_animations_[aid] = c;
-      }
-
-      if (auto* c = dynamic_cast<PanelAnimation*		>(vc)) panel_animations_.push_back(c);
-      if (auto* c = dynamic_cast<VCEventTarget*		>(vc)) map_vc_targets_[vc->GetId()] = c;
-      if (auto* c = dynamic_cast<PanelEventTarget*	>(vc)) map_panel_targets_[vc->GetId()] = c;
-      if (auto* c = dynamic_cast<VCTextureAnimation*	>(vc)) vc_texture_animations_.push_back(c);
-    }
-
-		for each (auto & sc in set_class_caps_components_) {
-			sc->HandleSetClassCaps(*this);
-		}
-	}
-
-	inline bool vessel::clbkVCMouseEvent(int id, int event, VECTOR3 &p)
-	{
-		// Old new mode...
-		auto c = idComponentMap_.find(id);
-		if (c != idComponentMap_.end())
-		{
-			return c->second->OnVCMouseEvent(id, event);
-		}
-
-		// NEW mode
-		auto vc = map_vc_targets_.find(id);
-		if (vc != map_vc_targets_.end()) {
-			vc->second->OnEvent(id, event);
-		}
-
-		return false;
-	}
-
-	inline bool vessel::clbkVCRedrawEvent(int id, int event, SURFHANDLE surf)
-	{
-		if (nullptr == meshVirtualCockpit0_)	return false;
-
-		auto c = idComponentMap_.find(id);
-		if (c != idComponentMap_.end())
-		{
-			return c->second->OnVCRedrawEvent(id, event, surf);
-		}
-
-		// NEW mode
-		auto pe = map_vc_targets_.find(id);
-		if (pe != map_vc_targets_.end()) {
-			pe->second->OnVCRedraw(meshVirtualCockpit0_);
-			return true;
-		}
-
-		auto pc = map_vc_component_.find(id);
-		if (pc != map_vc_component_.end()) {
-			pc->second->HandleRedrawVC(*this, id, event, surf);
-			return true;
-		}
-
-		return false;
-	}
-
-	inline void vessel::clbkVisualCreated(VISHANDLE visHandle, int refCount)
-	{
-		visualHandle_ = visHandle;
-		meshVirtualCockpit0_ = GetDevMesh(visualHandle_, vcIndex0_);
-	}
-
-	inline void vessel::clbkVisualDestroyed(VISHANDLE vis, int refcount)
-	{
-		visualHandle_ = nullptr;
-		meshVirtualCockpit0_ = nullptr;
-		isCreated_ = false;
-	}
-
-    inline void vessel::clbkPostStep(double simt, double simdt, double mjd)
-    {
-        // Update animations
-        for (auto& a : animations_)
-        {
-            a.second->Step(simdt);
-            auto state = a.second->GetState();
-            VESSEL3::SetAnimation(a.first, state);
-        }
-
-		// NEW MODE  << This will go away eventually
-		if (oapiCockpitMode() == COCKPIT_VIRTUAL) {
-			for (auto& va : map_vc_animations_) {
-				auto newState = va.second->VCStep(simdt);
-				VESSEL3::SetAnimation(va.first, newState);
-			}
-
-			auto mesh = GetVirtualCockpitMesh0();
-			for (auto& vt : vc_texture_animations_) {
-				vt->VCStep(mesh, simdt);
-			}
-		}
-
-		if (oapiCockpitMode() == COCKPIT_PANELS) {
-			auto mesh = GetpanelMeshHandle0();
-			for (auto& pa : panel_animations_) {
-				pa->PanelStep(mesh, simdt);
-			}
-		}
-
-		for (auto& ps : post_step_components_) {
-			ps->HandlePostStep(*this, simt, simdt, mjd);
-		}
-    }
-
-	inline void vessel::clbkPostCreation()
-	{
-		isCreated_ = true;
-	}
-
- 	inline bool vessel::IsStoppedOrDocked()
-	{
-		vesselStatus_.flag = 0;
-		GetStatusEx(&vesselStatus_);
-		return ((vesselStatus_.status == 1) || (DockingStatus(0) == 1));
-	}
-
-	inline bool vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
-	{
-		for each (auto & p in map_panel_targets_) {	// For panel, mouse and redraw happen in the same call.
-			RegisterPanelArea(
-				hPanel,
-				p.first,							// Area ID
-				p.second->PanelRect(),
-				p.second->PanelRedrawFlags(),	// PANEL_REDRAW_*
-				p.second->PanelMouseFlags());	// PANEL_MOUSE_*
-		}
-
-		for each (auto & vc in load_panel_components_) {
-			vc->HandleLoadPanel(*this, id, hPanel);
-		}
-
-		return true;
-	}
-
-	inline bool vessel::clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context)
-	{
-		// OLD New mode...
-		auto c = idComponentMap_.find(id);
-		if (c != idComponentMap_.end())
-		{
-			return c->second->OnPanelRedrawEvent(id, event, surf);
-		}
-
-		// NEW mode
-		auto pe = map_panel_targets_.find(id);
-		if (pe != map_panel_targets_.end()) {
-			pe->second->OnPanelRedraw(GetpanelMeshHandle0());
-			return true;
-		}
-
-		auto pc = map_panel_component_.find(id);
-		if (pc != map_panel_component_.end()) {
-			pc->second->HandleRedrawPanel(*this, id, event, surf);
-		}
-
-		return true;
-	}
-
-	inline bool vessel::clbkPanelMouseEvent(int id, int event, int mx, int my)
-	{
-		// Old New mode...
-		auto c = idComponentMap_.find(id);
-		if (c != idComponentMap_.end())
-		{
-			return c->second->OnPanelMouseEvent(id, event);
-		}
-
-		// NEW mode
-		auto pe = map_panel_targets_.find(id);
-		if (pe != map_panel_targets_.end()) {
-			pe->second->OnEvent(id, event);
-		}
-
-		return true;
-	}
+inline Vessel::Vessel(OBJHANDLE hvessel, int flightmodel) : VESSEL4(hvessel, flightmodel) {
+  memset(&vesselStatus_, 0, sizeof(vesselStatus_));
+  vesselStatus_.version = 2;
 }
+
+inline bool Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) {
+  for (auto& ps : draw_hud_components_) {
+    ps->HandleDrawHUD(*this, mode, hps, skp);
+  }
+
+  VESSEL3::clbkDrawHUD(mode, hps, skp);
+  return true;
+}
+
+inline bool Vessel::clbkLoadVC(int id) {
+  // Handle controls with load vc requirements.
+  for each (auto & vc in map_vc_targets_) {
+    oapiVCRegisterArea(
+    vc.first, // Area ID
+    vc.second->VCRedrawFlags(), // PANEL_REDRAW_*
+    vc.second->VCMouseFlags()); // PANEL_MOUSE_*
+
+    oapiVCSetAreaClickmode_Spherical(
+    vc.first, // Area ID
+    vc.second->VCEventLocation(),
+    vc.second->VCEventRadius());
+  }
+
+  // handle vessel components that require load vc.
+  for each (auto & vc in load_vc_components_) {
+    vc->HandleLoacVC(*this, id);
+  }
+
+  return true;
+}
+
+inline void Vessel::clbkSetClassCaps(FILEHANDLE cfg) {
+	// set_class_caps will flesh out to a more general 'component' list (non-ui/control intities)
+	for each (auto & cc in components_) {
+		if (auto* ac = dynamic_cast<HandlesPostStep*		>(cc))	post_step_components_.push_back(ac);
+		if (auto* ac = dynamic_cast<HandlesSetClassCaps*	>(cc))	set_class_caps_components_.push_back(ac);
+		if (auto* ac = dynamic_cast<HandlesDrawHud*		>(cc))	draw_hud_components_.push_back(ac);
+		if (auto* ac = dynamic_cast<HandlesVCLoading*		>(cc))	load_vc_components_.push_back(ac);
+		if (auto* ac = dynamic_cast<HandlesPanelLoading*		>(cc))	load_panel_components_.push_back(ac);
+	}
+
+  // Handle controls that need initialization.
+  for each (auto & vc in controls_) {
+    if (auto* c = dynamic_cast<VCAnimation*>(vc)) {
+      auto aid = VESSEL3::CreateAnimation(0);
+      auto trans = c->VCAnimationGroup();
+      trans->SetMeshIndex(GetVCMeshIndex());
+      VESSEL3::AddAnimationComponent(aid, trans->Start(), trans->Stop(), trans->Transform());
+      map_vc_animations_[aid] = c;
+    }
+
+    if (auto* c = dynamic_cast<PanelAnimation*>(vc)) panel_animations_.push_back(c);
+    if (auto* c = dynamic_cast<VCEventTarget*>(vc)) map_vc_targets_[vc->GetId()] = c;
+    if (auto* c = dynamic_cast<PanelEventTarget*>(vc)) map_panel_targets_[vc->GetId()] = c;
+    if (auto* c = dynamic_cast<VCTextureAnimation*>(vc)) vc_texture_animations_.push_back(c);
+  }
+
+  for each (auto & sc in set_class_caps_components_) {
+    sc->HandleSetClassCaps(*this);
+  }
+}
+
+inline bool Vessel::clbkVCMouseEvent(int id, int event, VECTOR3 &p) {
+  // Old new mode...
+  auto c = idComponentMap_.find(id);
+  if (c != idComponentMap_.end()) {
+    return c->second->OnVCMouseEvent(id, event);
+  }
+
+  // NEW mode
+  auto vc = map_vc_targets_.find(id);
+  if (vc != map_vc_targets_.end()) {
+    vc->second->OnEvent(id, event);
+  }
+
+  return false;
+}
+
+inline bool Vessel::clbkVCRedrawEvent(int id, int event, SURFHANDLE surf) {
+  if (nullptr == meshVirtualCockpit0_)	return false;
+
+  auto c = idComponentMap_.find(id);
+  if (c != idComponentMap_.end()) {
+    return c->second->OnVCRedrawEvent(id, event, surf);
+  }
+
+  // NEW mode
+  auto pe = map_vc_targets_.find(id);
+  if (pe != map_vc_targets_.end()) {
+    pe->second->OnVCRedraw(meshVirtualCockpit0_);
+    return true;
+  }
+
+  auto pc = map_vc_component_.find(id);
+  if (pc != map_vc_component_.end()) {
+    pc->second->HandleRedrawVC(*this, id, event, surf);
+    return true;
+  }
+
+  return false;
+}
+
+inline void Vessel::clbkVisualCreated(VISHANDLE visHandle, int refCount) {
+  visualHandle_ = visHandle;
+  meshVirtualCockpit0_ = GetDevMesh(visualHandle_, vcIndex0_);
+}
+
+inline void Vessel::clbkVisualDestroyed(VISHANDLE vis, int refcount) {
+  visualHandle_ = nullptr;
+  meshVirtualCockpit0_ = nullptr;
+  isCreated_ = false;
+}
+
+inline void Vessel::clbkPostStep(double simt, double simdt, double mjd) {
+  // Update animations
+  for (auto& a : animations_) {
+    a.second->Step(simdt);
+    auto state = a.second->GetState();
+    VESSEL3::SetAnimation(a.first, state);
+  }
+
+  // NEW MODE  << This will go away eventually
+  if (oapiCockpitMode() == COCKPIT_VIRTUAL) {
+    for (auto& va : map_vc_animations_) {
+      auto newState = va.second->VCStep(simdt);
+      VESSEL3::SetAnimation(va.first, newState);
+    }
+
+    auto mesh = GetVirtualCockpitMesh0();
+    for (auto& vt : vc_texture_animations_) {
+      vt->VCStep(mesh, simdt);
+    }
+  }
+
+  if (oapiCockpitMode() == COCKPIT_PANELS) {
+    auto mesh = GetpanelMeshHandle0();
+    for (auto& pa : panel_animations_) {
+      pa->PanelStep(mesh, simdt);
+    }
+  }
+
+  for (auto& ps : post_step_components_) {
+    ps->HandlePostStep(*this, simt, simdt, mjd);
+  }
+}
+
+inline void Vessel::clbkPostCreation() {
+  isCreated_ = true;
+}
+
+inline bool Vessel::IsStoppedOrDocked() {
+  vesselStatus_.flag = 0;
+  GetStatusEx(&vesselStatus_);
+  return ((vesselStatus_.status == 1) || (DockingStatus(0) == 1));
+}
+
+inline bool Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) {
+  for each (auto & p in map_panel_targets_) {	// For panel, mouse and redraw happen in the same call.
+    RegisterPanelArea(
+      hPanel,
+      p.first, // Area ID
+      p.second->PanelRect(),
+      p.second->PanelRedrawFlags(), // PANEL_REDRAW_*
+      p.second->PanelMouseFlags()); // PANEL_MOUSE_*
+  }
+
+  for each (auto & vc in load_panel_components_) {
+    vc->HandleLoadPanel(*this, id, hPanel);
+  }
+
+  return true;
+}
+
+inline bool Vessel::clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context) {
+  // OLD New mode...
+  auto c = idComponentMap_.find(id);
+  if (c != idComponentMap_.end()) {
+    return c->second->OnPanelRedrawEvent(id, event, surf);
+  }
+
+  // NEW mode
+  auto pe = map_panel_targets_.find(id);
+  if (pe != map_panel_targets_.end()) {
+    pe->second->OnPanelRedraw(GetpanelMeshHandle0());
+    return true;
+  }
+
+  auto pc = map_panel_component_.find(id);
+  if (pc != map_panel_component_.end()) {
+    pc->second->HandleRedrawPanel(*this, id, event, surf);
+  }
+
+  return true;
+}
+
+inline bool Vessel::clbkPanelMouseEvent(int id, int event, int mx, int my) {
+  // Old New mode...
+  auto c = idComponentMap_.find(id);
+  if (c != idComponentMap_.end())
+  {
+    return c->second->OnPanelMouseEvent(id, event);
+  }
+
+  // NEW mode
+  auto pe = map_panel_targets_.find(id);
+  if (pe != map_panel_targets_.end()) {
+    pe->second->OnEvent(id, event);
+  }
+
+  return true;
+}
+} // namespace bc_orbiter

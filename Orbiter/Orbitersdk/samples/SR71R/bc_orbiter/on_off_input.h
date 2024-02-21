@@ -53,7 +53,7 @@ namespace bc_orbiter {
 		, public VCEventTarget
 		, public PanelEventTarget
 		, public OneWaySwitch
-		, public signaller
+		, public Signaller
 	{
 	public:
 		on_off_input(
@@ -106,17 +106,17 @@ namespace bc_orbiter {
 		// event_target
 		bool OnEvent(int id, int event) override {
 			state_ = !state_;
-			fire();
+			Fire();
 			return true;
 		}
 
 		void AttachOnChange(const std::function<void()>& func) override {
-			attach(func);
+			Attach(func);
 		}
 
 		void toggle_state() {
 			state_ = !state_;
-			fire();
+			Fire();
 			oapiTriggerRedrawArea(0, 0, GetId());
 		}
 
@@ -126,7 +126,7 @@ namespace bc_orbiter {
 				input >> isEnabled;
 				obj.state_ = isEnabled;
 				obj.animVC_.SetState(isEnabled ? 1.0 : 0.0);
-				obj.fire();
+				obj.Fire();
 			}
 
 			return input;

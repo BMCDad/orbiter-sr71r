@@ -43,7 +43,7 @@ namespace bc_orbiter {
             TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, 0.0, vecTrans_);
         }
 
-        void set_position(int pos) {
+        void SetPosition(int pos) {
             set_transform(pos * offset_, 0.0);
         }
 

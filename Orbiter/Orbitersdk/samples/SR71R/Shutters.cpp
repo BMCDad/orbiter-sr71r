@@ -22,13 +22,13 @@
 
 #include <assert.h>
 
-Shutters::Shutters(bco::vessel& vessel)
+Shutters::Shutters(bco::Vessel& Vessel)
 {
-	vessel.AddControl(&switchShutters_);
-	switchShutters_.attach([&]() { Update(); });
+	Vessel.AddControl(&switchShutters_);
+	switchShutters_.Attach([&]() { Update(); });
 }
 
-bool Shutters::HandleLoadState(bco::vessel& vessel, const std::string& line)
+bool Shutters::HandleLoadState(bco::Vessel& Vessel, const std::string& line)
 {
 	//if (_strnicmp(key, ConfigKey, 8) != 0)
 	//{
@@ -44,7 +44,7 @@ bool Shutters::HandleLoadState(bco::vessel& vessel, const std::string& line)
 	return true;
 }
 
-std::string Shutters::HandleSaveState(bco::vessel& vessel)
+std::string Shutters::HandleSaveState(bco::Vessel& Vessel)
 {
 	//char cbuf[256];
 
@@ -64,7 +64,7 @@ void Shutters::Update()
 	//}
 
 	//auto trans = swShutters_.IsOn() ? 0.22 : 0.0;
-	auto trans = shuttersSlot_.value() ? 0.22 : 0.0;
+	auto trans = shuttersSlot_.Value() ? 0.22 : 0.0;
 
 	//visShuttersFrontLeft_.SetTranslate(_V(trans, 0.0, 0.0));
 	//visShuttersFrontLeft_.TranslateMesh(devMesh);

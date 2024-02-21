@@ -99,13 +99,13 @@ namespace bc_orbiter {
 				// Note: Event here does not alter state, that comes from the slot.
 				// State is only altered through the slot.
 
-				signal_.fire(!state_);
+				signal_.Fire(!state_);
 				return true;
 			}
 
 			// signal
-			signal<bool>& Signal() { return signal_; }
-			slot<bool>& Slot() { return slotState_; }
+			Signal<bool>& Signal() { return signal_; }
+			Slot<bool>& Slot() { return slotState_; }
 	private:
 		UINT			vcGroupId_;
 		VECTOR3			vcLocation_;
@@ -116,7 +116,7 @@ namespace bc_orbiter {
 		RECT			pnlRect_;
 		bool			state_{ false };
 		double			offset_{ 0.0 };
-		slot<bool>		slotState_;
-		signal<bool>	signal_;
+		Slot<bool>		slotState_;
+		Signal<bool>	signal_;
 	};
 }

@@ -16,7 +16,7 @@
 #pragma once
 
 namespace bc_orbiter {
-	class vessel;
+	class Vessel;
 }
 
 #include <vector>
@@ -143,14 +143,14 @@ class HydraulicProvider {
 
 class AvionicsProvider {
  public:
-  virtual double GetAltitude() const = 0;
-  virtual void GetAngularVelocity(VECTOR3& v) = 0;
-  virtual double GetBank() const = 0;
-  virtual double GetHeading() const = 0;
-  virtual double GetKEAS() const = 0;
-  virtual double GetMach() const = 0;
-  virtual double GetPitch() const = 0;
-  virtual double GetVerticalSpeed() const = 0;
+  virtual double AvGetAltitude() const = 0;
+  virtual void AvGetAngularVelocity(VECTOR3& v) = 0;
+  virtual double AvGetBank() const = 0;
+  virtual double AvGetHeading() const = 0;
+  virtual double AvGetKEAS() const = 0;
+  virtual double AvGetMach() const = 0;
+  virtual double AvGetPitch() const = 0;
+  virtual double AvGetVerticalSpeed() const = 0;
 };
 
 enum class Axis { Pitch = 0, Yaw = 1, Roll = 2 };

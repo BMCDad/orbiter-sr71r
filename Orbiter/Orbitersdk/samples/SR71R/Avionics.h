@@ -39,15 +39,15 @@ class Avionics :
 public:
 	enum AvionMode { AvionAtmo, AvionExo };
 
-	Avionics(bco::vessel& vessel, bco::PowerProvider& pwr);
+	Avionics(bco::Vessel& Vessel, bco::PowerProvider& pwr);
 	~Avionics() {}
 
 	// post_step
-	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+	void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override;
 
 	// manage_state
-	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
-	std::string HandleSaveState(bco::vessel& vessel) override;
+	bool HandleLoadState(bco::Vessel& Vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::Vessel& Vessel) override;
 
 	// power_consumer
 	double AmpDraw() const override { return IsPowered() ? 6.0 : 0.0; }
@@ -60,14 +60,14 @@ public:
 	bool	IsAeroAtmoMode()	{ return isAtmoMode_; }
 
 	// Signals:
-	bco::signal<double>&	SetCourseSignal()		{ return setCourseSignal_; }
+	bco::Signal<double>&	SetCourseSignal()		{ return setCourseSignal_; }
 	
-	bco::signal<double>&	SetHeadingSignal()		{ return setHeadingSignal_; }
-	bco::slot<double>&		SetHeadingSlot()		{ return setHeadingSlot_; }
+	bco::Signal<double>&	SetHeadingSignal()		{ return setHeadingSignal_; }
+	bco::Slot<double>&		SetHeadingSlot()		{ return setHeadingSlot_; }
 
-	bco::signal<double>&	GForceSignal()			{ return gforceSignal_; }
-	bco::signal<double>&	TrimSignal()			{ return trimSignal_; }
-	bco::signal<double>&	AOASignal()				{ return aoaSignal_; }
+	bco::Signal<double>&	GForceSignal()			{ return gforceSignal_; }
+	bco::Signal<double>&	TrimSignal()			{ return trimSignal_; }
+	bco::Signal<double>&	AOASignal()				{ return aoaSignal_; }
 
 private:
 	bco::PowerProvider&	power_;
@@ -78,14 +78,14 @@ private:
 	bool		isAtmoMode_;
 
 	// Signals:
-	bco::signal<double>		setCourseSignal_;
+	bco::Signal<double>		setCourseSignal_;
 	
-	bco::signal<double>		setHeadingSignal_;
-	bco::slot<double>		setHeadingSlot_;
+	bco::Signal<double>		setHeadingSignal_;
+	bco::Slot<double>		setHeadingSlot_;
 
-	bco::signal<double>		gforceSignal_;
-	bco::signal<double>		trimSignal_;
-	bco::signal<double>		aoaSignal_;
+	bco::Signal<double>		gforceSignal_;
+	bco::Signal<double>		trimSignal_;
+	bco::Signal<double>		aoaSignal_;
 
 	void UpdateSetCourse(double i);
 	void UpdateSetHeading(double i);
@@ -117,19 +117,19 @@ private:
 			bm::pnl::pnlNavMode_RC
 	};
 
-	bco::simple_event<>		dialSetCourseIncrement_{	bm::vc::CourseKnobInc_loc,
+	bco::SimpleEvent<>		dialSetCourseIncrement_{	bm::vc::CourseKnobInc_loc,
 														0.01,
 														bm::pnl::pnlSetCourseInc_RC		};
 
-	bco::simple_event<>		dialSetCourseDecrement_{	bm::vc::CourseKnobDec_loc,
+	bco::SimpleEvent<>		dialSetCourseDecrement_{	bm::vc::CourseKnobDec_loc,
 														0.01,
 														bm::pnl::pnlSetCourseDec_RC		};
 
-	bco::simple_event<>		dialSetHeadingIncrement_{	bm::vc::HeadingKnobInc_loc,
+	bco::SimpleEvent<>		dialSetHeadingIncrement_{	bm::vc::HeadingKnobInc_loc,
 														0.01,
 														bm::pnl::pnlSetHeadingInc_RC	};
 
-	bco::simple_event<>		dialSetHeadingDecrement_{	bm::vc::HeadingKnobDec_loc,
+	bco::SimpleEvent<>		dialSetHeadingDecrement_{	bm::vc::HeadingKnobDec_loc,
 														0.01,
 														bm::pnl::pnlSetHeadingDec_RC	};
 

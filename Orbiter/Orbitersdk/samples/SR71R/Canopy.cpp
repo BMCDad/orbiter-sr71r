@@ -23,16 +23,16 @@
 #include "Canopy.h"
 #include "SR71r_mesh.h"
 
-Canopy::Canopy(bco::PowerProvider& pwr, bco::vessel& vessel) :
+Canopy::Canopy(bco::PowerProvider& pwr, bco::Vessel& Vessel) :
     power_(pwr)
 { 
     power_.AttachConsumer(this);
-    vessel.AddControl(&switchOpen_);
-    vessel.AddControl(&switchPower_);
-    vessel.AddControl(&status_);
+    Vessel.AddControl(&switchOpen_);
+    Vessel.AddControl(&switchPower_);
+    Vessel.AddControl(&status_);
 }
 
-void Canopy::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
+void Canopy::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
         animCanopy_.Step(switchOpen_.IsOn() ? 1.0 : 0.0, simdt);
@@ -56,17 +56,17 @@ void Canopy::HandlePostStep(bco::vessel& vessel, double simt, double simdt, doub
     status_.set_state(status);
 }
 
-bool Canopy::HandleLoadState(bco::vessel& vessel, const std::string& line)
+bool Canopy::HandleLoadState(bco::Vessel& Vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchPower_;
     in >> switchOpen_;
     in >> animCanopy_;
-    vessel.SetAnimationState(animCanopy_);
+    Vessel.SetAnimationState(animCanopy_);
     return true;
 }
 
-std::string Canopy::HandleSaveState(bco::vessel& vessel)
+std::string Canopy::HandleSaveState(bco::Vessel& Vessel)
 {
     std::ostringstream os;
     os << switchPower_ << " " << switchOpen_ << " " << animCanopy_;
@@ -74,13 +74,13 @@ std::string Canopy::HandleSaveState(bco::vessel& vessel)
 }
 
 
-void Canopy::HandleSetClassCaps(bco::vessel& vessel)
+void Canopy::HandleSetClassCaps(bco::Vessel& Vessel)
 {
-    auto vcIdx = vessel.GetVCMeshIndex();
-    auto mIdx = vessel.GetMainMeshIndex();
+    auto vcIdx = Vessel.GetVCMeshIndex();
+    auto mIdx = Vessel.GetMainMeshIndex();
 
-    auto idAnim = vessel.CreateVesselAnimation(&animCanopy_, 0.2);
+    auto idAnim = Vessel.CreateVesselAnimation(&animCanopy_, 0.2);
     animCanopy_.VesselId(idAnim);
-    vessel.AddVesselAnimationComponent(idAnim, vcIdx, &gpCanopyVC_);
-    vessel.AddVesselAnimationComponent(idAnim, mIdx, &gpCanopy_);
+    Vessel.AddVesselAnimationComponent(idAnim, vcIdx, &gpCanopyVC_);
+    Vessel.AddVesselAnimationComponent(idAnim, mIdx, &gpCanopy_);
 }

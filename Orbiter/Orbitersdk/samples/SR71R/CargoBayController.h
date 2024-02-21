@@ -58,20 +58,20 @@ class CargoBayController :
     , public bco::HandlesState
 {
 public:
-	CargoBayController(bco::PowerProvider& pwr, bco::vessel& vessel);
+	CargoBayController(bco::PowerProvider& pwr, bco::Vessel& Vessel);
 
     // set_class_caps
-    void HandleSetClassCaps(bco::vessel& vessel) override;
+    void HandleSetClassCaps(bco::Vessel& Vessel) override;
 
     // power_consumer
     double AmpDraw() const override { return IsMoving() ? 4.0 : 0.0; }
 
     // post_step
-    void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override;
 
     // manage_state
-    bool HandleLoadState(bco::vessel& vessel, const std::string& line) override;
-    std::string HandleSaveState(bco::vessel& vessel) override;
+    bool HandleLoadState(bco::Vessel& Vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::Vessel& Vessel) override;
 
 
 private:

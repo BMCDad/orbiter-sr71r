@@ -24,7 +24,7 @@
 
 #include <assert.h>
 
-NavModes::NavModes(bco::vessel& baseVessel, Avionics& avionics) :
+NavModes::NavModes(bco::Vessel& baseVessel, Avionics& avionics) :
       baseVessel_(baseVessel)
     , avionics_(avionics)
 {
@@ -46,12 +46,12 @@ NavModes::NavModes(bco::vessel& baseVessel, Avionics& avionics) :
     baseVessel_.AddControl(&pnlHudMode_);
     baseVessel_.AddControl(&pnlHudMode2_);
 
-    btnKillRot_     .attach([&]() { ToggleMode(NAVMODE_KILLROT); });
-    btnHorzLevel_   .attach([&]() { ToggleMode(NAVMODE_HLEVEL); });
-    btnAntiNorm_    .attach([&]() { ToggleMode(NAVMODE_ANTINORMAL); });
-    btnNormal_      .attach([&]() { ToggleMode(NAVMODE_NORMAL); });
-    btnPrograde_    .attach([&]() { ToggleMode(NAVMODE_PROGRADE); });
-    btnRetrograde_  .attach([&]() { ToggleMode(NAVMODE_RETROGRADE); });
+    btnKillRot_     .Attach([&]() { ToggleMode(NAVMODE_KILLROT); });
+    btnHorzLevel_   .Attach([&]() { ToggleMode(NAVMODE_HLEVEL); });
+    btnAntiNorm_    .Attach([&]() { ToggleMode(NAVMODE_ANTINORMAL); });
+    btnNormal_      .Attach([&]() { ToggleMode(NAVMODE_NORMAL); });
+    btnPrograde_    .Attach([&]() { ToggleMode(NAVMODE_PROGRADE); });
+    btnRetrograde_  .Attach([&]() { ToggleMode(NAVMODE_RETROGRADE); });
 }
 
 void NavModes::OnNavMode(int mode, bool active)
@@ -110,7 +110,7 @@ void NavModes::Update()
 	}
 }
 
-void NavModes::HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void NavModes::HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
     int xLeft = 2;

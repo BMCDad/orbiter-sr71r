@@ -24,9 +24,9 @@
 
 #include <assert.h>
 
-PropulsionController::PropulsionController(bco::PowerProvider& pwr, bco::vessel& vessel) :
+PropulsionController::PropulsionController(bco::PowerProvider& pwr, bco::Vessel& Vessel) :
 	power_(pwr),
-	vessel_(vessel),
+	vessel_(Vessel),
 	mainFuelLevel_(0.0),
 	rcsFuelLevel_(0.0)
 	//slotThrottleLimit_(	[&](bool v) { SetThrustLevel((v) ? ENGINE_THRUST : ENGINE_THRUST_AB); }),
@@ -38,26 +38,26 @@ PropulsionController::PropulsionController(bco::PowerProvider& pwr, bco::vessel&
 
 	maxMainFlow_ = (ENGINE_THRUST / THRUST_ISP) * 2;
 
-	vessel.AddControl(&switchFuelDump_);
-	vessel.AddControl(&switchThrustLimit_);
-	vessel.AddControl(&gaugeFuelFlow_);
-	vessel.AddControl(&gaugeFuelMain_);
-	vessel.AddControl(&gaugeFuelRCS_);
-	vessel.AddControl(&btnFuelValveOpen_);
-	vessel.AddControl(&lightFuelValveOpen_);
-	vessel.AddControl(&lightFuelAvail_);
-	vessel.AddControl(&lightRCSAvail_);
+	Vessel.AddControl(&switchFuelDump_);
+	Vessel.AddControl(&switchThrustLimit_);
+	Vessel.AddControl(&gaugeFuelFlow_);
+	Vessel.AddControl(&gaugeFuelMain_);
+	Vessel.AddControl(&gaugeFuelRCS_);
+	Vessel.AddControl(&btnFuelValveOpen_);
+	Vessel.AddControl(&lightFuelValveOpen_);
+	Vessel.AddControl(&lightFuelAvail_);
+	Vessel.AddControl(&lightRCSAvail_);
 
-	vessel.AddControl(&btnRCSValveOpen_);
-	vessel.AddControl(&lightRCSValveOpen_);
+	Vessel.AddControl(&btnRCSValveOpen_);
+	Vessel.AddControl(&lightRCSValveOpen_);
 
-	vessel.AddControl(&statusFuel_);
-	vessel.AddControl(&statusLimiter_);
+	Vessel.AddControl(&statusFuel_);
+	Vessel.AddControl(&statusLimiter_);
 
-	switchThrustLimit_.attach([&]() { SetThrustLevel(switchThrustLimit_.IsOn() ? ENGINE_THRUST : ENGINE_THRUST_AB); });
+	switchThrustLimit_.Attach([&]() { SetThrustLevel(switchThrustLimit_.IsOn() ? ENGINE_THRUST : ENGINE_THRUST_AB); });
 
-	btnFuelValveOpen_.attach([&]() { ToggleFill(); });
-	btnRCSValveOpen_.attach([&]() { ToggleRCSFill(); });
+	btnFuelValveOpen_.Attach([&]() { ToggleFill(); });
+	btnRCSValveOpen_.Attach([&]() { ToggleRCSFill(); });
 }
 
 void PropulsionController::ToggleFill()
@@ -90,7 +90,7 @@ void PropulsionController::ToggleRCSFill()
 	}
 }
 
-void PropulsionController::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
+void PropulsionController::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd)
 {
 	// Limit how often we run
 	if (fabs(simt - prevTime_) > 0.1)
@@ -175,7 +175,7 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
 		auto actualDump = DrawMainFuel(FUEL_DUMP_RATE * deltaUpdate);
 	}
 
-	signalMainFuelLevel_.fire(mainFuelLevel_);
+	signalMainFuelLevel_.Fire(mainFuelLevel_);
 
 	statusFuel_.set_state(
 		(mainFuelLevel_ > 0.2) || !IsPowered()
@@ -195,8 +195,8 @@ double PropulsionController::DrawMainFuel(double amount)
     auto mainProp = vessel_.MainPropellant();
 
 	// Subtract the minimum fuel allowed to determine what available current is.
-	auto current = vessel_.GetPropellantMass(mainProp);
-	auto currentAvail = current - FUEL_MINIMUM_DUMP;
+	auto Current = vessel_.GetPropellantMass(mainProp);
+	auto currentAvail = Current - FUEL_MINIMUM_DUMP;
 
 	if (currentAvail <= 0.0)
 	{
@@ -206,7 +206,7 @@ double PropulsionController::DrawMainFuel(double amount)
 
 	auto actual = min(amount, currentAvail);
 
-	vessel_.SetPropellantMass(mainProp, (current - actual));
+	vessel_.SetPropellantMass(mainProp, (Current - actual));
 	return actual;
 }
 
@@ -214,11 +214,11 @@ double PropulsionController::FillMainFuel(double amount)
 {
     auto mainProp = vessel_.MainPropellant();
 
-	auto current = vessel_.GetPropellantMass(mainProp);
-	auto topOff = MAX_FUEL - current;
+	auto Current = vessel_.GetPropellantMass(mainProp);
+	auto topOff = MAX_FUEL - Current;
 
 	auto result = min(amount, topOff);
-	vessel_.SetPropellantMass(mainProp, (current + result));
+	vessel_.SetPropellantMass(mainProp, (Current + result));
 	return result;
 }
 
@@ -226,10 +226,10 @@ double PropulsionController::DrawRCSFuel(double amount)
 {
     auto rcsProp = vessel_.RcsPropellant();
 
-	auto current = vessel_.GetPropellantMass(rcsProp);
+	auto Current = vessel_.GetPropellantMass(rcsProp);
 
-	auto result = min(amount, current);
-	vessel_.SetPropellantMass(rcsProp, (current - result));
+	auto result = min(amount, Current);
+	vessel_.SetPropellantMass(rcsProp, (Current - result));
 	return result;
 }
 
@@ -237,32 +237,32 @@ double PropulsionController::FillRCSFuel(double amount)
 {
     auto rcsProp = vessel_.RcsPropellant();
 
-	auto current = vessel_.GetPropellantMass(rcsProp);
-	auto topOff = MAX_RCS_FUEL - current;
+	auto Current = vessel_.GetPropellantMass(rcsProp);
+	auto topOff = MAX_RCS_FUEL - Current;
 
 	auto result = min(amount, topOff);
-	vessel_.SetPropellantMass(rcsProp, (current + result));
+	vessel_.SetPropellantMass(rcsProp, (Current + result));
 	return result;
 }
 
-void PropulsionController::HandleSetClassCaps(bco::vessel& vessel)
+void PropulsionController::HandleSetClassCaps(bco::Vessel& Vessel)
 {
 	//	Start with max thrust (ENGINE_THRUST) this will change base on the max thrust selector.
-	mainThrustHandles_[0] = vessel.CreateThruster(
+	mainThrustHandles_[0] = Vessel.CreateThruster(
         bm::main::ThrusterP_loc,  
         _V(0, 0, 1), 
         ENGINE_THRUST, 
-        vessel.MainPropellant(), 
+        Vessel.MainPropellant(), 
         THRUST_ISP);
 
-	mainThrustHandles_[1] = vessel.CreateThruster(
+	mainThrustHandles_[1] = Vessel.CreateThruster(
         bm::main::ThrusterS_loc, 
         _V(0, 0, 1), 
         ENGINE_THRUST, 
-        vessel.MainPropellant(), 
+        Vessel.MainPropellant(), 
         THRUST_ISP);
 
-	vessel.CreateThrusterGroup(mainThrustHandles_, 2, THGROUP_MAIN);
+	Vessel.CreateThrusterGroup(mainThrustHandles_, 2, THGROUP_MAIN);
 
 	EXHAUSTSPEC es_main[2] =
 	{
@@ -276,91 +276,91 @@ void PropulsionController::HandleSetClassCaps(bco::vessel& vessel)
 		PARTICLESTREAMSPEC::ATM_PLOG, 1e-5, 0.1
 	};
 
-	for (auto i = 0; i < 2; i++) vessel.AddExhaust(es_main + i);
-	vessel.AddExhaustStream(mainThrustHandles_[0], _V(-4.6230, 0, -11), &exhaust_main);
-	vessel.AddExhaustStream(mainThrustHandles_[1], _V( 4.6230, 0, -11), &exhaust_main);
+	for (auto i = 0; i < 2; i++) Vessel.AddExhaust(es_main + i);
+	Vessel.AddExhaustStream(mainThrustHandles_[0], _V(-4.6230, 0, -11), &exhaust_main);
+	Vessel.AddExhaustStream(mainThrustHandles_[1], _V( 4.6230, 0, -11), &exhaust_main);
 
 	THRUSTER_HANDLE th_att_rot[4], th_att_lin[4];
 
 	// Pitch up/down attack points are simplified 8 meters forward and aft.
-	th_att_rot[0] = th_att_lin[0] = vessel.CreateThruster(_V(0, 0,  8), _V(0,  1, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_rot[1] = th_att_lin[3] = vessel.CreateThruster(_V(0, 0, -8), _V(0, -1, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_rot[2] = th_att_lin[2] = vessel.CreateThruster(_V(0, 0,  8), _V(0, -1, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_rot[3] = th_att_lin[1] = vessel.CreateThruster(_V(0, 0, -8), _V(0,  1, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[0] = th_att_lin[0] = Vessel.CreateThruster(_V(0, 0,  8), _V(0,  1, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[1] = th_att_lin[3] = Vessel.CreateThruster(_V(0, 0, -8), _V(0, -1, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[2] = th_att_lin[2] = Vessel.CreateThruster(_V(0, 0,  8), _V(0, -1, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[3] = th_att_lin[1] = Vessel.CreateThruster(_V(0, 0, -8), _V(0,  1, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
 
-	vessel.CreateThrusterGroup(th_att_rot    , 2, THGROUP_ATT_PITCHUP);
-	vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_PITCHDOWN);
-	vessel.CreateThrusterGroup(th_att_lin    , 2, THGROUP_ATT_UP);
-	vessel.CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_DOWN);
+	Vessel.CreateThrusterGroup(th_att_rot    , 2, THGROUP_ATT_PITCHUP);
+	Vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_PITCHDOWN);
+	Vessel.CreateThrusterGroup(th_att_lin    , 2, THGROUP_ATT_UP);
+	Vessel.CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_DOWN);
 
 	// Exhaust visuals
-	vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FL_DOWN_loc, _V(0, -1, 0));
-	vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_DOWN_loc, _V(0, -1, 0));
-	vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RL_UP_loc,   _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RR_UP_loc,   _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_UP_loc,   _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FR_UP_loc,   _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RL_DOWN_loc, _V(0, -1, 0));
-	vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RR_DOWN_loc, _V(0, -1, 0));
+	Vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FL_DOWN_loc, _V(0, -1, 0));
+	Vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_DOWN_loc, _V(0, -1, 0));
+	Vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RL_UP_loc,   _V(0,  1, 0));
+	Vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RR_UP_loc,   _V(0,  1, 0));
+	Vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_UP_loc,   _V(0,  1, 0));
+	Vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FR_UP_loc,   _V(0,  1, 0));
+	Vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RL_DOWN_loc, _V(0, -1, 0));
+	Vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RR_DOWN_loc, _V(0, -1, 0));
 
 
 	// Yaw left and right simplified at 10 meters.
-	th_att_rot[0] = th_att_lin[0] = vessel.CreateThruster(_V(0, 0,  10), _V(-1, 0, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_rot[1] = th_att_lin[3] = vessel.CreateThruster(_V(0, 0, -10), _V( 1, 0, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_rot[2] = th_att_lin[2] = vessel.CreateThruster(_V(0, 0,  10), _V( 1, 0, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_rot[3] = th_att_lin[1] = vessel.CreateThruster(_V(0, 0, -10), _V(-1, 0, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[0] = th_att_lin[0] = Vessel.CreateThruster(_V(0, 0,  10), _V(-1, 0, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[1] = th_att_lin[3] = Vessel.CreateThruster(_V(0, 0, -10), _V( 1, 0, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[2] = th_att_lin[2] = Vessel.CreateThruster(_V(0, 0,  10), _V( 1, 0, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[3] = th_att_lin[1] = Vessel.CreateThruster(_V(0, 0, -10), _V(-1, 0, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
 
-	vessel.CreateThrusterGroup(th_att_rot    , 2, THGROUP_ATT_YAWLEFT);
-	vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_YAWRIGHT);
-	vessel.CreateThrusterGroup(th_att_lin    , 2, THGROUP_ATT_LEFT);
-	vessel.CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_RIGHT);
+	Vessel.CreateThrusterGroup(th_att_rot    , 2, THGROUP_ATT_YAWLEFT);
+	Vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_YAWRIGHT);
+	Vessel.CreateThrusterGroup(th_att_lin    , 2, THGROUP_ATT_LEFT);
+	Vessel.CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_RIGHT);
 
-	vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_RIGHT_loc, _V( 1, 0, 0));
-	vessel.AddExhaust(th_att_rot[1], 0.94, 0.122, bm::main::RCS_RL_LEFT_loc,  _V(-1, 0, 0));
-	vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_LEFT_loc,  _V(-1, 0, 0));
-	vessel.AddExhaust(th_att_rot[3], 0.94, 0.122, bm::main::RCS_RR_RIGHT_loc, _V( 1, 0, 0));
+	Vessel.AddExhaust(th_att_rot[0], 0.6 , 0.078, bm::main::RCS_FR_RIGHT_loc, _V( 1, 0, 0));
+	Vessel.AddExhaust(th_att_rot[1], 0.94, 0.122, bm::main::RCS_RL_LEFT_loc,  _V(-1, 0, 0));
+	Vessel.AddExhaust(th_att_rot[2], 0.6 , 0.078, bm::main::RCS_FL_LEFT_loc,  _V(-1, 0, 0));
+	Vessel.AddExhaust(th_att_rot[3], 0.94, 0.122, bm::main::RCS_RR_RIGHT_loc, _V( 1, 0, 0));
 
 	// Bank left and right.
 
-	th_att_rot[0] = vessel.CreateThruster(_V( 5, 0, 0), _V(0,  1, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_rot[1] = vessel.CreateThruster(_V(-5, 0, 0), _V(0, -1, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_rot[2] = vessel.CreateThruster(_V(-5, 0, 0), _V(0,  1, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_rot[3] = vessel.CreateThruster(_V( 5, 0, 0), _V(0, -1, 0), RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[0] = Vessel.CreateThruster(_V( 5, 0, 0), _V(0,  1, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[1] = Vessel.CreateThruster(_V(-5, 0, 0), _V(0, -1, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[2] = Vessel.CreateThruster(_V(-5, 0, 0), _V(0,  1, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_rot[3] = Vessel.CreateThruster(_V( 5, 0, 0), _V(0, -1, 0), RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
 
-	vessel.CreateThrusterGroup(th_att_rot    , 2, THGROUP_ATT_BANKLEFT);
-	vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_BANKRIGHT);
+	Vessel.CreateThrusterGroup(th_att_rot    , 2, THGROUP_ATT_BANKLEFT);
+	Vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_BANKRIGHT);
 
-	vessel.AddExhaust(th_att_rot[0], 1.03, 0.134, bm::main::RCS_L_TOP_loc,    _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[1], 1.03, 0.134, bm::main::RCS_R_BOTTOM_loc, _V(0, -1, 0));
-	vessel.AddExhaust(th_att_rot[2], 1.03, 0.134, bm::main::RCS_R_TOP_loc,    _V(0,  1, 0));
-	vessel.AddExhaust(th_att_rot[3], 1.03, 0.134, bm::main::RCS_L_BOTTOM_loc, _V(0, -1, 0));
+	Vessel.AddExhaust(th_att_rot[0], 1.03, 0.134, bm::main::RCS_L_TOP_loc,    _V(0,  1, 0));
+	Vessel.AddExhaust(th_att_rot[1], 1.03, 0.134, bm::main::RCS_R_BOTTOM_loc, _V(0, -1, 0));
+	Vessel.AddExhaust(th_att_rot[2], 1.03, 0.134, bm::main::RCS_R_TOP_loc,    _V(0,  1, 0));
+	Vessel.AddExhaust(th_att_rot[3], 1.03, 0.134, bm::main::RCS_L_BOTTOM_loc, _V(0, -1, 0));
 
 
 	// Forward and back
-	th_att_lin[0] = vessel.CreateThruster(_V(0, 0, -7), _V(0, 0,  1), 2 * RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
-	th_att_lin[1] = vessel.CreateThruster(_V(0, 0,  7), _V(0, 0, -1), 2 * RCS_THRUST, vessel.RcsPropellant(), THRUST_ISP);
+	th_att_lin[0] = Vessel.CreateThruster(_V(0, 0, -7), _V(0, 0,  1), 2 * RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
+	th_att_lin[1] = Vessel.CreateThruster(_V(0, 0,  7), _V(0, 0, -1), 2 * RCS_THRUST, Vessel.RcsPropellant(), THRUST_ISP);
 
-	vessel.CreateThrusterGroup(th_att_lin    , 1, THGROUP_ATT_FORWARD);
-	vessel.CreateThrusterGroup(th_att_lin + 1, 1, THGROUP_ATT_BACK);
+	Vessel.CreateThrusterGroup(th_att_lin    , 1, THGROUP_ATT_FORWARD);
+	Vessel.CreateThrusterGroup(th_att_lin + 1, 1, THGROUP_ATT_BACK);
 
-	vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RL_LEFT_loc,   _V(0, 0, -1));
-	vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RR_RIGHT_loc,  _V(0, 0, -1));
-	vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_L_FORWARD_loc, _V(0, 0,  1));
-	vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_R_FORWARD_loc, _V(0, 0,  1));
+	Vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RL_LEFT_loc,   _V(0, 0, -1));
+	Vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RR_RIGHT_loc,  _V(0, 0, -1));
+	Vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_L_FORWARD_loc, _V(0, 0,  1));
+	Vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_R_FORWARD_loc, _V(0, 0,  1));
 
 	// swThrustLimit_.SetOff();
 	
 //	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
-bool PropulsionController::HandleLoadState(bco::vessel& vessel, const std::string& line)
+bool PropulsionController::HandleLoadState(bco::Vessel& Vessel, const std::string& line)
 {
 	std::istringstream in(line);
 	in >> switchThrustLimit_;
 	return true;
 }
 
-std::string PropulsionController::HandleSaveState(bco::vessel& vessel)
+std::string PropulsionController::HandleSaveState(bco::Vessel& Vessel)
 {
 	std::ostringstream os;
 	os << switchThrustLimit_;
@@ -384,13 +384,13 @@ void PropulsionController::SetThrustLevel(double newLevel)
 	vessel_.SetThrusterMax0(mainThrustHandles_[1], maxThrustLevel_);
 }
 
-void PropulsionController::HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void PropulsionController::HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 
-    auto th = vessel.GetThrusterGroupLevel(THGROUP_MAIN);
-    auto hv = vessel.GetThrusterGroupLevel(THGROUP_HOVER);
-    auto rt = vessel.GetThrusterGroupLevel(THGROUP_RETRO);
+    auto th = Vessel.GetThrusterGroupLevel(THGROUP_MAIN);
+    auto hv = Vessel.GetThrusterGroupLevel(THGROUP_HOVER);
+    auto rt = Vessel.GetThrusterGroupLevel(THGROUP_RETRO);
 
 
     char cbuf[16];

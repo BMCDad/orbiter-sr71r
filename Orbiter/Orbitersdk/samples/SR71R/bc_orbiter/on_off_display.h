@@ -14,6 +14,8 @@
 //	You should have received a copy of the GNU General Public License
 //	along with this program.If not, see <http://www.gnu.org/licenses/>.
 
+//// !!! REPLACE WITH on_off_vc/panel_display, this file will go away  !!!
+
 #pragma once
 
 #include "Control.h"

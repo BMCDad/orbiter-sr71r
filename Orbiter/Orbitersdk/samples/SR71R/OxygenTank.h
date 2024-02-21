@@ -33,15 +33,15 @@ class OxygenTank :
 	public bco::generic_tank
 {
 public:
-	OxygenTank(bco::PowerProvider& pwr, bco::vessel& vessel) :
+	OxygenTank(bco::PowerProvider& pwr, bco::Vessel& Vessel) :
 		bco::generic_tank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE)
 	{
-		vessel.AddControl(&gaugeLevel_);
-		vessel.AddControl(&lightAvailable_);
-		vessel.AddControl(&btnFill_);
-		vessel.AddControl(&btnLightFill_);
+		Vessel.AddControl(&gaugeLevel_);
+		Vessel.AddControl(&lightAvailable_);
+		Vessel.AddControl(&btnFill_);
+		Vessel.AddControl(&btnLightFill_);
 
-		btnFill_.attach([&]() { ToggleFilling(); });
+		btnFill_.Attach([&]() { ToggleFilling(); });
 
 		//LevelSignal().attach(		gaugeLevel_.Slot());
 		//IsFillingSignal().attach(	btnLightFill_.Slot());
@@ -74,7 +74,7 @@ private:
 														0.0244
 													};
 
-	bco::simple_event<>				btnFill_		{	bm::vc::LOXValveOpenSwitch_loc,
+	bco::SimpleEvent<>				btnFill_		{	bm::vc::LOXValveOpenSwitch_loc,
 														0.01,
 														bm::pnl::pnlO2Switch_RC
 													};

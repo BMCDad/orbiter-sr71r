@@ -22,18 +22,18 @@
 #include "SR71r_mesh.h"
 
 
-RetroEngines::RetroEngines(bco::PowerProvider& pwr, bco::vessel& vessel) :
+RetroEngines::RetroEngines(bco::PowerProvider& pwr, bco::Vessel& Vessel) :
     power_(pwr),
-    vessel_(vessel)
+    vessel_(Vessel)
 {
     power_.AttachConsumer(this);
     animRetroDoors_.SetTargetFunction([this] {EnableRetros(true); });
-    vessel.AddControl(&switchDoors_);
-    vessel.AddControl(&status_);
+    Vessel.AddControl(&switchDoors_);
+    Vessel.AddControl(&status_);
 }
 
 
-void RetroEngines::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
+void RetroEngines::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
         animRetroDoors_.Step(switchDoors_.IsOn() ? 1.0 : 0.0, simdt);
@@ -53,29 +53,29 @@ void RetroEngines::HandlePostStep(bco::vessel& vessel, double simt, double simdt
     status_.set_state(status);
 }
 
-void RetroEngines::HandleSetClassCaps(bco::vessel& vessel)
+void RetroEngines::HandleSetClassCaps(bco::Vessel& Vessel)
 {
-    auto main = vessel.GetMainMeshIndex();
+    auto main = Vessel.GetMainMeshIndex();
 
-    auto aid = vessel.CreateVesselAnimation(&animRetroDoors_, 0.2);
-    vessel.AddVesselAnimationComponent(aid, main, &gpDoors_);
+    auto aid = Vessel.CreateVesselAnimation(&animRetroDoors_, 0.2);
+    Vessel.AddVesselAnimationComponent(aid, main, &gpDoors_);
 
 
-    retroThrustHandles_[0] = vessel.CreateThruster(
+    retroThrustHandles_[0] = Vessel.CreateThruster(
         bm::main::ThrustRetroP_loc,
         _V(0, 0, -1),
         RETRO_THRUST,
-        vessel.MainPropellant(),
+        Vessel.MainPropellant(),
         THRUST_ISP);
 
-    retroThrustHandles_[1] = vessel.CreateThruster(
+    retroThrustHandles_[1] = Vessel.CreateThruster(
         bm::main::ThrustRetroS_loc,
         _V(0, 0, -1),
         RETRO_THRUST,
-        vessel.MainPropellant(),
+        Vessel.MainPropellant(),
         THRUST_ISP);
 
-    vessel.CreateThrusterGroup(retroThrustHandles_, 2, THGROUP_RETRO);
+    Vessel.CreateThrusterGroup(retroThrustHandles_, 2, THGROUP_RETRO);
 
     EXHAUSTSPEC es_retro[2] =
     {
@@ -89,20 +89,20 @@ void RetroEngines::HandleSetClassCaps(bco::vessel& vessel)
         PARTICLESTREAMSPEC::ATM_PLOG, 1e-5, 0.1
     };
 
-    for (auto i = 0; i < 2; i++) vessel.AddExhaust(es_retro + i);
-    vessel.AddExhaustStream(retroThrustHandles_[0], _V(-4.38, 0, 3), &exhaust_retro);
-    vessel.AddExhaustStream(retroThrustHandles_[1], _V(4.38, 0, 3), &exhaust_retro);
+    for (auto i = 0; i < 2; i++) Vessel.AddExhaust(es_retro + i);
+    Vessel.AddExhaustStream(retroThrustHandles_[0], _V(-4.38, 0, 3), &exhaust_retro);
+    Vessel.AddExhaustStream(retroThrustHandles_[1], _V(4.38, 0, 3), &exhaust_retro);
 }
 
-bool RetroEngines::HandleLoadState(bco::vessel& vessel, const std::string& line)
+bool RetroEngines::HandleLoadState(bco::Vessel& Vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchDoors_ >> animRetroDoors_;
-    vessel.SetAnimationState(animRetroDoors_);
+    Vessel.SetAnimationState(animRetroDoors_);
     return true;
 }
 
-std::string RetroEngines::HandleSaveState(bco::vessel& vessel)
+std::string RetroEngines::HandleSaveState(bco::Vessel& Vessel)
 {
     std::ostringstream os;
     os << switchDoors_ << " " << animRetroDoors_;
@@ -128,7 +128,7 @@ void RetroEngines::EnableRetros(bool isEnabled)
     }
 }
 
-void RetroEngines::HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void RetroEngines::HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 

@@ -31,31 +31,31 @@ class Airspeed :
 {
 public:
 
-	Airspeed(bco::vessel& vessel, Avionics& avionics) : 
+	Airspeed(bco::Vessel& Vessel, Avionics& avionics) : 
 		avionics_(avionics)
 	{
-		vessel.AddControl(&kiesHand_);
-		vessel.AddControl(&machHand_);
-		vessel.AddControl(&maxMachHand_);
+		Vessel.AddControl(&kiesHand_);
+		Vessel.AddControl(&machHand_);
+		Vessel.AddControl(&maxMachHand_);
 
-		vessel.AddControl(&tdiKeasOnes_);
-		vessel.AddControl(&tdieasTens_);
-		vessel.AddControl(&tdiKeasHunds_);
+		Vessel.AddControl(&tdiKeasOnes_);
+		Vessel.AddControl(&tdieasTens_);
+		Vessel.AddControl(&tdiKeasHunds_);
 
-		vessel.AddControl(&tdiMhOnes_);
-		vessel.AddControl(&tdiMhTens_);
-		vessel.AddControl(&tdiMhHunds_);
+		Vessel.AddControl(&tdiMhOnes_);
+		Vessel.AddControl(&tdiMhTens_);
+		Vessel.AddControl(&tdiMhHunds_);
 
-		vessel.AddControl(&enabledFlag_);
-		vessel.AddControl(&velocityFlag_);
+		Vessel.AddControl(&enabledFlag_);
+		Vessel.AddControl(&velocityFlag_);
 
-		vessel.AddControl(&status_);
+		Vessel.AddControl(&status_);
 	}
 
 	~Airspeed() {}
 
 	// post_step
-	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+	void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override {
 		double  keas			= 0.0;		// equivalent airspeed, shows in TDI
 		double  kias			= 0.0;		// indicated, shows as dial.
 		double  mach			= 0.0;		// shows in TDI and as a dial
@@ -66,10 +66,10 @@ public:
 		bool	isOverSpeed		= false;
 
 		if (avionics_.IsAeroActive()) {
-			keas = bco::GetVesselKeas(&vessel);
-			kias = bco::GetVesselKias(&vessel);
-			mach = vessel.GetMachNumber();
-			auto atmDens = vessel.GetAtmDensity();
+			keas = bco::GetVesselKeas(&Vessel);
+			kias = bco::GetVesselKias(&Vessel);
+			mach = Vessel.GetMachNumber();
+			auto atmDens = Vessel.GetAtmDensity();
 
 			if (atmDens > 0.0)
 			{
@@ -81,7 +81,7 @@ public:
 
 			if (!avionics_.IsAeroAtmoMode())  // if exo mode, use velocity for machGauge
 			{
-				machGauge = vessel.GetAirspeed() / 100;
+				machGauge = Vessel.GetAirspeed() / 100;
 				maxMach = 22.0;
 			}
 
@@ -103,9 +103,9 @@ public:
 
 		bco::TensParts parts;
 		bco::GetDigits(keas, parts);
-		tdiKeasOnes_.set_position(parts.Tens);
-		tdieasTens_.set_position(parts.Hundreds);
-		tdiKeasHunds_.set_position(parts.Thousands);
+		tdiKeasOnes_.SetPosition(parts.Tens);
+		tdieasTens_.SetPosition(parts.Hundreds);
+		tdiKeasHunds_.SetPosition(parts.Thousands);
 
 		maxMachHand_.set_state(maxMachRatio);
 		machHand_.set_state(speedRatio);
@@ -114,9 +114,9 @@ public:
 //		sprintf(oapiDebugString(), "speedRatio (mach hand): %+4.2f", speedRatio);
 
 		bco::GetDigits(mach, parts);
-		tdiMhOnes_.set_position(parts.Tenths);
-		tdiMhTens_.set_position(parts.Tens);
-		tdiMhHunds_.set_position(parts.Hundreds);
+		tdiMhOnes_.SetPosition(parts.Tenths);
+		tdiMhTens_.SetPosition(parts.Tens);
+		tdiMhHunds_.SetPosition(parts.Hundreds);
 
 		status_.set_state(isOverSpeed ? bco::status_display::status::error : bco::status_display::status::off);
 
@@ -139,7 +139,7 @@ private:
 	double l22 = log(23);
 
 	using dial = bco::rotary_display_target;
-	using roll = bco::flat_roll;
+	using roll = bco::FlatRoll;
 	const double ofs = 0.1084;		// flat_roll offset.
 
 	dial machHand_		{ bm::vc::vcMachHand_id,	bm::vc::vcMachHand_loc,		bm::vc::SpeedAxis_loc,	bm::pnl::pnlMachHand_id,	bm::pnl::pnlMachHand_vrt,	(300 * RAD), 2.0 };

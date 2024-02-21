@@ -20,40 +20,40 @@
 
 #include "Avionics.h"
 
-Avionics::Avionics(bco::vessel& vessel, bco::PowerProvider& pwr) :
+Avionics::Avionics(bco::Vessel& Vessel, bco::PowerProvider& pwr) :
 	power_(pwr),
-	setHeadingSlot_([&](double v) { setHeadingSignal_.fire(v); })
+	setHeadingSlot_([&](double v) { setHeadingSignal_.Fire(v); })
 {
 	power_.AttachConsumer(this);
 
-	vessel.AddControl(&switchAvionMode_);
-	vessel.AddControl(&switchAvionPower_);
-	vessel.AddControl(&switchNavMode_);
+	Vessel.AddControl(&switchAvionMode_);
+	Vessel.AddControl(&switchAvionPower_);
+	Vessel.AddControl(&switchNavMode_);
 
-	vessel.AddControl(&dialSetCourseDecrement_);
-	vessel.AddControl(&dialSetCourseIncrement_);
-	vessel.AddControl(&dialSetHeadingDecrement_);
-	vessel.AddControl(&dialSetHeadingIncrement_);
+	Vessel.AddControl(&dialSetCourseDecrement_);
+	Vessel.AddControl(&dialSetCourseIncrement_);
+	Vessel.AddControl(&dialSetHeadingDecrement_);
+	Vessel.AddControl(&dialSetHeadingIncrement_);
 
-	dialSetCourseDecrement_.attach([&]() { UpdateSetCourse(-0.0175); });
-	dialSetCourseIncrement_.attach([&]() { UpdateSetCourse(0.0175); });
-	dialSetHeadingDecrement_.attach([&]() { UpdateSetHeading(-0.0175); });
-	dialSetHeadingIncrement_.attach([&]() { UpdateSetHeading(0.0175); });
+	dialSetCourseDecrement_.Attach([&]() { UpdateSetCourse(-0.0175); });
+	dialSetCourseIncrement_.Attach([&]() { UpdateSetCourse(0.0175); });
+	dialSetHeadingDecrement_.Attach([&]() { UpdateSetHeading(-0.0175); });
+	dialSetHeadingIncrement_.Attach([&]() { UpdateSetHeading(0.0175); });
 
-	vessel.AddControl(&vsiHand_);
-	vessel.AddControl(&vsiActiveFlag_);
+	Vessel.AddControl(&vsiHand_);
+	Vessel.AddControl(&vsiActiveFlag_);
 	
-	vessel.AddControl(&attitudeDisplay_);
-	vessel.AddControl(&attitudeFlag_);
+	Vessel.AddControl(&attitudeDisplay_);
+	Vessel.AddControl(&attitudeFlag_);
 
-	vessel.AddControl(&aoaHand_);
-	vessel.AddControl(&trimHand_);
-	vessel.AddControl(&accelHand_);
+	Vessel.AddControl(&aoaHand_);
+	Vessel.AddControl(&trimHand_);
+	Vessel.AddControl(&accelHand_);
 }
 
 
 // post_step
-void Avionics::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) {
+void Avionics::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) {
 	double gforce	 = 0.0;
 	double trim		 = 0.0;
 	double aoa		 = 0.0;
@@ -67,13 +67,13 @@ void Avionics::HandlePostStep(bco::vessel& vessel, double simt, double simdt, do
 	isAtmoMode_ = switchAvionMode_.IsOn();
 
 	if (isAeroDataActive_) {
-		gforce		= bco::GetVesselGs(vessel);
-		trim		= vessel.GetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM);
-		aoa			= vessel.GetAOA();
-		vertSpeed	= bco::GetVerticalSpeedFPM(&vessel);
-		pitch		= vessel.GetPitch();
-		bank		= vessel.GetBank();
-		dynPress	= vessel.GetDynPressure();
+		gforce		= bco::GetVesselGs(Vessel);
+		trim		= Vessel.GetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM);
+		aoa			= Vessel.GetAOA();
+		vertSpeed	= bco::GetVerticalSpeedFPM(&Vessel);
+		pitch		= Vessel.AvGetPitch();
+		bank		= Vessel.AvGetBank();
+		dynPress	= Vessel.GetDynPressure();
 	}
 
 	// Vertical speed:
@@ -119,14 +119,14 @@ void Avionics::HandlePostStep(bco::vessel& vessel, double simt, double simdt, do
 }
 
 // manage_state
-bool Avionics::HandleLoadState(bco::vessel& vessel, const std::string& line) {
+bool Avionics::HandleLoadState(bco::Vessel& Vessel, const std::string& line) {
 	//sscanf_s(configLine + 8, "%i%i%i%i%i", &power, &heading, &course, &navSelect, &navMode);
 	std::istringstream in(line);
 	in >> switchAvionPower_ >> setHeadingSignal_ >> setCourseSignal_ >> switchNavMode_ >> switchAvionMode_;
 	return true;
 }
 
-std::string Avionics::HandleSaveState(bco::vessel& vessel) {
+std::string Avionics::HandleSaveState(bco::Vessel& Vessel) {
 	std::ostringstream os;
 	os << switchAvionPower_  << " " << setHeadingSignal_ << " " << setCourseSignal_ << " " << switchNavMode_ << " " << switchAvionMode_;
 	return os.str();
@@ -134,32 +134,32 @@ std::string Avionics::HandleSaveState(bco::vessel& vessel) {
 
 void Avionics::SetCourse(double s)
 {
-	setCourseSignal_.update(s * RAD);
+	setCourseSignal_.Update(s * RAD);
 	UpdateSetCourse(0.0);	 // force the signal to fire.
 }
 
 void Avionics::UpdateSetCourse(double i)
 {
-	auto inc = setCourseSignal_.current() + i;
+	auto inc = setCourseSignal_.Current() + i;
 	if (inc > PI2) inc -= PI2;
 	if (inc < 0) inc += PI2;
-	setCourseSignal_.fire(inc);
+	setCourseSignal_.Fire(inc);
 
 //	sprintf(oapiDebugString(), "Set Course: %+4.2f", setCourseSignal_.current());
 }
 
 void Avionics::SetHeading(double s)
 {
-	setHeadingSignal_.update(s * RAD);
+	setHeadingSignal_.Update(s * RAD);
 	UpdateSetHeading(0.0);	 // force the signal to fire.
 }
 
 void Avionics::UpdateSetHeading(double i)
 {
-	auto inc = setHeadingSignal_.current() + i;
+	auto inc = setHeadingSignal_.Current() + i;
 	if (inc > PI2) inc -= PI2;
 	if (inc < 0) inc += PI2;
-	setHeadingSignal_.fire(inc);
+	setHeadingSignal_.Fire(inc);
 
 	//	sprintf(oapiDebugString(), "Set Course: %+4.2f", setCourseSignal_.current());
 }

@@ -22,12 +22,12 @@
 
 #include <assert.h>
 
-LeftMFD::LeftMFD(bco::PowerProvider& pwr, bco::vessel* vessel) :
-bco::MFDBase(pwr, vessel, MFD_LEFT, 4.0)
+LeftMFD::LeftMFD(bco::PowerProvider& pwr, bco::Vessel* Vessel) :
+bco::MFDBase(pwr, Vessel, MFD_LEFT, 4.0)
 {
 }
 
-void LeftMFD::HandleSetClassCaps(bco::vessel& vessel)
+void LeftMFD::HandleSetClassCaps(bco::Vessel& Vessel)
 {
 	for (auto& a : data_)
 	{
@@ -39,9 +39,9 @@ void LeftMFD::HandleSetClassCaps(bco::vessel& vessel)
 	AssignMenu(GetBaseVessel()->GetIdForComponent(this));
 }
 
-bool LeftMFD::HandleLoacVC(bco::vessel& vessel, int vcid)
+bool LeftMFD::HandleLoacVC(bco::Vessel& Vessel, int vcid)
 {
-	auto vcMeshHandle = vessel.GetVCMeshHandle0();
+	auto vcMeshHandle = Vessel.GetVCMeshHandle0();
 	assert(vcMeshHandle != nullptr);
 
 	SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
@@ -115,9 +115,9 @@ bool LeftMFD::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
 	return true;
 }
 
-bool LeftMFD::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
+bool LeftMFD::HandleLoadPanel(bco::Vessel& Vessel, int id, PANELHANDLE hPanel)
 {
-	auto panelMesh = vessel.GetpanelMeshHandle0();
+	auto panelMesh = Vessel.GetpanelMeshHandle0();
 
 	// Orbiter bug with panel MFDs, it expects a specific vertex sequence, so we need to re-arrange.
 	static NTVERTEX VTX_MFD[1][4] = {
@@ -136,7 +136,7 @@ bool LeftMFD::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 	MESHGROUP grp_lmfd = { VTX_MFD[0], IDX_MFD, 4, 6, 0, 0, 0, 0, 0 };
 	auto lmfd_grp = oapiAddMeshGroup(panelMesh, &grp_lmfd);   // left MFD
 
-	vessel.RegisterPanelMFDGeometry(hPanel, MFD_LEFT, 0, lmfd_grp);
+	Vessel.RegisterPanelMFDGeometry(hPanel, MFD_LEFT, 0, lmfd_grp);
 
 	SURFHANDLE surfHandle = oapiGetTextureHandle(panelMesh, bm::pnl::TXIDX_SR71R_100_2DPanel_dds);
 
@@ -151,7 +151,7 @@ bool LeftMFD::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 
 	for (auto& a : data_)
 	{
-		vessel.RegisterPanelArea(
+		Vessel.RegisterPanelArea(
 			hPanel, 
 			a.id, 
 			a.pnlRC, 
@@ -160,7 +160,7 @@ bool LeftMFD::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 			surfHandle);
 	}
 
-	vessel.RegisterPanelArea(
+	Vessel.RegisterPanelArea(
 		hPanel,
 		GetPwrKey(),
 		bm::pnl::pnlLeftMFDPwr_RC,
@@ -168,7 +168,7 @@ bool LeftMFD::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 
 	// SEL
-	vessel.RegisterPanelArea(
+	Vessel.RegisterPanelArea(
 		hPanel,
 		GetSelectKey(),
 		bm::pnl::pnlLeftMFDSel_RC,
@@ -176,7 +176,7 @@ bool LeftMFD::HandleLoadPanel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 		PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);
 
 	// MNU
-	vessel.RegisterPanelArea(
+	Vessel.RegisterPanelArea(
 		hPanel,
 		GetSelectKey(),
 		bm::pnl::pnlLeftMFDMenu_RC,

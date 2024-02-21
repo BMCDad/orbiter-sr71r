@@ -35,13 +35,13 @@ public:
 	virtual void OnAvionModeChanged() {}
 
 	// Slots:
-	bco::slot<bool>& EnabledSlot() { return enabledSlot_; }
+	bco::Slot<bool>& EnabledSlot() { return enabledSlot_; }
 	// True = atmosphere mode, False = exo mode
-	bco::slot<bool>& AvionicsModeSlot() { return avionicsModeSlot_; }
+	bco::Slot<bool>& AvionicsModeSlot() { return avionicsModeSlot_; }
 
 private:
 	// Slots:
-	bco::slot<bool>			enabledSlot_;				// Main avion power switch.
-	bco::slot<bool>			avionicsModeSlot_;
+	bco::Slot<bool>			enabledSlot_;				// Main avion power switch.
+	bco::Slot<bool>			avionicsModeSlot_;
 
 };

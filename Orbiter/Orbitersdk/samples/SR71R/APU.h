@@ -58,25 +58,25 @@ class APU :
 	public bco::HydraulicProvider
 {
 public:
-	APU(bco::vessel& vessel, bco::PowerProvider& pwr) :
+	APU(bco::Vessel& Vessel, bco::PowerProvider& pwr) :
 		power_(pwr)
 	{
 		power_.AttachConsumer(this);
-		vessel.AddControl(&switchEnabled_);
-		vessel.AddControl(&gaugeAPULevel_);
-		vessel.AddControl(&status_);
+		Vessel.AddControl(&switchEnabled_);
+		Vessel.AddControl(&gaugeAPULevel_);
+		Vessel.AddControl(&status_);
 	}
 
 	double AmpDraw() const override { return IsPowered() ? 5.0 : 0.0; }
 
 	// manage_state
-	bool HandleLoadState(bco::vessel& vessel, const std::string& line) override {
+	bool HandleLoadState(bco::Vessel& Vessel, const std::string& line) override {
 		std::stringstream in(line);
 		in >> switchEnabled_;
 		return true;
 	}
 
-	std::string HandleSaveState(bco::vessel& vessel) override
+	std::string HandleSaveState(bco::Vessel& Vessel) override
 	{
 		std::ostringstream os;
 		os << switchEnabled_;
@@ -87,14 +87,14 @@ public:
 	double Level() const override { return level_; }
 
 	// post_step
-	void HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+	void HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd) override {
 		bool hasFuel = false;
 
 		if (!IsPowered()) {
 			level_ = 0.0;
 		}
 		else {
-			hasFuel = slotFuelLevel_.value() > 0.0;
+			hasFuel = slotFuelLevel_.Value() > 0.0;
 
 			if (hasFuel) {
 				// Note:  We don't actually draw fuel, but when its gone the APU will shutdown.
@@ -116,7 +116,7 @@ public:
 		);
 	}
 
-	bco::slot<double>&		FuelLevelSlot()			{ return slotFuelLevel_; }
+	bco::Slot<double>&		FuelLevelSlot()			{ return slotFuelLevel_; }
 
 private:
 	bco::PowerProvider&	power_;
@@ -128,7 +128,7 @@ private:
 	}
 
 	double					level_{ 0.0 };
-	bco::slot<double>		slotFuelLevel_;
+	bco::Slot<double>		slotFuelLevel_;
 
 
 	bco::on_off_input			switchEnabled_ { { bm::vc::SwAPUPower_id },

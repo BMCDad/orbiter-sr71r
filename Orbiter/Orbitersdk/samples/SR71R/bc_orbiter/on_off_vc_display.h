@@ -31,13 +31,13 @@ The state of the UI is control via a slot input.
 **/
 class OnOffVCDisplay : public Control, public VCEventTarget {
 public:
-  OnOffVCDisplay(const UINT vcGroupId, const NTVERTEX* vcVerts, double offset, signal<bool>& sig) :
+  OnOffVCDisplay(const UINT vcGroupId, const NTVERTEX* vcVerts, double offset, Signal<bool>& sig) :
       Control(-1),
       vcGroupId_(vcGroupId),
       vcVerts_(vcVerts),
       offset_(offset),
       sl_state_([&](bool v) { oapiTriggerRedrawArea(0, 0, GetId()); }) { 
-    sig.attach(sl_state_);
+    sig.Attach(sl_state_);
   }
 
 void OnVCRedraw(DEVMESHHANDLE vcMesh) override {
@@ -46,7 +46,7 @@ void OnVCRedraw(DEVMESHHANDLE vcMesh) override {
   TransformUV2d(
     vcVerts_,
     delta, 4,
-    _V(sl_state_.value() ? offset_ : 0.0, 0.0, 0.0),
+    _V(sl_state_.Value() ? offset_ : 0.0, 0.0, 0.0),
     0.0);
 
   GROUPEDITSPEC change{};
@@ -65,6 +65,6 @@ private:
   UINT vcGroupId_;
   const NTVERTEX* vcVerts_;
   double offset_{ 0.0 };
-  slot<bool> sl_state_;
+  Slot<bool> sl_state_;
 };
 } // namespace bc_orbiter

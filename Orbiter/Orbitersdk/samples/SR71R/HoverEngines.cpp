@@ -21,17 +21,17 @@
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
 
-HoverEngines::HoverEngines(bco::PowerProvider& pwr, bco::vessel& vessel) :
+HoverEngines::HoverEngines(bco::PowerProvider& pwr, bco::Vessel& Vessel) :
     power_(pwr),
-    vessel_(vessel)
+    vessel_(Vessel)
 {
     power_.AttachConsumer(this);
     animHoverDoors_.SetTargetFunction([this] { EnableHover(true); });
-    vessel.AddControl(&switchOpen_);
-    vessel.AddControl(&status_);
+    Vessel.AddControl(&switchOpen_);
+    Vessel.AddControl(&status_);
 }
 
-void HoverEngines::HandlePostStep(bco::vessel& vessel, double simt, double simdt, double mjd)
+void HoverEngines::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
         animHoverDoors_.Step(switchOpen_.IsOn() ? 1.0 : 0.0, simdt);
@@ -51,34 +51,34 @@ void HoverEngines::HandlePostStep(bco::vessel& vessel, double simt, double simdt
     status_.set_state(status);
 }
 
-void HoverEngines::HandleSetClassCaps(bco::vessel& vessel)
+void HoverEngines::HandleSetClassCaps(bco::Vessel& Vessel)
 {
-    auto vcIdx = vessel.GetVCMeshIndex();
-    auto mIdx = vessel.GetMainMeshIndex();
+    auto vcIdx = Vessel.GetVCMeshIndex();
+    auto mIdx = Vessel.GetMainMeshIndex();
 
     //  Hover engines : positions are simplified.
-    hoverThrustHandles_[0] = vessel.CreateThruster(
+    hoverThrustHandles_[0] = Vessel.CreateThruster(
         _V(0.0, 0.0, 5.0), 
         _V(0, 1, 0), 
         HOVER_THRUST, 
-        vessel.MainPropellant(),
+        Vessel.MainPropellant(),
         THRUST_ISP);
 
-    hoverThrustHandles_[1] = vessel.CreateThruster(
+    hoverThrustHandles_[1] = Vessel.CreateThruster(
         _V(-3.0, 0.0, -5.0), 
         _V(0, 1, 0), 
         HOVER_THRUST * 0.5, 
-        vessel.MainPropellant(),
+        Vessel.MainPropellant(),
         THRUST_ISP);
 
-    hoverThrustHandles_[2] = vessel.CreateThruster(
+    hoverThrustHandles_[2] = Vessel.CreateThruster(
         _V(3.0, 0.0, -5.0), 
         _V(0, 1, 0), 
         HOVER_THRUST * 0.5, 
-        vessel.MainPropellant(),
+        Vessel.MainPropellant(),
         THRUST_ISP);
 
-    vessel.CreateThrusterGroup(hoverThrustHandles_, 3, THGROUP_HOVER);
+    Vessel.CreateThrusterGroup(hoverThrustHandles_, 3, THGROUP_HOVER);
 
     EXHAUSTSPEC es_hover[3] =
     {
@@ -93,30 +93,30 @@ void HoverEngines::HandleSetClassCaps(bco::vessel& vessel)
         PARTICLESTREAMSPEC::ATM_PLOG, 1e-5, 0.1
     };
 
-    for (auto i = 0; i < 3; i++) vessel.AddExhaust(es_hover + i);
-    vessel.AddExhaustStream(hoverThrustHandles_[0], bm::main::ThrustHoverF_loc, &exhaust_hover);
-    vessel.AddExhaustStream(hoverThrustHandles_[1], bm::main::ThrustHoverP_loc, &exhaust_hover);
-    vessel.AddExhaustStream(hoverThrustHandles_[2], bm::main::ThrustHoverS_loc, &exhaust_hover);
+    for (auto i = 0; i < 3; i++) Vessel.AddExhaust(es_hover + i);
+    Vessel.AddExhaustStream(hoverThrustHandles_[0], bm::main::ThrustHoverF_loc, &exhaust_hover);
+    Vessel.AddExhaustStream(hoverThrustHandles_[1], bm::main::ThrustHoverP_loc, &exhaust_hover);
+    Vessel.AddExhaustStream(hoverThrustHandles_[2], bm::main::ThrustHoverS_loc, &exhaust_hover);
 
 
 //    swOpen_.Setup(vessel);
 
-    auto aid = vessel.CreateVesselAnimation(&animHoverDoors_, 0.12);
-    vessel.AddVesselAnimationComponent(aid, mIdx, &gpFrontLeft_);
-    vessel.AddVesselAnimationComponent(aid, mIdx, &gpFrontRight_);
-    vessel.AddVesselAnimationComponent(aid, mIdx, &gpLeft_);
-    vessel.AddVesselAnimationComponent(aid, mIdx, &gpRight_);
+    auto aid = Vessel.CreateVesselAnimation(&animHoverDoors_, 0.12);
+    Vessel.AddVesselAnimationComponent(aid, mIdx, &gpFrontLeft_);
+    Vessel.AddVesselAnimationComponent(aid, mIdx, &gpFrontRight_);
+    Vessel.AddVesselAnimationComponent(aid, mIdx, &gpLeft_);
+    Vessel.AddVesselAnimationComponent(aid, mIdx, &gpRight_);
 }
 
-bool HoverEngines::HandleLoadState(bco::vessel& vessel, const std::string& line)
+bool HoverEngines::HandleLoadState(bco::Vessel& Vessel, const std::string& line)
 {
     std::istringstream in(line);
     in >> switchOpen_ >> animHoverDoors_;
-    vessel.SetAnimationState(animHoverDoors_);
+    Vessel.SetAnimationState(animHoverDoors_);
     return true;
 }
 
-std::string HoverEngines::HandleSaveState(bco::vessel& vessel)
+std::string HoverEngines::HandleSaveState(bco::Vessel& Vessel)
 {
     std::ostringstream os;
     os << switchOpen_ << " " << animHoverDoors_;
@@ -142,7 +142,7 @@ void HoverEngines::EnableHover(bool isEnabled)
     }
 }
 
-void HoverEngines::HandleDrawHUD(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void HoverEngines::HandleDrawHUD(bco::Vessel& Vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 
