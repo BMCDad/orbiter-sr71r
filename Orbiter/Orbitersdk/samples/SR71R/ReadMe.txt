@@ -41,3 +41,6 @@ Blender:
 Gimp:
 -	Texture base gimp files are in the Art folder.  You will need the DDS plugin to output DDS files.
 
+VNext: (April 2 2024)
+-	Mesh enhancement.  We will end up with a higher poly count, and better looking model.
+	* 4/2/2024 - nacell, outer wings.  Main mesh 512kb.
