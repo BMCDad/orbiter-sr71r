@@ -104,11 +104,10 @@ private:
 
     bco::animation_target		    animCanopy_     { 0.2 };
 
-    bco::animation_group     gpCanopy_       { { bm::main::CanopyFO_id,
+    bco::animation_group     gpCanopy_       { { bm::main::Canopy_id,
                                                 bm::main::ForwardCanopyWindow_id,
-                                                bm::main::CanopyFI_id,
-												bm::main::CanopyWindowSI_id,
-												bm::main::CanopyWindowInsideLeft_id},
+                                                bm::main::CanopyWindowSI_id,
+                                                bm::main::CanopyWindowPI_id},
                                                 bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
                                                 (55 * RAD),
                                                 0, 1
@@ -116,7 +115,7 @@ private:
 
     bco::animation_group     gpCanopyVC_     { { bm::vc::CanopyFI_id,
                                                 bm::vc::CanopyFO_id,
-                                                bm::vc::CanopyWindowInsideLeft_id,
+                                                bm::vc::CanopyWindowPI_id,
                                                 bm::vc::CanopyWindowSI_id },
                                                 bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
                                                 (55 * RAD),

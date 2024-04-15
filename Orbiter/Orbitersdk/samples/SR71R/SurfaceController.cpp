@@ -49,7 +49,7 @@ void SurfaceController::handle_post_step(bco::vessel& vessel, double simt, doubl
 void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
 {
 	// Left Aileron Animation
-	static UINT groupLeftAileron = bm::main::LeftOuterElevon_id;
+	static UINT groupLeftAileron = bm::main::ElevonPO_id;
 	static VECTOR3 leftAileronAxis = bm::main::AileronAxisPO_loc - bm::main::AileronAxisPI_loc;
 	static VECTOR3 leftElevatorAxis = bm::main::AileronAxisPI_loc - bm::main::AileronAxisPO_loc;
 
@@ -79,7 +79,7 @@ void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
 
 
 	// Right Aileron Animation
-	static UINT groupRightAileron[1] = { bm::main::RightOuterElevon_id };
+	static UINT groupRightAileron[1] = { bm::main::ElevonSO_id };
 	static VECTOR3 rightAileronAxis = bm::main::AileronAxisSO_loc - bm::main::AileronAxisSI_loc;
 
 	normalise(rightAileronAxis);
@@ -107,7 +107,7 @@ void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
 
 
 	// Left Rudder Animation
-	static UINT groupLeftRudder = bm::main::LeftRudder_id;
+	static UINT groupLeftRudder = bm::main::RudderP_id;
 	static VECTOR3 leftRudderAxis = bm::main::RudderAxisPB_loc - bm::main::RudderAxisPT_loc;
 
 	normalise(leftRudderAxis);
@@ -121,7 +121,7 @@ void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
 
 
 	// Right Rudder Animation
-	static UINT groupRightRudder = bm::main::RightRudder_id;
+	static UINT groupRightRudder = bm::main::RudderS_id;
 	static VECTOR3 rightRudderAxis = bm::main::RudderAxisSB_loc - bm::main::RudderAxisST_loc;
 
 	normalise(rightRudderAxis);

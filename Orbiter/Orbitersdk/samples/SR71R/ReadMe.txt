@@ -43,4 +43,13 @@ Gimp:
 
 VNext: (April 2 2024)
 -	Mesh enhancement.  We will end up with a higher poly count, and better looking model.
-	* 4/2/2024 - nacell, outer wings.  Main mesh 512kb.
+: P-Port (left hand), S-Starboard (right hand), I-Inner, O-Outer, T-Top, B-Bottom, F-Forward, A-Aft
+: [P/S | F/A | I/O | T/B]
+	* Mesh start 380kb.
+	* 4/2/2024 - nacelle, outer wings.  Main mesh 512kb.
+	* 4/3/2024 - nacelle clean up : 493kb.
+	* 4/4/2024 - Nozell redo : 507kb.
+	* 4/4/2024 - Bay doors : 528kb
+	* 4/4/2024 - More bay doors, canopy 567kb
+	* 4/5/2024 - Cleaned up interior  564kb
+	* 4/5/2024 - Outer mesh mostly done.  Compiles and animations work.  Texturing not done, and some parts are not showing, that is coming.
