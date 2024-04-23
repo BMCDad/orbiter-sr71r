@@ -53,3 +53,6 @@ VNext: (April 2 2024)
 	* 4/4/2024 - More bay doors, canopy 567kb
 	* 4/5/2024 - Cleaned up interior  564kb
 	* 4/5/2024 - Outer mesh mostly done.  Compiles and animations work.  Texturing not done, and some parts are not showing, that is coming.
+	* 4/17/2024 - Everything on the body should be UV unwrapped at this point.  Need to combine into like textures, Exhaust, Skin, Lining.
+	* 4/20/2024 - More mesh clean up and organizing in collections.  582kb
+	* 4/21/2024 - Lining up UVs for outer skin, doors, etc.

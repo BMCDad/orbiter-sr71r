@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 4.0.2  Blender Tools: (2, 1, 6)
-// Date: Fri Apr  5 14:38:11 2024
+// Date: Sat Apr 20 06:45:21 2024
 
 
 #include "orbitersdk.h"
@@ -14,26 +14,29 @@ namespace bm
 
   namespace main 
   {
-    const NTVERTEX WindowSFI_vrt[3] = {
-    {0.3303f, 0.5991f, 15.2599f, -0.6322f, -0.6280f, -0.4539f, 0.8423f, 0.0694f},
-    {0.0241f, 0.8939f, 15.2785f, -0.6322f, -0.6280f, -0.4539f, 0.8719f, 0.0692f},
-    {0.0297f, 0.6076f, 15.6669f, -0.6322f, -0.6280f, -0.4539f, 0.8505f, 0.1224f}    };
-    const NTVERTEX CanopyWindowPI_vrt[6] = {
-    {-0.4317f, 0.7433f, 14.4864f, 0.7984f, -0.5807f, -0.1592f, 0.8405f, 0.1251f},
-    {-0.2610f, 0.9771f, 14.5001f, 0.7984f, -0.5807f, -0.1592f, 0.8404f, 0.0677f},
-    {-0.3712f, 0.6164f, 15.1668f, 0.7149f, -0.6112f, -0.3397f, 0.9667f, 0.1259f},
-    {-0.0599f, 0.9239f, 15.2037f, 0.7149f, -0.6112f, -0.3397f, 0.9667f, 0.0675f},
-    {-0.1872f, 0.9526f, 14.9490f, 0.7588f, -0.5996f, -0.2543f, 0.9147f, 0.0684f},
-    {-0.4043f, 0.6517f, 14.9686f, 0.7568f, -0.6003f, -0.2586f, 0.9192f, 0.1256f}    };
-    const NTVERTEX CanopyWindowSI_vrt[6] = {
-    {0.4317f, 0.7433f, 14.4864f, -0.7983f, -0.5808f, -0.1592f, 0.8405f, 0.1251f},
-    {0.2610f, 0.9772f, 14.5001f, -0.7983f, -0.5808f, -0.1592f, 0.8404f, 0.0677f},
-    {0.3712f, 0.6164f, 15.1668f, -0.7151f, -0.6113f, -0.3392f, 0.9667f, 0.1259f},
-    {0.0597f, 0.9242f, 15.2044f, -0.7151f, -0.6113f, -0.3392f, 0.9667f, 0.0675f},
-    {0.1871f, 0.9526f, 14.9490f, -0.7588f, -0.5997f, -0.2541f, 0.9147f, 0.0684f},
-    {0.4044f, 0.6517f, 14.9687f, -0.7569f, -0.6004f, -0.2583f, 0.9192f, 0.1256f}    };
+    const NTVERTEX FrontWindowInside_vrt[6] = {
+    {0.3303f, 0.5991f, 15.2599f, -0.6322f, -0.6280f, -0.4539f, 0.9688f, 0.6898f},
+    {0.0241f, 0.8939f, 15.2785f, -0.6322f, -0.6280f, -0.4539f, 0.9782f, 0.6898f},
+    {0.0297f, 0.6076f, 15.6669f, -0.6322f, -0.6280f, -0.4539f, 0.9714f, 0.7067f},
+    {-0.3303f, 0.5991f, 15.2599f, 0.6322f, -0.6280f, -0.4539f, 0.9688f, 0.6898f},
+    {-0.0241f, 0.8939f, 15.2785f, 0.6322f, -0.6280f, -0.4539f, 0.9782f, 0.6898f},
+    {-0.0297f, 0.6076f, 15.6669f, 0.6322f, -0.6280f, -0.4539f, 0.9714f, 0.7067f}    };
+    const NTVERTEX CanopyWindowInside_vrt[12] = {
+    {-0.4317f, 0.7433f, 14.4864f, 0.7984f, -0.5807f, -0.1592f, 0.8928f, 0.3106f},
+    {-0.2610f, 0.9771f, 14.5001f, 0.7984f, -0.5807f, -0.1592f, 0.8928f, 0.3008f},
+    {-0.3712f, 0.6164f, 15.1668f, 0.7149f, -0.6112f, -0.3397f, 0.9144f, 0.3107f},
+    {-0.0599f, 0.9239f, 15.2037f, 0.7149f, -0.6112f, -0.3397f, 0.9144f, 0.3007f},
+    {-0.1872f, 0.9526f, 14.9490f, 0.7588f, -0.5996f, -0.2543f, 0.9055f, 0.3009f},
+    {-0.4043f, 0.6517f, 14.9686f, 0.7568f, -0.6003f, -0.2586f, 0.9063f, 0.3107f},
+    {0.4317f, 0.7433f, 14.4864f, -0.7984f, -0.5807f, -0.1592f, 0.8928f, 0.3106f},
+    {0.2610f, 0.9771f, 14.5001f, -0.7984f, -0.5807f, -0.1592f, 0.8928f, 0.3008f},
+    {0.3712f, 0.6164f, 15.1668f, -0.7149f, -0.6112f, -0.3397f, 0.9144f, 0.3107f},
+    {0.0599f, 0.9239f, 15.2037f, -0.7149f, -0.6112f, -0.3397f, 0.9144f, 0.3007f},
+    {0.1872f, 0.9526f, 14.9490f, -0.7588f, -0.5996f, -0.2543f, 0.9055f, 0.3009f},
+    {0.4043f, 0.6517f, 14.9686f, -0.7568f, -0.6003f, -0.2586f, 0.9063f, 0.3107f}    };
     const DWORD TXIDX_SR71_VCCockPit_dds = 1;
     const DWORD TXIDX_SR71rBody_dds = 2;
+    const DWORD TXIDX_EngineExhaust_Tex_png = 3;
     constexpr auto MESH_NAME = "SR71r";
 
     const UINT CockpitPanelHood_id = 0;
@@ -44,55 +47,54 @@ namespace bm
     const UINT ElevonSIT_id = 5;
     const UINT ElevonPIT_id = 6;
     const UINT CockpitPanelF_id = 7;
-    const UINT CargoBay_id = 8;
-    const UINT Body_id = 9;
-    const UINT WindowF_id = 10;
-    const UINT LGDoorSI_id = 11;
-    const UINT LGDoorPI_id = 12;
-    const UINT LGCrossP_id = 13;
-    const UINT LGLArm_id = 14;
-    const UINT LGLFork_id = 15;
-    const UINT LGLWheel2_id = 16;
-    const UINT LGLWheel1_id = 17;
-    const UINT LGLWheel3_id = 18;
-    const UINT LGRCross_id = 19;
-    const UINT LGRArm_id = 20;
-    const UINT LGRFork_id = 21;
-    const UINT LGRWheel1_id = 22;
-    const UINT LGRWheel3_id = 23;
-    const UINT LGRWheel2_id = 24;
-    const UINT LGDoorSO_id = 25;
-    const UINT LGDoorPO_id = 26;
-    const UINT LGCrossF_id = 27;
-    const UINT LGFrontArm_id = 28;
-    const UINT LGFrontLeftWheel_id = 29;
-    const UINT LGFrontAxel_id = 30;
-    const UINT LGFrontRightWheel_id = 31;
-    const UINT LGDoorPF_id = 32;
-    const UINT LGDoorSF_id = 33;
-    const UINT ElevonSIB_id = 34;
-    const UINT ElevonSO_id = 35;
-    const UINT ElevonPIB_id = 36;
-    const UINT ElevonPO_id = 37;
-    const UINT OuterWings_id = 38;
-    const UINT Engines_id = 39;
-    const UINT RudderBase_id = 40;
-    const UINT RudderP_id = 41;
-    const UINT RudderS_id = 42;
-    const UINT EngineExhaust_id = 43;
-    const UINT EngineCone_id = 44;
-    const UINT BayDoorSA_id = 45;
-    const UINT BayDoorSF_id = 46;
-    const UINT BayDoorPA_id = 47;
-    const UINT BayDoorPF_id = 48;
-    const UINT Canopy_id = 49;
-    const UINT DockConnector_id = 50;
-    const UINT ForwardCockpit_id = 51;
-    const UINT ForwardCanopyWindow_id = 52;
+    const UINT Body_id = 8;
+    const UINT LGDoorSI_id = 9;
+    const UINT LGDoorPI_id = 10;
+    const UINT LGDoorSO_id = 11;
+    const UINT LGDoorPO_id = 12;
+    const UINT LGDoorPF_id = 13;
+    const UINT LGDoorSF_id = 14;
+    const UINT ElevonSIB_id = 15;
+    const UINT ElevonSO_id = 16;
+    const UINT ElevonPIB_id = 17;
+    const UINT ElevonPO_id = 18;
+    const UINT OuterWings_id = 19;
+    const UINT Engines_id = 20;
+    const UINT RudderBase_id = 21;
+    const UINT RudderP_id = 22;
+    const UINT RudderS_id = 23;
+    const UINT EngineExhaust_id = 24;
+    const UINT EngineCone_id = 25;
+    const UINT BayDoorSA_id = 26;
+    const UINT BayDoorSF_id = 27;
+    const UINT BayDoorPA_id = 28;
+    const UINT BayDoorPF_id = 29;
+    const UINT Canopy_id = 30;
+    const UINT DockConnector_id = 31;
+    const UINT ForwardCockpit_id = 32;
+    const UINT CargoBay_id = 33;
+    const UINT LGRCross_id = 34;
+    const UINT LGRArm_id = 35;
+    const UINT LGRFork_id = 36;
+    const UINT LGRWheel1_id = 37;
+    const UINT LGRWheel3_id = 38;
+    const UINT LGRWheel2_id = 39;
+    const UINT LGLWheel2_id = 40;
+    const UINT LGLWheel1_id = 41;
+    const UINT LGLWheel3_id = 42;
+    const UINT LGCrossP_id = 43;
+    const UINT LGLArm_id = 44;
+    const UINT LGLFork_id = 45;
+    const UINT LGCrossF_id = 46;
+    const UINT LGFrontArm_id = 47;
+    const UINT LGFrontAxel_id = 48;
+    const UINT LGFrontLeftWheel_id = 49;
+    const UINT LGFrontRightWheel_id = 50;
+    const UINT FrontWindowOutside_id = 51;
+    const UINT CanopyWindowOutside_id = 52;
     const UINT CockpitPanelHoodTop_id = 53;
-    const UINT WindowSFI_id = 54;
-    const UINT CanopyWindowPI_id = 55;
-    const UINT CanopyWindowSI_id = 56;
+    const UINT FrontWindowInside_id = 54;
+    const UINT CanopyWindowInside_id = 55;
     constexpr VECTOR3 AileronAxisPI_loc =     {-5.5504, 0.0862, -8.6488};
     constexpr VECTOR3 AileronAxisPO_loc =     {-8.5592, -0.0012, -8.3760};
     constexpr VECTOR3 AileronAxisSI_loc =     {5.5504, 0.0862, -8.6488};
@@ -1573,10 +1575,13 @@ namespace bm
     {-0.3303f, 0.5991f, 15.2599f, 0.6322f, -0.6280f, -0.4539f, 0.8423f, 0.0694f},
     {-0.0241f, 0.8939f, 15.2785f, 0.6322f, -0.6280f, -0.4539f, 0.8719f, 0.0692f},
     {-0.0297f, 0.6076f, 15.6669f, 0.6322f, -0.6280f, -0.4539f, 0.8505f, 0.1224f}    };
-    const NTVERTEX WindowSFI_vrt[3] = {
-    {0.3303f, 0.5991f, 15.2599f, -0.6322f, -0.6280f, -0.4539f, 0.8423f, 0.0694f},
-    {0.0241f, 0.8939f, 15.2785f, -0.6322f, -0.6280f, -0.4539f, 0.8719f, 0.0692f},
-    {0.0297f, 0.6076f, 15.6669f, -0.6322f, -0.6280f, -0.4539f, 0.8505f, 0.1224f}    };
+    const NTVERTEX FrontWindowInside_vrt[6] = {
+    {0.3303f, 0.5991f, 15.2599f, -0.6322f, -0.6280f, -0.4539f, 0.9688f, 0.6898f},
+    {0.0241f, 0.8939f, 15.2785f, -0.6322f, -0.6280f, -0.4539f, 0.9782f, 0.6898f},
+    {0.0297f, 0.6076f, 15.6669f, -0.6322f, -0.6280f, -0.4539f, 0.9714f, 0.7067f},
+    {-0.3303f, 0.5991f, 15.2599f, 0.6322f, -0.6280f, -0.4539f, 0.9688f, 0.6898f},
+    {-0.0241f, 0.8939f, 15.2785f, 0.6322f, -0.6280f, -0.4539f, 0.9782f, 0.6898f},
+    {-0.0297f, 0.6076f, 15.6669f, 0.6322f, -0.6280f, -0.4539f, 0.9714f, 0.7067f}    };
     const NTVERTEX gaFuelFlow_vrt[4] = {
     {0.1488f, 0.6506f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4257f, 0.5393f},
     {0.1559f, 0.6434f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4445f, 0.5393f},
@@ -1622,13 +1627,19 @@ namespace bm
     {-0.0594f, 0.6772f, 15.2751f, 0.0000f, 0.0000f, -1.0000f, 0.4187f, 0.6083f},
     {-0.0721f, 0.6645f, 15.2751f, 0.0000f, 0.0000f, -1.0000f, 0.3950f, 0.6320f},
     {-0.0594f, 0.6645f, 15.2751f, 0.0000f, 0.0000f, -1.0000f, 0.4187f, 0.6320f}    };
-    const NTVERTEX CanopyWindowPI_vrt[6] = {
-    {-0.4317f, 0.7433f, 14.4864f, 0.7984f, -0.5807f, -0.1592f, 0.8405f, 0.1251f},
-    {-0.2610f, 0.9771f, 14.5001f, 0.7984f, -0.5807f, -0.1592f, 0.8404f, 0.0677f},
-    {-0.3712f, 0.6164f, 15.1668f, 0.7149f, -0.6112f, -0.3397f, 0.9667f, 0.1259f},
-    {-0.0599f, 0.9239f, 15.2037f, 0.7149f, -0.6112f, -0.3397f, 0.9667f, 0.0675f},
-    {-0.1872f, 0.9526f, 14.9490f, 0.7588f, -0.5996f, -0.2543f, 0.9147f, 0.0684f},
-    {-0.4043f, 0.6517f, 14.9686f, 0.7568f, -0.6003f, -0.2586f, 0.9192f, 0.1256f}    };
+    const NTVERTEX CanopyWindowInside_vrt[12] = {
+    {-0.4317f, 0.7433f, 14.4864f, 0.7984f, -0.5807f, -0.1592f, 0.8928f, 0.3106f},
+    {-0.2610f, 0.9771f, 14.5001f, 0.7984f, -0.5807f, -0.1592f, 0.8928f, 0.3008f},
+    {-0.3712f, 0.6164f, 15.1668f, 0.7149f, -0.6112f, -0.3397f, 0.9144f, 0.3107f},
+    {-0.0599f, 0.9239f, 15.2037f, 0.7149f, -0.6112f, -0.3397f, 0.9144f, 0.3007f},
+    {-0.1872f, 0.9526f, 14.9490f, 0.7588f, -0.5996f, -0.2543f, 0.9055f, 0.3009f},
+    {-0.4043f, 0.6517f, 14.9686f, 0.7568f, -0.6003f, -0.2586f, 0.9063f, 0.3107f},
+    {0.4317f, 0.7433f, 14.4864f, -0.7984f, -0.5807f, -0.1592f, 0.8928f, 0.3106f},
+    {0.2610f, 0.9771f, 14.5001f, -0.7984f, -0.5807f, -0.1592f, 0.8928f, 0.3008f},
+    {0.3712f, 0.6164f, 15.1668f, -0.7149f, -0.6112f, -0.3397f, 0.9144f, 0.3107f},
+    {0.0599f, 0.9239f, 15.2037f, -0.7149f, -0.6112f, -0.3397f, 0.9144f, 0.3007f},
+    {0.1872f, 0.9526f, 14.9490f, -0.7588f, -0.5996f, -0.2543f, 0.9055f, 0.3009f},
+    {0.4043f, 0.6517f, 14.9686f, -0.7568f, -0.6003f, -0.2586f, 0.9063f, 0.3107f}    };
     const NTVERTEX CanopyWindowSI_vrt[6] = {
     {0.4317f, 0.7433f, 14.4864f, -0.7983f, -0.5808f, -0.1592f, 0.8405f, 0.1251f},
     {0.2610f, 0.9772f, 14.5001f, -0.7983f, -0.5808f, -0.1592f, 0.8404f, 0.0677f},
@@ -1777,7 +1788,7 @@ namespace bm
     const UINT vcRCSRot_id = 121;
     const UINT VSIOffFlag_id = 122;
     const UINT ForwardWindowInsideLeft_id = 123;
-    const UINT WindowSFI_id = 124;
+    const UINT FrontWindowInside_id = 124;
     const UINT ClockTimerMinute_id = 125;
     const UINT gaFuelFlow_id = 126;
     const UINT gaMainFuel_id = 127;
@@ -1802,7 +1813,7 @@ namespace bm
     const UINT HSIOffFlag_id = 146;
     const UINT SpeedVelocityFlag_id = 147;
     const UINT HSITopPlane_id = 148;
-    const UINT CanopyWindowPI_id = 149;
+    const UINT CanopyWindowInside_id = 149;
     const UINT CanopyWindowSI_id = 150;
     const UINT vcAlt10Hand_id = 151;
     const UINT HSIExoFlag_id = 152;
