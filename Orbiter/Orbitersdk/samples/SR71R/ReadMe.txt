@@ -56,3 +56,10 @@ VNext: (April 2 2024)
 	* 4/17/2024 - Everything on the body should be UV unwrapped at this point.  Need to combine into like textures, Exhaust, Skin, Lining.
 	* 4/20/2024 - More mesh clean up and organizing in collections.  582kb
 	* 4/21/2024 - Lining up UVs for outer skin, doors, etc.
+	* 4/22/2024 - More UV body layout.
+	* 4/25/2024 - Start body texturing.
+	* 4/28/2024 - Body/wings lines, ribs etc.  NOTE: Overlay and UVs will not match, so line up each section as needed (scale, skew).
+	* 4/28/2024 - Body texture paths.
+	* 5/5/2024 - Abandoning normals for now.  Getting Blender to bake those correctly is rather complicated, especially since we want to use 
+					a gray scale texture.  It may be easier to have a high-poly model, but not now.
+	*

@@ -1,5 +1,5 @@
-// Auto generated code file.  Blender: 4.0.2  Blender Tools: (2, 1, 6)
-// Date: Sat Apr 20 06:45:21 2024
+// Auto generated code file.  Blender: 4.0.2  Blender Tools: (2, 1, 8)
+// Date: Sat May  4 15:53:40 2024
 
 
 #include "orbitersdk.h"
@@ -35,7 +35,7 @@ namespace bm
     {0.1872f, 0.9526f, 14.9490f, -0.7588f, -0.5996f, -0.2543f, 0.9055f, 0.3009f},
     {0.4043f, 0.6517f, 14.9686f, -0.7568f, -0.6003f, -0.2586f, 0.9063f, 0.3107f}    };
     const DWORD TXIDX_SR71_VCCockPit_dds = 1;
-    const DWORD TXIDX_SR71rBody_dds = 2;
+    const DWORD TXIDX_SR71R_200_Body_dds = 2;
     const DWORD TXIDX_EngineExhaust_Tex_png = 3;
     constexpr auto MESH_NAME = "SR71r";
 
@@ -46,54 +46,54 @@ namespace bm
     const UINT HoverDoorPF_id = 4;
     const UINT ElevonSIT_id = 5;
     const UINT ElevonPIT_id = 6;
-    const UINT CockpitPanelF_id = 7;
-    const UINT Body_id = 8;
-    const UINT LGDoorSI_id = 9;
-    const UINT LGDoorPI_id = 10;
-    const UINT LGDoorSO_id = 11;
-    const UINT LGDoorPO_id = 12;
-    const UINT LGDoorPF_id = 13;
-    const UINT LGDoorSF_id = 14;
-    const UINT ElevonSIB_id = 15;
-    const UINT ElevonSO_id = 16;
-    const UINT ElevonPIB_id = 17;
-    const UINT ElevonPO_id = 18;
-    const UINT OuterWings_id = 19;
-    const UINT Engines_id = 20;
-    const UINT RudderBase_id = 21;
-    const UINT RudderP_id = 22;
-    const UINT RudderS_id = 23;
-    const UINT EngineExhaust_id = 24;
-    const UINT EngineCone_id = 25;
-    const UINT BayDoorSA_id = 26;
-    const UINT BayDoorSF_id = 27;
-    const UINT BayDoorPA_id = 28;
-    const UINT BayDoorPF_id = 29;
-    const UINT Canopy_id = 30;
-    const UINT DockConnector_id = 31;
-    const UINT ForwardCockpit_id = 32;
-    const UINT CargoBay_id = 33;
-    const UINT LGRCross_id = 34;
-    const UINT LGRArm_id = 35;
-    const UINT LGRFork_id = 36;
-    const UINT LGRWheel1_id = 37;
-    const UINT LGRWheel3_id = 38;
-    const UINT LGRWheel2_id = 39;
-    const UINT LGLWheel2_id = 40;
-    const UINT LGLWheel1_id = 41;
-    const UINT LGLWheel3_id = 42;
-    const UINT LGCrossP_id = 43;
-    const UINT LGLArm_id = 44;
-    const UINT LGLFork_id = 45;
-    const UINT LGCrossF_id = 46;
-    const UINT LGFrontArm_id = 47;
-    const UINT LGFrontAxel_id = 48;
-    const UINT LGFrontLeftWheel_id = 49;
-    const UINT LGFrontRightWheel_id = 50;
+    const UINT Body_id = 7;
+    const UINT LGDoorSI_id = 8;
+    const UINT LGDoorPI_id = 9;
+    const UINT LGDoorSO_id = 10;
+    const UINT LGDoorPO_id = 11;
+    const UINT LGDoorPF_id = 12;
+    const UINT LGDoorSF_id = 13;
+    const UINT ElevonSIB_id = 14;
+    const UINT ElevonSO_id = 15;
+    const UINT ElevonPIB_id = 16;
+    const UINT ElevonPO_id = 17;
+    const UINT OuterWings_id = 18;
+    const UINT Engines_id = 19;
+    const UINT RudderBase_id = 20;
+    const UINT RudderP_id = 21;
+    const UINT RudderS_id = 22;
+    const UINT EngineExhaust_id = 23;
+    const UINT EngineCone_id = 24;
+    const UINT BayDoorSA_id = 25;
+    const UINT BayDoorSF_id = 26;
+    const UINT BayDoorPA_id = 27;
+    const UINT BayDoorPF_id = 28;
+    const UINT Canopy_id = 29;
+    const UINT DockConnector_id = 30;
+    const UINT ForwardCockpit_id = 31;
+    const UINT CargoBay_id = 32;
+    const UINT LGRCross_id = 33;
+    const UINT LGRArm_id = 34;
+    const UINT LGRFork_id = 35;
+    const UINT LGRWheel1_id = 36;
+    const UINT LGRWheel3_id = 37;
+    const UINT LGRWheel2_id = 38;
+    const UINT LGLWheel2_id = 39;
+    const UINT LGLWheel1_id = 40;
+    const UINT LGLWheel3_id = 41;
+    const UINT LGCrossP_id = 42;
+    const UINT LGLArm_id = 43;
+    const UINT LGLFork_id = 44;
+    const UINT LGCrossF_id = 45;
+    const UINT LGFrontArm_id = 46;
+    const UINT LGFrontAxel_id = 47;
+    const UINT LGFrontLeftWheel_id = 48;
+    const UINT LGFrontRightWheel_id = 49;
+    const UINT CockpitPanelF_id = 50;
     const UINT FrontWindowOutside_id = 51;
-    const UINT CanopyWindowOutside_id = 52;
-    const UINT CockpitPanelHoodTop_id = 53;
-    const UINT FrontWindowInside_id = 54;
+    const UINT CockpitPanelHoodTop_id = 52;
+    const UINT FrontWindowInside_id = 53;
+    const UINT CanopyWindowOutside_id = 54;
     const UINT CanopyWindowInside_id = 55;
     constexpr VECTOR3 AileronAxisPI_loc =     {-5.5504, 0.0862, -8.6488};
     constexpr VECTOR3 AileronAxisPO_loc =     {-8.5592, -0.0012, -8.3760};
@@ -1659,7 +1659,7 @@ namespace bm
     {-0.1044f, 0.6610f, 15.2751f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6319f}    };
     const DWORD TXIDX_SR71_VCCockPit_dds = 1;
     const DWORD TXIDX_SR71R_100_VC2_dds = 2;
-    const DWORD TXIDX_SR71rBody_dds = 3;
+    const DWORD TXIDX_SR71R_200_Body_dds = 3;
     const DWORD TXIDX_SR71R_100_VC1_dds = 4;
     const DWORD TXIDX_SR71R_100_2DPanel_dds = 5;
     constexpr auto MESH_NAME = "SR71rVC";
