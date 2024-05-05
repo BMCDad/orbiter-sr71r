@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SR71R", "SR71R\SR71R.vcxproj", "{0338DDB6-45BA-459A-A700-49F2F8DB4108}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0338DDB6-45BA-459A-A700-49F2F8DB4108}.Debug|x86.ActiveCfg = Debug|Win32
+		{0338DDB6-45BA-459A-A700-49F2F8DB4108}.Debug|x86.Build.0 = Debug|Win32
+		{0338DDB6-45BA-459A-A700-49F2F8DB4108}.Release|x86.ActiveCfg = Release|Win32
+		{0338DDB6-45BA-459A-A700-49F2F8DB4108}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74A44CDC-E75A-40FA-9461-3BF0FD431A28}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+EndGlobal
