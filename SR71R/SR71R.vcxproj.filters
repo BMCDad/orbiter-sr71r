@@ -1,0 +1,454 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{e3c9c030-863e-413f-8791-470054f70e3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Art">
+      <UniqueIdentifier>{a5c4b344-9baa-4f81-bcc2-7d11892d37dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Meshes">
+      <UniqueIdentifier>{8ce2aff6-0d13-4a15-9011-b9d83d924d15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{52629fbc-aa6f-4a67-96eb-3169d7341fb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interfaces">
+      <UniqueIdentifier>{838109ba-93c2-46aa-8675-f67b40b032f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\src">
+      <UniqueIdentifier>{068ec136-39e2-4e25-b99c-3544153ea839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Deployment">
+      <UniqueIdentifier>{9869f40e-6aef-43f6-a93a-c7da9918a425}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs">
+      <UniqueIdentifier>{939075d8-bbcc-4d90-9c9b-c55b108a0893}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenarios">
+      <UniqueIdentifier>{a9e6c9aa-edc2-44a3-b754-b113fb3bb38c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Computer">
+      <UniqueIdentifier>{78fad8f5-d9fb-4a9a-8a35-78cc5e2235b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenarios\Moon">
+      <UniqueIdentifier>{9cdc8e44-f856-410f-8113-88f50a437720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bc_orbiter">
+      <UniqueIdentifier>{66bd06c1-4866-4ab8-a68d-51f715d93c84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blender">
+      <UniqueIdentifier>{4a87d556-8c9c-4885-a5f0-df8818c7be54}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SR71Vessel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShipMets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LiftCoeff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SR71r_mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FuelCell.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PropulsionController.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HUD.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RCSSystem.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="NavModes.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerSystem.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="LeftMFD.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RightMfd.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CargoBayController.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="APU.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="LandingGear.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IConsumable.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="MfdMets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AirBrake.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Clock.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Shutters.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IAvionics.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="FlightComputer.h">
+      <Filter>Components\Computer</Filter>
+    </ClInclude>
+    <ClInclude Include="VesselControl.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HoverEngines.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RetroEngines.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Canopy.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Avionics.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Altimeter.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AvionBase.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TestComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HSI.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Airspeed.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SR71r_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HydrogenTank.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="OxygenTank.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceController.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\Animation.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\Component.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\control.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\flat_roll.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\generic_tank.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\handler_interfaces.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\IAnimationState.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\MFDBase.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\on_off_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\on_off_display_event.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\on_off_input.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\panel_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\pid_altitude.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\rotary_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\signals.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\simple_event.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\status_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\Tools.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\transform_display.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\vessel.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\Visual.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SR71Vessel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SR71r.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SR71Vessel_clbk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LiftCoeff.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropulsionController.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerSystem.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="CargoBayController.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="HUD.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="NavModes.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="RCSSystem.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="LandingGear.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="FuelCell.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="LeftMFD.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="RightMfd.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AirBrake.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Clock.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Shutters.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="FlightComputer.cpp">
+      <Filter>Components\Computer</Filter>
+    </ClCompile>
+    <ClCompile Include="VesselControl.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="HoverEngines.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="RetroEngines.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Canopy.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Avionics.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceController.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Deploy.bat">
+      <Filter>Deployment</Filter>
+    </None>
+    <None Include="$(OrbiterDir)\Config\Vessels\SR71r.cfg" />
+    <None Include="..\Orbiter\Scenarios\SR71r\0 Cold Start.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\1 Power Up.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\2 Setup Flight.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\3 Ready for Takeoff.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\4 Chasing Down ISS.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\5 Rendezvous with ISS.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\6 Docked at the ISS.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\7 Lined up for Re-entry.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\8 Landing Approach.scn">
+      <Filter>Scenarios</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\Moon\1 Ascent to Earth orbit.scn">
+      <Filter>Scenarios\Moon</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\Moon\2 In Earth orbit.scn">
+      <Filter>Scenarios\Moon</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\Moon\3 Arrival - Moon orbit.scn">
+      <Filter>Scenarios\Moon</Filter>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\Moon\4 Landed - Brighton Beach.scn">
+      <Filter>Scenarios\Moon</Filter>
+    </None>
+    <None Include="..\Docs\SR71r Manual.docx">
+      <Filter>Docs</Filter>
+    </None>
+    <None Include="..\Docs\SR71r Manual.pdf">
+      <Filter>Docs</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_2DPanel.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_BaseObjects.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_ButtonBuilder.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_Buttons.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_GuidanceComp.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_Horizon.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_HSI.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_LeftInstrumentPanel.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_LeftPanel.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_MFD.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_RightInstrumentPanel.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_RightPanel.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_VC1.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_100_VC2.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71R_VCCockpit.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Art\SR71rBody.xcf">
+      <Filter>Art</Filter>
+    </None>
+    <None Include="..\Blender\SR71r.blend">
+      <Filter>Blender</Filter>
+    </None>
+    <None Include="Target.bat">
+      <Filter>Deployment</Filter>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71r.msh">
+      <Filter>Meshes</Filter>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71r2D.msh">
+      <Filter>Meshes</Filter>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71rVC.msh">
+      <Filter>Meshes</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SR71R.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Orbiter\Textures\SR71_VCCockPit.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_2DPanel.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_VC1.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_VC2.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71rBody.dds">
+      <Filter>Textures</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
