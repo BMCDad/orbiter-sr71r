@@ -18,9 +18,9 @@
 
 #include "Orbitersdk.h"
 
-#include "bc_orbiter/MFDBase.h"
-#include "bc_orbiter/Tools.h"
-#include "bc_orbiter/Control.h"
+#include "../bc_orbiter/MFDBase.h"
+#include "../bc_orbiter/Tools.h"
+#include "../bc_orbiter/Control.h"
 
 #include "SR71r_mesh.h"
 

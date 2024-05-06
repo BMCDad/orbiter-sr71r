@@ -24,7 +24,7 @@
 */
 
 #include "Orbitersdk.h"
-#include "bc_orbiter\pid_altitude.h"
+#include "..\bc_orbiter\pid_altitude.h"
 
 #include "IAvionics.h"
 #include "PropulsionController.h"

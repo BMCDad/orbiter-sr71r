@@ -16,7 +16,7 @@
 
 #include "StdAfx.h"
 
-#include "bc_orbiter\Tools.h"
+#include "..\bc_orbiter\Tools.h"
 
 #include "Orbitersdk.h"
 #include "CargoBayController.h"

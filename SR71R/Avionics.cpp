@@ -16,7 +16,7 @@
 
 #include "StdAfx.h"
 
-#include "bc_orbiter\vessel.h"
+#include "..\bc_orbiter\vessel.h"
 
 #include "Avionics.h"
 

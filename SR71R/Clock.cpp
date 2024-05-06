@@ -16,7 +16,7 @@
 
 #include "StdAfx.h"
 
-#include "bc_orbiter\Tools.h"
+#include "..\bc_orbiter\Tools.h"
 
 #include "Clock.h"
 #include "Orbitersdk.h"

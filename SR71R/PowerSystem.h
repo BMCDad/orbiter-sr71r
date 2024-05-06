@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include "bc_orbiter/signals.h"
-#include "bc_orbiter/on_off_input.h"
-#include "bc_orbiter/on_off_display.h"
-#include "bc_orbiter/rotary_display.h"
-#include "bc_orbiter/status_display.h"
+#include "../bc_orbiter/signals.h"
+#include "../bc_orbiter/on_off_input.h"
+#include "../bc_orbiter/on_off_display.h"
+#include "../bc_orbiter/rotary_display.h"
+#include "../bc_orbiter/status_display.h"
 
 #include "FuelCell.h"
 #include "SR71r_mesh.h"

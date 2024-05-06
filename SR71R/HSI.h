@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include "bc_orbiter/control.h"
-#include "bc_orbiter/signals.h"
-#include "bc_orbiter/vessel.h"
-#include "bc_orbiter/rotary_display.h"
-#include "bc_orbiter/transform_display.h"
-#include "bc_orbiter/flat_roll.h"
+#include "../bc_orbiter/control.h"
+#include "../bc_orbiter/signals.h"
+#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/rotary_display.h"
+#include "../bc_orbiter/transform_display.h"
+#include "../bc_orbiter/flat_roll.h"
 
 #include "Avionics.h"
 

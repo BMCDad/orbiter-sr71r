@@ -17,8 +17,8 @@
 #include "StdAfx.h"
 
 #include "Orbitersdk.h"
-#include "bc_orbiter/vessel.h"
-#include "bc_orbiter/Tools.h"
+#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/Tools.h"
 
 #include "RCSSystem.h"
 #include "SR71r_mesh.h"

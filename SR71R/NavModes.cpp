@@ -17,7 +17,7 @@
 #include "StdAfx.h"
 
 #include "Orbitersdk.h"
-#include "bc_orbiter\vessel.h"
+#include "..\bc_orbiter\vessel.h"
 
 #include "NavModes.h"
 #include "SR71r_mesh.h"

@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include "bc_orbiter/vessel.h"
-#include "bc_orbiter/Component.h"
-#include "bc_orbiter/Animation.h"
-#include "bc_orbiter/simple_event.h"
-#include "bc_orbiter/panel_display.h"
+#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/Component.h"
+#include "../bc_orbiter/Animation.h"
+#include "../bc_orbiter/simple_event.h"
+#include "../bc_orbiter/panel_display.h"
 
 #include "SR71r_mesh.h"
 

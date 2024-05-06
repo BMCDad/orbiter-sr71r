@@ -16,8 +16,8 @@
 
 #include "StdAfx.h"
 
-#include "bc_orbiter/Tools.h"
-#include "bc_orbiter/status_display.h"
+#include "../bc_orbiter/Tools.h"
+#include "../bc_orbiter/status_display.h"
 
 #include "Orbitersdk.h"
 #include "Canopy.h"

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "bc_orbiter/on_off_input.h"
+#include "../bc_orbiter/on_off_input.h"
 
 namespace bco = bc_orbiter;
 

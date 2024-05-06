@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include "bc_orbiter\control.h"
-#include "bc_orbiter\handler_interfaces.h"
-#include "bc_orbiter\vessel.h"
+#include "..\bc_orbiter\control.h"
+#include "..\bc_orbiter\handler_interfaces.h"
+#include "..\bc_orbiter\vessel.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"

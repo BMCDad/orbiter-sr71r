@@ -78,14 +78,14 @@
       <OutputFile>$(ModuleDir)\$(ProjectName).dll</OutputFile>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>$(OrbiterDir)\OrbiterSDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>orbiter.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>orbiter.lib;Orbitersdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy $(SolutionDir)Orbiter\*.* $(OrbiterDir)\ /d/s/y</Command>
+      <Message>Updates the target orbiter folder with dev files.</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -108,7 +108,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>$(OrbiterDir)\OrbiterSDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>orbiter.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>orbiter.lib;Orbitersdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>call "$(ProjectDir)deploy.bat" $(ProjectDir) $(OrbiterDir)</Command>
@@ -180,7 +180,6 @@
     <ClInclude Include="VesselControl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\bc_orbiter\TestBCO.cpp" />
     <ClCompile Include="Avionics.cpp" />
     <ClCompile Include="AirBrake.cpp" />
     <ClCompile Include="Canopy.cpp" />
@@ -239,9 +238,15 @@
     </None>
     <None Include="..\Docs\SR71r Manual.docx" />
     <None Include="..\Docs\SR71r Manual.pdf" />
-    <None Include="..\Orbiter\Meshes\SR71r\SR71r.msh" />
-    <None Include="..\Orbiter\Meshes\SR71r\SR71r2D.msh" />
-    <None Include="..\Orbiter\Meshes\SR71r\SR71rVC.msh" />
+    <None Include="..\Orbiter\Meshes\SR71r.msh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71r2D.msh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71rVC.msh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
     <None Include="..\Orbiter\Scenarios\SR71r\0 Cold Start.scn" />
     <None Include="..\Orbiter\Scenarios\SR71r\1 Power Up.scn" />
     <None Include="..\Orbiter\Scenarios\SR71r\2 Setup Flight.scn" />
@@ -259,16 +264,27 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DeploymentContent>
     </None>
+    <None Include="Target.bat" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SR71R.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Orbiter\Textures\SR71r\SR71rBody.dds" />
-    <Image Include="..\Orbiter\Textures\SR71r\SR71R_100_2DPanel.dds" />
-    <Image Include="..\Orbiter\Textures\SR71r\SR71R_100_VC1.dds" />
-    <Image Include="..\Orbiter\Textures\SR71r\SR71R_100_VC2.dds" />
-    <Image Include="..\Orbiter\Textures\SR71r\SR71_VCCockPit.dds" />
+    <Image Include="..\Orbiter\Textures\SR71rBody.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_2DPanel.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_VC1.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_VC2.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71_VCCockPit.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

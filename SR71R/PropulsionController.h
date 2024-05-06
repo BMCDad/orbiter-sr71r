@@ -20,13 +20,13 @@
 
 #include <string>
 
-#include "bc_orbiter/Animation.h"
-#include "bc_orbiter/vessel.h"
-#include "bc_orbiter/on_off_input.h"
-#include "bc_orbiter/on_off_display.h"
-#include "bc_orbiter/simple_event.h"
-#include "bc_orbiter/rotary_display.h"
-#include "bc_orbiter/status_display.h"
+#include "../bc_orbiter/Animation.h"
+#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/on_off_input.h"
+#include "../bc_orbiter/on_off_display.h"
+#include "../bc_orbiter/simple_event.h"
+#include "../bc_orbiter/rotary_display.h"
+#include "../bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"

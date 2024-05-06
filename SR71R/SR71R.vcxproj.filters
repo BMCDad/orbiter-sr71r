@@ -314,26 +314,6 @@
     <ClCompile Include="SurfaceController.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\bc_orbiter\TestBCO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\Orbiter\Textures\SR71r\SR71_VCCockPit.dds">
-      <Filter>Textures</Filter>
-    </Image>
-    <Image Include="..\Orbiter\Textures\SR71r\SR71R_100_2DPanel.dds">
-      <Filter>Textures</Filter>
-    </Image>
-    <Image Include="..\Orbiter\Textures\SR71r\SR71R_100_VC2.dds">
-      <Filter>Textures</Filter>
-    </Image>
-    <Image Include="..\Orbiter\Textures\SR71r\SR71rBody.dds">
-      <Filter>Textures</Filter>
-    </Image>
-    <Image Include="..\Orbiter\Textures\SR71r\SR71R_100_VC1.dds">
-      <Filter>Textures</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="Deploy.bat">
@@ -433,22 +413,42 @@
     <None Include="..\Art\SR71rBody.xcf">
       <Filter>Art</Filter>
     </None>
-    <None Include="..\Orbiter\Meshes\SR71r\SR71r.msh">
-      <Filter>Meshes</Filter>
-    </None>
-    <None Include="..\Orbiter\Meshes\SR71r\SR71r2D.msh">
-      <Filter>Meshes</Filter>
-    </None>
-    <None Include="..\Orbiter\Meshes\SR71r\SR71rVC.msh">
-      <Filter>Meshes</Filter>
-    </None>
     <None Include="..\Blender\SR71r.blend">
       <Filter>Blender</Filter>
+    </None>
+    <None Include="Target.bat">
+      <Filter>Deployment</Filter>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71r.msh">
+      <Filter>Meshes</Filter>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71r2D.msh">
+      <Filter>Meshes</Filter>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71rVC.msh">
+      <Filter>Meshes</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SR71R.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Orbiter\Textures\SR71_VCCockPit.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_2DPanel.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_VC1.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_VC2.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71rBody.dds">
+      <Filter>Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

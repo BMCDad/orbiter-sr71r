@@ -18,11 +18,11 @@
 
 #include "OrbiterSDK.h"
 
-#include "bc_orbiter/Animation.h"
-#include "bc_orbiter/vessel.h"
-#include "bc_orbiter/control.h"
-#include "bc_orbiter/on_off_input.h"
-#include "bc_orbiter/status_display.h"
+#include "../bc_orbiter/Animation.h"
+#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/control.h"
+#include "../bc_orbiter/on_off_input.h"
+#include "../bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
 #include "ShipMets.h"

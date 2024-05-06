@@ -3,12 +3,16 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <OrbiterDir>D:\Orbiter\2016Dev</OrbiterDir>
+    <ModuleDir>$(OrbiterDir)\Modules</ModuleDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
     <BuildMacro Include="OrbiterDir">
       <Value>$(OrbiterDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ModuleDir">
+      <Value>$(ModuleDir)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>
