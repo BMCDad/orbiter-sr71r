@@ -1,0 +1,292 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0338DDB6-45BA-459A-A700-49F2F8DB4108}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>SR71R</RootNamespace>
+    <SccProjectName>SAK</SccProjectName>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccProvider>SAK</SccProvider>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="SR71r.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="SR71r.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ModuleDir)\</OutDir>
+    <LibraryPath>$(VCInstallDir)UnitTest\lib;$(LibraryPath);$(VCInstallDir)Auxiliary\VS\UnitTest\lib</LibraryPath>
+    <IncludePath>$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ModuleDir)\</OutDir>
+    <IncludePath>$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(VCInstallDir)Auxiliary\VS\UnitTest\lib</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SR71R_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+      <DisableSpecificWarnings>26812;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(OrbiterDir)\OrbiterSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OutputFile>$(ModuleDir)\$(ProjectName).dll</OutputFile>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(OrbiterDir)\OrbiterSDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>orbiter.lib;Orbitersdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>xcopy $(SolutionDir)Orbiter\*.* $(OrbiterDir)\ /d/s/y</Command>
+      <Message>Updates the target orbiter folder with dev files.</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SR71R_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>26812;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(OrbiterDir)\OrbiterSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(OrbiterDir)\OrbiterSDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>orbiter.lib;Orbitersdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>call "$(ProjectDir)deploy.bat" $(ProjectDir) $(OrbiterDir)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\bc_orbiter\handler_interfaces.h" />
+    <ClInclude Include="..\bc_orbiter\transform_display.h" />
+    <ClInclude Include="..\bc_orbiter\Visual.h" />
+    <ClInclude Include="Avionics.h" />
+    <ClInclude Include="AirBrake.h" />
+    <ClInclude Include="Airspeed.h" />
+    <ClInclude Include="Altimeter.h" />
+    <ClInclude Include="APU.h" />
+    <ClInclude Include="AvionBase.h" />
+    <ClInclude Include="..\bc_orbiter\Animation.h" />
+    <ClInclude Include="..\bc_orbiter\panel_display.h" />
+    <ClInclude Include="..\bc_orbiter\pid_altitude.h" />
+    <ClInclude Include="..\bc_orbiter\vessel.h" />
+    <ClInclude Include="..\bc_orbiter\Component.h" />
+    <ClInclude Include="..\bc_orbiter\control.h" />
+    <ClInclude Include="..\bc_orbiter\flat_roll.h" />
+    <ClInclude Include="..\bc_orbiter\generic_tank.h" />
+    <ClInclude Include="..\bc_orbiter\IAnimationState.h" />
+    <ClInclude Include="..\bc_orbiter\MFDBase.h" />
+    <ClInclude Include="..\bc_orbiter\on_off_display_event.h" />
+    <ClInclude Include="..\bc_orbiter\on_off_input.h" />
+    <ClInclude Include="..\bc_orbiter\on_off_display.h" />
+    <ClInclude Include="..\bc_orbiter\rotary_display.h" />
+    <ClInclude Include="..\bc_orbiter\signals.h" />
+    <ClInclude Include="..\bc_orbiter\simple_event.h" />
+    <ClInclude Include="..\bc_orbiter\status_display.h" />
+    <ClInclude Include="..\bc_orbiter\Tools.h" />
+    <ClInclude Include="Canopy.h" />
+    <ClInclude Include="CargoBayController.h" />
+    <ClInclude Include="Clock.h" />
+    <ClInclude Include="FlightComputer.h" />
+    <ClInclude Include="HoverEngines.h" />
+    <ClInclude Include="HSI.h" />
+    <ClInclude Include="HydrogenTank.h" />
+    <ClInclude Include="IAvionics.h" />
+    <ClInclude Include="FuelCell.h" />
+    <ClInclude Include="IConsumable.h" />
+    <ClInclude Include="LandingGear.h" />
+    <ClInclude Include="OxygenTank.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="RetroEngines.h" />
+    <ClInclude Include="Shutters.h" />
+    <ClInclude Include="SR71r_common.h" />
+    <ClInclude Include="LeftMFD.h" />
+    <ClInclude Include="MfdMets.h" />
+    <ClInclude Include="NavModes.h" />
+    <ClInclude Include="HUD.h" />
+    <ClInclude Include="PowerSystem.h" />
+    <ClInclude Include="PropulsionController.h" />
+    <ClInclude Include="LiftCoeff.h" />
+    <ClInclude Include="RCSSystem.h" />
+    <ClInclude Include="RightMfd.h" />
+    <ClInclude Include="ShipMets.h" />
+    <ClInclude Include="SR71r_mesh.h" />
+    <ClInclude Include="SR71Vessel.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="Lights.h" />
+    <ClInclude Include="SurfaceController.h" />
+    <ClInclude Include="TestComponent.h" />
+    <ClInclude Include="VesselControl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Avionics.cpp" />
+    <ClCompile Include="AirBrake.cpp" />
+    <ClCompile Include="Canopy.cpp" />
+    <ClCompile Include="CargoBayController.cpp" />
+    <ClCompile Include="Clock.cpp" />
+    <ClCompile Include="FlightComputer.cpp" />
+    <ClCompile Include="FuelCell.cpp" />
+    <ClCompile Include="HoverEngines.cpp" />
+    <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="LandingGear.cpp" />
+    <ClCompile Include="LeftMFD.cpp" />
+    <ClCompile Include="NavModes.cpp" />
+    <ClCompile Include="PowerSystem.cpp" />
+    <ClCompile Include="PropulsionController.cpp" />
+    <ClCompile Include="LiftCoeff.cpp" />
+    <ClCompile Include="RCSSystem.cpp" />
+    <ClCompile Include="RetroEngines.cpp" />
+    <ClCompile Include="RightMfd.cpp" />
+    <ClCompile Include="Shutters.cpp" />
+    <ClCompile Include="SR71r.cpp" />
+    <ClCompile Include="SR71Vessel.cpp" />
+    <ClCompile Include="SR71Vessel_clbk.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SurfaceController.cpp" />
+    <ClCompile Include="VesselControl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Art\SR71rBody.xcf" />
+    <None Include="..\Art\SR71R_100_2DPanel.xcf" />
+    <None Include="..\Art\SR71R_100_BaseObjects.xcf" />
+    <None Include="..\Art\SR71R_100_ButtonBuilder.xcf" />
+    <None Include="..\Art\SR71R_100_Buttons.xcf" />
+    <None Include="..\Art\SR71R_100_GuidanceComp.xcf" />
+    <None Include="..\Art\SR71R_100_Horizon.xcf" />
+    <None Include="..\Art\SR71R_100_HSI.xcf" />
+    <None Include="..\Art\SR71R_100_LeftInstrumentPanel.xcf" />
+    <None Include="..\Art\SR71R_100_LeftPanel.xcf" />
+    <None Include="..\Art\SR71R_100_MFD.xcf" />
+    <None Include="..\Art\SR71R_100_RightInstrumentPanel.xcf" />
+    <None Include="..\Art\SR71R_100_RightPanel.xcf" />
+    <None Include="..\Art\SR71R_100_VC1.xcf" />
+    <None Include="..\Art\SR71R_100_VC2.xcf" />
+    <None Include="..\Art\SR71R_VCCockpit.xcf" />
+    <None Include="$(OrbiterDir)\Config\Vessels\SR71r.cfg">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    </None>
+    <None Include="..\Blender\SR71r.blend">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DeploymentContent>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DeploymentContent>
+    </None>
+    <None Include="..\Docs\SR71r Manual.docx" />
+    <None Include="..\Docs\SR71r Manual.pdf" />
+    <None Include="..\Orbiter\Meshes\SR71r.msh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71r2D.msh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71rVC.msh">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Orbiter\Scenarios\SR71r\0 Cold Start.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\1 Power Up.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\2 Setup Flight.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\3 Ready for Takeoff.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\4 Chasing Down ISS.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\5 Rendezvous with ISS.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\6 Docked at the ISS.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\7 Lined up for Re-entry.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\8 Landing Approach.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\Moon\1 Ascent to Earth orbit.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\Moon\2 In Earth orbit.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\Moon\3 Arrival - Moon orbit.scn" />
+    <None Include="..\Orbiter\Scenarios\SR71r\Moon\4 Landed - Brighton Beach.scn" />
+    <None Include="Deploy.bat">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DeploymentContent>
+    </None>
+    <None Include="Target.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SR71R.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Orbiter\Textures\SR71rBody.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_2DPanel.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_VC1.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71R_100_VC2.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="..\Orbiter\Textures\SR71_VCCockPit.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Image>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
