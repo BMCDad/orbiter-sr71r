@@ -87,6 +87,10 @@
       <Command>xcopy $(SolutionDir)Orbiter\*.* $(OrbiterDir)\ /d/s/y</Command>
       <Message>Updates the target orbiter folder with dev files.</Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -225,6 +229,7 @@
     <None Include="..\Art\SR71R_100_RightPanel.xcf" />
     <None Include="..\Art\SR71R_100_VC1.xcf" />
     <None Include="..\Art\SR71R_100_VC2.xcf" />
+    <None Include="..\Art\SR71R_200_Body.xcf" />
     <None Include="..\Art\SR71R_VCCockpit.xcf" />
     <None Include="$(OrbiterDir)\Config\Vessels\SR71r.cfg">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

@@ -62,4 +62,4 @@ VNext: (April 2 2024)
 	* 4/28/2024 - Body texture paths.
 	* 5/5/2024 - Abandoning normals for now.  Getting Blender to bake those correctly is rather complicated, especially since we want to use 
 					a gray scale texture.  It may be easier to have a high-poly model, but not now.
-	*
+	* 5/16/2024 - Top body texturing done.  Bottom should go quicker.
