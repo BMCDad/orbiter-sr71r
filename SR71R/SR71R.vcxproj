@@ -51,6 +51,9 @@
     <OutDir>$(ModuleDir)\</OutDir>
     <LibraryPath>$(VCInstallDir)UnitTest\lib;$(LibraryPath);$(VCInstallDir)Auxiliary\VS\UnitTest\lib</LibraryPath>
     <IncludePath>$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(IncludePath)</IncludePath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+    <CodeAnalysisRuleSet>MixedRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
