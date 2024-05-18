@@ -29,11 +29,7 @@
 
 namespace bco = bc_orbiter;
 
-class Avionics :
-	  public bco::vessel_component
-	, public bco::post_step
-	, public bco::manage_state
-	, public bco::power_consumer
+class Avionics : public bco::vessel_component, public bco::post_step, public bco::manage_state, public bco::power_consumer
 {
 
 public:
@@ -56,8 +52,8 @@ public:
 	void SetHeading(double s);
 
 
-	bool	IsAeroActive()	{ return isAeroDataActive_; }		// Is aero available (switch is on, power is adequate)
-	bool	IsAeroAtmoMode()	{ return isAtmoMode_; }
+	bool	IsAeroActive() const { return isAeroDataActive_; }		// Is aero available (switch is on, power is adequate)
+	bool	IsAeroAtmoMode() const { return isAtmoMode_; }
 
 	// Signals:
 	bco::signal<double>&	SetCourseSignal()		{ return setCourseSignal_; }

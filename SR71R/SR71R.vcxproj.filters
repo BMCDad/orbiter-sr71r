@@ -428,6 +428,9 @@
     <None Include="..\Orbiter\Meshes\SR71rVC.msh">
       <Filter>Meshes</Filter>
     </None>
+    <None Include="..\Art\SR71R_200_Body.xcf">
+      <Filter>Art</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SR71R.rc">
