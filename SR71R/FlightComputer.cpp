@@ -57,6 +57,7 @@ FC::FlightComputer::FlightComputer(
 	vessel.AddControl(&gcKeyF8_);
 	vessel.AddControl(&gcKeyF9_);
 	vessel.AddControl(&gcKeyF10_);
+    vessel.AddControl(&gcKeyMenu_);
 
 	vessel.AddControl(&apBtnMain_);
 	vessel.AddControl(&apBtnHeading_);
@@ -102,6 +103,7 @@ FC::FlightComputer::FlightComputer(
 	gcKeyF8_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F8); });
 	gcKeyF9_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F9); });
 	gcKeyF10_		.attach([&]() { keyBuffer_.push_back(FC::GCKey::F10); });
+    gcKeyMenu_      .attach([&]() { keyBuffer_.push_back(FC::GCKey::Menu); });
 
 	apBtnMain_		.attach([&]() { ToggleAtmoProgram(FCProgFlags::AtmoActive); });
 	apBtnHeading_	.attach([&]() { ToggleAtmoProgram(FCProgFlags::HoldHeading); });
@@ -413,7 +415,7 @@ void FC::FlightComputer::PageMain()
 	MapKey(GCKey::F3, [this] { PageReEntry(); });
 	MapKey(GCKey::F4, [this] { PageAtmosphere(); });
 
-	funcUpdate_ = [] {};
+	funcUpdate_ = [this] {};
 }
 
 void FC::FlightComputer::PageAtmosphere()
@@ -437,7 +439,9 @@ void FC::FlightComputer::UpdateAtmospherePage()
 	if (runningPrograms_ != prevRunning_)
 	{
 		DisplayLine(1, "<HDG   -%s-", IsProgramRunning(FCProgFlags::HoldHeading) ? "ON " : " . ");
+        DisplayLine(2, "This is a test");
 		DisplayLine(3, "<ALT   -%s-", IsProgramRunning(FCProgFlags::HoldAltitude) ? "ON " : " . ");
+        DisplayLine(4, "This is a test");
 		DisplayLine(5, "<KEAS  -%s-", IsProgramRunning(FCProgFlags::HoldKEAS) ? "ON " : " . ");
 		DisplayLine(7, "<MACH  -%s-", IsProgramRunning(FCProgFlags::HoldMACH) ? "ON " : " . ");
 		DisplayLine(9, " -%s-   -%s->", 
