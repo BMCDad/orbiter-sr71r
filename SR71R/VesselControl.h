@@ -225,7 +225,7 @@ public:
             ctrlLevel = (climbError > 0) ? 1.0 : -1.0;
         }
 
-        vessel.set_aileron_level(ctrlLevel / 2);
+        vessel.set_elevator_level(ctrlLevel / 2);
     }
 
     void stop(bco::vessel& vessel) override

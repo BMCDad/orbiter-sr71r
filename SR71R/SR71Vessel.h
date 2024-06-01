@@ -42,6 +42,7 @@
 #include "OxygenTank.h"
 #include "FlightComputer.h"
 #include "SurfaceController.h"
+#include "APMFD.h"
 
 #include <vector>
 #include <map>
@@ -79,6 +80,9 @@ public:
 	PropulsionController*	GetPropulsionControl() { return &propulsion_; }
 
 private:
+    int                     RegisterAPMFD();
+    int                     apMFDId_{ 0 };
+
 	UINT					mainMeshIndex_{ 0 };
 
 	MESHHANDLE				vcMeshHandle_{ nullptr };

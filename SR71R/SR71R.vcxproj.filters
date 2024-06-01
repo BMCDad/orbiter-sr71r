@@ -237,6 +237,12 @@
     <ClInclude Include="..\bc_orbiter\Visual.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
+    <ClInclude Include="APMFD.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoPilot.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">
@@ -312,6 +318,12 @@
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="SurfaceController.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="APMFD.cpp">
+      <Filter>Components\src</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoPilot.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
   </ItemGroup>

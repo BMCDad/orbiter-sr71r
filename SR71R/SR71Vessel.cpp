@@ -24,6 +24,8 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	bco::vessel(hvessel, flightmodel),
 	meshVirtualCockpit_(nullptr)
 {
+    apMFDId_ = RegisterAPMFD();
+
 	AddComponent(&avionics_);
 	AddComponent(&airBrake_);
 	AddComponent(&airspeed_);
@@ -67,6 +69,7 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 
 SR71Vessel::~SR71Vessel()
 {
+    UnregisterMFDMode(apMFDId_);
 }
 
 void SR71Vessel::SetupAerodynamics()
@@ -89,4 +92,15 @@ void SR71Vessel::SetupAerodynamics()
 		HORZ_WING_CHORD,
 		HORZ_WING_AREA,
 		HORZ_WING_AR);
+}
+
+int SR71Vessel::RegisterAPMFD()
+{
+    static char* name = "SR71AP";
+    MFDMODESPECEX spec;
+    spec.name = name;
+    spec.key = OAPI_KEY_B;
+    spec.context = NULL;
+    spec.msgproc = APMFD::MsgProc;
+    return RegisterMFDMode(spec);
 }

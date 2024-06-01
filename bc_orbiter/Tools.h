@@ -17,6 +17,7 @@
 #pragma once
 
 #include "Orbitersdk.h"
+#include <cmath>
 
 namespace bc_orbiter
 {
@@ -658,4 +659,47 @@ namespace bc_orbiter
 		grp->Vtx[2].tv = verts[2].tv + offset_v;
 		grp->Vtx[3].tv = verts[3].tv + offset_v;
 	}
+
+    inline void mjddate(double mjd, tm& date)
+    {
+        double ijd, c, e, h;
+        int a, b, f;
+
+        h = 24.0 * modf(mjd, &ijd);
+        if (ijd < -100840) {
+            c = ijd + 2401525.0;
+        }
+        else {
+            b = (int)((ijd + 532784.75) / 36524.25);
+            c = ijd + 2401526.0 + (b - b / 4);
+        }
+        a = (int)((c - 122.1) / 365.25);
+        e = 365.0 * a + a / 4;
+        f = (int)((c - e) / 30.6001);
+        date.tm_wday = ((int)mjd + 3) % 7;
+        date.tm_mday = (int)(c - e + 0.5) - (int)(30.6001 * f);
+        date.tm_mon = f - 1 - 12 * (f / 14);
+        date.tm_year = a - 4715 - ((7 + date.tm_mon) / 10) - 1900;
+        date.tm_hour = (int)h;
+        date.tm_min = (int)(h = 60.0 * (h - date.tm_hour));
+        date.tm_sec = (int)(h = 60.0 * (h - date.tm_min));
+        date.tm_isdst = 0;
+    }
+
+    inline double greenwich_siderial(double mjd) 
+    {
+        // https://aa.usno.navy.mil/faq/GAST
+
+        auto JDtt   = mjd + 2400000.5;      // Convert to JD, orbiter uses modified (mjd)
+        auto JD0    = floor(JDtt) + 0.5;    // 0 hour, previous midnight
+        auto H      = (JDtt - JD0) * 24;    // Hours since midnight
+        auto Dtt    = JDtt - 2451545.0;     // number of days from  2000 January 1, 12h
+        auto Dut    = JD0 - 2451545.0;      // Same for JD0.
+        auto T      = Dtt / 36525;          // Centuries since 2000.
+
+        // GMST = mod (6.697375 + 0.065709824279 DUT + 1.0027379 H + 0.0000258 T2, 24) h
+        auto pm = (6.697375 + (0.065709824279 * Dut) + (1.0027379 * H) + (0.0000258 * (T * T)));
+        auto gsmt = fmod(pm, 24.0);
+        return gsmt;
+    }
 }
