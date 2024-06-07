@@ -30,12 +30,12 @@
 namespace bco = bc_orbiter;
 
 class HoverEngines : 
-      public bco::vessel_component
-    , public bco::power_consumer
-    , public bco::post_step
-    , public bco::set_class_caps
-    , public bco::draw_hud
-    , public bco::manage_state
+    public bco::vessel_component,
+    public bco::power_consumer,
+    public bco::post_step,
+    public bco::set_class_caps,
+    public bco::draw_hud,
+    public bco::manage_state
 {
 public:
     HoverEngines(bco::power_provider& pwr, bco::vessel& vessel);
@@ -77,44 +77,51 @@ private:
 
     THRUSTER_HANDLE         hoverThrustHandles_[3];
 
-    bco::animation_target   animHoverDoors_ {   0.2};
+    bco::animation_target   animHoverDoors_{ 0.2 };
 
-    bco::animation_group    gpFrontLeft_    {   { bm::main::HoverDoorPF_id },
-                                                bm::main::HoverDoorAxisPFF_loc, bm::main::HoverDoorAxisPFA_loc,
-                                                (140 * RAD),
-                                                0, 1
-                                            };
+    bco::animation_group    gpFrontLeft_{
+        { bm::main::HoverDoorPF_id },
+        bm::main::HoverDoorAxisPFF_loc, bm::main::HoverDoorAxisPFA_loc,
+        (140 * RAD),
+        0, 1
+    };
         
-    bco::animation_group    gpFrontRight_   {   { bm::main::HoverDoorSF_id },
-                                                bm::main::HoverDoorAxisSFA_loc, bm::main::HoverDoorAxisSFF_loc,
-                                                (140 * RAD),
-                                                0, 1
-                                            };
+    bco::animation_group    gpFrontRight_{
+        { bm::main::HoverDoorSF_id },
+        bm::main::HoverDoorAxisSFA_loc, bm::main::HoverDoorAxisSFF_loc,
+        (140 * RAD),
+        0, 1
+    };
 
-    bco::animation_group    gpLeft_         {   { bm::main::HoverDoorPA_id } ,
-                                                bm::main::HoverDoorAxisPF_loc, bm::main::HoverDoorAxisPA_loc,
-                                                (100 * RAD),
-                                                0, 1
-                                            };
+    bco::animation_group    gpLeft_{
+        { bm::main::HoverDoorPA_id } ,
+        bm::main::HoverDoorAxisPF_loc, bm::main::HoverDoorAxisPA_loc,
+        (100 * RAD),
+        0, 1
+    };
 
-    bco::animation_group    gpRight_        {   { bm::main::HoverDoorSA_id } ,
-                                                bm::main::HoverDoorAxisSA_loc, bm::main::HoverDoorAxisSF_loc, 
-                                                (100 * RAD),
-                                                0, 1
-                                            };
+    bco::animation_group    gpRight_{ 
+        { bm::main::HoverDoorSA_id } ,
+        bm::main::HoverDoorAxisSA_loc, bm::main::HoverDoorAxisSF_loc,
+        (100 * RAD),
+        0, 1
+    };
 
-    bco::on_off_input		switchOpen_     { { bm::vc::swHoverDoor_id },
-                                                bm::vc::swHoverDoor_loc, bm::vc::DoorsRightAxis_loc,
-                                                toggleOnOff,
-                                                bm::pnl::pnlDoorHover_id,
-                                                bm::pnl::pnlDoorHover_vrt,
-                                                bm::pnl::pnlDoorHover_RC
-                                        };
+    bco::on_off_input       switchOpen_{
+        { bm::vc::swHoverDoor_id },
+        bm::vc::swHoverDoor_loc, bm::vc::DoorsRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlHoverDoor_id,
+        bm::pnlright::pnlHoverDoor_vrt,
+        bm::pnlright::pnlHoverDoor_RC,
+        1
+    };
 
-    bco::status_display     status_ {           bm::vc::MsgLightHover_id,
-                                                bm::vc::MsgLightHover_vrt,
-                                                bm::pnl::pnlMsgLightHover_id,
-                                                bm::pnl::pnlMsgLightHover_vrt,
-                                                0.0361
-                                            };
+    bco::status_display     status_{ 
+        bm::vc::MsgLightHover_id,
+        bm::vc::MsgLightHover_vrt,
+        bm::pnl::pnlMsgLightHover_id,
+        bm::pnl::pnlMsgLightHover_vrt,
+        0.0361
+    };
 };

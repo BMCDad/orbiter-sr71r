@@ -28,12 +28,14 @@ namespace bc_orbiter {
         panel_display(
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
-            double offset)
+            double offset,
+            int pnlId = 0)
             :
             control(0),       // id not used
             pnlGroup_(pnlGroupId),
             pnlVerts_(pnlVerts),
-            offset_(offset)
+            offset_(offset),
+            pnlId_(pnlId)
         {
         }
 
@@ -42,6 +44,8 @@ namespace bc_orbiter {
             //            RotateMesh<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, angle_);
             TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, 0.0, vecTrans_);
         }
+
+        int panel_id() override { return pnlId_; }
 
         void set_position(int pos) {
             set_transform(pos * offset_, 0.0);
@@ -54,5 +58,6 @@ namespace bc_orbiter {
         UINT			pnlGroup_{ 0 };
         const NTVERTEX* pnlVerts_;
         double          offset_;
+        int             pnlId_;
     };
 }

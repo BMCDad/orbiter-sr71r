@@ -48,104 +48,108 @@ namespace bc_orbiter {
 	that can be reused for many control. A bank of switches for example.
 	*/
 	class on_off_input :
-		  public control
-		, public vc_animation
-		, public vc_event_target
-		, public panel_event_target
-		, public one_way_switch
-		, public signaller
+        public control,
+        public vc_animation,
+        public vc_event_target,
+        public panel_event_target,
+        public one_way_switch,
+        public signaller
 	{
-	public:
-		on_off_input(
-			  anim_ids const&			vcAnimGroupIds
-			, const VECTOR3&			vcLocation
-			, const VECTOR3&			vcAxisLocation
-			, const on_off_input_meta&	vcData
-			, const UINT				pnlGroup
-			, const NTVERTEX*			pnlVerts
-			, const RECT&				pnl
+    public:
+        on_off_input(
+            anim_ids const&             vcAnimGroupIds,
+            const VECTOR3&              vcLocation,
+            const VECTOR3&              vcAxisLocation,
+            const on_off_input_meta&    vcData,
+            const UINT                  pnlGroup,
+            const NTVERTEX*             pnlVerts,
+            const RECT&                 pnl,
+            const int                   pnlId = 0
 		) :
-			vcData_(vcData),
-			vcAnimGroup_(
-				vcAnimGroupIds,
-				vcLocation, vcAxisLocation,
-				vcData.animRotation,
-				vcData.animStart, vcData.animEnd),
-			pnlGroup_(pnlGroup),
-			pnlVerts_(pnlVerts),
-			pnlRect_(pnl),
-			pnlOffset_(vcData.pnlOffset),
-			animVC_(vcData_.animSpeed)
-		{ }
+            vcData_(vcData),
+            vcAnimGroup_(
+                vcAnimGroupIds,
+                vcLocation, vcAxisLocation,
+                vcData.animRotation,
+                vcData.animStart, vcData.animEnd),
+            pnlGroup_(pnlGroup),
+            pnlVerts_(pnlVerts),
+            pnlRect_(pnl),
+            pnlOffset_(vcData.pnlOffset),
+            animVC_(vcData_.animSpeed),
+            pnlId_(pnlId)
+            { }
 
-		bool IsOn() const { return state_; }
-		bool is_on() const override { return state_; }
+            bool IsOn() const { return state_; }
+            bool is_on() const override { return state_; }
 
-		// vc_animation
-		animation_group*		vc_animation_group()		override { return &vcAnimGroup_; }
-		double				vc_animation_speed() const	override { return vcData_.animSpeed; }
-		double vc_step(double simdt) override {
-			animVC_.Step(state_ ? 1.0 : 0.0, simdt);
-			return animVC_.GetState();
-		}
+            // vc_animation
+            animation_group*    vc_animation_group()        override { return &vcAnimGroup_; }
+            double              vc_animation_speed() const  override { return vcData_.animSpeed; }
+            double vc_step(double simdt) override {
+                animVC_.Step(state_ ? 1.0 : 0.0, simdt);
+                return animVC_.GetState();
+            }
 
-		// vc_event_target
-		VECTOR3				vc_event_location()			override { return vcAnimGroup_.location_; }
-		double				vc_event_radius()			override { return vcData_.hitRadius; }
-		int					vc_mouse_flags()			override { return vcData_.vcMouseFlags; }
-		int					vc_redraw_flags()			override { return vcData_.vcRedrawFlags; }
+        // vc_event_target
+        VECTOR3             vc_event_location()         override { return vcAnimGroup_.location_; }
+        double              vc_event_radius()           override { return vcData_.hitRadius; }
+        int                 vc_mouse_flags()            override { return vcData_.vcMouseFlags; }
+        int                 vc_redraw_flags()           override { return vcData_.vcRedrawFlags; }
 
-		// panel_event_target
-		RECT				panel_rect()				override { return pnlRect_; }
-		int					panel_mouse_flags()			override { return vcData_.pnlMouseFlags; }
-		int					panel_redraw_flags()		override { return vcData_.pnlRedrawFlags; }
+        // panel_event_target
+        RECT                panel_rect()                override { return pnlRect_; }
+        int                 panel_mouse_flags()         override { return vcData_.pnlMouseFlags; }
+        int                 panel_redraw_flags()        override { return vcData_.pnlRedrawFlags; }
+        int                 panel_id()                  override { return pnlId_; }
 
-		void on_panel_redraw(MESHHANDLE meshPanel) override {
-			DrawPanelOnOff(meshPanel, pnlGroup_, pnlVerts_, IsOn(), pnlOffset_);
-		}
+        void on_panel_redraw(MESHHANDLE meshPanel) override {
+            DrawPanelOnOff(meshPanel, pnlGroup_, pnlVerts_, IsOn(), pnlOffset_);
+        }
 
-		// event_target
-		bool on_event(int id, int event) override {
-			state_ = !state_;
-			fire();
-			return true;
-		}
+        // event_target
+        bool on_event(int id, int event) override {
+            state_ = !state_;
+            fire();
+            return true;
+        }
 
-		void attach_on_change(const std::function<void()>& func) override {
-			attach(func);
-		}
+        void attach_on_change(const std::function<void()>& func) override {
+            attach(func);
+        }
 
-		void toggle_state() {
-			state_ = !state_;
-			fire();
-			oapiTriggerRedrawArea(0, 0, get_id());
-		}
+        void toggle_state() {
+            state_ = !state_;
+            fire();
+            oapiTriggerRedrawArea(0, 0, get_id());
+        }
 
-		friend std::istream& operator>>(std::istream& input, on_off_input& obj) {
-			if (input) {
-				bool isEnabled;
-				input >> isEnabled;
-				obj.state_ = isEnabled;
-				obj.animVC_.SetState(isEnabled ? 1.0 : 0.0);
-				obj.fire();
-			}
+        friend std::istream& operator>>(std::istream& input, on_off_input& obj) {
+            if (input) {
+                bool isEnabled;
+                input >> isEnabled;
+                obj.state_ = isEnabled;
+                obj.animVC_.SetState(isEnabled ? 1.0 : 0.0);
+                obj.fire();
+            }
 
-			return input;
-		}
+            return input;
+        }
 
-		friend std::ostream& operator<<(std::ostream& output, on_off_input& obj) {
-			output << obj.state_ ? "1" : "0";
-			return output;
-		}
+        friend std::ostream& operator<<(std::ostream& output, on_off_input& obj) {
+            output << obj.state_ ? "1" : "0";
+            return output;
+        }
 
-	private:
-		animation_group		vcAnimGroup_;
-		bool				state_{ false };
-		on_off_input_meta	vcData_;
-		UINT				pnlGroup_;
-		const NTVERTEX*		pnlVerts_;
-		RECT				pnlRect_;
-		double				pnlOffset_;
-		animation_target			animVC_;
-	};
+    private:
+        animation_group     vcAnimGroup_;
+        bool                state_{ false };
+        on_off_input_meta   vcData_;
+        UINT                pnlGroup_;
+        const NTVERTEX*     pnlVerts_;
+        RECT                pnlRect_;
+        double              pnlOffset_;
+        animation_target    animVC_;
+        int                 pnlId_;
+    };
 }

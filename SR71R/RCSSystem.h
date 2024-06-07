@@ -29,53 +29,55 @@ class VESSEL3;
 /** RCSMode
 */
 
-class RCSSystem : 
-	  public bco::vessel_component
-	, public bco::power_consumer
+class RCSSystem :
+    public bco::vessel_component
+    , public bco::power_consumer
 {
 public:
-	RCSSystem(bco::vessel& vessel, bco::power_provider& pwr);
+    RCSSystem(bco::vessel& vessel, bco::power_provider& pwr);
 
-	// Callback:
-	void OnRCSMode(int mode);
+    // Callback:
+    void OnRCSMode(int mode);
 
-	double amp_draw() const override { return IsPowered() ? 2.0 : 0.0; }
-	void on_change(double v) override { }
+    double amp_draw() const override { return IsPowered() ? 2.0 : 0.0; }
+    void on_change(double v) override { }
 
 private:
-	bco::vessel&			vessel_;
-	bco::power_provider&	power_;
+    bco::vessel& vessel_;
+    bco::power_provider& power_;
 
-	bool IsPowered() const { return power_.volts_available() > 24; }
+    bool IsPowered() const { return power_.volts_available() > 24; }
 
     void OnChanged(int mode);
-	void ActiveChanged(bool isActive);
+    void ActiveChanged(bool isActive);
 
-	bco::simple_event<>		btnLinear_{
-		bm::vc::vcRCSLin_loc,
-			0.01,
-			bm::pnl::pnlRCSLin_RC
-	};
+    bco::simple_event<>     btnLinear_{
+        bm::vc::vcRCSLin_loc,
+        0.01,
+        bm::pnl::pnlRCSLin_RC,
+        0
+    };
 
-	bco::on_off_display		lightLinear_{
-		bm::vc::vcRCSLin_id,
-			bm::vc::vcRCSLin_vrt,
-			bm::pnl::pnlRCSLin_id,
-			bm::pnl::pnlRCSLin_vrt,
-			0.0352
-	};
+    bco::on_off_display     lightLinear_{
+        bm::vc::vcRCSLin_id,
+            bm::vc::vcRCSLin_vrt,
+            bm::pnl::pnlRCSLin_id,
+            bm::pnl::pnlRCSLin_vrt,
+            0.0352
+    };
 
-	bco::simple_event<>		btnRotate_{
-		bm::vc::vcRCSRot_loc,
-			0.01,
-			bm::pnl::pnlRCSRot_RC
-	};
+    bco::simple_event<>     btnRotate_{
+        bm::vc::vcRCSRot_loc,
+        0.01,
+        bm::pnl::pnlRCSRot_RC,
+        0
+    };
 
-	bco::on_off_display		lightRotate_{
-		bm::vc::vcRCSRot_id,
-			bm::vc::vcRCSRot_vrt,
-			bm::pnl::pnlRCSRot_id,
-			bm::pnl::pnlRCSRot_vrt,
-			0.0352
-	};
+    bco::on_off_display		lightRotate_{
+        bm::vc::vcRCSRot_id,
+            bm::vc::vcRCSRot_vrt,
+            bm::pnl::pnlRCSRot_id,
+            bm::pnl::pnlRCSRot_vrt,
+            0.0352
+    };
 };

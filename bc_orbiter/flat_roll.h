@@ -37,7 +37,8 @@ namespace bc_orbiter {
             , const NTVERTEX* vcVerts
             , const UINT pnlGroupId
             , const NTVERTEX* pnlVerts
-            , const double texOffset)
+            , const double texOffset
+            , int pnlId = 0)
             :
               control(0)
             , vcGroup_(vcGroupId)
@@ -45,6 +46,7 @@ namespace bc_orbiter {
             , pnlGroup_(pnlGroupId)
             , pnlVerts_(pnlVerts)
             , texOffset_(texOffset)
+            , pnlId_(pnlId)
         { }
 
         void vc_step(DEVMESHHANDLE mesh, double simdt) override {
@@ -61,6 +63,8 @@ namespace bc_orbiter {
             //            sprintf(oapiDebugString(), "T: %+4.4f  Anim: %+4.4f  Slot: %+4.4f", target_state_, anim_.GetState(), (double)slotTransform_.value());
         }
 
+        int panel_id() override { return pnlId_; }
+
         void set_position(double pos) { target_state_ = floor(pos) / 10; }
 
     private:
@@ -72,5 +76,6 @@ namespace bc_orbiter {
         const NTVERTEX* pnlVerts_{ nullptr };
         UINT			vcGroup_{ 0 };
         const NTVERTEX* vcVerts_{ nullptr };
+        int             pnlId_;
     };
 }

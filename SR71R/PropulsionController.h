@@ -155,112 +155,119 @@ private:
 	bool		isRCSFilling_		{ false };
 
 	// Switches
-	bco::on_off_input		switchThrustLimit_{		// Thrust Limit
-		{ bm::vc::swThrottleLimit_id },
-			bm::vc::swThrottleLimit_loc, bm::vc::TopRowSwitchRightAxis_loc,
-			toggleOnOff,
-			bm::pnl::pnlThrottleLimit_id,
-			bm::pnl::pnlThrottleLimit_vrt,
-			bm::pnl::pnlThrottleLimit_RC
-	};
+    bco::on_off_input		switchThrustLimit_{		// Thrust Limit
+        { bm::vc::swThrottleLimit_id },
+        bm::vc::swThrottleLimit_loc, bm::vc::TopRowSwitchRightAxis_loc,
+        toggleOnOff,
+        bm::pnl::pnlThrottleLimit_id,
+        bm::pnl::pnlThrottleLimit_vrt,
+        bm::pnl::pnlThrottleLimit_RC
+    };
 
-	bco::on_off_input		switchFuelDump_{		// Fuel dump
-		{ bm::vc::swDumpFuel_id },
-			bm::vc::swDumpFuel_loc, bm::vc::FuelTransferRightAxis_loc,
-			toggleOnOff,
-			bm::pnl::pnlFuelDump_id,
-			bm::pnl::pnlFuelDump_vrt,
-			bm::pnl::pnlFuelDump_RC
-	};
+    bco::on_off_input       switchFuelDump_{        // Fuel dump
+        { bm::vc::swDumpFuel_id },
+        bm::vc::swDumpFuel_loc, bm::vc::FuelTransferRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlFuelDump_id,
+        bm::pnlright::pnlFuelDump_vrt,
+        bm::pnlright::pnlFuelDump_RC,
+        1
+    };
 
 	// Gauges
-	bco::rotary_display<bco::animation_target>		gaugeFuelFlow_{
-		{ bm::vc::gaFuelFlow_id },
-			bm::vc::gaFuelFlow_loc, bm::vc::FuelFlowAxisFront_loc,
-			bm::pnl::pnlGaFuelFlow_id,
-			bm::pnl::pnlGaFuelFlow_vrt,
-			(270 * RAD),	// Clockwise
-			1.0
-	};
+    bco::rotary_display<bco::animation_target>		gaugeFuelFlow_{
+        { bm::vc::gaFuelFlow_id },
+        bm::vc::gaFuelFlow_loc, bm::vc::FuelFlowAxisFront_loc,
+        bm::pnl::pnlGaFuelFlow_id,
+        bm::pnl::pnlGaFuelFlow_vrt,
+        (270 * RAD),	// Clockwise
+        1.0
+    };
 
-	bco::rotary_display<bco::animation_target>		gaugeFuelMain_{
-		{ bm::vc::gaMainFuel_id },
-			bm::vc::gaMainFuel_loc, bm::vc::FuelLevelAxisFront_loc,
-			bm::pnl::pnlGaFuelMain_id,
-			bm::pnl::pnlGaFuelMain_vrt,
-			(256 * RAD),	// Clockwise
-			1.0
-	};
+    bco::rotary_display<bco::animation_target>		gaugeFuelMain_{
+        { bm::vc::gaMainFuel_id },
+        bm::vc::gaMainFuel_loc, bm::vc::FuelLevelAxisFront_loc,
+        bm::pnl::pnlGaFuelMain_id,
+        bm::pnl::pnlGaFuelMain_vrt,
+        (256 * RAD),	// Clockwise
+        1.0
+    };
 
-	bco::rotary_display<bco::animation_target>		gaugeFuelRCS_{
-		{ bm::vc::gaRCSFuel_id },
-			bm::vc::gaRCSFuel_loc, bm::vc::RCSLevelAxisFront_loc,
-			bm::pnl::pnlGaFuelRCS_id,
-			bm::pnl::pnlGaFuelRCS_vrt,
-			(264 * RAD),	// Clockwise
-			1.0
-	};
+    bco::rotary_display<bco::animation_target>		gaugeFuelRCS_{
+        { bm::vc::gaRCSFuel_id },
+        bm::vc::gaRCSFuel_loc, bm::vc::RCSLevelAxisFront_loc,
+        bm::pnl::pnlGaFuelRCS_id,
+        bm::pnl::pnlGaFuelRCS_vrt,
+        (264 * RAD),	// Clockwise
+        1.0
+    };
 
 	// Displays
-	bco::on_off_display		lightFuelAvail_{
-		bm::vc::FuelSupplyOnLight_id,
-			bm::vc::FuelSupplyOnLight_vrt,
-			bm::pnl::pnlFuelAvail_id,
-			bm::pnl::pnlFuelAvail_vrt,
-			0.0244
-	};
+    bco::on_off_display		lightFuelAvail_{
+        bm::vc::FuelSupplyOnLight_id,
+        bm::vc::FuelSupplyOnLight_vrt,
+        bm::pnlright::pnlFuelAvail_id,
+        bm::pnlright::pnlFuelAvail_vrt,
+        0.0244,
+        1
+    };
 
-	bco::on_off_display		lightRCSAvail_{
-		bm::vc::RCSSupplyOnLight_id,
-			bm::vc::RCSSupplyOnLight_vrt,
-			bm::pnl::pnlRCSAvail_id,
-			bm::pnl::pnlRCSAvail_vrt,
-			0.0244
-	};
+    bco::on_off_display		lightRCSAvail_{
+        bm::vc::RCSSupplyOnLight_id,
+        bm::vc::RCSSupplyOnLight_vrt,
+        bm::pnlright::pnlRCSAvail_id,
+        bm::pnlright::pnlRCSAvail_vrt,
+        0.0244,
+        1
+    };
 
 	// Load FUEL pump
-	bco::simple_event<>		btnFuelValveOpen_{
-		bm::vc::FuelValveOpenSwitch_loc,
-			0.01,
-			bm::pnl::pnlFuelValveSwitch_RC
-	};
+    bco::simple_event<>     btnFuelValveOpen_{
+        bm::vc::FuelValveOpenSwitch_loc,
+        0.01,
+        bm::pnlright::pnlFuelValveSwitch_RC,
+        1
+    };
 
-	bco::on_off_display		lightFuelValveOpen_{
-		bm::vc::FuelValveOpenSwitch_id,
-			bm::vc::FuelValveOpenSwitch_vrt,
-			bm::pnl::pnlFuelValveSwitch_id,
-			bm::pnl::pnlFuelValveSwitch_vrt,
-			0.0352
-	};
+    bco::on_off_display     lightFuelValveOpen_{
+        bm::vc::FuelValveOpenSwitch_id,
+        bm::vc::FuelValveOpenSwitch_vrt,
+        bm::pnlright::pnlFuelValveSwitch_id,
+        bm::pnlright::pnlFuelValveSwitch_vrt,
+        0.0352,
+        1
+    };
 
 	// Load RCS pump
-	bco::simple_event<>		btnRCSValveOpen_{
-		bm::vc::RCSValveOpenSwitch_loc,
-			0.01,
-			bm::pnl::pnlRCSValveSwitch_RC
-	};
+    bco::simple_event<>     btnRCSValveOpen_{
+        bm::vc::RCSValveOpenSwitch_loc,
+        0.01,
+        bm::pnlright::pnlRCSValveSwitch_RC,
+        1
+    };
 
-	bco::on_off_display		lightRCSValveOpen_{
-		bm::vc::RCSValveOpenSwitch_id,
-			bm::vc::RCSValveOpenSwitch_vrt,
-			bm::pnl::pnlRCSValveSwitch_id,
-			bm::pnl::pnlRCSValveSwitch_vrt,
-			0.0352
-	};
+    bco::on_off_display     lightRCSValveOpen_{
+        bm::vc::RCSValveOpenSwitch_id,
+        bm::vc::RCSValveOpenSwitch_vrt,
+        bm::pnlright::pnlRCSValveSwitch_id,
+        bm::pnlright::pnlRCSValveSwitch_vrt,
+        0.0352,
+        1
+    };
 
-	bco::status_display     statusFuel_     {           
-		bm::vc::MsgLightFuelWarn_id,
-		bm::vc::MsgLightFuelWarn_vrt,
-		bm::pnl::pnlMsgLightFuelWarn_id,
-		bm::pnl::pnlMsgLightFuelWarn_vrt,
-		0.0361
-	};
+    bco::status_display     statusFuel_{
+        bm::vc::MsgLightFuelWarn_id,
+        bm::vc::MsgLightFuelWarn_vrt,
+        bm::pnl::pnlMsgLightFuelWarn_id,
+        bm::pnl::pnlMsgLightFuelWarn_vrt,
+        0.0361
+    };
 
-	bco::status_display     statusLimiter_     {           
-		bm::vc::MsgLightThrustLimit_id,
-		bm::vc::MsgLightThrustLimit_vrt,
-		bm::pnl::pnlMsgLightThrustLimit_id,
-		bm::pnl::pnlMsgLightThrustLimit_vrt,
-		0.0361
-	};
+    bco::status_display     statusLimiter_{
+        bm::vc::MsgLightThrustLimit_id,
+        bm::vc::MsgLightThrustLimit_vrt,
+        bm::pnl::pnlMsgLightThrustLimit_id,
+        bm::pnl::pnlMsgLightThrustLimit_vrt,
+        0.0361
+    };
 };

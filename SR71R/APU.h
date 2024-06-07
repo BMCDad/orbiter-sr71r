@@ -50,104 +50,110 @@ class VESSEL3;
 	Short cuts:
 	None.
 */
-class APU : 
-	public bco::vessel_component,
-	public bco::post_step,
-	public bco::power_consumer,
-	public bco::manage_state,
-	public bco::hydraulic_provider
+class APU :
+    public bco::vessel_component,
+    public bco::post_step,
+    public bco::power_consumer,
+    public bco::manage_state,
+    public bco::hydraulic_provider
 {
 public:
-	APU(bco::vessel& vessel, bco::power_provider& pwr) :
-		power_(pwr)
-	{
-		power_.attach_consumer(this);
-		vessel.AddControl(&switchEnabled_);
-		vessel.AddControl(&gaugeAPULevel_);
-		vessel.AddControl(&status_);
-	}
+    APU(bco::vessel & vessel, bco::power_provider & pwr) :
+        power_(pwr)
+    {
+        power_.attach_consumer(this);
+        vessel.AddControl(&switchEnabled_);
+        vessel.AddControl(&gaugeAPULevel_);
+        vessel.AddControl(&status_);
+    }
 
-	double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
+    double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
 
-	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override {
-		std::stringstream in(line);
-		in >> switchEnabled_;
-		return true;
-	}
+    // manage_state
+    bool handle_load_state(bco::vessel & vessel, const std::string & line) override {
+        std::stringstream in(line);
+        in >> switchEnabled_;
+        return true;
+    }
 
-	std::string handle_save_state(bco::vessel& vessel) override
-	{
-		std::ostringstream os;
-		os << switchEnabled_;
-		return os.str();
-	}
+    std::string handle_save_state(bco::vessel & vessel) override
+    {
+        std::ostringstream os;
+        os << switchEnabled_;
+        return os.str();
+    }
 
-	// haudralic_provider
-	double level() const override { return level_; }
+    // haudralic_provider
+    double level() const override { return level_; }
 
-	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
-		bool hasFuel = false;
+    // post_step
+    void handle_post_step(bco::vessel & vessel, double simt, double simdt, double mjd) override {
+        bool hasFuel = false;
 
-		if (!IsPowered()) {
-			level_ = 0.0;
-		}
-		else {
-			hasFuel = slotFuelLevel_.value() > 0.0;
+        if (!IsPowered()) {
+            level_ = 0.0;
+        }
+        else {
+            hasFuel = slotFuelLevel_.value() > 0.0;
 
-			if (hasFuel) {
-				// Note:  We don't actually draw fuel, but when its gone the APU will shutdown.
-				level_ = 1.0;
-			}
-			else {
-				level_ = 0.0;
-			}
-		}
+            if (hasFuel) {
+                // Note:  We don't actually draw fuel, but when its gone the APU will shutdown.
+                level_ = 1.0;
+            }
+            else {
+                level_ = 0.0;
+            }
+        }
 
-		gaugeAPULevel_.set_state(level_);
+        gaugeAPULevel_.set_state(level_);
 
-		status_.set_state(
-			IsPowered() 
-			?	hasFuel		
-				?	bco::status_display::status::on
-				:	bco::status_display::status::warn
-			:	bco::status_display::status::off
-		);
-	}
+        status_.set_state(
+            IsPowered()
+            ? hasFuel
+            ? bco::status_display::status::on
+            : bco::status_display::status::warn
+            : bco::status_display::status::off
+        );
+    }
 
-	bco::slot<double>&		FuelLevelSlot()			{ return slotFuelLevel_; }
+    bco::slot<double>&FuelLevelSlot() { return slotFuelLevel_; }
 
 private:
-	bco::power_provider&	power_;
+    bco::power_provider & power_;
 
-	bool IsPowered() const {
-		return 
-			switchEnabled_.is_on() &&
-			(power_.volts_available() > 24.0);
-	}
+    bool IsPowered() const {
+        return switchEnabled_.is_on() && (power_.volts_available() > 24.0);
+    }
 
-	double					level_{ 0.0 };
-	bco::slot<double>		slotFuelLevel_;
+    double                  level_{ 0.0 };
+    bco::slot<double>       slotFuelLevel_;
 
 
-	bco::on_off_input			switchEnabled_ { { bm::vc::SwAPUPower_id },
-												bm::vc::SwAPUPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
-												toggleOnOff,
-												bm::pnl::pnlAPUSwitch_id,
-												bm::pnl::pnlAPUSwitch_vrt,
-												bm::pnl::pnlAPUSwitch_RC	};
+    bco::on_off_input       switchEnabled_{
+        { bm::vc::SwAPUPower_id },
+        bm::vc::SwAPUPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlAPUSwitch_id,
+        bm::pnlright::pnlAPUSwitch_vrt,
+        bm::pnlright::pnlAPUSwitch_RC,
+        1
+    };
 
-	bco::rotary_display_target	gaugeAPULevel_{ { bm::vc::gaHydPress_id },
-												bm::vc::gaHydPress_loc, bm::vc::axisHydPress_loc,
-												bm::pnl::pnlHydPress_id,
-												bm::pnl::pnlHydPress_vrt,
-												(300 * RAD),	// Clockwise
-												0.2	};
+    bco::rotary_display_target  gaugeAPULevel_{
+        { bm::vc::gaHydPress_id },
+        bm::vc::gaHydPress_loc, bm::vc::axisHydPress_loc,
+        bm::pnlright::pnlHydPress_id,
+        bm::pnlright::pnlHydPress_vrt,
+        (300 * RAD),	// Clockwise
+        0.2,
+        1
+    };
 
-	bco::status_display			status_		{   bm::vc::MsgLightAPU_id,
-												bm::vc::MsgLightAPU_vrt,
-												bm::pnl::pnlMsgLightAPU_id,
-												bm::pnl::pnlMsgLightAPU_vrt,
-												0.0361	};
+    bco::status_display         status_{
+        bm::vc::MsgLightAPU_id,
+        bm::vc::MsgLightAPU_vrt,
+        bm::pnl::pnlMsgLightAPU_id,
+        bm::pnl::pnlMsgLightAPU_vrt,
+        0.0361
+    };
 };

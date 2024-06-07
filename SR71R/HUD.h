@@ -38,80 +38,88 @@ namespace bco = bc_orbiter;
 	Configuration:
 	The HUD mode is managed by Orbiter.
 */
-class HUD : 
-	  public bco::vessel_component
-	, public bco::power_consumer
-	, public bco::load_vc
-	, public bco::draw_hud
+class HUD :
+    public bco::vessel_component
+    , public bco::power_consumer
+    , public bco::load_vc
+    , public bco::draw_hud
 {
 public:
-	HUD(bco::power_provider& pwr, bco::vessel& vessel);
+    HUD(bco::power_provider& pwr, bco::vessel& vessel);
 
-	bool handle_load_vc(bco::vessel& vessel, int vcid) override;
+    bool handle_load_vc(bco::vessel& vessel, int vcid) override;
 
-	void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-	double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
+    double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
 
-	void OnHudMode(int mode);
+    void OnHudMode(int mode);
 
-	//bco::slot<bool>&	DockModeSlot()		{ return slotDockMode_; }
-	//bco::slot<bool>&	OrbitModeSlot()		{ return slotOrbitMode_; }
-	//bco::slot<bool>&	SurfaceModeSlot()	{ return slotSurfaceMode_; }
+    //bco::slot<bool>&	DockModeSlot()		{ return slotDockMode_; }
+    //bco::slot<bool>&	OrbitModeSlot()		{ return slotOrbitMode_; }
+    //bco::slot<bool>&	SurfaceModeSlot()	{ return slotSurfaceMode_; }
 
-	//bco::signal<bool>&	DockModeSignal()	{ return sigDockMode_; }
-	//bco::signal<bool>&	OrbitModeSignal()	{ return sigOrbitMode_; }
-	//bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
+    //bco::signal<bool>&	DockModeSignal()	{ return sigDockMode_; }
+    //bco::signal<bool>&	OrbitModeSignal()	{ return sigOrbitMode_; }
+    //bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
 
 private:
-	bco::power_provider& power_;
+    bco::power_provider& power_;
 
-	bool IsPowered() const {	return power_.volts_available() > 24.0; }
+    bool IsPowered() const { return power_.volts_available() > 24.0; }
 
-	void OnChanged(int mode);
+    void OnChanged(int mode);
 
-	//bco::slot<bool> slotDockMode_;
-	//bco::slot<bool> slotOrbitMode_;
-	//bco::slot<bool> slotSurfaceMode_;
+    //bco::slot<bool> slotDockMode_;
+    //bco::slot<bool> slotOrbitMode_;
+    //bco::slot<bool> slotSurfaceMode_;
 
-	//bco::signal<bool> sigDockMode_;
-	//bco::signal<bool> sigOrbitMode_;
-	//bco::signal<bool> sigSurfaceMode_;
+    //bco::signal<bool> sigDockMode_;
+    //bco::signal<bool> sigOrbitMode_;
+    //bco::signal<bool> sigSurfaceMode_;
 
-	// *** HUD *** 
-	bco::simple_event<>		btnDocking_	{		bm::vc::vcHUDDock_loc,
-												0.01,
-												bm::pnl::pnlHUDDock_RC
-											};
+    // *** HUD *** 
+    bco::simple_event<>     btnDocking_{
+        bm::vc::vcHUDDock_loc,
+        0.01,
+        bm::pnl::pnlHUDDock_RC,
+        0
+    };
 
-	bco::on_off_display		btnLightDocking_ {	bm::vc::vcHUDDock_id,
-												bm::vc::vcHUDDock_vrt,
-												bm::pnl::pnlHUDDock_id,
-												bm::pnl::pnlHUDDock_vrt,
-												0.0352
-											};
+    bco::on_off_display     btnLightDocking_{
+        bm::vc::vcHUDDock_id,
+        bm::vc::vcHUDDock_vrt,
+        bm::pnl::pnlHUDDock_id,
+        bm::pnl::pnlHUDDock_vrt,
+        0.0352
+    };
 
-	bco::simple_event<>		btnOrbit_ {			bm::vc::vcHUDOrbit_loc,
-												0.01,
-												bm::pnl::pnlHUDOrbit_RC
-											};
+    bco::simple_event<>     btnOrbit_{
+        bm::vc::vcHUDOrbit_loc,
+        0.01,
+        bm::pnl::pnlHUDOrbit_RC,
+        0
+    };
 
-	bco::on_off_display		btnLightOrbit_ {	bm::vc::vcHUDOrbit_id,
-												bm::vc::vcHUDOrbit_vrt,
-												bm::pnl::pnlHUDOrbit_id,
-												bm::pnl::pnlHUDOrbit_vrt,
-												0.0352
-											};
+    bco::on_off_display     btnLightOrbit_{
+        bm::vc::vcHUDOrbit_id,
+        bm::vc::vcHUDOrbit_vrt,
+        bm::pnl::pnlHUDOrbit_id,
+        bm::pnl::pnlHUDOrbit_vrt,
+        0.0352
+    };
 
-	bco::simple_event<>		btnSurface_ {		bm::vc::vcHUDSURF_loc,
-												0.01,
-												bm::pnl::pnlHUDSurf_RC
-										};
+    bco::simple_event<>     btnSurface_ {
+        bm::vc::vcHUDSURF_loc,
+        0.01,
+        bm::pnl::pnlHUDSurf_RC,
+        0
+    };
 
-	bco::on_off_display		btnLightSurface_ {	bm::vc::vcHUDSURF_id,
-												bm::vc::vcHUDSURF_vrt,
-												bm::pnl::pnlHUDSurf_id,
-												bm::pnl::pnlHUDSurf_vrt,
-												0.0352
-											};
+    bco::on_off_display		btnLightSurface_{ bm::vc::vcHUDSURF_id,
+                                                bm::vc::vcHUDSURF_vrt,
+                                                bm::pnl::pnlHUDSurf_id,
+                                                bm::pnl::pnlHUDSurf_vrt,
+                                                0.0352
+    };
 };

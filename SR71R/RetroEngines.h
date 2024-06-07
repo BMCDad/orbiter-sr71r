@@ -30,12 +30,12 @@
 namespace bco = bc_orbiter;
 
 class RetroEngines :
-      public bco::vessel_component
-    , public bco::power_consumer
-    , public bco::post_step
-    , public bco::set_class_caps
-    , public bco::draw_hud
-    , public bco::manage_state
+    public bco::vessel_component,
+    public bco::power_consumer,
+    public bco::post_step,
+    public bco::set_class_caps,
+    public bco::draw_hud,
+    public bco::manage_state
 {
 public:
     RetroEngines(bco::power_provider& pwr, bco::vessel& vessel);
@@ -77,26 +77,29 @@ private:
 
     THRUSTER_HANDLE         retroThrustHandles_[2];
 
-    bco::animation_target          animRetroDoors_ {   0.2};
+    bco::animation_target   animRetroDoors_{ 0.2 };
 
-    bco::animation_group     gpDoors_        {   {bm::main::EngineCone_id },
-                                                _V(0, 0, -1.2), 
-                                                0.0, 1.0 
-                                            };
+    bco::animation_group    gpDoors_ {
+        {bm::main::EngineCone_id },
+        _V(0, 0, -1.2), 
+        0.0, 1.0 
+    };
 
-    bco::on_off_input		switchDoors_    { { bm::vc::swRetroDoors_id },
-                                                bm::vc::swRetroDoors_loc, bm::vc::DoorsRightAxis_loc,
-                                                toggleOnOff,
-                                                bm::pnl::pnlDoorRetro_id,
-                                                bm::pnl::pnlDoorRetro_vrt,
-                                                bm::pnl::pnlDoorRetro_RC
-                                            };
+    bco::on_off_input       switchDoors_ {
+        { bm::vc::swRetroDoors_id },
+        bm::vc::swRetroDoors_loc, bm::vc::DoorsRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlDoorRetro_id,
+        bm::pnlright::pnlDoorRetro_vrt,
+        bm::pnlright::pnlDoorRetro_RC,
+        1
+    };
 
-    bco::status_display     status_ {           bm::vc::MsgLightRetro_id,
-                                                bm::vc::MsgLightRetro_vrt,
-                                                bm::pnl::pnlMsgLightRetro_id,
-                                                bm::pnl::pnlMsgLightRetro_vrt,
-                                                0.0361
-                                            };
-
+    bco::status_display     status_ {
+        bm::vc::MsgLightRetro_id,
+        bm::vc::MsgLightRetro_vrt,
+        bm::pnl::pnlMsgLightRetro_id,
+        bm::pnl::pnlMsgLightRetro_vrt,
+        0.0361
+    };
 };
