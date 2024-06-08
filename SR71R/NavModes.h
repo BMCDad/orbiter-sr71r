@@ -74,12 +74,12 @@ private:
 	const double rad = 0.01;		// hit radius
 	const double ofs = 0.0352;		// tex offset
 
-	evt	btnKillRot_		{ bm::vc::vcNavKillRot_loc,		rad, bm::pnl::pnlNavKillrot_RC,		NAVMODE_KILLROT		};
-	evt	btnHorzLevel_	{ bm::vc::vcNavHorzLvl_loc,		rad, bm::pnl::pnlNavHorzLvl_RC,		NAVMODE_HLEVEL		};
-	evt	btnPrograde_	{ bm::vc::vcNavProGrade_loc,	rad, bm::pnl::pnlNavPrograde_RC,	NAVMODE_PROGRADE	};
-	evt	btnRetrograde_	{ bm::vc::vcNavRetro_loc,		rad, bm::pnl::pnlNavRetro_RC,		NAVMODE_RETROGRADE	};
-	evt	btnNormal_		{ bm::vc::vcNavNorm_loc,		rad, bm::pnl::pnlNavNorm_RC,		NAVMODE_NORMAL		};
-	evt	btnAntiNorm_	{ bm::vc::vcNavAntiNorm_loc,	rad, bm::pnl::pnlNavAntiNorm_RC,	NAVMODE_ANTINORMAL	};
+	evt	btnKillRot_     { bm::vc::vcNavKillRot_loc,     rad, bm::pnl::pnlNavKillrot_RC,     0,  NAVMODE_KILLROT     };
+	evt	btnHorzLevel_   { bm::vc::vcNavHorzLvl_loc,     rad, bm::pnl::pnlNavHorzLvl_RC,     0,  NAVMODE_HLEVEL      };
+	evt	btnPrograde_    { bm::vc::vcNavProGrade_loc,    rad, bm::pnl::pnlNavPrograde_RC,    0,  NAVMODE_PROGRADE    };
+	evt	btnRetrograde_  { bm::vc::vcNavRetro_loc,       rad, bm::pnl::pnlNavRetro_RC,       0,  NAVMODE_RETROGRADE  };
+	evt	btnNormal_      { bm::vc::vcNavNorm_loc,        rad, bm::pnl::pnlNavNorm_RC,        0,  NAVMODE_NORMAL      };
+	evt	btnAntiNorm_    { bm::vc::vcNavAntiNorm_loc,    rad, bm::pnl::pnlNavAntiNorm_RC,    0,  NAVMODE_ANTINORMAL  };
 
 	dsp	lightKillRot_	{ bm::vc::vcNavKillRot_id,	bm::vc::vcNavKillRot_vrt,	bm::pnl::pnlNavKillrot_id,	bm::pnl::pnlNavKillrot_vrt,		ofs	};
 	dsp	lightHorzLevel_	{ bm::vc::vcNavHorzLvl_id,	bm::vc::vcNavHorzLvl_vrt,	bm::pnl::pnlNavHorzLvl_id,	bm::pnl::pnlNavHorzLvl_vrt,		ofs	};

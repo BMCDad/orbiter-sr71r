@@ -49,7 +49,7 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 
 	AddComponent(&mfdLeft_);
 	AddComponent(&mfdRight_);
-	AddComponent(&computer_);
+//	AddComponent(&computer_);
 	AddComponent(&surfaceCtrl_);
 
 	// Fuel cell					// A signal can drive more then one slot
@@ -62,8 +62,8 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	// ...which in turn drive the HSI course and heading
 	bco::connect( avionics_.SetCourseSignal(),				hsi_.SetCourseSlot());
 	bco::connect( avionics_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
-	bco::connect( avionics_.SetHeadingSignal(),				computer_.HeadingSlot());
-	bco::connect( computer_.HeadingSignal(),				avionics_.SetHeadingSlot());
+	//bco::connect( avionics_.SetHeadingSignal(),				computer_.HeadingSlot());
+	//bco::connect( computer_.HeadingSignal(),				avionics_.SetHeadingSlot());
 			// ...which drives the course and heading needle and wheels.
 }
 

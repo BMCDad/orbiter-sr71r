@@ -53,6 +53,7 @@ namespace bc_orbiter {
 	*/
 	struct panel_animation {
 		virtual void panel_step(MESHHANDLE mesh, double simdt) = 0;
+        virtual int panel_id() = 0;
 	};
 
 	/**
@@ -65,40 +66,41 @@ namespace bc_orbiter {
 		virtual void vc_step(DEVMESHHANDLE mesh, double simdt) = 0;
 	};
 
-	/**
-	* event_target
-	* Base class for any control that will be an event target.
-	*/
-	struct event_target {
-		virtual bool on_event(int id, int event) { return false; }
-	};
+    /**
+    * event_target
+    * Base class for any control that will be an event target.
+    */
+    struct event_target {
+        virtual bool on_event(int id, int event) { return false; }
+    };
 
-	/**
-	vc_event_target
-	Implemented to indicate that a VC control is a target for either mouse events, or redraw
-	events, or both.  If you need mouse events, override vc_mouse_flags to enable mouse events.
-	For redraw events, override vc_redraw_flags.
-	*/
-	struct vc_event_target : public event_target {
-		virtual VECTOR3		vc_event_location()					{ return _V(0.0, 0.0, 0.0); }
-		virtual double		vc_event_radius()					{ return 0.0; }
-		virtual int			vc_mouse_flags()					{ return PANEL_MOUSE_IGNORE; }
-		virtual int			vc_redraw_flags()					{ return PANEL_REDRAW_NEVER; }
-		virtual void		on_vc_redraw(DEVMESHHANDLE meshVC)	{}
-	};
+    /**
+    vc_event_target
+    Implemented to indicate that a VC control is a target for either mouse events, or redraw
+    events, or both.  If you need mouse events, override vc_mouse_flags to enable mouse events.
+    For redraw events, override vc_redraw_flags.
+    */
+    struct vc_event_target : public event_target {
+        virtual VECTOR3     vc_event_location()                 { return _V(0.0, 0.0, 0.0); }
+        virtual double      vc_event_radius()                   { return 0.0; }
+        virtual int         vc_mouse_flags()                    { return PANEL_MOUSE_IGNORE; }
+        virtual int         vc_redraw_flags()                   { return PANEL_REDRAW_NEVER; }
+        virtual void        on_vc_redraw(DEVMESHHANDLE meshVC)  {}
+    };
 
-	/**
-	panel_event_target
-	Implemented to indicate that a panel control is a target for either mouse events, or redraw
-	events, or both.  If you need mouse events, override vc_mouse_flags to enable mouse events.
-	For redraw events, override vc_redraw_flags.
-	*/
-	struct panel_event_target : public event_target {
-		virtual RECT		panel_rect()						{ return _R(0, 0, 0, 0); }
-		virtual int			panel_mouse_flags()					{ return PANEL_MOUSE_IGNORE; }
-		virtual int			panel_redraw_flags()				{ return PANEL_REDRAW_NEVER; }
-		virtual void		on_panel_redraw(MESHHANDLE meshPanel) {}
-	};
+    /**
+    panel_event_target
+    Implemented to indicate that a panel control is a target for either mouse events, or redraw
+    events, or both.  If you need mouse events, override vc_mouse_flags to enable mouse events.
+    For redraw events, override vc_redraw_flags.
+    */
+    struct panel_event_target : public event_target {
+        virtual RECT        panel_rect()                            { return _R(0, 0, 0, 0); }
+        virtual int         panel_mouse_flags()                     { return PANEL_MOUSE_IGNORE; }
+        virtual int         panel_redraw_flags()                    { return PANEL_REDRAW_NEVER; }
+        virtual void        on_panel_redraw(MESHHANDLE meshPanel)   {}
+        virtual int         panel_id()                              { return 0; }
+    };
 
 
 
@@ -159,19 +161,18 @@ namespace bc_orbiter {
 		virtual void set_elevator_level(double l) = 0;
 	};
 
-	/**
-	* Base class for a control.
-	*/
-	class control {// : public IControl {
-	public:
-		control(int ctrlId) : ctrlId_(ctrlId) {}
-		control() : ctrlId_(-1) {}
+    /**
+    * Base class for a control.
+    */
+    class control {
+    public:
+        control(int ctrlId) : ctrlId_(ctrlId) {}
+        control() : ctrlId_(-1) {}
 
-		virtual void set_id(int id) { ctrlId_ = id; }
-		virtual int get_id() const { return ctrlId_; }
+        virtual void set_id(int id) { ctrlId_ = id; }
+        virtual int get_id() const { return ctrlId_; }
 
-	private:
-		int ctrlId_;
-	};
-
+    private:
+        int ctrlId_;
+    };
 }

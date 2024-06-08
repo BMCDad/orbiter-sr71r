@@ -56,8 +56,10 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 
 	// Load 2D Panel:
 	auto panelMeshHandle = oapiLoadMeshGlobal(bm::pnl::MESH_NAME);
-	SetPanelMeshHandle0(panelMeshHandle);
-	
+	SetPanelMeshHandle(0, panelMeshHandle);
+    panelMeshHandle = oapiLoadMeshGlobal(bm::pnlright::MESH_NAME);
+    SetPanelMeshHandle(1, panelMeshHandle);
+
 		// Setup ship metrics:
 	SetSize(SHIP_SIZE);
 	SetEmptyMass(EMPTY_MASS);
@@ -121,23 +123,23 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 			return 1;
 
 		case OAPI_KEY_1:	// Main auto pilot toggle.
-			computer_.ToggleProgram(FCProgFlags::AtmoActive);
+//			computer_.ToggleProgram(FCProgFlags::AtmoActive);
 			return 1;
 
 		case OAPI_KEY_2:	// Toggle hold heading
-			computer_.ToggleProgram(FCProgFlags::HoldHeading);
+//			computer_.ToggleProgram(FCProgFlags::HoldHeading);
 			return 1;
 
 		case OAPI_KEY_3:
-			computer_.ToggleProgram(FCProgFlags::HoldAttitude);
+//			computer_.ToggleProgram(FCProgFlags::HoldAttitude);
 			return 1;
 
 		case OAPI_KEY_4:
-			computer_.ToggleProgram(FCProgFlags::HoldKEAS);
+//			computer_.ToggleProgram(FCProgFlags::HoldKEAS);
 			return 1;
 
 		case OAPI_KEY_5:
-			computer_.ToggleProgram(FCProgFlags::HoldMACH);
+//			computer_.ToggleProgram(FCProgFlags::HoldMACH);
 			return 1;
 
 		//case OAPI_KEY_6:
@@ -208,25 +210,50 @@ bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD 
 		Other panels referenced from oapiSetPanelNeighbours will come through this call those ids.
 	*/
 
-	/*
-	* Orbiter expects the mesh size to be
-	*/
-	SetPanelBackground(
-		hPanel,
-		0,
-		0,
-		GetpanelMeshHandle0(),					// Handle to the panel mesh.
-		(DWORD)bm::pnl::MainPanel_Width,		// Panel mesh width (mesh units)
-		(DWORD)bm::pnl::MainPanel_Height,		// Panel mesh height (mesh units)
-		(DWORD)bm::pnl::MainPanel_Height / 5,	// Baseline (adjust to move panel)
-		PANEL_ATTACH_BOTTOM | PANEL_MOVEOUT_BOTTOM);
+    switch (id) {
+    case 0:
+    {
+        /*
+        * Orbiter expects the mesh size to be
+        */
+        SetPanelBackground(
+            hPanel,
+            0,
+            0,
+            GetpanelMeshHandle(0),					// Handle to the panel mesh.
+            (DWORD)bm::pnl::MainPanel_Width,		// Panel mesh width (mesh units)
+            (DWORD)bm::pnl::MainPanel_Height,		// Panel mesh height (mesh units)
+            0,	                                    // Baseline (adjust to move panel)
+            PANEL_ATTACH_BOTTOM | PANEL_MOVEOUT_BOTTOM);
 
-	// Example: viewW = 3000 and panel width = 2000 (panel too small), defscale becomes (3000/2000) = 1.5 to fit the window.
-	//			viewW = 1000 and panel width = 2000 (panel too big), defscale becomes (1000/2000) = .5 shrink panel to fit.
-	double defscale = (double)viewW / bm::pnl::MainPanel_Width;
-	double extscale = max(defscale, 1.0);
-	SetPanelScaling(hPanel, defscale, extscale);
+        // Example: viewW = 3000 and panel width = 2000 (panel too small), defscale becomes (3000/2000) = 1.5 to fit the window.
+        //			viewW = 1000 and panel width = 2000 (panel too big), defscale becomes (1000/2000) = .5 shrink panel to fit.
+        double defscale = (double)viewW / bm::pnl::MainPanel_Width;
+        double extscale = max(defscale, 1.0);
+        SetPanelScaling(hPanel, defscale, extscale);
 
+        oapiSetPanelNeighbours(-1, 1, -1, -1);
+        break;
+    }
+    case 1:
+    {
+        SetPanelBackground(
+            hPanel,
+            0,
+            0,
+            GetpanelMeshHandle(1),					// Handle to the panel mesh.
+            (DWORD)bm::pnlright::MainPanelRight_Width,		// Panel mesh width (mesh units)
+            (DWORD)bm::pnlright::MainPanelRight_Height,		// Panel mesh height (mesh units)
+            0,	                                    // Baseline (adjust to move panel)
+            PANEL_ATTACH_BOTTOM);
+
+        double defscale = (double)viewW / bm::pnl::MainPanel_Width;     // Yes, this is correct so all panels have same aspect.
+        double extscale = max(defscale, 1.0);
+        SetPanelScaling(hPanel, defscale, extscale);
+        oapiSetPanelNeighbours(0, -1, -1, -1);
+        break;
+    }
+    }
 	return vessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
 }
 

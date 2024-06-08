@@ -108,20 +108,25 @@ private:
     // Panel
     const VECTOR3 sTrans { bm::pnl::pnlSpeedBrakeFull_loc - bm::pnl::pnlSpeedBrakeOff_loc };
 
-    bco::simple_event<>		btnDecreaseAirbrake_ {  bm::vc::ABTargetDecrease_loc,
-                                                    0.01,
-                                                    bm::pnl::pnlAirBrakeDecrease_RC
-                                                };
+    bco::simple_event<>		btnDecreaseAirbrake_ {  
+        bm::vc::ABTargetDecrease_loc,
+        0.01,
+        bm::pnl::pnlAirBrakeDecrease_RC,
+        0
+    };
 
-    bco::simple_event<>		btnIncreaseAirbrake_ {  bm::vc::ABTargetIncrease_loc,
-                                                    0.01,
-                                                    bm::pnl::pnlAirBrakeIncrease_RC
-                                                };
+    bco::simple_event<>		btnIncreaseAirbrake_{ 
+        bm::vc::ABTargetIncrease_loc,
+        0.01,
+        bm::pnl::pnlAirBrakeIncrease_RC,
+        0
+    };
 
-    bco::status_display     status_     {           bm::vc::MsgLightSpeedBrake_id,
-                                                    bm::vc::MsgLightSpeedBrake_vrt,
-                                                    bm::pnl::pnlMsgLightSpeedBrake_id,
-                                                    bm::pnl::pnlMsgLightSpeedBrake_vrt,
-                                                    0.0361
-                                                };
+    bco::status_display     status_     {
+        bm::vc::MsgLightSpeedBrake_id,
+        bm::vc::MsgLightSpeedBrake_vrt,
+        bm::pnl::pnlMsgLightSpeedBrake_id,
+        bm::pnl::pnlMsgLightSpeedBrake_vrt,
+        0.0361
+    };
 };

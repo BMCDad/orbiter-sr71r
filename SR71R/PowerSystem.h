@@ -44,134 +44,143 @@ class FuelCell;
 	On a change to the receiver slot, check that the new voltage level is adequate.
 	On each step, report through the amp signal the current amp usage for that component.
 */
-class PowerSystem :	
-	  public bco::vessel_component
-	, public bco::power_provider
-	, public bco::post_step
-	, public bco::manage_state
+class PowerSystem :
+    public bco::vessel_component
+    , public bco::power_provider
+    , public bco::post_step
+    , public bco::manage_state
 {
 public:
-	PowerSystem(bco::vessel& vessel);
+    PowerSystem(bco::vessel& vessel);
 
-	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override
-	{
-		double draw = 0.0;
+    // post_step
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override
+    {
+        double draw = 0.0;
 
-		for each (auto & c in consumers_) {
-			draw += c->amp_draw();
-		}
+        for each (auto & c in consumers_) {
+            draw += c->amp_draw();
+        }
 
-		ampDraw_ = fmin(draw, AMP_OVERLOAD);
-		gaugePowerAmps_.set_state(ampDraw_ / AMP_OVERLOAD);
-		Update(vessel);
-	}
+        ampDraw_ = fmin(draw, AMP_OVERLOAD);
+        gaugePowerAmps_.set_state(ampDraw_ / AMP_OVERLOAD);
+        Update(vessel);
+    }
 
-	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::vessel& vessel) override;
+    // manage_state
+    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
 
-	// Fuelcell:
-	bco::slot<double>&		FuelCellAvailablePowerSlot()	{ return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
+    // Fuelcell:
+    bco::slot<double>& FuelCellAvailablePowerSlot() { return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
 
-	void attach_consumer(bco::power_consumer* consumer) override {
-		consumers_.push_back(consumer);
-	}
+    void attach_consumer(bco::power_consumer* consumer) override {
+        consumers_.push_back(consumer);
+    }
 
-	double volts_available() const override { return prevVolts_; }
-	double amp_load() const override { return ampDraw_; }
+    double volts_available() const override { return prevVolts_; }
+    double amp_load() const override { return ampDraw_; }
 
 private:
-	void Update(bco::vessel& vessel);
+    void Update(bco::vessel& vessel);
 
-	const double			FULL_POWER		=  28.0;
-	const double			USEABLE_POWER	=  24.0;
-	const double			AMP_OVERLOAD	= 100.0;
+    const double			FULL_POWER = 28.0;
+    const double			USEABLE_POWER = 24.0;
+    const double			AMP_OVERLOAD = 100.0;
 
-	std::vector<bco::power_consumer*>  consumers_;
+    std::vector<bco::power_consumer*>  consumers_;
 
-	bco::signal<bool>		signalIsDrawingBattery_;
-	bco::slot<double>		slotFuelCellAvailablePower_;
+    bco::signal<bool>		signalIsDrawingBattery_;
+    bco::slot<double>		slotFuelCellAvailablePower_;
 
-	double					ampDraw_{ 0.0 };			// Collects the total amps drawn during a step.
-	double					batteryLevel_;
-	bool					isDrawingBattery_{ false };
-	double					prevStep_{ 0.0 };	
-	double					prevVolts_{ -1.0 };
+    double					ampDraw_{ 0.0 };			// Collects the total amps drawn during a step.
+    double					batteryLevel_;
+    bool					isDrawingBattery_{ false };
+    double					prevStep_{ 0.0 };
+    double					prevVolts_{ -1.0 };
 
-	bco::on_off_input		switchEnabled	{ { bm::vc::swMainPower_id },
-												bm::vc::swMainPower_loc, bm::vc::PowerTopRightAxis_loc,
-												toggleOnOff,
-												bm::pnl::pnlPwrMain_id,
-												bm::pnl::pnlPwrMain_vrt,
-												bm::pnl::pnlPwrMain_RC
-											};
+    bco::on_off_input       switchEnabled{
+        { bm::vc::swMainPower_id },
+        bm::vc::swMainPower_loc, bm::vc::PowerTopRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlPwrMain_id,
+        bm::pnlright::pnlPwrMain_vrt,
+        bm::pnlright::pnlPwrMain_RC,
+        1
+    };
 
-	bco::on_off_input		switchConnectExternal_ {
-												{ bm::vc::swConnectExternalPower_id },
-												bm::vc::swConnectExternalPower_loc, bm::vc::PowerBottomRightAxis_loc,
-												toggleOnOff,
-												bm::pnl::pnlPwrExtBus_id,
-												bm::pnl::pnlPwrExtBus_vrt,
-												bm::pnl::pnlPwrExtBus_RC
-											};
+    bco::on_off_input       switchConnectExternal_{
+        { bm::vc::swConnectExternalPower_id },
+        bm::vc::swConnectExternalPower_loc, bm::vc::PowerBottomRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlPwrExtBus_id,
+        bm::pnlright::pnlPwrExtBus_vrt,
+        bm::pnlright::pnlPwrExtBus_RC,
+        1
+    };
 
-	bco::on_off_input		switchConnectFuelCell_ {
-												{ bm::vc::swConnectFuelCell_id },
-												bm::vc::swConnectFuelCell_loc, bm::vc::PowerBottomRightAxis_loc,
-												toggleOnOff,
-												bm::pnl::pnlPwrFCBus_id,
-												bm::pnl::pnlPwrFCBus_vrt,
-												bm::pnl::pnlPwrFCBus_RC
-											};
+    bco::on_off_input       switchConnectFuelCell_{
+        { bm::vc::swConnectFuelCell_id },
+        bm::vc::swConnectFuelCell_loc, bm::vc::PowerBottomRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlPwrFCBus_id,
+        bm::pnlright::pnlPwrFCBus_vrt,
+        bm::pnlright::pnlPwrFCBus_RC,
+        1
+    };
 
-	bco::on_off_display		lightFuelCellConnected_ {
-												bm::vc::FuelCellConnectedLight_id,
-												bm::vc::FuelCellConnectedLight_vrt,
-												bm::pnl::pnlLgtFCPwrOn_id,
-												bm::pnl::pnlLgtFCPwrOn_vrt,
-												0.0244
-											};
+    bco::on_off_display     lightFuelCellConnected_{
+        bm::vc::FuelCellConnectedLight_id,
+        bm::vc::FuelCellConnectedLight_vrt,
+        bm::pnlright::pnlLgtFCPwrOn_id,
+        bm::pnlright::pnlLgtFCPwrOn_vrt,
+        0.0244,
+        1
+    };
 
-	bco::on_off_display		lightExternalAvail_ {
-												bm::vc::ExtAvailableLight_id,
-												bm::vc::ExtAvailableLight_vrt,
-												bm::pnl::pnlLgtExtPwrAvail_id,
-												bm::pnl::pnlLgtExtPwrAvail_vrt,
-												0.0244
-											};
+    bco::on_off_display     lightExternalAvail_{
+        bm::vc::ExtAvailableLight_id,
+        bm::vc::ExtAvailableLight_vrt,
+        bm::pnlright::pnlLgtExtPwrAvail_id,
+        bm::pnlright::pnlLgtExtPwrAvail_vrt,
+        0.0244,
+        1
+    };
 
-	bco::on_off_display		lightExternalConnected_ {
-												bm::vc::ExtConnectedLight_id,
-												bm::vc::ExtConnectedLight_vrt,
-												bm::pnl::pnlLgtExtPwrOn_id,
-												bm::pnl::pnlLgtExtPwrOn_vrt,
-												0.0244
-											};
+    bco::on_off_display     lightExternalConnected_{
+        bm::vc::ExtConnectedLight_id,
+        bm::vc::ExtConnectedLight_vrt,
+        bm::pnlright::pnlLgtExtPwrOn_id,
+        bm::pnlright::pnlLgtExtPwrOn_vrt,
+        0.0244,
+        1
+    };
 
-	bco::rotary_display_target	gaugePowerVolts_{
-												{ bm::vc::gaugeVoltMeter_id },
-												bm::vc::gaugeVoltMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
-												bm::pnl::pnlVoltMeter_id,
-												bm::pnl::pnlVoltMeter_vrt,
-												-(120 * RAD),
-												0.2
-											};
+    bco::rotary_display_target  gaugePowerVolts_{
+        { bm::vc::gaugeVoltMeter_id },
+        bm::vc::gaugeVoltMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
+        bm::pnlright::pnlVoltMeter_id,
+        bm::pnlright::pnlVoltMeter_vrt,
+        -(120 * RAD),
+        0.2,
+        1
+    };
 
-	bco::rotary_display_target	gaugePowerAmps_{
-												{ bm::vc::gaugeAmpMeter_id },
-												bm::vc::gaugeAmpMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
-												bm::pnl::pnlAmpMeter_id,
-												bm::pnl::pnlAmpMeter_vrt,
-												(120 * RAD),	// Clockwise
-												0.2
-											};
+    bco::rotary_display_target  gaugePowerAmps_{
+        { bm::vc::gaugeAmpMeter_id },
+        bm::vc::gaugeAmpMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
+        bm::pnlright::pnlAmpMeter_id,
+        bm::pnlright::pnlAmpMeter_vrt,
+        (120 * RAD),	// Clockwise
+        0.2,
+        1
+    };
 
-	bco::status_display			statusBattery_ {
-												bm::vc::MsgLightBattery_id,
-												bm::vc::MsgLightBattery_vrt,
-												bm::pnl::pnlMsgLightBattery_id,
-												bm::pnl::pnlMsgLightBattery_vrt,
-												0.0361
-											};
+    bco::status_display         statusBattery_{
+        bm::vc::MsgLightBattery_id,
+        bm::vc::MsgLightBattery_vrt,
+        bm::pnl::pnlMsgLightBattery_id,
+        bm::pnl::pnlMsgLightBattery_vrt,
+        0.0361
+    };
 };

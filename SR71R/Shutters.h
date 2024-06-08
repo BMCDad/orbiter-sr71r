@@ -47,13 +47,14 @@ private:
 
 	const char*				ConfigKey = "SHUTTERS";
 
-	// ***  Shutters  *** //
-	bco::on_off_input		switchShutters_{		// Open close shutters
-		{ bm::vc::swShutter_id },
-			bm::vc::swShutter_loc, bm::vc::DoorsRightAxis_loc,
-			toggleOnOff,
-			bm::pnl::pnlScreenSwitch_id,
-			bm::pnl::pnlScreenSwitch_vrt,
-			bm::pnl::pnlScreenSwitch_RC
-	};
+    // ***  Shutters  *** //
+    bco::on_off_input   switchShutters_{    // Open close shutters
+        { bm::vc::swShutter_id },
+        bm::vc::swShutter_loc, bm::vc::DoorsRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlScreenSwitch_id,
+        bm::pnlright::pnlScreenSwitch_vrt,
+        bm::pnlright::pnlScreenSwitch_RC,
+        1
+    };
 };

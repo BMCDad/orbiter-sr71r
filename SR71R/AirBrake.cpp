@@ -50,7 +50,7 @@ void AirBrake::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 //	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
 
 	// This needs to be put into a switch statement eventually
-	bco::TranslateMesh(vessel.GetpanelMeshHandle0(), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_vrt, sTrans * animBrakeSwitch_.GetState());
+	bco::TranslateMesh(vessel.GetpanelMeshHandle(0), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_vrt, sTrans * animBrakeSwitch_.GetState());
 
 	status_.set_state(
 		dragFactor_ > 0.05 

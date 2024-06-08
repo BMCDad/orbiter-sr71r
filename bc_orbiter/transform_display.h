@@ -30,13 +30,15 @@ namespace bc_orbiter {
             const UINT vcGroupId,
             const NTVERTEX* vcVerts,
             const UINT pnlGroupId,
-            const NTVERTEX* pnlVerts)
+            const NTVERTEX* pnlVerts,
+            int pnlId = 0)
             :
             control(0),       // id not used
             vcGroup_(vcGroupId),
             vcVerts_(vcVerts),
             pnlGroup_(pnlGroupId),
-            pnlVerts_(pnlVerts)
+            pnlVerts_(pnlVerts),
+            pnlId_(pnlId)
         {
         }
 
@@ -52,6 +54,8 @@ namespace bc_orbiter {
             TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, angle_, vecTrans_);
         }
 
+        int panel_id() override { return pnlId_; }
+
         void SetAngle(double a) { angle_ = a; }
         void SetTransform(double x, double y) { vecTrans_.x = x; vecTrans_.y = y; }
 
@@ -62,5 +66,6 @@ namespace bc_orbiter {
         const NTVERTEX* vcVerts_;
         UINT			pnlGroup_   { 0 };
         const NTVERTEX* pnlVerts_;
+        int             pnlId_;
     };
 }
