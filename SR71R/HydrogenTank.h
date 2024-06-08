@@ -70,7 +70,8 @@ private:
         bm::vc::LH2SupplyOnLight_vrt,
         bm::pnlright::pnlLH2Avail_id,
         bm::pnlright::pnlLH2Avail_vrt,
-        0.0244
+        0.0244,
+        1
     };
 
     bco::simple_event<>             btnFill_{
@@ -85,6 +86,7 @@ private:
         bm::vc::LH2ValveOpenSwitch_vrt,
         bm::pnlright::pnlLH2Switch_id,
         bm::pnlright::pnlLH2Switch_vrt,
-        0.0352
+        0.0352,
+        1
     };
 };

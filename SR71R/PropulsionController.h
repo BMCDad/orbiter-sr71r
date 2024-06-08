@@ -157,7 +157,7 @@ private:
 	// Switches
     bco::on_off_input		switchThrustLimit_{		// Thrust Limit
         { bm::vc::swThrottleLimit_id },
-        bm::vc::swThrottleLimit_loc, bm::vc::TopRowSwitchRightAxis_loc,
+        bm::vc::swThrottleLimit_loc, bm::vc::navPanelAxis_loc,
         toggleOnOff,
         bm::pnl::pnlThrottleLimit_id,
         bm::pnl::pnlThrottleLimit_vrt,

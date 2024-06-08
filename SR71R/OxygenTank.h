@@ -74,7 +74,8 @@ private:
         bm::vc::LOXSupplyOnLight_vrt,
         bm::pnlright::pnlO2Avail_id,
         bm::pnlright::pnlO2Avail_vrt,
-        0.0244
+        0.0244,
+        1
     };
 
     bco::simple_event<> btnFill_{
@@ -89,7 +90,8 @@ private:
         bm::vc::LOXValveOpenSwitch_vrt,
         bm::pnlright::pnlO2Switch_id,
         bm::pnlright::pnlO2Switch_vrt,
-        0.0352
+        0.0352,
+        1
     };
 };
 

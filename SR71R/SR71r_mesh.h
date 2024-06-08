@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 4.0.2  Blender Tools: (2, 1, 8)
-// Date: Thu Jun  6 19:18:14 2024
+// Date: Fri Jun  7 14:22:17 2024
 
 
 #include "orbitersdk.h"
@@ -1493,60 +1493,60 @@ namespace bm
     {0.2200f, 0.5529f, 15.2737f, -0.3487f, 0.0000f, -0.9372f, 0.4254f, 0.1402f},
     {0.2372f, 0.5529f, 15.2673f, -0.3487f, 0.0000f, -0.9372f, 0.4605f, 0.1402f}    };
     const NTVERTEX vcHUDDock_vrt[4] = {
-    {-0.1399f, 0.6713f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3470f, 0.3414f},
-    {-0.1216f, 0.6713f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.3414f},
-    {-0.1399f, 0.6567f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3470f, 0.3705f},
-    {-0.1216f, 0.6567f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.3705f}    };
+    {-0.1716f, 0.5895f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3470f, 0.3414f},
+    {-0.1533f, 0.5895f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.3414f},
+    {-0.1716f, 0.5749f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3470f, 0.3705f},
+    {-0.1533f, 0.5749f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.3705f}    };
     const NTVERTEX vcHUDOrbit_vrt[4] = {
-    {-0.1588f, 0.6561f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5032f, 0.3126f},
-    {-0.1405f, 0.6561f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5386f, 0.3126f},
-    {-0.1588f, 0.6414f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5032f, 0.3417f},
-    {-0.1405f, 0.6414f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5386f, 0.3417f}    };
+    {-0.2094f, 0.5895f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5032f, 0.3126f},
+    {-0.1911f, 0.5895f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5386f, 0.3126f},
+    {-0.2094f, 0.5748f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5032f, 0.3417f},
+    {-0.1911f, 0.5748f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.5386f, 0.3417f}    };
     const NTVERTEX vcHUDSURF_vrt[4] = {
-    {-0.1399f, 0.6561f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.3414f},
-    {-0.1216f, 0.6561f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4607f, 0.3414f},
-    {-0.1399f, 0.6414f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.3705f},
-    {-0.1216f, 0.6414f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4607f, 0.3705f}    };
+    {-0.1905f, 0.5895f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.3414f},
+    {-0.1722f, 0.5895f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4607f, 0.3414f},
+    {-0.1905f, 0.5748f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.3705f},
+    {-0.1722f, 0.5748f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4607f, 0.3705f}    };
     const NTVERTEX vcNavAntiNorm_vrt[4] = {
-    {-0.1713f, 0.5857f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2263f},
-    {-0.1530f, 0.5857f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2263f},
-    {-0.1713f, 0.5710f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2550f},
-    {-0.1530f, 0.5710f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2550f}    };
+    {-0.0234f, 0.5343f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2263f},
+    {-0.0051f, 0.5343f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2263f},
+    {-0.0234f, 0.5196f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2550f},
+    {-0.0051f, 0.5196f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2550f}    };
     const NTVERTEX vcNavHorzLvl_vrt[4] = {
-    {-0.2091f, 0.5857f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4250f, 0.2838f},
-    {-0.1908f, 0.5857f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4603f, 0.2838f},
-    {-0.2091f, 0.5710f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4250f, 0.3126f},
-    {-0.1908f, 0.5710f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4603f, 0.3126f}    };
+    {-0.0235f, 0.5494f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4250f, 0.2838f},
+    {-0.0052f, 0.5494f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4603f, 0.2838f},
+    {-0.0235f, 0.5348f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4250f, 0.3126f},
+    {-0.0052f, 0.5348f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4603f, 0.3126f}    };
     const NTVERTEX vcNavKillRot_vrt[4] = {
-    {-0.2091f, 0.6006f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3472f, 0.2837f},
-    {-0.1908f, 0.6006f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3826f, 0.2837f},
-    {-0.2091f, 0.5859f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3472f, 0.3129f},
-    {-0.1908f, 0.5859f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3826f, 0.3129f}    };
+    {-0.0422f, 0.5494f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3472f, 0.2837f},
+    {-0.0239f, 0.5494f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3826f, 0.2837f},
+    {-0.0422f, 0.5348f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3472f, 0.3129f},
+    {-0.0239f, 0.5348f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3826f, 0.3129f}    };
     const NTVERTEX vcNavNorm_vrt[4] = {
-    {-0.1713f, 0.6006f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.2264f},
-    {-0.1530f, 0.6006f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3826f, 0.2264f},
-    {-0.1713f, 0.5859f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.2550f},
-    {-0.1530f, 0.5859f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3826f, 0.2550f}    };
+    {-0.0422f, 0.5343f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.2264f},
+    {-0.0239f, 0.5343f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3826f, 0.2264f},
+    {-0.0422f, 0.5196f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3473f, 0.2550f},
+    {-0.0239f, 0.5196f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3826f, 0.2550f}    };
     const NTVERTEX vcNavProGrade_vrt[4] = {
-    {-0.1902f, 0.6006f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3471f, 0.2551f},
-    {-0.1719f, 0.6006f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.2551f},
-    {-0.1902f, 0.5859f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3471f, 0.2838f},
-    {-0.1719f, 0.5859f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.2838f}    };
+    {-0.0422f, 0.5191f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3471f, 0.2551f},
+    {-0.0239f, 0.5191f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.2551f},
+    {-0.0422f, 0.5045f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3471f, 0.2838f},
+    {-0.0239f, 0.5045f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3824f, 0.2838f}    };
     const NTVERTEX vcNavRetro_vrt[4] = {
-    {-0.1902f, 0.5857f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2553f},
-    {-0.1719f, 0.5857f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2553f},
-    {-0.1902f, 0.5710f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2837f},
-    {-0.1719f, 0.5710f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2837f}    };
+    {-0.0234f, 0.5191f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2553f},
+    {-0.0051f, 0.5191f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2553f},
+    {-0.0234f, 0.5045f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4252f, 0.2837f},
+    {-0.0051f, 0.5045f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.4606f, 0.2837f}    };
     const NTVERTEX vcRCSLin_vrt[4] = {
-    {-0.1782f, 0.6383f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.3126f},
-    {-0.1599f, 0.6383f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4607f, 0.3126f},
-    {-0.1782f, 0.6237f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.3416f},
-    {-0.1599f, 0.6237f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4607f, 0.3416f}    };
+    {-0.1912f, 0.6249f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.3126f},
+    {-0.1729f, 0.6249f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4607f, 0.3126f},
+    {-0.1912f, 0.6103f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4253f, 0.3416f},
+    {-0.1729f, 0.6103f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.4607f, 0.3416f}    };
     const NTVERTEX vcRCSRot_vrt[4] = {
-    {-0.1782f, 0.6232f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3471f, 0.3126f},
-    {-0.1599f, 0.6232f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3825f, 0.3126f},
-    {-0.1782f, 0.6086f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3471f, 0.3415f},
-    {-0.1599f, 0.6086f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3825f, 0.3415f}    };
+    {-0.1725f, 0.6250f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3471f, 0.3126f},
+    {-0.1542f, 0.6250f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3825f, 0.3126f},
+    {-0.1725f, 0.6103f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3471f, 0.3415f},
+    {-0.1542f, 0.6103f, 15.2752f, 0.0000f, 0.0000f, -1.0000f, 0.3825f, 0.3415f}    };
     const NTVERTEX VSIOffFlag_vrt[4] = {
     {0.0587f, 0.6156f, 15.2756f, 0.0000f, 0.0000f, -1.0000f, 0.3456f, 0.6081f},
     {0.0714f, 0.6156f, 15.2756f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6081f},
@@ -1597,10 +1597,10 @@ namespace bm
     {-0.0362f, 0.6979f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3455f, 0.6320f},
     {-0.0235f, 0.6979f, 15.2755f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6320f}    };
     const NTVERTEX COMStatusPanel_vrt[4] = {
-    {0.3229f, 0.5341f, 15.2367f, -0.3402f, 0.0000f, -0.9404f, 0.5261f, 0.0268f},
-    {0.3109f, 0.5341f, 15.2410f, -0.3402f, 0.0000f, -0.9404f, 0.5014f, 0.0268f},
-    {0.3229f, 0.5468f, 15.2367f, -0.3402f, 0.0000f, -0.9404f, 0.5261f, 0.0021f},
-    {0.3109f, 0.5468f, 15.2410f, -0.3402f, 0.0000f, -0.9404f, 0.5014f, 0.0021f}    };
+    {0.1337f, 0.6593f, 15.2745f, -0.0003f, 0.0000f, -1.0000f, 0.5261f, 0.0268f},
+    {0.1210f, 0.6593f, 15.2745f, -0.0003f, 0.0000f, -1.0000f, 0.5014f, 0.0268f},
+    {0.1337f, 0.6720f, 15.2745f, -0.0003f, 0.0000f, -1.0000f, 0.5261f, 0.0021f},
+    {0.1210f, 0.6720f, 15.2745f, -0.0003f, 0.0000f, -1.0000f, 0.5014f, 0.0021f}    };
     const NTVERTEX HSIOffFlag_vrt[4] = {
     {-0.0462f, 0.6284f, 15.2750f, 0.0000f, 0.0000f, -1.0000f, 0.3448f, 0.6333f},
     {-0.0335f, 0.6284f, 15.2750f, 0.0000f, 0.0000f, -1.0000f, 0.3692f, 0.6333f},
@@ -1673,39 +1673,39 @@ namespace bm
     const UINT swMainPower_id = 22;
     const UINT swRetroDoors_id = 23;
     const UINT swShutter_id = 24;
-    const UINT swThrottleLimit_id = 25;
-    const UINT vcAvionMode_id = 26;
-    const UINT VCMfdLeft_id = 27;
-    const UINT VCMfdLeftFrame_id = 28;
-    const UINT VCMfdRight_id = 29;
-    const UINT VCMfdRightFrame_id = 30;
-    const UINT vcNavMode_id = 31;
-    const UINT ForwardCockpit_id = 32;
-    const UINT HUDBracketLeft_id = 33;
-    const UINT HUDBracketRight_id = 34;
-    const UINT vcCrsHunds_id = 35;
-    const UINT vcCrsOnes_id = 36;
-    const UINT vcCrsTens_id = 37;
-    const UINT vcCRSWindow_id = 38;
-    const UINT vcMilesHunds_id = 39;
-    const UINT vcMilesOnes_id = 40;
-    const UINT vcMilesTens_id = 41;
-    const UINT vcMilesWindow_id = 42;
-    const UINT vcTDIAltHunds_id = 43;
-    const UINT vcTDIAltOnes_id = 44;
-    const UINT vcTDIAltTens_id = 45;
-    const UINT vcTDIAltTenThous_id = 46;
-    const UINT vcTDIAltThous_id = 47;
-    const UINT vcTDIAltWindow_id = 48;
-    const UINT vcTDIKeasHunds_id = 49;
-    const UINT vcTDIKeasOnes_id = 50;
-    const UINT vcTDIKeasTens_id = 51;
-    const UINT vcTDIKEASWindow_id = 52;
-    const UINT vcTDIMachHunds_id = 53;
-    const UINT vcTDIMachOne_id = 54;
-    const UINT vcTDIMachTens_id = 55;
-    const UINT vcTDIMachWindowLeft_id = 56;
-    const UINT vcTDIMachWindowRight_id = 57;
+    const UINT vcAvionMode_id = 25;
+    const UINT VCMfdLeft_id = 26;
+    const UINT VCMfdLeftFrame_id = 27;
+    const UINT VCMfdRight_id = 28;
+    const UINT VCMfdRightFrame_id = 29;
+    const UINT ForwardCockpit_id = 30;
+    const UINT HUDBracketLeft_id = 31;
+    const UINT HUDBracketRight_id = 32;
+    const UINT vcCrsHunds_id = 33;
+    const UINT vcCrsOnes_id = 34;
+    const UINT vcCrsTens_id = 35;
+    const UINT vcCRSWindow_id = 36;
+    const UINT vcMilesHunds_id = 37;
+    const UINT vcMilesOnes_id = 38;
+    const UINT vcMilesTens_id = 39;
+    const UINT vcMilesWindow_id = 40;
+    const UINT vcTDIAltHunds_id = 41;
+    const UINT vcTDIAltOnes_id = 42;
+    const UINT vcTDIAltTens_id = 43;
+    const UINT vcTDIAltTenThous_id = 44;
+    const UINT vcTDIAltThous_id = 45;
+    const UINT vcTDIAltWindow_id = 46;
+    const UINT vcTDIKeasHunds_id = 47;
+    const UINT vcTDIKeasOnes_id = 48;
+    const UINT vcTDIKeasTens_id = 49;
+    const UINT vcTDIKEASWindow_id = 50;
+    const UINT vcTDIMachHunds_id = 51;
+    const UINT vcTDIMachOne_id = 52;
+    const UINT vcTDIMachTens_id = 53;
+    const UINT vcTDIMachWindowLeft_id = 54;
+    const UINT vcTDIMachWindowRight_id = 55;
+    const UINT swThrottleLimit_id = 56;
+    const UINT vcNavMode_id = 57;
     const UINT AttitudeIndicator_id = 58;
     const UINT CompassFace_id = 59;
     const UINT HUDPanel_id = 60;
@@ -1728,65 +1728,65 @@ namespace bm
     const UINT gaugeVoltMeter_id = 77;
     const UINT gaVSINeedle_id = 78;
     const UINT GlideSlopeNeedle_id = 79;
-    const UINT GuidanceComp_id = 80;
-    const UINT HudDockOn_id = 81;
-    const UINT HudOrbOn_id = 82;
-    const UINT HudSurfOn_id = 83;
-    const UINT LeftPanel_id = 84;
-    const UINT LH2SupplyOnLight_id = 85;
-    const UINT LH2ValveOpenSwitch_id = 86;
-    const UINT LOXSupplyOnLight_id = 87;
-    const UINT LOXValveOpenSwitch_id = 88;
-    const UINT MsgLightAPU_id = 89;
-    const UINT MsgLightBattery_id = 90;
-    const UINT MsgLightBay_id = 91;
-    const UINT MsgLightC2_id = 92;
-    const UINT MsgLightCanopy_id = 93;
-    const UINT MsgLightDock_id = 94;
-    const UINT MsgLightFuelWarn_id = 95;
-    const UINT MsgLightHover_id = 96;
-    const UINT MsgLightKeasWarn_id = 97;
-    const UINT MsgLightRetro_id = 98;
-    const UINT MsgLightSpeedBrake_id = 99;
-    const UINT MsgLightThrustLimit_id = 100;
-    const UINT RCSSupplyOnLight_id = 101;
-    const UINT RCSValveOpenSwitch_id = 102;
-    const UINT vcMachMaxHand_id = 103;
-    const UINT SwAPAltitude_id = 104;
-    const UINT SwAPHeading_id = 105;
-    const UINT SwAPKEAS_id = 106;
-    const UINT SwAPMACH_id = 107;
-    const UINT SwAPMain_id = 108;
-    const UINT TrimNeedle_id = 109;
-    const UINT vcHUDDock_id = 110;
-    const UINT vcHUDOrbit_id = 111;
-    const UINT vcHUDSURF_id = 112;
-    const UINT vcNavAntiNorm_id = 113;
-    const UINT vcNavHorzLvl_id = 114;
-    const UINT vcNavKillRot_id = 115;
-    const UINT vcNavNorm_id = 116;
-    const UINT vcNavProGrade_id = 117;
-    const UINT vcNavRetro_id = 118;
-    const UINT vcRCSLin_id = 119;
-    const UINT vcRCSRot_id = 120;
-    const UINT VSIOffFlag_id = 121;
-    const UINT ForwardWindowInsideLeft_id = 122;
-    const UINT ClockTimerMinute_id = 123;
-    const UINT gaFuelFlow_id = 124;
-    const UINT gaMainFuel_id = 125;
-    const UINT gaRCSFuel_id = 126;
-    const UINT gaugeAmpMeter_id = 127;
-    const UINT MessagesLabels_id = 128;
-    const UINT RoseCompass_id = 129;
-    const UINT vcKiesHand_id = 130;
-    const UINT ClockHour_id = 131;
-    const UINT HSIBearingArrow_id = 132;
-    const UINT vcMachHand_id = 133;
-    const UINT ClockMinute_id = 134;
-    const UINT HSICourse_id = 135;
-    const UINT ClockSecond_id = 136;
-    const UINT HSICourseNeedle_id = 137;
-    const UINT PanelHorizonFace_id = 138;
+    const UINT HudDockOn_id = 80;
+    const UINT HudOrbOn_id = 81;
+    const UINT HudSurfOn_id = 82;
+    const UINT LeftPanel_id = 83;
+    const UINT LH2SupplyOnLight_id = 84;
+    const UINT LH2ValveOpenSwitch_id = 85;
+    const UINT LOXSupplyOnLight_id = 86;
+    const UINT LOXValveOpenSwitch_id = 87;
+    const UINT MsgLightAPU_id = 88;
+    const UINT MsgLightBattery_id = 89;
+    const UINT MsgLightBay_id = 90;
+    const UINT MsgLightC2_id = 91;
+    const UINT MsgLightCanopy_id = 92;
+    const UINT MsgLightDock_id = 93;
+    const UINT MsgLightFuelWarn_id = 94;
+    const UINT MsgLightHover_id = 95;
+    const UINT MsgLightKeasWarn_id = 96;
+    const UINT MsgLightRetro_id = 97;
+    const UINT MsgLightSpeedBrake_id = 98;
+    const UINT MsgLightThrustLimit_id = 99;
+    const UINT RCSSupplyOnLight_id = 100;
+    const UINT RCSValveOpenSwitch_id = 101;
+    const UINT vcMachMaxHand_id = 102;
+    const UINT SwAPAltitude_id = 103;
+    const UINT SwAPHeading_id = 104;
+    const UINT SwAPKEAS_id = 105;
+    const UINT SwAPMACH_id = 106;
+    const UINT SwAPMain_id = 107;
+    const UINT TrimNeedle_id = 108;
+    const UINT vcHUDDock_id = 109;
+    const UINT vcHUDOrbit_id = 110;
+    const UINT vcHUDSURF_id = 111;
+    const UINT vcNavAntiNorm_id = 112;
+    const UINT vcNavHorzLvl_id = 113;
+    const UINT vcNavKillRot_id = 114;
+    const UINT vcNavNorm_id = 115;
+    const UINT vcNavProGrade_id = 116;
+    const UINT vcNavRetro_id = 117;
+    const UINT vcRCSLin_id = 118;
+    const UINT vcRCSRot_id = 119;
+    const UINT VSIOffFlag_id = 120;
+    const UINT ForwardWindowInsideLeft_id = 121;
+    const UINT ClockTimerMinute_id = 122;
+    const UINT gaFuelFlow_id = 123;
+    const UINT gaMainFuel_id = 124;
+    const UINT gaRCSFuel_id = 125;
+    const UINT gaugeAmpMeter_id = 126;
+    const UINT MessagesLabels_id = 127;
+    const UINT RoseCompass_id = 128;
+    const UINT vcKiesHand_id = 129;
+    const UINT ClockHour_id = 130;
+    const UINT HSIBearingArrow_id = 131;
+    const UINT vcMachHand_id = 132;
+    const UINT ClockMinute_id = 133;
+    const UINT HSICourse_id = 134;
+    const UINT ClockSecond_id = 135;
+    const UINT HSICourseNeedle_id = 136;
+    const UINT PanelHorizonFace_id = 137;
+    const UINT PanelNavButtons_id = 138;
     const UINT AltimeterGround_id = 139;
     const UINT AltimeterOffFlag_id = 140;
     const UINT AOANeedle_id = 141;
@@ -1848,34 +1848,6 @@ namespace bm
     constexpr VECTOR3 gaugeOxygenLevel_loc =     {-0.3114, 0.5101, 15.2403};
     constexpr VECTOR3 gaugeVoltMeter_loc =     {0.3653, 0.4774, 15.2200};
     constexpr VECTOR3 gaVSINeedle_loc =     {0.0864, 0.5973, 15.2753};
-    constexpr VECTOR3 GCKey0_loc =     {0.0088, 0.4410, 15.2751};
-    constexpr VECTOR3 GCKey1_loc =     {-0.0401, 0.4410, 15.2751};
-    constexpr VECTOR3 GCKey2_loc =     {-0.0239, 0.4410, 15.2751};
-    constexpr VECTOR3 GCKey3_loc =     {-0.0078, 0.4410, 15.2751};
-    constexpr VECTOR3 GCKey4_loc =     {-0.0402, 0.4566, 15.2751};
-    constexpr VECTOR3 GCKey5_loc =     {-0.0237, 0.4564, 15.2751};
-    constexpr VECTOR3 GCKey6_loc =     {-0.0078, 0.4567, 15.2751};
-    constexpr VECTOR3 GCKey7_loc =     {-0.0404, 0.4733, 15.2751};
-    constexpr VECTOR3 GCKey8_loc =     {-0.0236, 0.4732, 15.2751};
-    constexpr VECTOR3 GCKey9_loc =     {-0.0079, 0.4732, 15.2751};
-    constexpr VECTOR3 GCKeyClear_loc =     {0.0408, 0.4410, 15.2751};
-    constexpr VECTOR3 GCKeyDecimal_loc =     {0.0077, 0.4570, 15.2751};
-    constexpr VECTOR3 GCKeyEnter_loc =     {0.0244, 0.4409, 15.2751};
-    constexpr VECTOR3 GCKeyFunc1_loc =     {-0.0412, 0.5380, 15.2751};
-    constexpr VECTOR3 GCKeyFunc2_loc =     {-0.0412, 0.5283, 15.2751};
-    constexpr VECTOR3 GCKeyFunc3_loc =     {-0.0412, 0.5177, 15.2751};
-    constexpr VECTOR3 GCKeyFunc4_loc =     {-0.0412, 0.5076, 15.2751};
-    constexpr VECTOR3 GCKeyFunc5_loc =     {-0.0412, 0.4977, 15.2751};
-    constexpr VECTOR3 GCKeyFunc6_loc =     {0.0413, 0.5377, 15.2751};
-    constexpr VECTOR3 GCKeyFunc7_loc =     {0.0413, 0.5278, 15.2751};
-    constexpr VECTOR3 GCKeyFunc8_loc =     {0.0413, 0.5175, 15.2751};
-    constexpr VECTOR3 GCKeyFunc9_loc =     {0.0413, 0.5076, 15.2751};
-    constexpr VECTOR3 GCKeyFunc10_loc =     {0.0413, 0.4973, 15.2751};
-    constexpr VECTOR3 GCKeyHome_loc =     {0.0242, 0.4570, 15.2751};
-    constexpr VECTOR3 GCKeyHUD_loc =     {0.0403, 0.4570, 15.2751};
-    constexpr VECTOR3 GCKeyNext_loc =     {0.0403, 0.4733, 15.2751};
-    constexpr VECTOR3 GCKeyPlusMinus_loc =     {0.0084, 0.4732, 15.2751};
-    constexpr VECTOR3 GCKeyPrev_loc =     {0.0242, 0.4733, 15.2751};
     constexpr VECTOR3 GearLeverDownTarget_loc =     {-0.2228, 0.5699, 15.2370};
     constexpr VECTOR3 GearLeverUpTarget_loc =     {-0.2228, 0.5328, 15.2369};
     constexpr VECTOR3 HeadingKnobInc_loc =     {0.0444, 0.5677, 15.2658};
@@ -1960,31 +1932,27 @@ namespace bm
     constexpr VECTOR3 swMainPower_loc =     {0.2306, 0.4971, 15.2712};
     constexpr VECTOR3 swRetroDoors_loc =     {-0.2927, 0.4209, 15.2482};
     constexpr VECTOR3 swShutter_loc =     {-0.3690, 0.4206, 15.2200};
-    constexpr VECTOR3 swThrottleLimit_loc =     {0.2301, 0.5780, 15.2704};
     constexpr VECTOR3 TDIAltAxis_loc =     {-0.0637, 0.5992, 15.2847};
     constexpr VECTOR3 TDIMachAxis_loc =     {-0.0639, 0.5802, 15.2847};
-    constexpr VECTOR3 TopRowSwitchRightAxis_loc =     {0.2456, 0.5780, 15.2658};
     constexpr VECTOR3 TrimAxis_loc =     {-0.1379, 0.6141, 15.2705};
     constexpr VECTOR3 TrimNeedle_loc =     {-0.1379, 0.6141, 15.2753};
-    constexpr VECTOR3 vcAvionMode_loc =     {0.1737, 0.6228, 15.2749};
-    constexpr VECTOR3 vcHUDDock_loc =     {-0.1308, 0.6645, 15.2752};
-    constexpr VECTOR3 vcHUDOrbit_loc =     {-0.1497, 0.6492, 15.2752};
-    constexpr VECTOR3 vcHUDSURF_loc =     {-0.1308, 0.6492, 15.2752};
-    constexpr VECTOR3 vcNavAntiNorm_loc =     {-0.1622, 0.5788, 15.2755};
-    constexpr VECTOR3 vcNavHorzLvl_loc =     {-0.1999, 0.5788, 15.2755};
-    constexpr VECTOR3 vcNavKillRot_loc =     {-0.1999, 0.5937, 15.2752};
-    constexpr VECTOR3 vcNavMode_loc =     {0.3314, 0.5401, 15.2358};
-    constexpr VECTOR3 vcNavNorm_loc =     {-0.1622, 0.5937, 15.2752};
-    constexpr VECTOR3 vcNavProGrade_loc =     {-0.1811, 0.5937, 15.2752};
-    constexpr VECTOR3 vcNavRetro_loc =     {-0.1811, 0.5788, 15.2755};
-    constexpr VECTOR3 vcRCSLin_loc =     {-0.1691, 0.6314, 15.2752};
-    constexpr VECTOR3 vcRCSRot_loc =     {-0.1691, 0.6163, 15.2752};
+    constexpr VECTOR3 vcAvionMode_loc =     {0.0119, 0.5318, 15.2749};
+    constexpr VECTOR3 vcHUDDock_loc =     {-0.1625, 0.5827, 15.2752};
+    constexpr VECTOR3 vcHUDOrbit_loc =     {-0.2003, 0.5826, 15.2752};
+    constexpr VECTOR3 vcHUDSURF_loc =     {-0.1814, 0.5826, 15.2752};
+    constexpr VECTOR3 vcNavAntiNorm_loc =     {-0.0143, 0.5274, 15.2755};
+    constexpr VECTOR3 vcNavHorzLvl_loc =     {-0.0143, 0.5425, 15.2755};
+    constexpr VECTOR3 vcNavKillRot_loc =     {-0.0331, 0.5425, 15.2752};
+    constexpr VECTOR3 vcNavNorm_loc =     {-0.0331, 0.5274, 15.2752};
+    constexpr VECTOR3 vcNavProGrade_loc =     {-0.0331, 0.5123, 15.2752};
+    constexpr VECTOR3 vcNavRetro_loc =     {-0.0143, 0.5123, 15.2755};
+    constexpr VECTOR3 vcRCSLin_loc =     {-0.1820, 0.6181, 15.2752};
+    constexpr VECTOR3 vcRCSRot_loc =     {-0.1633, 0.6181, 15.2752};
     constexpr VECTOR3 VoltMeterFrontAxis_loc =     {0.3604, 0.4774, 15.2064};
     constexpr VECTOR3 VSIAxis_loc =     {0.0864, 0.5973, 15.2427};
     constexpr VECTOR3 PilotPOV_loc =     {0.0000, 0.8204, 14.7813};
     constexpr VECTOR3 PilotPOVLeft_loc =     {-0.0743, 0.8204, 14.7813};
     constexpr VECTOR3 PilotPOVRight_loc =     {0.0758, 0.8204, 14.7813};
-    constexpr VECTOR3 vcCOMNavAxis_loc =     {0.3434, 0.5404, 15.2296};
     constexpr RECT vcCrsHunds_RC = {0, 0, 0, 0};
     constexpr RECT vcCrsOnes_RC = {0, 0, 0, 0};
     constexpr RECT vcCrsTens_RC = {0, 0, 0, 0};
@@ -2011,7 +1979,9 @@ namespace bm
     constexpr VECTOR3 HSITopPlane_loc =     {-0.0000, 0.5956, 15.2746};
     constexpr VECTOR3 CourseKnobDec_loc =     {-0.0452, 0.5680, 15.2658};
     constexpr VECTOR3 HeadingKnobDec_loc =     {0.0300, 0.5677, 15.2658};
-    constexpr VECTOR3 avionModeAxis_loc =     {0.1835, 0.6223, 15.2748};
+    constexpr VECTOR3 swThrottleLimit_loc =     {0.0422, 0.5320, 15.2749};
+    constexpr VECTOR3 vcNavMode_loc =     {0.0271, 0.5318, 15.2749};
+    constexpr VECTOR3 navPanelAxis_loc =     {0.0499, 0.5324, 15.2658};
 
   }
 

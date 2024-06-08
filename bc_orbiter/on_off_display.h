@@ -36,8 +36,14 @@ namespace bc_orbiter {
         public panel_event_target
     {
     public:
-        on_off_display( const UINT vcGroupId, const NTVERTEX* vcVerts, const UINT pnlGroupId,
-                        const NTVERTEX* pnlVerts, double offset, int pnlId = 0) :
+        on_off_display(
+            const UINT vcGroupId,
+            const NTVERTEX* vcVerts,
+            const UINT pnlGroupId,
+            const NTVERTEX* pnlVerts,
+            double offset,
+            int pnlId = 0
+        ):  
             control(-1),
             vcGroupId_(vcGroupId),
             vcVerts_(vcVerts),

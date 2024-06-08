@@ -98,7 +98,7 @@ private:
 
     bco::on_off_input       switchAvionMode_{       // Atmosphere=On, External=Off
         { bm::vc::vcAvionMode_id },
-        bm::vc::vcAvionMode_loc, bm::vc::avionModeAxis_loc,
+        bm::vc::vcAvionMode_loc, bm::vc::navPanelAxis_loc,
         toggleOnOff,
         bm::pnl::pnlAvionMode_id,
         bm::pnl::pnlAvionMode_vrt,
@@ -107,7 +107,7 @@ private:
 
     bco::on_off_input		switchNavMode_{		// Nav mode 1 2
         { bm::vc::vcNavMode_id },
-        bm::vc::vcNavMode_loc, bm::vc::vcCOMNavAxis_loc,
+        bm::vc::vcNavMode_loc, bm::vc::navPanelAxis_loc,
         toggleOnOff,
         bm::pnl::pnlNavMode_id,
         bm::pnl::pnlNavMode_vrt,
