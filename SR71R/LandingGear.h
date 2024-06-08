@@ -163,14 +163,18 @@ private:
     const VECTOR3 sTrans{ bm::pnl::pnlLandingGearKnobDown_loc - bm::pnl::pnlLandingGearKnobUp_loc };
 
     // *** LANDING GEAR *** //
-    bco::simple_event<>		btnRaiseGear_       {   bm::vc::GearLeverUpTarget_loc,
-                                                    0.01,
-                                                    bm::pnl::pnlLandingGearUp_RC
-                                                };
+    bco::simple_event<>     btnRaiseGear_ {
+        bm::vc::GearLeverUpTarget_loc,
+        0.01,
+        bm::pnl::pnlLandingGearUp_RC,
+        0
+    };
 
-    bco::simple_event<>		btnLowerGear_       {   bm::vc::GearLeverDownTarget_loc,
-                                                    0.01,
-                                                    bm::pnl::pnlLandingGearDown_RC
+    bco::simple_event<>     btnLowerGear_ {
+        bm::vc::GearLeverDownTarget_loc,
+        0.01,
+        bm::pnl::pnlLandingGearDown_RC,
+        0
     };
 
     bco::panel_display      pnlHudGear_         {   bm::pnl::pnlHUDGear_id,     /* 0-DOWN, 1-UP, 2-Transition*/

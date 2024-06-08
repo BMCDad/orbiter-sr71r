@@ -30,60 +30,68 @@
 namespace bco = bc_orbiter;
 
 class OxygenTank :
-	public bco::generic_tank
+    public bco::generic_tank
 {
 public:
-	OxygenTank(bco::power_provider& pwr, bco::vessel& vessel) :
-		bco::generic_tank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE)
-	{
-		vessel.AddControl(&gaugeLevel_);
-		vessel.AddControl(&lightAvailable_);
-		vessel.AddControl(&btnFill_);
-		vessel.AddControl(&btnLightFill_);
+    OxygenTank(bco::power_provider& pwr, bco::vessel& vessel) :
+        bco::generic_tank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE)
+    {
+        vessel.AddControl(&gaugeLevel_);
+        vessel.AddControl(&lightAvailable_);
+        vessel.AddControl(&btnFill_);
+        vessel.AddControl(&btnLightFill_);
 
-		btnFill_.attach([&]() { ToggleFilling(); });
+        btnFill_.attach([&]() { ToggleFilling(); });
 
-		//LevelSignal().attach(		gaugeLevel_.Slot());
-		//IsFillingSignal().attach(	btnLightFill_.Slot());
-		//IsAvailableSignal().attach(	lightAvailable_.Slot());
-	}
+        //LevelSignal().attach(		gaugeLevel_.Slot());
+        //IsFillingSignal().attach(	btnLightFill_.Slot());
+        //IsAvailableSignal().attach(	lightAvailable_.Slot());
+    }
 
-	void UpdateLevel(double l) override { gaugeLevel_.set_state(l); }
-	void UpdateIsFilling(bool b) override { btnLightFill_.set_state(b); }
-	void UpdateIsAvailable(bool b) override { lightAvailable_.set_state(b); }
+    void UpdateLevel(double l) override { gaugeLevel_.set_state(l); }
+    void UpdateIsFilling(bool b) override { btnLightFill_.set_state(b); }
+    void UpdateIsAvailable(bool b) override { lightAvailable_.set_state(b); }
 
-	double amp_draw() const override {
-		return generic_tank::amp_draw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
-	}
+    double amp_draw() const override {
+        return generic_tank::amp_draw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
+    }
 
 private:
 
-	// ***  HYDROGEN SUPPLY  *** //
-	bco::rotary_display<bco::animation_target>	gaugeLevel_{ { bm::vc::gaugeOxygenLevel_id },
-														bm::vc::gaugeOxygenLevel_loc, bm::vc::axisOxygenLevel_loc,
-														bm::pnl::pnlLOXPress_id,
-														bm::pnl::pnlLOXPress_vrt,
-														(300 * RAD),	// Clockwise
-														0.2
-	};
+    // ***  HYDROGEN SUPPLY  *** //
+    bco::rotary_display<bco::animation_target> gaugeLevel_{
+        { bm::vc::gaugeOxygenLevel_id },
+        bm::vc::gaugeOxygenLevel_loc, bm::vc::axisOxygenLevel_loc,
+        bm::pnlright::pnlLOXPress_id,
+        bm::pnlright::pnlLOXPress_vrt,
+        (300 * RAD),	// Clockwise
+        0.2,
+        1
+    };
 
-	bco::on_off_display				lightAvailable_ {	bm::vc::LOXSupplyOnLight_id,
-														bm::vc::LOXSupplyOnLight_vrt,
-														bm::pnl::pnlO2Avail_id,
-														bm::pnl::pnlO2Avail_vrt,
-														0.0244
-													};
+    bco::on_off_display lightAvailable_{
+        bm::vc::LOXSupplyOnLight_id,
+        bm::vc::LOXSupplyOnLight_vrt,
+        bm::pnlright::pnlO2Avail_id,
+        bm::pnlright::pnlO2Avail_vrt,
+        0.0244,
+        1
+    };
 
-	bco::simple_event<>				btnFill_		{	bm::vc::LOXValveOpenSwitch_loc,
-														0.01,
-														bm::pnl::pnlO2Switch_RC
-													};
+    bco::simple_event<> btnFill_{
+        bm::vc::LOXValveOpenSwitch_loc,
+        0.01,
+        bm::pnlright::pnlO2Switch_RC,
+        1
+    };
 
-	bco::on_off_display				btnLightFill_	{	bm::vc::LOXValveOpenSwitch_id,
-														bm::vc::LOXValveOpenSwitch_vrt,
-														bm::pnl::pnlO2Switch_id,
-														bm::pnl::pnlO2Switch_vrt,
-														0.0352
-													};
+    bco::on_off_display btnLightFill_{
+        bm::vc::LOXValveOpenSwitch_id,
+        bm::vc::LOXValveOpenSwitch_vrt,
+        bm::pnlright::pnlO2Switch_id,
+        bm::pnlright::pnlO2Switch_vrt,
+        0.0352,
+        1
+    };
 };
 

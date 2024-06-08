@@ -118,21 +118,25 @@ private:
                                                     0.26, 0.49
                                                 };
 
-    bco::on_off_input		switchPower_        { { bm::vc::SwCargoPower_id },
-                                                    bm::vc::SwCargoPower_loc, bm::vc::PowerTopRightAxis_loc,
-                                                    toggleOnOff,
-                                                    bm::pnl::pnlPwrCargo_id,
-                                                    bm::pnl::pnlPwrCargo_vrt,
-                                                    bm::pnl::pnlPwrCargo_RC
-                                                };
+    bco::on_off_input       switchPower_{
+        { bm::vc::SwCargoPower_id },
+        bm::vc::SwCargoPower_loc, bm::vc::PowerTopRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlPwrCargo_id,
+        bm::pnlright::pnlPwrCargo_vrt,
+        bm::pnlright::pnlPwrCargo_RC,
+        1
+    };
 
-    bco::on_off_input		switchOpen_         { { bm::vc::SwCargoOpen_id },
-                                                    bm::vc::SwCargoOpen_loc, bm::vc::DoorsRightAxis_loc,
-                                                    toggleOnOff,
-                                                    bm::pnl::pnlDoorCargo_id,
-                                                    bm::pnl::pnlDoorCargo_vrt,
-                                                    bm::pnl::pnlDoorCargo_RC
-                                                };
+    bco::on_off_input       switchOpen_{ 
+        { bm::vc::SwCargoOpen_id },
+        bm::vc::SwCargoOpen_loc, bm::vc::DoorsRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlDoorCargo_id,
+        bm::pnlright::pnlDoorCargo_vrt,
+        bm::pnlright::pnlDoorCargo_RC,
+        1
+    };
 
     bco::status_display     status_     {           bm::vc::MsgLightBay_id,
                                                     bm::vc::MsgLightBay_vrt,

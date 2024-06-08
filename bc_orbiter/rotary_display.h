@@ -35,9 +35,9 @@ namespace bc_orbiter {
     */
     template<typename Tanim>
     class rotary_display : 
-          public control
-        , public vc_animation
-        , public panel_animation
+        public control,
+        public vc_animation,
+        public panel_animation
     {
     public:
         rotary_display(
@@ -46,7 +46,8 @@ namespace bc_orbiter {
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
             double angle,
-            double speed)
+            double speed,
+            int pnlId = 0)
             : 
             control(-1),       // id not used for gauges.
             vcAnimGroup_(
@@ -57,7 +58,8 @@ namespace bc_orbiter {
             pnlGroup_(pnlGroupId),
             pnlVerts_(pnlVerts),
             animSpeed_(speed),
-            angle_(angle)
+            angle_(angle),
+            panel_id_(pnlId)
         {
         }
 
@@ -79,6 +81,8 @@ namespace bc_orbiter {
             RotateMesh(mesh, pnlGroup_, pnlVerts_, (anim_.GetState() * -angle_));
         }
 
+        int panel_id() override { return panel_id_; }
+
         void set_state(double d) { 
             state_ = d;
         }
@@ -91,6 +95,7 @@ namespace bc_orbiter {
         double          state_{ 0.0 };
         double          angle_{ 0.0 };
         Tanim           anim_{ animSpeed_ };
+        int             panel_id_;
     };
 
     using rotary_display_target = rotary_display<animation_target>;

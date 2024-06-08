@@ -121,23 +121,27 @@ private:
                                                 0, 1
                                             };
 
-    bco::on_off_input		switchPower_    { { bm::vc::SwCanopyPower_id },
-                                                bm::vc::SwCanopyPower_loc,
-                                                bm::vc::PowerTopRightAxis_loc,
-                                                toggleOnOff,
-                                                bm::pnl::pnlPwrCanopy_id,
-                                                bm::pnl::pnlPwrCanopy_vrt,
-                                                bm::pnl::pnlPwrCanopy_RC
-                                            };
+    bco::on_off_input       switchPower_{
+        { bm::vc::SwCanopyPower_id },
+        bm::vc::SwCanopyPower_loc,
+        bm::vc::PowerTopRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlPwrCanopy_id,
+        bm::pnlright::pnlPwrCanopy_vrt,
+        bm::pnlright::pnlPwrCanopy_RC,
+        1
+    };
 
-    bco::on_off_input		switchOpen_     { { bm::vc::SwCanopyOpen_id },
-                                                bm::vc::SwCanopyOpen_loc,
-                                                bm::vc::DoorsRightAxis_loc, 
-                                                toggleOnOff,
-                                                bm::pnl::pnlDoorCanopy_id,
-                                                bm::pnl::pnlDoorCanopy_vrt,
-                                                bm::pnl::pnlDoorCanopy_RC
-                                            };
+    bco::on_off_input       switchOpen_{
+        { bm::vc::SwCanopyOpen_id },
+        bm::vc::SwCanopyOpen_loc,
+        bm::vc::DoorsRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlDoorCanopy_id,
+        bm::pnlright::pnlDoorCanopy_vrt,
+        bm::pnlright::pnlDoorCanopy_RC,
+        1
+    };
 
     bco::status_display     status_ {           bm::vc::MsgLightCanopy_id,
                                                 bm::vc::MsgLightCanopy_vrt,
