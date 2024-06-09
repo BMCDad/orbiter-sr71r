@@ -29,7 +29,6 @@
 class VESSEL;
 
 namespace bco = bc_orbiter;
-namespace bco = bc_orbiter;
 
 namespace AP {
 

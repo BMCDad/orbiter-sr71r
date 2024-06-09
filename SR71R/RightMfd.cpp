@@ -171,7 +171,7 @@ bool RightMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel
     // MNU
     vessel.RegisterPanelArea(
         hPanel,
-        GetSelectKey(),
+        GetMenuKey(),
         bm::pnl::pnlRightMFDMenu_RC,
         PANEL_REDRAW_NEVER,
         PANEL_MOUSE_LBDOWN | PANEL_MOUSE_ONREPLAY);

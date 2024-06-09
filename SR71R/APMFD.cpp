@@ -21,6 +21,7 @@
 
 APMFD::APMFD(DWORD w, DWORD h, VESSEL* vessel) : MFD2(w, h, vessel) {
     sr71Vessel_ = (SR71Vessel*)vessel;
+    ascent_ = sr71Vessel_->get_ascent();
     // Allocate pens, etc.
 }
 
@@ -32,12 +33,9 @@ bool APMFD::Update(oapi::Sketchpad* skp)
 {
     Title(skp, "SR71 Auto Pilots");
 
-    auto handle = sr71Vessel_->GetHandle();
-
-    double longitude = 0.0;
-    double latitude = 0.0;
-    double radius = 0.0;
-    oapiGetEquPos(handle, &longitude, &latitude, &radius);
+    double longitude = ascent_->vessel_longitude();
+    double latitude = ascent_->vessel_latitude();
+    double radius = ascent_->vessel_radius();
 
     skp->SetTextColor(0x00ff00);
     char cbuf[256];
@@ -79,26 +77,15 @@ bool APMFD::Update(oapi::Sketchpad* skp)
     skp->Text(lbright, ch * 3, "Lst:", 4);
     skp->Text(lbright, ch * 4, "TAz:", 4);
 
-    // inc 74.51 lan 169.03
-    double tinc = 74.51;
-    double tlan = 169.03;
-    double tlst = 24.0 * (tlan / 360);
-    double tazm = 0;
-
-    double direct, alt;
-    if (bc_orbiter::CalcLaunchHeading(latitude, tinc * RAD, direct, alt)) {
-        tazm = direct;
-    }
-
     skp->SetTextAlign(oapi::Sketchpad::RIGHT);
-    sprintf(cbuf, "%0.2fº", tinc);
+    sprintf(cbuf, "%0.2fº", ascent_->target_inclination() * DEG);
     skp->Text(vright, ch * 1, cbuf, strlen(cbuf));
-    sprintf(cbuf, "%0.2fº", tlan);
+    sprintf(cbuf, "%0.2fº", ascent_->target_lan() * DEG);
     skp->Text(vright, ch * 2, cbuf, strlen(cbuf));
-    sprintf(cbuf, "%0.3f", tlst);
+    sprintf(cbuf, "%0.3f", ascent_->target_lst());
     skp->Text(vright, ch * 3, cbuf, strlen(cbuf));
-    if (tazm != 0.0)
-        sprintf(cbuf, "%0.2fº", tazm * DEG);
+    if (ascent_->launch_heading() != 0.0)
+        sprintf(cbuf, "%0.2fº", ascent_->launch_heading() * DEG);
     else
         sprintf(cbuf, "n/s");
     skp->Text(vright, ch * 4, cbuf, strlen(cbuf));
@@ -111,6 +98,26 @@ bool APMFD::Update(oapi::Sketchpad* skp)
 
 
     return true;
+}
+
+char* APMFD::ButtonLabel(int bt)
+{
+    auto lb = labels_.find(bt);
+    if (lb == labels_.end()) return nullptr;
+    return (char*)lb->second.c_str();
+}
+
+int APMFD::ButtonMenu(const MFDBUTTONMENU** menu) const
+{
+    if (menu == 0) { return menu_.size(); }
+
+    if (menu) *menu = (MFDBUTTONMENU*)menu_.data();
+    return menu_.size();
+}
+
+bool APMFD::ConsumeButton(int bt, int event)
+{
+    return false;
 }
 
 int APMFD::MsgProc(UINT msg, UINT mfd, WPARAM wparam, LPARAM lparam)

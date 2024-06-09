@@ -1,26 +1,25 @@
-//	SurfaceController - SR-71r Orbiter Addon
-//	Copyright(C) 2016  Blake Christensen
-//
-//	This program is free software : you can redistribute it and / or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program.If not, see <http://www.gnu.org/licenses/>.
+//  SurfaceController - SR-71r Orbiter Addon
+//  Copyright(C) 2016  Blake Christensen
+//  
+//  This program is free software : you can redistribute it and / or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//  
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+//  GNU General Public License for more details.
+//  
+//  You should have received a copy of the GNU General Public License
+//  along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
 /*  Vessel control
     The intent here is to create a control layer between the vessel
     calls which control spacecraft control and the automation components
-    such as the and flight computer.  Note:  The AutoPilot has been sub-sumed
-	into the flight computer at this point.
+    such as the and flight computer.
 */
 
 #include "Orbitersdk.h"
@@ -37,14 +36,14 @@ namespace bco = bc_orbiter;
 //
 enum class FCProgFlags
 {
-	None			= 0,
-	HoldHeading		= 1,
-	HoldAltitude	= 2,
-	HoldKEAS		= 4,
-	HoldMACH		= 8,
-	HoldInvalid		= 12,			// << KEAS + MACH is invalid.  Use this to force a re-eval.
-	HoldAttitude	= 16,
-	AtmoActive		= 32
+    None            = 0,
+    HoldHeading     = 1,
+    HoldAltitude    = 2,
+    HoldKEAS        = 4,
+    HoldMACH        = 8,
+    HoldInvalid     = 12,   // << KEAS + MACH is invalid.  Use this to force a re-eval.
+    HoldAttitude    = 16,
+    AtmoActive      = 32
 };
 
 constexpr FCProgFlags operator|(FCProgFlags l, FCProgFlags r)
@@ -90,29 +89,29 @@ struct control_program
 class HoldHeadingProgram : public control_program
 {
     const double RAD30 = 30 * RAD;
-	double target_{ 0.0 };
+    double target_{ 0.0 };
 
 public:
-    HoldHeadingProgram() 
+    HoldHeadingProgram()
     {}
 
-	void set_target(double target) override { target_ = target; }
+    void set_target(double target) override { target_ = target; }
 
     void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
     {
-		// GetHeading will return a value between 0 and PI2 (0 - 360 in degrees)
-        auto currentYaw     = vessel.get_heading();
+        // GetHeading will return a value between 0 and PI2 (0 - 360 in degrees)
+        auto currentYaw = vessel.get_heading();
 
-		// Bank will return between -PI2 to PI2
-        auto currentBank    = vessel.get_bank();
+        // Bank will return between -PI2 to PI2
+        auto currentBank = vessel.get_bank();
 
         // Find the delta heading from target.  This is also called the 'error'.
-		// When the target is to the left of current, the error is negative.  The
-		// error value should be between -PI and PI, or 180 deg.
+        // When the target is to the left of current, the error is negative.  The
+        // error value should be between -PI and PI, or 180 deg.
         auto deltaYaw = target_ - currentYaw;
 
-		// If deltaYas is < -PI or > PI then we are 'going around the long way'
-		// and need to adjust.
+        // If deltaYas is < -PI or > PI then we are 'going around the long way'
+        // and need to adjust.
         if (deltaYaw < -PI) deltaYaw += PI2;
         if (deltaYaw > PI) deltaYaw -= PI2;
 
@@ -121,12 +120,10 @@ public:
         // -deltaYaw becomes targetBank
         // Target bank based on yawFactor * 1 RAD
         auto targetBank = 0.0;
-        if (abs(deltaYaw) < 0.2)
-        {
+        if (abs(deltaYaw) < 0.2) {
             targetBank = -deltaYaw;
         }
-        else
-        {
+        else {
             targetBank = (deltaYaw > 0) ? -RAD30 : RAD30;
         }
 
@@ -138,7 +135,7 @@ public:
         if (deltaBank < -1) deltaBank = -1;
 
         vessel.set_aileron_level(-deltaBank);
-//        sprintf(oapiDebugString(), "Hold heading ON - Target: %.2f, deltaBank: %.2f", target * DEG, deltaBank);
+        //        sprintf(oapiDebugString(), "Hold heading ON - Target: %.2f, deltaBank: %.2f", target * DEG, deltaBank);
     }
 
     void start(bco::vessel& vessel) override {}
@@ -175,24 +172,24 @@ class HoldAltitudeProgram : public control_program
     const double AltitudeHoldRange = 100.0;
     const double ClimbHoldRange = 2.0;
 
-	double target_{ 0.0 };
+    double target_{ 0.0 };
 
     bco::pid_altitude pid_;
     double kp = 0.1;  // .5 start .2 no change .8 no change
     double ki = 0.4;    // .2 start .1 nothing
     double kd = 0.1;
 
-    double ALT_ERROR_RANGE  = 200.0;      // 20 meters.
-    double MAX_VS           = 100.0;
-    double VS_STEP_PS       =   0.01;       // Trim steps per second.
+    double ALT_ERROR_RANGE = 200.0;      // 20 meters.
+    double MAX_VS = 100.0;
+    double VS_STEP_PS = 0.01;       // Trim steps per second.
 
-    double prev_error       = 0.0;
+    double prev_error = 0.0;
 
 public:
-    HoldAltitudeProgram() 
+    HoldAltitudeProgram()
     {}
 
-	void set_target(double t) override { target_ = t; }
+    void set_target(double t) override { target_ = t; }
 
     void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
     {
@@ -203,12 +200,10 @@ public:
 
         auto targetClimb = 0.0;
 
-        if (fabs(altError) < AltitudeHoldRange)	// within AltRange
-        {
+        if (fabs(altError) < AltitudeHoldRange) {// within AltRange
             targetClimb = TargetClimbRateMPS * (altError / AltitudeHoldRange);
         }
-        else
-        {
+        else {
             targetClimb = (altError > 0) ? TargetClimbRateMPS : -TargetClimbRateMPS;
         }
 
@@ -216,12 +211,10 @@ public:
 
         auto ctrlLevel = 0.0;
 
-        if (fabs(climbError) < TargetClimbRateMPS)
-        {
+        if (fabs(climbError) < TargetClimbRateMPS) {
             ctrlLevel = climbError / TargetClimbRateMPS;
         }
-        else
-        {
+        else {
             ctrlLevel = (climbError > 0) ? 1.0 : -1.0;
         }
 
@@ -233,12 +226,12 @@ public:
         vessel.set_elevator_level(0.0);
     }
 
-	void start(bco::vessel& vessel) override
-	{
+    void start(bco::vessel& vessel) override
+    {
         vessel.set_elevator_level(0.0);
         target_ = vessel.get_altitude();
         pid_.reset(target_, kp, ki, kd);
-	}
+    }
 };
 
 class HoldKeasProgram : public control_program
@@ -247,21 +240,21 @@ class HoldKeasProgram : public control_program
     double target_{ 0.0 };
 
 public:
-    HoldKeasProgram() 
+    HoldKeasProgram()
     {}
 
-	void set_target(double t) override { target_ = t; }
+    void set_target(double t) override { target_ = t; }
 
     void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
     {
-        auto currentKeas    = vessel.get_keas();
-        auto thLevel        = vessel.get_main_thrust_level();
+        auto currentKeas = vessel.get_keas();
+        auto thLevel = vessel.get_main_thrust_level();
 
-        auto accel          = (currentKeas - prevAtmoKeas_) / simdt;
-        prevAtmoKeas_       = currentKeas;
+        auto accel = (currentKeas - prevAtmoKeas_) / simdt;
+        prevAtmoKeas_ = currentKeas;
 
-        auto dspd           = target_ - currentKeas;
-        auto dThrot         = (dspd - accel) * simdt;
+        auto dspd = target_ - currentKeas;
+        auto dThrot = (dspd - accel) * simdt;
 
         vessel.set_main_thrust_level(thLevel + dThrot);
     }
@@ -271,16 +264,16 @@ public:
         prevAtmoKeas_ = -1.0;
     }
 
-	void start(bco::vessel& vessel) override
-	{
+    void start(bco::vessel& vessel) override
+    {
         target_ = vessel.get_keas();
-	}
+    }
 };
 
 class HoldMachProgram : public control_program
 {
     double prevAtmoMach_{ 0.0 };
-	double target_{ 0.0 };
+    double target_{ 0.0 };
 
 public:
     HoldMachProgram() 
@@ -298,7 +291,7 @@ public:
         auto accel          = (currentMach - prevAtmoMach_) / simdt;
         prevAtmoMach_       = currentMach;
 
-		auto dspd			= target_ -currentMach;
+		auto dspd           = target_ -currentMach;
         auto dThrot         = (dspd - accel) * simdt;
 
         vessel.set_main_thrust_level(thLevel + dThrot);
@@ -318,16 +311,16 @@ public:
 
 class HoldAttitude : public control_program
 {
-    const double DEAD_ZONE      = 0.1   * RAD;
-    const double DEAD_ZONE_MAX  = 5     * RAD;
-    const double MAX_ROT_RATE   = 5     * RAD;		// Degrees per second.
+    const double DEAD_ZONE = 0.1 * RAD;
+    const double DEAD_ZONE_MAX = 5 * RAD;
+    const double MAX_ROT_RATE = 5 * RAD;		// Degrees per second.
 
-	double targetAOA_{ 0.0 };
+    double targetAOA_{ 0.0 };
 public:
-    HoldAttitude() 
+    HoldAttitude()
     {}
 
-	void set_target(double t) override { targetAOA_ = t; }
+    void set_target(double t) override { targetAOA_ = t; }
 
     void step(bco::vessel& vessel, double simt, double simdt, double mjd) override
     {
@@ -356,16 +349,13 @@ public:
 
         // If we are in the dead zone, then assume 0.0 target roll.
         // We also assume we are 'up' and will adjust later if needed.
-        if (fabs(eP) > DEAD_ZONE)
-        {
-        	if (fabs(eP) > DEAD_ZONE_MAX)
-        	{
-        		tRate = (eP > 0.0) ? MAX_ROT_RATE : -MAX_ROT_RATE;
-        	}
-        	else
-        	{
-        		tRate = MAX_ROT_RATE * (eP / DEAD_ZONE_MAX);
-        	}
+        if (fabs(eP) > DEAD_ZONE) {
+            if (fabs(eP) > DEAD_ZONE_MAX) {
+                tRate = (eP > 0.0) ? MAX_ROT_RATE : -MAX_ROT_RATE;
+            }
+            else {
+                tRate = MAX_ROT_RATE * (eP / DEAD_ZONE_MAX);
+            }
         }
 
         // Adjust the rate for 'down'.

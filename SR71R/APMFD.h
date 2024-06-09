@@ -18,6 +18,8 @@
 
 #include "Orbitersdk.h"
 #include "SR71Vessel.h"
+#include "Ascent.h"
+
 
 class SR71Vessel;
 
@@ -28,9 +30,44 @@ public:
     ~APMFD();
 
     bool Update(oapi::Sketchpad* skp) override;
+    char* ButtonLabel(int bt) override;
+    int ButtonMenu(const MFDBUTTONMENU** menu) const override;
+    bool ConsumeButton(int bt, int event) override;
+
     static int MsgProc(UINT msg, UINT mfd, WPARAM wparam, LPARAM lparam);
 
 private:
     SR71Vessel* sr71Vessel_;
 
+    Ascent* ascent_;
+
+    std::map<int, std::string> labels_{
+        {0, "ZRO"},
+        {1, "ONE"},
+        {2, "TWO"},
+        {3, "THR"},
+        {4, "FOR"},
+        {5, "FVE"},
+        {6, "SIX"},
+        {7, "SVN"},
+        {8, "EGT"},
+        {9, "NIN"},
+        {10, "TEN"},
+        {11, "ELV"}
+    };
+
+    std::vector<MFDBUTTONMENU> menu_{
+        {"Zero Option", nullptr, 'A'},
+        {"First Option", nullptr, 'B'},
+        {"Second Option", nullptr, 'C'},
+        {"Third Option", nullptr, 'D'},
+        {"Fourth Option", nullptr, 'E'},
+        {"Fifth Option", nullptr, 'F'},
+        {"Sixth Option", nullptr, 'G'},
+        {"Seventh Option", nullptr, 'H'},
+        {"Eighth Option", nullptr, 'I'},
+        {"Nineth Option", nullptr, 'J'},
+        {"Tenth Option", nullptr, 'K'},
+        {"Eleventh Option", nullptr, 'L'}
+    };
 };

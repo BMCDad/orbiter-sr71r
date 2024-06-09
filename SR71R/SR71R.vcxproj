@@ -129,6 +129,7 @@
     <ClInclude Include="..\bc_orbiter\transform_display.h" />
     <ClInclude Include="..\bc_orbiter\Visual.h" />
     <ClInclude Include="APMFD.h" />
+    <ClInclude Include="Ascent.h" />
     <ClInclude Include="AutoPilot.h" />
     <ClInclude Include="Avionics.h" />
     <ClInclude Include="AirBrake.h" />
@@ -189,6 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APMFD.cpp" />
+    <ClCompile Include="Ascent.cpp" />
     <ClCompile Include="AutoPilot.cpp" />
     <ClCompile Include="Avionics.cpp" />
     <ClCompile Include="AirBrake.cpp" />

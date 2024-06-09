@@ -16,7 +16,7 @@
 
 #include "StdAfx.h"
 
-#include "Orbitersdk.h"
+#include "Orbitersdk.h"1
 #include "AutoPilot.h"
 
 AP::AutoPilot::AutoPilot(bco::vessel& vessel)
