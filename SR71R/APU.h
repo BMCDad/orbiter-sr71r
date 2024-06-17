@@ -18,9 +18,12 @@
 
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/on_off_input.h"
 #include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/status_display.h"
+#include "../bc_orbiter/PanelEvent.h"
+#include "../bc_orbiter/VCEvent.h"
+#include "../bc_orbiter/PanelDisplay.h"
+#include "../bc_orbiter/VCAnimation.h"
+#include "../bc_orbiter/VCDisplay.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
@@ -62,9 +65,25 @@ public:
         power_(pwr)
     {
         power_.attach_consumer(this);
-        vessel.AddControl(&switchEnabled_);
+
         vessel.AddControl(&gaugeAPULevel_);
-        vessel.AddControl(&status_);
+//        vessel.AddControl(&status_);
+        vessel.AddControl(&pnlPowerSwitchEvent_);
+        vessel.AddControl(&vcPowerSwitchEvent_);
+        vessel.AddControl(&pnDspSwitch_);
+        vessel.AddControl(&vcDspSwitch_);
+
+        vessel.AddControl(&pnlDisplayStatus_);
+        vessel.AddControl(&vcDisplayStatus_);
+
+        bco::connect(sigSwitch_, pnDspSwitch_.Slot());
+        bco::connect(sigSwitch_, vcDspSwitch_.Slot());
+
+        bco::connect(sigStatus_, pnlDisplayStatus_.Slot());
+        bco::connect(sigStatus_, vcDisplayStatus_.Slot());
+
+        pnlPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
+        vcPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
     }
 
     double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
@@ -72,14 +91,16 @@ public:
     // manage_state
     bool handle_load_state(bco::vessel & vessel, const std::string & line) override {
         std::stringstream in(line);
-        in >> switchEnabled_;
+        int v;
+        in >> v;
+        sigSwitch_.fire((v != 0) ? true : false);
         return true;
     }
 
     std::string handle_save_state(bco::vessel & vessel) override
     {
         std::ostringstream os;
-        os << switchEnabled_;
+        os << sigSwitch_.current() ? 1 : 0;
         return os.str();
     }
 
@@ -107,36 +128,48 @@ public:
 
         gaugeAPULevel_.set_state(level_);
 
-        status_.set_state(
-            IsPowered()
-            ? hasFuel
-            ? bco::status_display::status::on
-            : bco::status_display::status::warn
-            : bco::status_display::status::off
-        );
+        sigStatus_.fire(IsPowered()
+            ? (hasFuel ? bco::status_display::status::on : bco::status_display::status::warn)
+            : bco::status_display::status::off);
     }
 
     bco::slot<double>&FuelLevelSlot() { return slotFuelLevel_; }
 
+    void TogglePowerSwitch()
+    {
+        sigSwitch_.fire(!sigSwitch_.current());
+    }
+
 private:
     bco::power_provider & power_;
 
+    bco::signal<bool> sigSwitch_;
+    bco::signal<bco::status_display::status> sigStatus_;
+
     bool IsPowered() const {
-        return switchEnabled_.is_on() && (power_.volts_available() > 24.0);
+        return sigSwitch_.current() && (power_.volts_available() > 24.0);
     }
 
     double                  level_{ 0.0 };
     bco::slot<double>       slotFuelLevel_;
 
+    bco::PanelEvent         pnlPowerSwitchEvent_ { bm::pnlright::pnlAPUSwitch_RC, 1 };
+    bco::VCEvent            vcPowerSwitchEvent_  { bm::vc::SwAPUPower_loc, toggleOnOff.hitRadius };
 
-    bco::on_off_input       switchEnabled_{
+    std::vector<bco::control> ctrls = {
+
+    };
+
+    bco::PanelDisplay<bool>   pnDspSwitch_{
+        bm::pnlright::pnlAPUSwitch_id, 
+        bm::pnlright::pnlAPUSwitch_vrt, 
+        1 
+    };
+
+    bco::VCAnimation<bool>    vcDspSwitch_{
         { bm::vc::SwAPUPower_id },
         bm::vc::SwAPUPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
-        toggleOnOff,
-        bm::pnlright::pnlAPUSwitch_id,
-        bm::pnlright::pnlAPUSwitch_vrt,
-        bm::pnlright::pnlAPUSwitch_RC,
-        1
+        toggleOnOff.animRotation, toggleOnOff.animSpeed
     };
 
     bco::rotary_display_target  gaugeAPULevel_{
@@ -149,11 +182,14 @@ private:
         1
     };
 
-    bco::status_display         status_{
-        bm::vc::MsgLightAPU_id,
-        bm::vc::MsgLightAPU_vrt,
+    bco::PanelDisplay<bco::status_display::status> pnlDisplayStatus_{
         bm::pnl::pnlMsgLightAPU_id,
         bm::pnl::pnlMsgLightAPU_vrt,
-        0.0361
+        0
+    };
+
+    bco::VCDisplay<bco::status_display::status> vcDisplayStatus_{
+        bm::vc::MsgLightAPU_id,
+        bm::vc::MsgLightAPU_vrt
     };
 };
