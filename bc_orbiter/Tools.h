@@ -658,4 +658,16 @@ namespace bc_orbiter
 		grp->Vtx[2].tv = verts[2].tv + offset_v;
 		grp->Vtx[3].tv = verts[3].tv + offset_v;
 	}
+
+    inline double UVOffset(const NTVERTEX* nv)
+    {
+        double maxv = nv->tu;
+        double minv = nv->tu;
+        for (int x = 1; x < 4; x++) {
+            maxv = max(maxv, nv[x].tu);
+            minv = min(minv, nv[x].tu);
+        }
+
+        return maxv - minv;
+    }
 }
