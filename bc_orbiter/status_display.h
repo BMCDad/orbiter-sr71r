@@ -61,7 +61,7 @@ namespace bc_orbiter {
 			TransformUV2d(
 				vcVerts_,
 				delta, 4,
-				_V(state_ * offset_,
+				_V(static_cast<double>(state_) * offset_,
 					0.0,
 					0.0),
 				0.0);
@@ -76,7 +76,7 @@ namespace bc_orbiter {
 		}
 
 		void on_panel_redraw(MESHHANDLE meshPanel) override {
-			DrawPanelOffset(meshPanel, pnlGroupId_, pnlVerts_, offset_ * state_);
+			DrawPanelOffset(meshPanel, pnlGroupId_, pnlVerts_, offset_ * static_cast<double>(state_));
 		}
 
 		int vc_mouse_flags() { return PANEL_MOUSE_IGNORE; }

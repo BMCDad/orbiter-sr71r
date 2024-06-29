@@ -251,7 +251,7 @@ namespace bc_orbiter
     inline bool vessel::clbkLoadVC(int id)
     {
         // Handle controls with load vc requirements.
-        for each (auto & vc in map_vc_targets_) {
+        for (auto & vc : map_vc_targets_) {
             oapiVCRegisterArea(
                 vc.first,							// Area ID
                 vc.second->vc_redraw_flags(),		// PANEL_REDRAW_*
@@ -264,7 +264,7 @@ namespace bc_orbiter
         }
 
         // handle vessel components that require load vc.
-        for each (auto & vc in load_vc_components_) {
+        for (auto & vc : load_vc_components_) {
             vc->handle_load_vc(*this, id);
         }
 
@@ -274,7 +274,7 @@ namespace bc_orbiter
     inline void vessel::clbkSetClassCaps(FILEHANDLE cfg)
     {
         // set_class_caps will flesh out to a more general 'component' list (non-ui/control intities)
-        for each (auto & cc in components_) {
+        for (auto & cc : components_) {
             if (auto* ac = dynamic_cast<post_step*>(cc))        post_step_components_.push_back(ac);
             if (auto* ac = dynamic_cast<set_class_caps*>(cc))   set_class_caps_components_.push_back(ac);
             if (auto* ac = dynamic_cast<draw_hud*>(cc))         draw_hud_components_.push_back(ac);
@@ -283,7 +283,7 @@ namespace bc_orbiter
         }
 
         // Handle controls that need initialization.
-        for each (auto & vc in controls_) {
+        for (auto & vc : controls_) {
             if (auto* c = dynamic_cast<vc_animation*>(vc)) {
                 auto aid = VESSEL3::CreateAnimation(0);
                 auto trans = c->vc_animation_group();
@@ -303,7 +303,7 @@ namespace bc_orbiter
             if (auto* c = dynamic_cast<vc_tex_animation*>(vc)) vc_texture_animations_.push_back(c);
         }
 
-        for each (auto & sc in set_class_caps_components_) {
+        for (auto & sc : set_class_caps_components_) {
             sc->handle_set_class_caps(*this);
         }
     }
@@ -412,7 +412,7 @@ namespace bc_orbiter
 
     inline bool vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
     {
-        for each (auto & p in map_panel_targets_) {	// For panel, mouse and redraw happen in the same call.
+        for (auto & p : map_panel_targets_) {	// For panel, mouse and redraw happen in the same call.
             if (p.second->panel_id() != id) continue;
 
             RegisterPanelArea(
@@ -423,7 +423,7 @@ namespace bc_orbiter
                 p.second->panel_mouse_flags()); // PANEL_MOUSE_*
         }
 
-        for each (auto & vc in load_panel_components_) {
+        for (auto & vc : load_panel_components_) {
             vc->handle_load_panel(*this, id, hPanel);
         }
 

@@ -413,7 +413,7 @@ void PropulsionController::handle_draw_hud(bco::vessel& vessel, int mode, const 
         yTop + bxHeight);
 
     auto mt = 0.0;
-    char* LB = nullptr;
+    const char* LB = (th >= rt) ? "M" : "R";
     if (th >= rt)
     {
         mt = th;

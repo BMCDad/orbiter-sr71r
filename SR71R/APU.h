@@ -24,6 +24,7 @@
 #include "../bc_orbiter/PanelDisplay.h"
 #include "../bc_orbiter/VCAnimation.h"
 #include "../bc_orbiter/VCDisplay.h"
+#include "../bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"

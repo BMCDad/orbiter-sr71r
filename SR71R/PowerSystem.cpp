@@ -98,7 +98,7 @@ void PowerSystem::Update(bco::vessel& vessel)
 	if (availPower != prevVolts_) {
 		prevVolts_ = availPower;
 
-		for each (auto & c in consumers_) {
+		for (auto & c : consumers_) {
 			c->on_change(prevVolts_);
 		}
 	}

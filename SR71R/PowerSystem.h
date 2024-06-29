@@ -58,7 +58,7 @@ public:
     {
         double draw = 0.0;
 
-        for each (auto & c in consumers_) {
+        for (auto & c : consumers_) {
             draw += c->amp_draw();
         }
 
