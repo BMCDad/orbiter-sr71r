@@ -126,9 +126,6 @@
     <ClInclude Include="IAvionics.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="FlightComputer.h">
-      <Filter>Components\Computer</Filter>
-    </ClInclude>
     <ClInclude Include="VesselControl.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -237,6 +234,21 @@
     <ClInclude Include="..\bc_orbiter\Visual.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
+    <ClInclude Include="..\bc_orbiter\PanelDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\PanelEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\VCAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\VCDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\VCEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">
@@ -292,9 +304,6 @@
     </ClCompile>
     <ClCompile Include="Shutters.cpp">
       <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="FlightComputer.cpp">
-      <Filter>Components\Computer</Filter>
     </ClCompile>
     <ClCompile Include="VesselControl.cpp">
       <Filter>Components\src</Filter>
@@ -431,6 +440,7 @@
     <None Include="..\Art\SR71R_200_Body.xcf">
       <Filter>Art</Filter>
     </None>
+    <None Include="..\Orbiter\Meshes\SR71r2DRight.msh" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SR71R.rc">
