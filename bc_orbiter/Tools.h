@@ -641,6 +641,26 @@ namespace bc_orbiter
 		grp->Vtx[3].tu = verts[3].tu + trans;
 	}
 
+   inline void DrawVCOffset(DEVMESHHANDLE vcMesh, UINT groupId, const NTVERTEX* source, double offset)
+   {
+       NTVERTEX* delta = new NTVERTEX[4];
+
+       float trans = (float)offset;
+       for (int i = 0; i < 4; i++)
+       {
+           delta[i] = source[i];
+           delta[i].tu = source[i].tu + trans;
+       }
+
+       GROUPEDITSPEC change{};
+       change.flags = GRPEDIT_VTXTEX;
+       change.nVtx = 4;
+       change.vIdx = NULL; //Just use the mesh order
+       change.Vtx = delta;
+       auto res = oapiEditMeshGroup(vcMesh, groupId, &change);
+       delete[] delta;
+   }
+
 	template <typename T>
 	inline void UVTranslate(T mesh, UINT group, const NTVERTEX* verts, double offset_u, double offset_v)
 	{

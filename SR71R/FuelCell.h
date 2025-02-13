@@ -26,8 +26,12 @@
 
 #include "IConsumable.h"
 #include "PowerSystem.h"
-#include "SR71r_mesh.h"
 #include "SR71r_common.h"
+
+#include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
 
 class PowerSystem;
 

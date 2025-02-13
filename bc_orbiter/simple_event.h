@@ -31,13 +31,13 @@ namespace bc_orbiter {
     class simple_event :
         public control,
         public vc_event_target,
-        public panel_event_target,
-        public signaller
+        public panel_event_target
     {
     public:
         simple_event(
             const VECTOR3& vcLocation,
             double vcRadius,
+            int vcId,
             const RECT& pnlRect,
             int pnlId,
             T data = T()
@@ -45,6 +45,7 @@ namespace bc_orbiter {
             control(-1),
             vcLocation_(vcLocation),
             vcRadius_(vcRadius),
+            vcId_(vcId),
             pnlRect_(pnlRect),
             data_(data),
             pnlId_(pnlId)
@@ -55,6 +56,7 @@ namespace bc_orbiter {
         double      vc_event_radius()       override { return vcRadius_; }
         int         vc_mouse_flags()        override { return PANEL_MOUSE_LBDOWN; }
         int         vc_redraw_flags()       override { return PANEL_REDRAW_NEVER; }
+        int         vc_id()                 override { return vcId_; }
 
         // panel_event_target
         RECT        panel_rect()            override { return pnlRect_; }
@@ -64,19 +66,22 @@ namespace bc_orbiter {
 
         // event_target
         bool on_event(int id, int event) override {
-            signal_.fire(data_);		// Remove eventually
-            fire();
+            func_();
             return true;
         }
 
-        // signal
-        signal<T>& Signal() { return signal_; }
+        void attach(funcEvent event) {
+            func_ = event;
+        }
+
     private:
         T           data_;
         VECTOR3     vcLocation_;
         double      vcRadius_;
+        int         vcId_{ 0 };
         RECT        pnlRect_;
         signal<T>   signal_;
         int         pnlId_;
+        funcEvent   func_{ [] {} };
     };
 }

@@ -23,6 +23,10 @@
 #include "../bc_orbiter/simple_event.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
+
 
 namespace bco = bc_orbiter;
 
@@ -91,6 +95,7 @@ private:
     bco::simple_event<>         clockTimerReset_{
         bm::vc::ClockTimerReset_loc,
         0.01,
+        0,
         bm::pnl::pnlClockTimerReset_RC,
         0
     };
@@ -98,6 +103,7 @@ private:
     bco::simple_event<>         clockElapsedReset_{
         bm::vc::ClockElapsedReset_loc,
         0.01,
+        0,
         bm::pnl::pnlClockElapsedReset_RC,
         0
     };

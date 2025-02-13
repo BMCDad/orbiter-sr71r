@@ -23,6 +23,10 @@
 #include "../bc_orbiter/on_off_input.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
+
 #include "SR71r_common.h"
 
 namespace bco = bc_orbiter;

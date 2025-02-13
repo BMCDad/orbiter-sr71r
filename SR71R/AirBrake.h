@@ -24,6 +24,10 @@
 #include "../bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
+
 
 class VESSEL;
 
@@ -111,6 +115,7 @@ private:
     bco::simple_event<>		btnDecreaseAirbrake_ {  
         bm::vc::ABTargetDecrease_loc,
         0.01,
+        0,
         bm::pnl::pnlAirBrakeDecrease_RC,
         0
     };
@@ -118,6 +123,7 @@ private:
     bco::simple_event<>		btnIncreaseAirbrake_{ 
         bm::vc::ABTargetIncrease_loc,
         0.01,
+        0,
         bm::pnl::pnlAirBrakeIncrease_RC,
         0
     };

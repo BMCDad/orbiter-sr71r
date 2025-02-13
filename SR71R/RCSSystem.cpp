@@ -25,49 +25,52 @@
 
 
 RCSSystem::RCSSystem(bco::vessel& vessel, bco::power_provider& pwr) :
-	vessel_(vessel),
-	power_(pwr)
-{ 
-	vessel_.AddControl(&btnLinear_);
-	vessel_.AddControl(&btnRotate_);
-	vessel_.AddControl(&lightLinear_);
-	vessel_.AddControl(&lightRotate_);
+    vessel_(vessel),
+    power_(pwr)
+{
+    vessel_.AddControl(&btnLinear_);
+    vessel_.AddControl(&btnRotate_);
+    vessel_.AddControl(&lightLinear_);
+    vessel_.AddControl(&lightRotate_);
 
-	btnLinear_.attach([&]() { OnChanged(RCS_LIN); });
-	btnRotate_.attach([&]() { OnChanged(RCS_ROT); });
+    btnLinear_.attach([&]() { OnChanged(RCS_LIN); });
+    btnRotate_.attach([&]() { OnChanged(RCS_ROT); });
 }
 
 void RCSSystem::ActiveChanged(bool isActive)
 {
-	if (!isActive) {
-		if (vessel_.IsCreated())
-		{
-			vessel_.SetAttitudeMode(RCS_NONE);
-		}
-	}
+    if (!isActive) {
+        if (vessel_.IsCreated())
+        {
+            vessel_.SetAttitudeMode(RCS_NONE);
+        }
+    }
 }
 
 
 // Callback:
 void RCSSystem::OnRCSMode(int mode)
 {
-	if ((RCS_NONE != mode) && (!IsPowered()))
-	{
-		vessel_.SetAttitudeMode(RCS_NONE);
-		lightLinear_.set_state(false);
-		lightRotate_.set_state(false);
-	}
-	else {
-		lightLinear_.set_state(mode == RCS_LIN);
-		lightRotate_.set_state(mode == RCS_ROT);
-	}
+    auto linMode = false;
+    auto rotMode = false;
+    if ((RCS_NONE != mode) && (!IsPowered()))
+    {
+        vessel_.SetAttitudeMode(RCS_NONE);
+    }
+    else {
+        linMode = (mode == RCS_LIN);
+        rotMode = (mode == RCS_ROT);
+    }
+
+    if (lightLinear_.set_state(linMode)) vessel_.TriggerRedrawArea(0, 0, lightLinear_.get_id());
+    if (lightRotate_.set_state(rotMode)) vessel_.TriggerRedrawArea(0, 0, lightRotate_.get_id());
 }
 
 void RCSSystem::OnChanged(int mode)
 {
-	if (!vessel_.IsCreated()) return;
+    if (!vessel_.IsCreated()) return;
 
-	auto currentMode = vessel_.GetAttitudeMode();
-	auto newMode = (mode == currentMode) ? RCS_NONE : mode;
-	vessel_.SetAttitudeMode(newMode);
+    auto currentMode = vessel_.GetAttitudeMode();
+    auto newMode = (mode == currentMode) ? RCS_NONE : mode;
+    vessel_.SetAttitudeMode(newMode);
 }

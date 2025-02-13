@@ -243,11 +243,14 @@
     <ClInclude Include="..\bc_orbiter\VCAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\VCDisplay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\bc_orbiter\VCEvent.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\vc_display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\state_display.h">
+      <Filter>bc_orbiter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -431,9 +434,6 @@
     <None Include="..\Orbiter\Meshes\SR71r.msh">
       <Filter>Meshes</Filter>
     </None>
-    <None Include="..\Orbiter\Meshes\SR71r2D.msh">
-      <Filter>Meshes</Filter>
-    </None>
     <None Include="..\Orbiter\Meshes\SR71rVC.msh">
       <Filter>Meshes</Filter>
     </None>
@@ -441,6 +441,24 @@
       <Filter>Art</Filter>
     </None>
     <None Include="..\Orbiter\Meshes\SR71r2DRight.msh" />
+    <None Include="..\Blender\SR71r_pnlMain.blend" />
+    <None Include="..\Blender\SR71r_VC.blend" />
+    <None Include="..\Blender\SR71rVC.blend">
+      <Filter>Blender</Filter>
+    </None>
+    <None Include="..\Blender\SR71rPanel.blend">
+      <Filter>Blender</Filter>
+    </None>
+    <None Include="..\Blender\SR71rPanelRight.blend">
+      <Filter>Blender</Filter>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71rPanel.msh">
+      <Filter>Meshes</Filter>
+    </None>
+    <None Include="..\Orbiter\Meshes\SR71rPanelRight.msh">
+      <Filter>Meshes</Filter>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SR71R.rc">

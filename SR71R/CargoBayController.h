@@ -25,6 +25,10 @@
 #include "../bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
+
 #include "ShipMets.h"
 #include "SR71r_common.h"
 

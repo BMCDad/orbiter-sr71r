@@ -21,15 +21,15 @@
 namespace bc_orbiter {
 
     /*
-    VCDisplay
+    vc_display
     A four state status display control intended for the status display panel.
     **/
     template<typename T = double>
-    class VCDisplay : public control, public vc_event_target
+    class vc_display : public control, public vc_event_target
     {
     public:
 
-        VCDisplay(const UINT vcGroupId, const NTVERTEX* vcVerts) :
+        vc_display(const UINT vcGroupId, const NTVERTEX* vcVerts) :
             control(-1),
             vcGroupId_(vcGroupId),
             vcVerts_(vcVerts),

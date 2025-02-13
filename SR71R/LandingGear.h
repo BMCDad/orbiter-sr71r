@@ -23,6 +23,9 @@
 #include "../bc_orbiter/panel_display.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
 
 namespace bco = bc_orbiter;
 
@@ -166,6 +169,7 @@ private:
     bco::simple_event<>     btnRaiseGear_ {
         bm::vc::GearLeverUpTarget_loc,
         0.01,
+        0,
         bm::pnl::pnlLandingGearUp_RC,
         0
     };
@@ -173,6 +177,7 @@ private:
     bco::simple_event<>     btnLowerGear_ {
         bm::vc::GearLeverDownTarget_loc,
         0.01,
+        0,
         bm::pnl::pnlLandingGearDown_RC,
         0
     };

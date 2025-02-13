@@ -24,8 +24,12 @@
 #include "../bc_orbiter/rotary_display.h"
 #include "../bc_orbiter/transform_display.h"
 
-#include "SR71r_mesh.h"
 #include "SR71r_common.h"
+
+#include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
 
 namespace bco = bc_orbiter;
 
@@ -117,6 +121,7 @@ private:
     bco::simple_event<>		dialSetCourseIncrement_{
         bm::vc::CourseKnobInc_loc,
         0.01,
+        0,
         bm::pnl::pnlSetCourseInc_RC,
         0
     };
@@ -124,6 +129,7 @@ private:
     bco::simple_event<>     dialSetCourseDecrement_{
         bm::vc::CourseKnobDec_loc,
         0.01,
+        0,
         bm::pnl::pnlSetCourseDec_RC,
         0
     };
@@ -131,6 +137,7 @@ private:
     bco::simple_event<>     dialSetHeadingIncrement_{
         bm::vc::HeadingKnobInc_loc,
         0.01,
+        0,
         bm::pnl::pnlSetHeadingInc_RC,
         0
     };
@@ -138,6 +145,7 @@ private:
     bco::simple_event<>     dialSetHeadingDecrement_{
         bm::vc::HeadingKnobDec_loc,
         0.01,
+        0,
         bm::pnl::pnlSetHeadingDec_RC,
         0 
     };

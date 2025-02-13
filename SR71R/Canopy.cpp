@@ -42,18 +42,19 @@ void Canopy::handle_post_step(bco::vessel& vessel, double simt, double simdt, do
         warn    - yes power AND is moving
         on      - yes power AND open
     */
-    auto status = bco::status_display::status::off;
+    auto status = STATUS_OFF;
     if (power_.volts_available() > MIN_VOLTS) {
         if ((animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0)) {
-            status = bco::status_display::status::warn;
+            status = STATUS_WARN;
         }
         else {
             if (animCanopy_.GetState() == 1.0) {
-                status = bco::status_display::status::on;
+                status = STATUS_ON;
             }
         }
     }
-    status_.set_state(status);
+    
+    if (status_.set_state(status)) vessel.TriggerRedrawArea(0, 0, status_.get_id());
 }
 
 bool Canopy::handle_load_state(bco::vessel& vessel, const std::string& line)

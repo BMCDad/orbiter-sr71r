@@ -23,10 +23,14 @@
 #include "../bc_orbiter/VCEvent.h"
 #include "../bc_orbiter/PanelDisplay.h"
 #include "../bc_orbiter/VCAnimation.h"
-#include "../bc_orbiter/VCDisplay.h"
+#include "../bc_orbiter/vc_display.h"
 #include "../bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
+
 #include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
@@ -129,9 +133,11 @@ public:
 
         gaugeAPULevel_.set_state(level_);
 
-        sigStatus_.fire(IsPowered()
-            ? (hasFuel ? bco::status_display::status::on : bco::status_display::status::warn)
-            : bco::status_display::status::off);
+        auto status = IsPowered() ? 
+            (hasFuel ? bco::status_display::status::on : bco::status_display::status::warn) : bco::status_display::status::off;
+
+        vcDisplayStatus_.Slot().notify(status);
+        pnlDisplayStatus_.Slot().notify(status);
     }
 
     bco::slot<double>&FuelLevelSlot() { return slotFuelLevel_; }
@@ -189,7 +195,7 @@ private:
         0
     };
 
-    bco::VCDisplay<bco::status_display::status> vcDisplayStatus_{
+    bco::vc_display<bco::status_display::status> vcDisplayStatus_{
         bm::vc::MsgLightAPU_id,
         bm::vc::MsgLightAPU_vrt
     };

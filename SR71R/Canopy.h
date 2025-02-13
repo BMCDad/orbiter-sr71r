@@ -1,5 +1,5 @@
 //	Canopy - SR-71r Orbiter Addon
-//	Copyright(C) 2017  Blake Christensen
+//	Copyright(C) 2025  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -23,8 +23,13 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/on_off_input.h"
 #include "../bc_orbiter/status_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
+
 #include "ShipMets.h"
 #include "SR71r_common.h"
 
@@ -61,11 +66,11 @@ on_off_input (canopy open):
 :slot - has power
 */
 class Canopy : 
-      public bco::vessel_component
-    , public bco::set_class_caps
-    , public bco::post_step
-    , public bco::power_consumer
-    , public bco::manage_state
+    public bco::vessel_component,
+    public bco::set_class_caps,
+    public bco::post_step,
+    public bco::power_consumer,
+    public bco::manage_state
 {
 public:
     Canopy(bco::power_provider& pwr, bco::vessel& vessel);
@@ -86,6 +91,14 @@ public:
 private:
     const double MIN_VOLTS = 20.0;
     
+    const double STATUS_ON      = 0.0;      // move to common
+    const double STATUS_OFF     = 1.0;
+    const double STATUS_ERROR   = 2.0;
+    const double STATUS_WARN    = 3.0;
+
+    const int   VC_ID           = 0;        // move to common
+    const int   PANEL_ID        = 0;
+
     bco::power_provider& power_;
     
     bool IsPowered() const { 
@@ -102,7 +115,7 @@ private:
             (animCanopy_.GetState() < 1.0); 
     }
 
-    bco::animation_target		    animCanopy_     { 0.2 };
+    bco::animation_target    animCanopy_     { 0.2 };
 
     bco::animation_group     gpCanopy_       { { bm::main::Canopy_id,
                                                 bm::main::CanopyWindowInside_id,
@@ -143,10 +156,12 @@ private:
         1
     };
 
-    bco::status_display     status_ {           bm::vc::MsgLightCanopy_id,
-                                                bm::vc::MsgLightCanopy_vrt,
-                                                bm::pnl::pnlMsgLightCanopy_id,
-                                                bm::pnl::pnlMsgLightCanopy_vrt,
-                                                0.0361
-                                            };
+    bco::state_display      status_ {
+        bm::vc::MsgLightCanopy_id,
+        bm::vc::MsgLightCanopy_vrt,
+        VC_ID,
+        bm::pnl::pnlMsgLightCanopy_id,
+        bm::pnl::pnlMsgLightCanopy_vrt,
+        PANEL_ID
+    };
 };

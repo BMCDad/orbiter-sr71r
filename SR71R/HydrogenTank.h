@@ -77,6 +77,7 @@ private:
     bco::simple_event<>             btnFill_{
         bm::vc::LH2ValveOpenSwitch_loc,
         0.01,
+        0,
         bm::pnlright::pnlLH2Switch_RC,
         1
     };

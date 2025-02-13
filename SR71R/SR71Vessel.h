@@ -46,6 +46,7 @@
 #include <map>
 
 
+
 class SR71Vessel : public bco::vessel
 {
 public:
@@ -111,8 +112,8 @@ private:
 	FuelCell				fuelCell_		{ powerSystem_, *this, oxygenTank_,	hydrogenTank_ };
 	HUD						headsUpDisplay_	{ powerSystem_, *this };
 
-	LeftMFD					mfdLeft_		{ powerSystem_, this };
-	RightMFD				mfdRight_		{ powerSystem_, this };
+//	LeftMFD					mfdLeft_		{ powerSystem_, this };
+//	RightMFD				mfdRight_		{ powerSystem_, this };
 
 
 	// Map components that handle config state with a key for that component.

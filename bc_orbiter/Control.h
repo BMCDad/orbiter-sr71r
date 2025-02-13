@@ -86,6 +86,7 @@ namespace bc_orbiter {
         virtual int         vc_mouse_flags()                    { return PANEL_MOUSE_IGNORE; }
         virtual int         vc_redraw_flags()                   { return PANEL_REDRAW_NEVER; }
         virtual void        on_vc_redraw(DEVMESHHANDLE meshVC)  {}
+        virtual int         vc_id()                             { return 0; }
     };
 
     /**
@@ -175,4 +176,6 @@ namespace bc_orbiter {
     private:
         int ctrlId_;
     };
+
+    using funcEvent = std::function<void()>;
 }

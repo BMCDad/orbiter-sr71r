@@ -21,113 +21,114 @@
 
 namespace bc_orbiter {
 
-	/**
-	* slot
-	* Receives a notification from a signal when the signal changes.  Used
-	* along with the signal class to facilitate communication between components.
-	*/
-	template<typename T>
-	class slot {
-	public:
-		slot(const std::function<void(T)> func = [](T v) {})
-			:
-			func_(func)
-		{}
+    /**
+    * slot
+    * Receives a notification from a signal when the signal changes.  Used
+    * along with the signal class to facilitate communication between components.
+    */
+    template<typename T>
+    class slot {
+    public:
+        slot(const std::function<void(T)> func = [](T v) {})
+            :
+            func_(func)
+        {
+        }
 
-		virtual ~slot() {}
+        virtual ~slot() {}
 
-		void notify(T value) {
-			if (dirty_ || (value != value_)) {
-				dirty_ = false;
-				value_ = value;
-				if (nullptr != func_) func_(value_);
-			}
-		}
+        void notify(T value) {
+            if (dirty_ || (value != value_)) {
+                dirty_ = false;
+                value_ = value;
+                if (nullptr != func_) func_(value_);
+            }
+        }
 
-		T value() const { return value_; }
-		void set() { dirty_ = true; }
-	private:
-		bool	dirty_{ true };
-		T		value_	{ };
-		
-		const std::function<void(T)> func_{ nullptr };
-	};
+        T value() const { return value_; }
+        void set() { dirty_ = true; }
+    private:
+        bool	dirty_{ true };
+        T		value_{ };
 
-	/**
-	* signal
-	* Along with slot, provides a means to pass events between components.
-	*/
-	template<typename T>
-	class signal {
-	public:
-		signal() = default;
-		virtual ~signal() = default;
+        const std::function<void(T)> func_{ nullptr };
+    };
 
-		void attach(slot<T>& sl) {
-			slots_.emplace_back(&sl);
-		}
+    /**
+    * signal
+    * Along with slot, provides a means to pass events between components.
+    */
+    template<typename T>
+    class signal {
+    public:
+        signal() = default;
+        virtual ~signal() = default;
 
-		void fire(const T& val) {
-			value_ = val;
-			for (const auto& s : slots_) {
-				s->notify(val);
-			}
-		}
+        void attach(slot<T>& sl) {
+            slots_.emplace_back(&sl);
+        }
 
-		T current() const {
-			return value_;
-		}
+        void fire(const T& val) {
+            value_ = val;
+            for (const auto& s : slots_) {
+                s->notify(val);
+            }
+        }
 
-		void update(T val) {	// Update value without firing event (config)
-			value_ = val;
-		}
+        T current() const {
+            return value_;
+        }
 
-		friend std::istream& operator>>(std::istream& input, signal<T>& obj) {
-			if (input) {
-				T value;
-				input >> value;
-				obj.fire(value);
-			}
+        void update(T val) {	// Update value without firing event (config)
+            value_ = val;
+        }
 
-			return input;
-		}
+        friend std::istream& operator>>(std::istream& input, signal<T>& obj) {
+            if (input) {
+                T value;
+                input >> value;
+                obj.fire(value);
+            }
 
-		friend std::ostream& operator<<(std::ostream& output, signal<T>& obj) {
-			output << obj.value_;
-			return output;
-		}
+            return input;
+        }
 
-	private:
-		std::vector<slot<T>*> slots_;
-		T value_{};
-	};
+        friend std::ostream& operator<<(std::ostream& output, signal<T>& obj) {
+            output << obj.value_;
+            return output;
+        }
 
-	/**
-	* signal
-	* Along with slot, provides a means to pass events between components.
-	*/
-	class signaller {
-	public:
-		signaller() = default;
-		virtual ~signaller() = default;
+    private:
+        std::vector<slot<T>*> slots_;
+        T value_{};
+    };
 
-		void attach(const std::function<void()> sl) {
-			funcs_.emplace_back(sl);
-		}
+    /**
+    * signal
+    * Along with slot, provides a means to pass events between components.
+    */
+    class signaller {
+    public:
+        signaller() = default;
+        virtual ~signaller() = default;
 
-		void fire() {
-			for (const auto& s : funcs_) {
-				s();
-			}
-		}
+        void attach(const std::function<void()> sl) {
+            funcs_.emplace_back(sl);
+        }
 
-	private:
-		std::vector<std::function<void()>> funcs_;
-	};
+        void fire() {
+            for (const auto& s : funcs_) {
+                s();
+            }
+        }
 
-	template<typename TSignal, typename TSlot>
-	void connect(TSignal& sig, TSlot& slot)
-	{
-		sig.attach(slot);
-	}
+    private:
+        std::vector<std::function<void()>> funcs_;
+    };
+
+    template<typename TSignal, typename TSlot>
+    void connect(TSignal& sig, TSlot& slot)
+    {
+        sig.attach(slot);
+    }
 }

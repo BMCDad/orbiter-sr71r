@@ -36,30 +36,17 @@ Building:
 	!! Make sure the Orbiter installation is functional outside of the debugger before you try and run it under the debugger !!
 
 Blender:
--	The source .blend file it edited and built using the tools found here: https://www.orbiter-forum.com/showthread.php?t=36734
+-	The source .blend file is edited and built using the tools found here: https://www.orbiter-forum.com/showthread.php?t=36734
 
 Gimp:
--	Texture base gimp files are in the Art folder.  You will need the DDS plugin to output DDS files.
+-	Texture base gimp files are in the Art folder.
 
-VNext: (April 2 2024)
--	Mesh enhancement.  We will end up with a higher poly count, and better looking model.
-: P-Port (left hand), S-Starboard (right hand), I-Inner, O-Outer, T-Top, B-Bottom, F-Forward, A-Aft
-: [P/S | F/A | I/O | T/B]
-	* Mesh start 380kb.
-	* 4/2/2024 - nacelle, outer wings.  Main mesh 512kb.
-	* 4/3/2024 - nacelle clean up : 493kb.
-	* 4/4/2024 - Nozell redo : 507kb.
-	* 4/4/2024 - Bay doors : 528kb
-	* 4/4/2024 - More bay doors, canopy 567kb
-	* 4/5/2024 - Cleaned up interior  564kb
-	* 4/5/2024 - Outer mesh mostly done.  Compiles and animations work.  Texturing not done, and some parts are not showing, that is coming.
-	* 4/17/2024 - Everything on the body should be UV unwrapped at this point.  Need to combine into like textures, Exhaust, Skin, Lining.
-	* 4/20/2024 - More mesh clean up and organizing in collections.  582kb
-	* 4/21/2024 - Lining up UVs for outer skin, doors, etc.
-	* 4/22/2024 - More UV body layout.
-	* 4/25/2024 - Start body texturing.
-	* 4/28/2024 - Body/wings lines, ribs etc.  NOTE: Overlay and UVs will not match, so line up each section as needed (scale, skew).
-	* 4/28/2024 - Body texture paths.
-	* 5/5/2024 - Abandoning normals for now.  Getting Blender to bake those correctly is rather complicated, especially since we want to use 
-					a gray scale texture.  It may be easier to have a high-poly model, but not now.
-	* 5/16/2024 - Top body texturing done.  Bottom should go quicker.
+Orbiter 2024: (February 10 2025)
+	 * 2/10/2025 - Fix up project so it builds.
+	 * 2/10/2025 - Comment out MFDs causing oapiBitBlt errors.  We need to come back to this.
+	 * 2/11/2025 - Fix textures.  Use 'default' DDS plugin, no compression.
+	 * 2/11/2025 - Break up .blend files into four separate files to everything is in scene 1.
+	 * 2/12/2025 - create state_display, start conversion.
+	 * 2/12/2025 - fix up simple_event
+	 * Start work on obsolete functions.
+	 

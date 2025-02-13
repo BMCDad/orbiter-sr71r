@@ -178,8 +178,8 @@ void SR71Vessel::clbkNavMode(int mode, bool active)
 
 void SR71Vessel::clbkMFDMode(int mfd, int mode)
 {
-	mfdLeft_.OnMfdMode(mfd, mode);
-	mfdRight_.OnMfdMode(mfd, mode);
+//	mfdLeft_.OnMfdMode(mfd, mode);
+//	mfdRight_.OnMfdMode(mfd, mode);
 }
 
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)

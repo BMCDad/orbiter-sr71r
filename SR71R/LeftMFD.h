@@ -23,6 +23,9 @@
 #include "../bc_orbiter/Control.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
 
 namespace bco = bc_orbiter;
 

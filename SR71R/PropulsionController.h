@@ -29,6 +29,10 @@
 #include "../bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
+
 #include "SR71r_common.h"
 #include "ShipMets.h"
 
@@ -225,6 +229,7 @@ private:
     bco::simple_event<>     btnFuelValveOpen_{
         bm::vc::FuelValveOpenSwitch_loc,
         0.01,
+        0,
         bm::pnlright::pnlFuelValveSwitch_RC,
         1
     };
@@ -242,6 +247,7 @@ private:
     bco::simple_event<>     btnRCSValveOpen_{
         bm::vc::RCSValveOpenSwitch_loc,
         0.01,
+        0,
         bm::pnlright::pnlRCSValveSwitch_RC,
         1
     };

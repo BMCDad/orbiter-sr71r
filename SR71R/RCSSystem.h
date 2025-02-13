@@ -19,8 +19,11 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/simple_event.h"
 #include "../bc_orbiter/on_off_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
 
 namespace bco = bc_orbiter;
 
@@ -54,30 +57,34 @@ private:
     bco::simple_event<>     btnLinear_{
         bm::vc::vcRCSLin_loc,
         0.01,
+        0,
         bm::pnl::pnlRCSLin_RC,
         0
     };
 
-    bco::on_off_display     lightLinear_{
+    bco::state_display     lightLinear_{
         bm::vc::vcRCSLin_id,
-            bm::vc::vcRCSLin_vrt,
-            bm::pnl::pnlRCSLin_id,
-            bm::pnl::pnlRCSLin_vrt,
-            0.0352
+        bm::vc::vcRCSLin_vrt,
+        0,
+        bm::pnl::pnlRCSLin_id,
+        bm::pnl::pnlRCSLin_vrt,
+        0
     };
 
     bco::simple_event<>     btnRotate_{
         bm::vc::vcRCSRot_loc,
         0.01,
+        0,
         bm::pnl::pnlRCSRot_RC,
         0
     };
 
-    bco::on_off_display		lightRotate_{
+    bco::state_display      lightRotate_{
         bm::vc::vcRCSRot_id,
-            bm::vc::vcRCSRot_vrt,
-            bm::pnl::pnlRCSRot_id,
-            bm::pnl::pnlRCSRot_vrt,
-            0.0352
+        bm::vc::vcRCSRot_vrt,
+        0,
+        bm::pnl::pnlRCSRot_id,
+        bm::pnl::pnlRCSRot_vrt,
+        0
     };
 };

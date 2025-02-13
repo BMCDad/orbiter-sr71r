@@ -25,6 +25,10 @@
 #include "../bc_orbiter/simple_event.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71rPanel_mesh.h"
+#include "SR71rPanelRight_mesh.h"
+
 
 namespace bco = bc_orbiter;
 
@@ -82,6 +86,7 @@ private:
     bco::simple_event<>     btnDocking_{
         bm::vc::vcHUDDock_loc,
         0.01,
+        0,
         bm::pnl::pnlHUDDock_RC,
         0
     };
@@ -97,6 +102,7 @@ private:
     bco::simple_event<>     btnOrbit_{
         bm::vc::vcHUDOrbit_loc,
         0.01,
+        0,
         bm::pnl::pnlHUDOrbit_RC,
         0
     };
@@ -112,6 +118,7 @@ private:
     bco::simple_event<>     btnSurface_ {
         bm::vc::vcHUDSURF_loc,
         0.01,
+        0,
         bm::pnl::pnlHUDSurf_RC,
         0
     };
