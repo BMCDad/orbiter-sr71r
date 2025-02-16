@@ -33,7 +33,7 @@ namespace bc_orbiter
 	class Component
 	{
 	public:
-		Component(vessel* baseVessel) : baseVessel_(baseVessel)
+		Component(vessel* baseVessel) : vessel_(baseVessel)
 		{}
 
 		/**
@@ -87,10 +87,10 @@ namespace bc_orbiter
 		void SetRedrawId(int id) { redrawId_ = id; }
 		int GetRedrawId() const { return redrawId_; }
 
-		vessel*	GetBaseVessel() const { return baseVessel_; }
+		vessel*	GetBaseVessel() const { return vessel_; }
 
 	private:
-		vessel*		baseVessel_;
+		vessel*		vessel_;
 
 		int redrawId_	{ 0 };
 	};

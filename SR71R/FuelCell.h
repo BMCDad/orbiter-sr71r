@@ -22,11 +22,12 @@
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/on_off_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "IConsumable.h"
 #include "PowerSystem.h"
 #include "SR71r_common.h"
+#include "Common.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -39,6 +40,7 @@ const double OXYGEN_BURN_RATE_PER_SEC_100A = (0.2 / 3600) / 100;		// 2 lbs per h
 const double HYDROGEN_BURN_RATE_PER_SEC_100A = (0.1 / 3600) / 100;			// 0.3 lbs per hour @ 100 amps.  
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 /**	Fuel cell.
 	Models the plane's fuel cell.
@@ -92,6 +94,7 @@ public:
     bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
 
 private:
+    bco::vessel&            vessel_;
     bco::power_provider&    power_;
     bco::consumable&        lox_;
     bco::consumable&        hydro_;
@@ -119,12 +122,12 @@ private:
         1
     };
 
-    bco::on_off_display	lightAvailable_     {
-                                                bm::vc::FuelCellAvailableLight_id,
-                                                bm::vc::FuelCellAvailableLight_vrt,
-                                                bm::pnlright::pnlLgtFCPwrAvail_id,
-                                                bm::pnlright::pnlLgtFCPwrAvail_vrt,
-                                                0.0244,
-                                                1
-                                            };
+    bco::state_display  lightAvailable_ {
+        bm::vc::FuelCellAvailableLight_id,
+        bm::vc::FuelCellAvailableLight_vrt,
+        cmn::vc::main,
+        bm::pnlright::pnlLgtFCPwrAvail_id,
+        bm::pnlright::pnlLgtFCPwrAvail_vrt,
+        cmn::panel::right
+    };
 };

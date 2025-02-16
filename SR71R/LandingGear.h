@@ -27,7 +27,10 @@
 #include "SR71rPanel_mesh.h"
 #include "SR71rPanelRight_mesh.h"
 
+#include "Common.h"
+
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 class VESSEL;
 
@@ -182,8 +185,9 @@ private:
         0
     };
 
-    bco::panel_display      pnlHudGear_         {   bm::pnl::pnlHUDGear_id,     /* 0-DOWN, 1-UP, 2-Transition*/
-                                                    bm::pnl::pnlHUDGear_vrt, 
-                                                    0.0305
-                                                };
+    bco::panel_display      pnlHudGear_ {
+        bm::pnl::pnlHUDGear_id,     /* 0-DOWN, 1-UP, 2-Transition*/
+        bm::pnl::pnlHUDGear_vrt, 
+        cmn::panel::main
+    };
 };

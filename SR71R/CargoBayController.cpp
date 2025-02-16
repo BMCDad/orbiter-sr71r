@@ -34,7 +34,7 @@ CargoBayController::CargoBayController(bco::power_provider& pwr, bco::vessel& ve
 void CargoBayController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
 	if (IsPowered()) {
-        animCargoBayDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
+        animCargoBayDoors_.Update(vessel, switchOpen_.is_on() ? 1.0 : 0.0, simdt);
 	}
 
     auto status = bco::status_display::status::off;
@@ -70,8 +70,7 @@ void CargoBayController::handle_set_class_caps(bco::vessel& vessel)
 {
     auto mIdx = vessel.GetMainMeshIndex();
 
-    auto id = vessel.CreateVesselAnimation(&animCargoBayDoors_, 0.01);
-    animCargoBayDoors_.VesselId(id);
+    auto id = vessel.CreateVesselAnimation(animCargoBayDoors_);
     vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftFront_);
     vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightFront_);
     vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftMain_);

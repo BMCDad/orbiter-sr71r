@@ -20,7 +20,8 @@
 #include "SR71r_mesh.h"
 
 HUD::HUD(bco::power_provider& pwr, bco::vessel& vessel) :
-    power_(pwr)
+    power_(pwr),
+    vessel_(vessel_)
 { 
     power_.attach_consumer(this),
     vessel.AddControl(&btnLightDocking_);
@@ -38,37 +39,37 @@ HUD::HUD(bco::power_provider& pwr, bco::vessel& vessel) :
 
 bool HUD::handle_load_vc(bco::vessel& vessel, int vcid)
 {
-	// Register HUD
-	static VCHUDSPEC huds =
-	{
-		1,						// Mesh number (VC)
-		bm::vc::HUD_id,			// mesh group
-		{ 0.0, 0.8, 15.25 },	// hud center (location)
-		0.12					// hud size
-	};
+    // Register HUD
+    static VCHUDSPEC huds =
+    {
+       1,                   // Mesh number (VC)
+       bm::vc::HUD_id,      // mesh group
+       { 0.0, 0.8, 15.25 }, // hud center (location)
+       0.12                 // hud size
+    };
 
-	oapiVCRegisterHUD(&huds);	// HUD parameters
-	return true;
+    oapiVCRegisterHUD(&huds);	// HUD parameters
+    return true;
 }
 
 void HUD::OnHudMode(int mode)
 {
-    btnLightDocking_.set_state( mode == HUD_DOCKING);
-    btnLightSurface_.set_state( mode == HUD_SURFACE);
-    btnLightOrbit_.set_state(   mode == HUD_ORBIT);
+    btnLightDocking_.set_state( vessel_, mode == HUD_DOCKING);
+    btnLightSurface_.set_state( vessel_, mode == HUD_SURFACE);
+    btnLightOrbit_.set_state(   vessel_, mode == HUD_ORBIT);
 
     // HUD mode is changing, if it is NOT changing to NONE, and we don't have power, turn it off.
-	if (!IsPowered())
-	{
-		oapiSetHUDMode(HUD_NONE);
-	}
+    if (!IsPowered())
+    {
+        oapiSetHUDMode(HUD_NONE);
+    }
 }
 
 void HUD::OnChanged(int mode)
 {
-	auto currentMode = oapiGetHUDMode();
-	auto newMode = ((mode == currentMode) || !IsPowered()) ? HUD_NONE : mode;
-	oapiSetHUDMode(newMode);;
+    auto currentMode = oapiGetHUDMode();
+    auto newMode = ((mode == currentMode) || !IsPowered()) ? HUD_NONE : mode;
+    oapiSetHUDMode(newMode);;
 }
 
 void HUD::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)

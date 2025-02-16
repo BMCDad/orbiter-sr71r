@@ -78,9 +78,9 @@ private:
 
     bco::animation_target   animBrakeSurface_;
     bco::animation_target   animBrakeSwitch_    {   2.0 };
-    bco::animation_target	animAirBrake_       {   2.0 };
+    bco::animation_target   animAirBrake_       {   2.0 };
 
-    bco::animation_group     gpBrakeHandle_     {   { bm::vc::AirBrakeLever_id },
+    bco::animation_group    gpBrakeHandle_     {   { bm::vc::AirBrakeLever_id },
                                                     bm::vc::SpBrakeAxisRight_loc, bm::vc::SpBrakeAxisLeft_loc,
                                                     (58 * RAD),
                                                     0.0, 1.0 };

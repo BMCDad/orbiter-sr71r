@@ -22,40 +22,41 @@
 
 
 FuelCell::FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumable& lox, bco::consumable& hydro) :
-	power_(pwr),
-	lox_(lox),
-	hydro_(hydro),
-	isFuelCellAvailable_(false)
+    power_(pwr),
+    lox_(lox),
+    hydro_(hydro),
+    isFuelCellAvailable_(false),
+    vessel_(vessel)
 {
-	vessel.AddControl(&switchEnabled_);
-	vessel.AddControl(&lightAvailable_);
+    vessel.AddControl(&switchEnabled_);
+    vessel.AddControl(&lightAvailable_);
 }
 
 void FuelCell::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
-	if (!IsPowered())
-	{
-		SetIsFuelCellPowerAvailable(false);
-	}
-	else
-	{
-		auto ampFac = power_.amp_load();
+    if (!IsPowered())
+    {
+        SetIsFuelCellPowerAvailable(false);
+    }
+    else
+    {
+        auto ampFac = power_.amp_load();
 
-		auto isLOX = lox_.level() > 0.0;
-		auto isHYD = hydro_.level() > 0.0;
+        auto isLOX = lox_.level() > 0.0;
+        auto isHYD = hydro_.level() > 0.0;
 
-		if (isLOX) {
-			lox_.draw(OXYGEN_BURN_RATE_PER_SEC_100A * ampFac);
-		}
+        if (isLOX) {
+            lox_.draw(OXYGEN_BURN_RATE_PER_SEC_100A * ampFac);
+        }
 
-		if (isHYD) {
-			hydro_.draw(HYDROGEN_BURN_RATE_PER_SEC_100A * ampFac);
-		}
+        if (isHYD) {
+            hydro_.draw(HYDROGEN_BURN_RATE_PER_SEC_100A * ampFac);
+        }
 
-		SetIsFuelCellPowerAvailable(isLOX && isHYD);
-	}
+        SetIsFuelCellPowerAvailable(isLOX && isHYD);
+    }
 
-	sigAvailPower_.fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
+    sigAvailPower_.fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
 }
 
 bool FuelCell::handle_load_state(bco::vessel& vessel, const std::string& line)
@@ -67,17 +68,17 @@ bool FuelCell::handle_load_state(bco::vessel& vessel, const std::string& line)
 
 std::string FuelCell::handle_save_state(bco::vessel& vessel)
 {
-	std::ostringstream os;
-	os << switchEnabled_;
-	return os.str();
+    std::ostringstream os;
+    os << switchEnabled_;
+    return os.str();
 }
 
 
 void FuelCell::SetIsFuelCellPowerAvailable(bool newValue)
 {
-	if (newValue != isFuelCellAvailable_)
-	{
-		isFuelCellAvailable_ = newValue;
-		lightAvailable_.set_state(isFuelCellAvailable_);
-	}
+    if (newValue != isFuelCellAvailable_)
+    {
+        isFuelCellAvailable_ = newValue;
+        lightAvailable_.set_state(vessel_, isFuelCellAvailable_);
+    }
 }

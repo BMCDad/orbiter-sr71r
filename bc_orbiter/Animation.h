@@ -55,7 +55,7 @@ namespace bc_orbiter
         }
         
         std::vector<UINT>                   group_;
-        VECTOR3                             location_;
+        VECTOR3                             location_{ 0.0, 0.0, 0.0 };
         std::unique_ptr<MGROUP_TRANSFORM>   transform_;
         double start_;
         double stop_;
@@ -70,9 +70,9 @@ namespace bc_orbiter
 
     struct state_update
     {
-        double	            speed_{ 1.0 };
-        double				state_{ 0.0 };
-        double              target_state_{ 0.0 };
+        double	         speed_{ 1.0 };
+        double          state_{ 0.0 };
+        double          target_state_{ 0.0 };
     };
 
     /**
@@ -210,10 +210,17 @@ namespace bc_orbiter
         }
     };
 
-    struct animation {
-        virtual void Step(double dt) = 0;
-        virtual double GetState() const = 0;
-        virtual void SetState(double) = 0;
+    class animation {
+    public:
+        virtual ~animation() = default;
+        animation() = default;  // Ensure default constructor exists
+        animation(const animation&) = default;
+        animation& operator=(const animation&) = default;
+
+        virtual void Step(double dt) {};
+        virtual double GetState() const { return 0.0; }
+        virtual void SetState(double) {};
+        virtual void VesselId(UINT id) {};
     };
 
     /**
@@ -224,8 +231,7 @@ namespace bc_orbiter
     class animation_base : public animation, public IAnimationState
     {
     public:
-        animation_base()
-        {}
+        animation_base() = default;
 
         animation_base(IAnimationState* state, double speed, func_target_achieved func = nullptr) :
             stateProvider_(state),
@@ -269,6 +275,12 @@ namespace bc_orbiter
             }
         }
 
+        void Update(VESSEL4& vessel, double target, double simdt)
+        {
+            Step(target, simdt);
+            vessel.SetAnimation(vesselId_, updateState_.state_);
+        }
+
         /**
         Sets the state of the animation.
         @param state The new state of the animation.  The state is a number 0..1 which indicates
@@ -276,7 +288,7 @@ namespace bc_orbiter
         to a specific state.  This calls is useful during load configuration in order to set the
         animation state immediatly to a starting point.
         */
-        void SetState(double state)
+        void SetState(double state) override
         {
             updateState_.state_ = state;
             updateState_.target_state_ = state;
@@ -296,7 +308,7 @@ namespace bc_orbiter
 
         const double* GetStatePtr() const { return &updateState_.state_; }
 
-        void VesselId(UINT id) { vesselId_ = id; }
+        void VesselId(UINT id) override { vesselId_ = id; }
         UINT VesselId() const { return vesselId_; }
 
         friend std::istream& operator>>(std::istream& input, animation_base& obj) {

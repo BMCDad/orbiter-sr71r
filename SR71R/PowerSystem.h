@@ -18,12 +18,12 @@
 
 #include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/on_off_display.h"
 #include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/status_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "FuelCell.h"
 #include "SR71r_common.h"
+#include "Common.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -33,6 +33,7 @@
 #include <map>
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 class FuelCell;
 
@@ -133,31 +134,31 @@ private:
         1
     };
 
-    bco::on_off_display     lightFuelCellConnected_{
+    bco::state_display     lightFuelCellConnected_ {
         bm::vc::FuelCellConnectedLight_id,
         bm::vc::FuelCellConnectedLight_vrt,
+        cmn::vc::main,
         bm::pnlright::pnlLgtFCPwrOn_id,
         bm::pnlright::pnlLgtFCPwrOn_vrt,
-        0.0244,
-        1
+        cmn::panel::right
     };
 
-    bco::on_off_display     lightExternalAvail_{
+    bco::state_display     lightExternalAvail_ {
         bm::vc::ExtAvailableLight_id,
         bm::vc::ExtAvailableLight_vrt,
+        cmn::vc::main,
         bm::pnlright::pnlLgtExtPwrAvail_id,
         bm::pnlright::pnlLgtExtPwrAvail_vrt,
-        0.0244,
-        1
+        cmn::panel::right
     };
 
-    bco::on_off_display     lightExternalConnected_{
+    bco::state_display     lightExternalConnected_{
         bm::vc::ExtConnectedLight_id,
         bm::vc::ExtConnectedLight_vrt,
+        cmn::vc::main,
         bm::pnlright::pnlLgtExtPwrOn_id,
         bm::pnlright::pnlLgtExtPwrOn_vrt,
-        0.0244,
-        1
+        cmn::panel::right
     };
 
     bco::rotary_display_target  gaugePowerVolts_{
@@ -180,11 +181,12 @@ private:
         1
     };
 
-    bco::status_display         statusBattery_{
+    bco::state_display         statusBattery_ {
         bm::vc::MsgLightBattery_id,
         bm::vc::MsgLightBattery_vrt,
+        cmn::vc::main,
         bm::pnl::pnlMsgLightBattery_id,
         bm::pnl::pnlMsgLightBattery_vrt,
-        0.0361
+        cmn::panel::main
     };
 };

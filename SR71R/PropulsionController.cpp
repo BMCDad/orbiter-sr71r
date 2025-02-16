@@ -102,33 +102,39 @@ void PropulsionController::handle_post_step(bco::vessel& vessel, double simt, do
 
 void PropulsionController::Update(double deltaUpdate)
 {
-	isExternAvail_ = (IsPowered() && vessel_.IsStoppedOrDocked());
-	lightFuelAvail_.set_state(isExternAvail_);
-	lightRCSAvail_.set_state(isExternAvail_);
+    isExternAvail_ = (IsPowered() && vessel_.IsStoppedOrDocked());
+    
+    if (lightFuelAvail_.set_state(isExternAvail_)) 
+        vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightFuelAvail_.get_id());
 
-	if (!isExternAvail_)
-	{
-		isFilling_ = false;
-		isRCSFilling_ = false;
-	}
+    if (lightRCSAvail_.set_state(isExternAvail_))
+        vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightRCSAvail_.get_id());
 
-	lightFuelValveOpen_.set_state(isFilling_);
-	lightRCSValveOpen_.set_state(isRCSFilling_);
+    if (!isExternAvail_)
+    {
+        isFilling_ = false;
+        isRCSFilling_ = false;
+    }
 
-	HandleTransfer(deltaUpdate); // <- this sets the current levels.
+    if (lightFuelValveOpen_.set_state(isFilling_))
+        vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightFuelValveOpen_.get_id());
+
+    if (lightRCSValveOpen_.set_state(isRCSFilling_))
+        vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightRCSValveOpen_.get_id());
+
+    HandleTransfer(deltaUpdate); // <- this sets the current levels.
 
     // Main flow
     auto flow = vessel_.GetPropellantFlowrate(vessel_.MainPropellant());
-//    auto trFlow = (flow / maxMainFlow_) * (PI2 * 0.75);	// 90.718 = 200lbs per hour : 270 deg.
-	if ((flow < 0.0) || switchFuelDump_.is_on()) flow = 0.0;	 // Don't report flow if dumping.
-//	sigFuelFlowRate_.fire(flow / maxMainFlow_);	 // Converted to 0-1 range.
-	gaugeFuelFlow_.set_state(flow / maxMainFlow_);
+    //    auto trFlow = (flow / maxMainFlow_) * (PI2 * 0.75);	// 90.718 = 200lbs per hour : 270 deg.
+    if ((flow < 0.0) || switchFuelDump_.is_on()) flow = 0.0;	 // Don't report flow if dumping.
+    //	sigFuelFlowRate_.fire(flow / maxMainFlow_);	 // Converted to 0-1 range.
+    gaugeFuelFlow_.set_state(flow / maxMainFlow_);
 
-	statusLimiter_.set_state(
-		(!IsPowered() || switchThrustLimit_.is_on())
-		?	bco::status_display::status::off
-		:	bco::status_display::status::on
-	);
+    if (statusLimiter_.set_state(
+        (!IsPowered() || switchThrustLimit_.is_on())
+        ? cmn::status::off
+        : cmn::status::on)) vessel_.TriggerRedrawArea(cmn::panel::main, cmn::vc::main, statusLimiter_.get_id());
 
 
     // Main level
@@ -142,47 +148,47 @@ void PropulsionController::Update(double deltaUpdate)
 
 void PropulsionController::HandleTransfer(double deltaUpdate)
 {
-	// Determine fuel levels:
-	mainFuelLevel_  = vessel_.GetPropellantMass(vessel_.MainPropellant()) / 
-					  vessel_.GetPropellantMaxMass(vessel_.MainPropellant());
+    // Determine fuel levels:
+    mainFuelLevel_ = vessel_.GetPropellantMass(vessel_.MainPropellant()) /
+        vessel_.GetPropellantMaxMass(vessel_.MainPropellant());
 
-	rcsFuelLevel_   = vessel_.GetPropellantMass(vessel_.RcsPropellant()) / 
-					  vessel_.GetPropellantMaxMass(vessel_.RcsPropellant());
+    rcsFuelLevel_ = vessel_.GetPropellantMass(vessel_.RcsPropellant()) /
+        vessel_.GetPropellantMaxMass(vessel_.RcsPropellant());
 
-	gaugeFuelMain_.set_state(mainFuelLevel_);
-	gaugeFuelRCS_.set_state(rcsFuelLevel_);
+    gaugeFuelMain_.set_state(mainFuelLevel_);
+    gaugeFuelRCS_.set_state(rcsFuelLevel_);
 
-	// Dumping and filling of the main tank will happen regardless of the transfer switch position.
-	if (isFilling_) // cannot be enabled if external fuel is unavailable.
-	{
-		// Add to main.
-		auto actualFill = FillMainFuel(FUEL_FILL_RATE * deltaUpdate);
-		if (actualFill <= 0.0)
-		{
-			isFilling_ = false;
-		}
-	}
+    // Dumping and filling of the main tank will happen regardless of the transfer switch position.
+    if (isFilling_) // cannot be enabled if external fuel is unavailable.
+    {
+        // Add to main.
+        auto actualFill = FillMainFuel(FUEL_FILL_RATE * deltaUpdate);
+        if (actualFill <= 0.0)
+        {
+            isFilling_ = false;
+        }
+    }
 
-	if (isRCSFilling_) {
-		auto actualFill = FillRCSFuel(FUEL_FILL_RATE * deltaUpdate);
-		if (actualFill <= 0.0) {
-			isRCSFilling_ = false;
-		}
-	}
+    if (isRCSFilling_) {
+        auto actualFill = FillRCSFuel(FUEL_FILL_RATE * deltaUpdate);
+        if (actualFill <= 0.0) {
+            isRCSFilling_ = false;
+        }
+    }
 
-	if (IsPowered() && switchFuelDump_.is_on())
-	{
-		auto actualDump = DrawMainFuel(FUEL_DUMP_RATE * deltaUpdate);
-	}
+    if (IsPowered() && switchFuelDump_.is_on())
+    {
+        auto actualDump = DrawMainFuel(FUEL_DUMP_RATE * deltaUpdate);
+    }
 
-	signalMainFuelLevel_.fire(mainFuelLevel_);
+    signalMainFuelLevel_.fire(mainFuelLevel_);
 
-	statusFuel_.set_state(
-		(mainFuelLevel_ > 0.2) || !IsPowered()
-		?	bco::status_display::status::off
-		:	mainFuelLevel_ == 0.0
-			?	bco::status_display::status::error
-			:	bco::status_display::status::warn);
+    auto fuelStatus = (mainFuelLevel_ > 0.2) || !IsPowered()
+        ? cmn::status::off : mainFuelLevel_ == 0.0
+            ? cmn::status::error : cmn::status::warn;
+
+    if (statusFuel_.set_state(fuelStatus)) 
+        vessel_.TriggerRedrawArea(cmn::panel::main, cmn::vc::main, statusFuel_.get_id());
 }
 
 double PropulsionController::GetVesselMainThrustLevel()

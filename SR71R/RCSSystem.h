@@ -18,7 +18,6 @@
 
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/on_off_display.h"
 #include "../bc_orbiter/state_display.h"
 
 #include "SR71r_mesh.h"

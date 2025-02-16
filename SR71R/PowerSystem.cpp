@@ -23,35 +23,35 @@
 #include <assert.h>
 
 PowerSystem::PowerSystem(bco::vessel& vessel) :
-	batteryLevel_(1.0),			// Always available for now.
-	slotFuelCellAvailablePower_([&](double v) { })
+    batteryLevel_(1.0),			// Always available for now.
+    slotFuelCellAvailablePower_([&](double v) {})
 {
-	vessel.AddControl(&switchEnabled);
-	vessel.AddControl(&switchConnectExternal_);
-	vessel.AddControl(&switchConnectFuelCell_);
-	vessel.AddControl(&lightFuelCellConnected_);
-	vessel.AddControl(&lightExternalAvail_);
-	vessel.AddControl(&lightExternalConnected_);
-	vessel.AddControl(&gaugePowerAmps_);
-	vessel.AddControl(&gaugePowerVolts_);
-	vessel.AddControl(&statusBattery_);
+    vessel.AddControl(&switchEnabled);
+    vessel.AddControl(&switchConnectExternal_);
+    vessel.AddControl(&switchConnectFuelCell_);
+    vessel.AddControl(&lightFuelCellConnected_);
+    vessel.AddControl(&lightExternalAvail_);
+    vessel.AddControl(&lightExternalConnected_);
+    vessel.AddControl(&gaugePowerAmps_);
+    vessel.AddControl(&gaugePowerVolts_);
+    vessel.AddControl(&statusBattery_);
 }
 
 bool PowerSystem::handle_load_state(bco::vessel& vessel, const std::string& line)
 {
-	// sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
-	double volt, bl; // Not used, but we read them.
+    // sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
+    double volt, bl; // Not used, but we read them.
 
-	std::stringstream ss(line);
-	ss >> switchEnabled >> switchConnectExternal_ >> switchConnectFuelCell_ >> volt >> bl;
-	return true;
+    std::stringstream ss(line);
+    ss >> switchEnabled >> switchConnectExternal_ >> switchConnectFuelCell_ >> volt >> bl;
+    return true;
 }
 
 std::string PowerSystem::handle_save_state(bco::vessel& vessel)
 {
-	std::stringstream ss;
-	ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_ << " 0.0 0.0";
-	return ss.str();
+    std::stringstream ss;
+    ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_ << " 0.0 0.0";
+    return ss.str();
 }
 
 //void PowerSystem::AddMainCircuitDevice(bco::PoweredComponent* device)
@@ -61,53 +61,53 @@ std::string PowerSystem::handle_save_state(bco::vessel& vessel)
 
 void PowerSystem::Update(bco::vessel& vessel)
 {
-	/* Power system update:
-	*	Determine if we have a power source available and how much it provides.
-	*	Check the current amp total and determine if we have an overload.
-	*	Report the voltage available signal so components know what they have to work with.
-	*/
-	auto externalConnected = vessel.IsStoppedOrDocked();
-	lightExternalAvail_.set_state(externalConnected);
+    /* Power system update:
+    *	Determine if we have a power source available and how much it provides.
+    *	Check the current amp total and determine if we have an overload.
+    *	Report the voltage available signal so components know what they have to work with.
+    */
+    auto externalConnected = vessel.IsStoppedOrDocked();
+    lightExternalAvail_.set_state(vessel, externalConnected);
 
-	// handle connected power
-	auto availExternal = 
-		externalConnected &&				// External power is available
-		switchConnectExternal_.is_on() 		// External power is connected to the bus
-		? FULL_POWER : 0.0;
+    // handle connected power
+    auto availExternal =
+        externalConnected &&				// External power is available
+        switchConnectExternal_.is_on() 		// External power is connected to the bus
+        ? FULL_POWER : 0.0;
 
-	lightExternalConnected_.set_state(availExternal > USEABLE_POWER);
+    lightExternalConnected_.set_state(vessel, availExternal > USEABLE_POWER);
 
-	// handle fuelcell power
-	auto availFuelCell = switchConnectFuelCell_.is_on() ? slotFuelCellAvailablePower_.value() : 0.0;
-	lightFuelCellConnected_.set_state(availFuelCell > USEABLE_POWER);
+    // handle fuelcell power
+    auto availFuelCell = switchConnectFuelCell_.is_on() ? slotFuelCellAvailablePower_.value() : 0.0;
+    lightFuelCellConnected_.set_state(vessel, availFuelCell > USEABLE_POWER);
 
-	// handle battery power
-	auto availBattery = batteryLevel_ * FULL_POWER;
-	auto availPower = 0.0;
-	isDrawingBattery_ = false;
+    // handle battery power
+    auto availBattery = batteryLevel_ * FULL_POWER;
+    auto availPower = 0.0;
+    isDrawingBattery_ = false;
 
-	if (switchEnabled.is_on())
-	{
-		availPower = fmax(availExternal, availFuelCell);
-		if (availPower < USEABLE_POWER) {
-			isDrawingBattery_ = true;
-			availPower = availBattery;
-		}
-	}
+    if (switchEnabled.is_on())
+    {
+        availPower = fmax(availExternal, availFuelCell);
+        if (availPower < USEABLE_POWER) {
+            isDrawingBattery_ = true;
+            availPower = availBattery;
+        }
+    }
 
-	if (availPower != prevVolts_) {
-		prevVolts_ = availPower;
+    if (availPower != prevVolts_) {
+        prevVolts_ = availPower;
 
-		for (auto & c : consumers_) {
-			c->on_change(prevVolts_);
-		}
-	}
+        for (auto& c : consumers_) {
+            c->on_change(prevVolts_);
+        }
+    }
 
-	gaugePowerVolts_.set_state(availPower / FULL_POWER);
+    gaugePowerVolts_.set_state(availPower / FULL_POWER);
 
-	statusBattery_.set_state(
-		(switchEnabled.is_on() && isDrawingBattery_)
-		?	bco::status_display::status::warn
-		:	bco::status_display::status::off
-	);
+    statusBattery_.set_state(vessel,
+        (switchEnabled.is_on() && isDrawingBattery_)
+        ? cmn::status::warn
+        : cmn::status::off
+    );
 }

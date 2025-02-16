@@ -1,5 +1,5 @@
 //	vessel - bco Orbiter Library
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2025  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -88,18 +88,13 @@ namespace bc_orbiter
         PROPELLANT_HANDLE RcsPropellant() const { return rcsPropellant_; }
 
         /**
-        Creates an animation and registers it with the base vessel.  animation_target registered
-        with the base class automatically receive part of the PostStep time processing.
-        @param target IAnimationState object that will control the animation state.
-        @param speed The speed of the animation.
-        @param func The function to call when the animation hits its target state.
+        Registers animation with the base vessel, and assigns its id.
+        @param animation Animation to register.
         */
-        template<typename AT = animation_target>
-        UINT CreateVesselAnimation(IAnimationState* target, double speed = 1.0, func_target_achieved func = nullptr)
+        UINT CreateVesselAnimation(animation& animation)
         {
             auto animId = VESSEL3::CreateAnimation(0.0);
-
-            animations_[animId] = std::make_unique<AT>(target, speed, func);
+            animation.VesselId(animId);
             return animId;
         }
 
@@ -118,18 +113,15 @@ namespace bc_orbiter
         {
             ANIMATIONCOMPONENT_HANDLE result = nullptr;
 
-            auto eh = animations_.find(animId);
+            //auto eh = animations_.find(animId);
 
-            if (eh != animations_.end())
-            {
-                transform->transform_->mesh = meshIdx;
-                result = VESSEL3::AddAnimationComponent(
-                    animId,
-                    transform->start_,
-                    transform->stop_,
-                    transform->transform_.get(),
-                    parent);
-            }
+            transform->transform_->mesh = meshIdx;
+            result = VESSEL3::AddAnimationComponent(
+                animId,
+                transform->start_,
+                transform->stop_,
+                transform->transform_.get(),
+                parent);
 
             return result;
         }
@@ -143,8 +135,8 @@ namespace bc_orbiter
         */
         void SetAnimationState(const animation_target& anim)
         {
-            auto eh = animations_.find(anim.VesselId());
-            if (eh != animations_.end())	eh->second->SetState(anim.GetState());
+            //auto eh = animations_.find(anim.VesselId());
+            //if (eh != animations_.end())	eh->second->SetState(anim.GetState());
         }
 
         int GetIdForComponent(Component* comp)
@@ -207,11 +199,11 @@ namespace bc_orbiter
         std::vector<load_vc*>							load_vc_components_;
         std::vector<load_panel*>						load_panel_components_;
         std::map<int, load_vc*>							map_vc_component_;
-        std::map<int, load_panel*>						map_panel_component_;
+        std::map<int, load_panel*>                  map_panel_component_;
 
-        std::map<int, Component*>						idComponentMap_;		// still used by MFDs.  Need to figure that out, then we can get rid of Component
-        std::map<UINT, std::unique_ptr<animation>>      animations_;
-        std::map<int, MESHHANDLE>                       panel_mesh_handles_;
+        std::map<int, Component*>                   idComponentMap_;		// still used by MFDs.  Need to figure that out, then we can get rid of Component
+//        std::map<UINT, std::unique_ptr<animation>>  animations_;
+        std::map<int, MESHHANDLE>                   panel_mesh_handles_;
 
         int					nextEventId_{ 0 };
         bool				isCreated_{ false };	// Set true after clbkPostCreation
@@ -366,12 +358,12 @@ namespace bc_orbiter
     inline void vessel::clbkPostStep(double simt, double simdt, double mjd)
     {
         // Update animations
-        for (auto& a : animations_)
-        {
-            a.second->Step(simdt);
-            auto state = a.second->GetState();
-            VESSEL3::SetAnimation(a.first, state);
-        }
+        //for (auto& a : animations_)
+        //{
+        //    a.second->Step(simdt);
+        //    auto state = a.second->GetState();
+        //    VESSEL3::SetAnimation(a.first, state);
+        //}
 
         // NEW MODE  << This will go away eventually
         if (oapiCockpitMode() == COCKPIT_VIRTUAL) {

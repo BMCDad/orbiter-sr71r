@@ -195,9 +195,6 @@
     <ClInclude Include="..\bc_orbiter\MFDBase.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\on_off_display.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="..\bc_orbiter\on_off_display_event.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
@@ -217,9 +214,6 @@
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\simple_event.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\status_display.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\Tools.h">
@@ -251,6 +245,9 @@
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\state_display.h">
       <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

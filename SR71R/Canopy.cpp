@@ -35,26 +35,26 @@ Canopy::Canopy(bco::power_provider& pwr, bco::vessel& vessel) :
 void Canopy::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
-        animCanopy_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
+        animCanopy_.Update(vessel, switchOpen_.is_on() ? 1.0 : 0.0, simdt);
     }
     /*
         off     - no power OR closed
         warn    - yes power AND is moving
         on      - yes power AND open
     */
-    auto status = STATUS_OFF;
+    auto status = cmn::status::off;
     if (power_.volts_available() > MIN_VOLTS) {
         if ((animCanopy_.GetState() > 0.0) && (animCanopy_.GetState() < 1.0)) {
-            status = STATUS_WARN;
+            status = cmn::status::warn;
         }
         else {
             if (animCanopy_.GetState() == 1.0) {
-                status = STATUS_ON;
+                status = cmn::status::on;
             }
         }
     }
     
-    if (status_.set_state(status)) vessel.TriggerRedrawArea(0, 0, status_.get_id());
+    status_.set_state(vessel, status);
 }
 
 bool Canopy::handle_load_state(bco::vessel& vessel, const std::string& line)
@@ -80,7 +80,7 @@ void Canopy::handle_set_class_caps(bco::vessel& vessel)
     auto vcIdx = vessel.GetVCMeshIndex();
     auto mIdx = vessel.GetMainMeshIndex();
 
-    auto idAnim = vessel.CreateVesselAnimation(&animCanopy_, 0.2);
+    auto idAnim = vessel.CreateVesselAnimation(animCanopy_);
     animCanopy_.VesselId(idAnim);
     vessel.AddVesselAnimationComponent(idAnim, vcIdx, &gpCanopyVC_);
     vessel.AddVesselAnimationComponent(idAnim, mIdx, &gpCanopy_);

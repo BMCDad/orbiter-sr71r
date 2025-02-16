@@ -25,26 +25,26 @@
 #include <assert.h>
 
 NavModes::NavModes(bco::vessel& baseVessel, Avionics& avionics) :
-      baseVessel_(baseVessel)
+      vessel_(baseVessel)
     , avionics_(avionics)
 {
-    baseVessel_.AddControl(&btnKillRot_);
-    baseVessel_.AddControl(&btnHorzLevel_);
-    baseVessel_.AddControl(&btnAntiNorm_);
-    baseVessel_.AddControl(&btnNormal_);
-    baseVessel_.AddControl(&btnPrograde_);
-    baseVessel_.AddControl(&btnRetrograde_);
+    vessel_.AddControl(&btnKillRot_);
+    vessel_.AddControl(&btnHorzLevel_);
+    vessel_.AddControl(&btnAntiNorm_);
+    vessel_.AddControl(&btnNormal_);
+    vessel_.AddControl(&btnPrograde_);
+    vessel_.AddControl(&btnRetrograde_);
 
-    baseVessel_.AddControl(&lightKillRot_);
-    baseVessel_.AddControl(&lightHorzLevel_);
-    baseVessel_.AddControl(&lightAntiNorm_);
-    baseVessel_.AddControl(&lightNormal_);
-    baseVessel_.AddControl(&lightPrograde_);
-    baseVessel_.AddControl(&lightRetro_);
+    vessel_.AddControl(&lightKillRot_);
+    vessel_.AddControl(&lightHorzLevel_);
+    vessel_.AddControl(&lightAntiNorm_);
+    vessel_.AddControl(&lightNormal_);
+    vessel_.AddControl(&lightPrograde_);
+    vessel_.AddControl(&lightRetro_);
 
-    baseVessel_.AddControl(&pnlHudFrame_);
-    baseVessel_.AddControl(&pnlHudMode_);
-    baseVessel_.AddControl(&pnlHudMode2_);
+    vessel_.AddControl(&pnlHudFrame_);
+    vessel_.AddControl(&pnlHudMode_);
+    vessel_.AddControl(&pnlHudMode2_);
 
     btnKillRot_     .attach([&]() { ToggleMode(NAVMODE_KILLROT); });
     btnHorzLevel_   .attach([&]() { ToggleMode(NAVMODE_HLEVEL); });
@@ -58,27 +58,27 @@ void NavModes::OnNavMode(int mode, bool active)
 {
     switch (mode) {
     case NAVMODE_ANTINORMAL:
-        lightAntiNorm_.set_state(active);
+        lightAntiNorm_.set_state(vessel_, active);
         navMode1_ = active ? NAVMODE_ANTINORMAL : 0;
         break;
     case NAVMODE_HLEVEL:
-        lightHorzLevel_.set_state(active);
+        lightHorzLevel_.set_state(vessel_, active);
         navMode2_ = active ? NAVMODE_HLEVEL : 0;
         break;
     case NAVMODE_KILLROT:
-        lightKillRot_.set_state(active);
+        lightKillRot_.set_state(vessel_, active);
         navMode1_ = active ? NAVMODE_KILLROT : 0;
         break;
     case NAVMODE_NORMAL:
-        lightNormal_.set_state(active);
+        lightNormal_.set_state(vessel_, active);
         navMode1_ = active ? NAVMODE_NORMAL : 0;
         break;
     case NAVMODE_PROGRADE:
-        lightPrograde_.set_state(active);
+        lightPrograde_.set_state(vessel_, active);
         navMode1_ = active ? NAVMODE_PROGRADE : 0;
         break;
     case NAVMODE_RETROGRADE:
-        lightRetro_.set_state(active);
+        lightRetro_.set_state(vessel_, active);
         navMode1_ = active ? NAVMODE_RETROGRADE : 0;
         break;
     }
@@ -90,7 +90,7 @@ void NavModes::ToggleMode(int mode)
 {
 	if (avionics_.IsAeroActive())
 	{
-        baseVessel_.ToggleNavmode(mode);
+        vessel_.ToggleNavmode(mode);
 	}
 
 	Update();
@@ -101,12 +101,12 @@ void NavModes::Update()
 	if (!avionics_.IsAeroActive())
 	{
 		// Shut down all modes:
-		baseVessel_.DeactivateNavmode(NAVMODE_KILLROT);
-		baseVessel_.DeactivateNavmode(NAVMODE_HLEVEL);
-		baseVessel_.DeactivateNavmode(NAVMODE_PROGRADE);
-		baseVessel_.DeactivateNavmode(NAVMODE_RETROGRADE);
-		baseVessel_.DeactivateNavmode(NAVMODE_NORMAL);
-		baseVessel_.DeactivateNavmode(NAVMODE_ANTINORMAL);
+		vessel_.DeactivateNavmode(NAVMODE_KILLROT);
+		vessel_.DeactivateNavmode(NAVMODE_HLEVEL);
+		vessel_.DeactivateNavmode(NAVMODE_PROGRADE);
+		vessel_.DeactivateNavmode(NAVMODE_RETROGRADE);
+		vessel_.DeactivateNavmode(NAVMODE_NORMAL);
+		vessel_.DeactivateNavmode(NAVMODE_ANTINORMAL);
 	}
 }
 

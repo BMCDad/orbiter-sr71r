@@ -20,21 +20,24 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/rotary_display.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/on_off_display.h"
 #include "../bc_orbiter/simple_event.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
+#include "Common.h"
 #include "ShipMets.h"
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 class OxygenTank :
     public bco::generic_tank
 {
 public:
     OxygenTank(bco::power_provider& pwr, bco::vessel& vessel) :
-        bco::generic_tank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE)
+        bco::generic_tank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE),
+        vessel_(vessel)
     {
         vessel.AddControl(&gaugeLevel_);
         vessel.AddControl(&lightAvailable_);
@@ -49,14 +52,21 @@ public:
     }
 
     void UpdateLevel(double l) override { gaugeLevel_.set_state(l); }
-    void UpdateIsFilling(bool b) override { btnLightFill_.set_state(b); }
-    void UpdateIsAvailable(bool b) override { lightAvailable_.set_state(b); }
+
+    void UpdateIsFilling(bool b) override {
+        if (btnLightFill_.set_state(b)) vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, btnLightFill_.get_id());
+    }
+
+    void UpdateIsAvailable(bool b) override {
+        if (lightAvailable_.set_state(b)) vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightAvailable_.get_id());
+    }
 
     double amp_draw() const override {
         return generic_tank::amp_draw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
     }
 
 private:
+    bco::vessel& vessel_;
 
     // ***  HYDROGEN SUPPLY  *** //
     bco::rotary_display<bco::animation_target> gaugeLevel_{
@@ -69,13 +79,13 @@ private:
         1
     };
 
-    bco::on_off_display lightAvailable_{
+    bco::state_display  lightAvailable_ {
         bm::vc::LOXSupplyOnLight_id,
         bm::vc::LOXSupplyOnLight_vrt,
+        cmn::vc::main,
         bm::pnlright::pnlO2Avail_id,
         bm::pnlright::pnlO2Avail_vrt,
-        0.0244,
-        1
+        cmn::panel::right
     };
 
     bco::simple_event<> btnFill_{
@@ -86,13 +96,13 @@ private:
         1
     };
 
-    bco::on_off_display btnLightFill_{
+    bco::state_display   btnLightFill_ {
         bm::vc::LOXValveOpenSwitch_id,
         bm::vc::LOXValveOpenSwitch_vrt,
+        cmn::vc::main,
         bm::pnlright::pnlO2Switch_id,
         bm::pnlright::pnlO2Switch_vrt,
-        0.0352,
-        1
+        cmn::panel::right
     };
 };
 

@@ -48,5 +48,10 @@ Orbiter 2024: (February 10 2025)
 	 * 2/11/2025 - Break up .blend files into four separate files to everything is in scene 1.
 	 * 2/12/2025 - create state_display, start conversion.
 	 * 2/12/2025 - fix up simple_event
+	 * 2/14/2025 - state_display : propulsion, oxygen, hydrogen, navmode, power,
+	 * 2/15/2025 - Animation map removed from vessel, comps manage own animations.
+	 * 2/15/2025 - retired on_off_display in favor of state_display
+	 * Consolidate sr71_common and common.
 	 * Start work on obsolete functions.
+	 * clean up animation classes, more complex then needed probably.
 	 

@@ -53,7 +53,7 @@ void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simd
         }
     }
 
-    pnlHudGear_.set_position(hudState);
+//    if (pnlHudGear_.set_state(hudState)) vessel.TriggerPanelRedrawArea(cmn::panel::main, pnlHudGear_.get_id());
 }
 
 bool LandingGear::handle_load_state(bco::vessel& vessel, const std::string& line)
@@ -81,12 +81,12 @@ void LandingGear::handle_set_class_caps(bco::vessel& vessel)
     auto meshIdx = vessel.GetMainMeshIndex();
 
     // VC
-    auto aid = vessel.CreateVesselAnimation(&animLandingSwitch_, 2.0);
+    auto aid = vessel.CreateVesselAnimation(animLandingSwitch_);
     animLandingGear_.VesselId(aid);
     vessel.AddVesselAnimationComponent(aid, vcMeshIdx, &lgHandle_);
 
     // External
-    idAnim_ = vessel.CreateVesselAnimation(&animLandingGear_, 0.15);
+    idAnim_ = vessel.CreateVesselAnimation(animLandingGear_);
     animLandingGear_.VesselId(idAnim_);
 
     // Front gear

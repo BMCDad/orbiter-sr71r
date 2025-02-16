@@ -101,7 +101,7 @@ void HoverEngines::handle_set_class_caps(bco::vessel& vessel)
 
 //    swOpen_.Setup(vessel);
 
-    auto aid = vessel.CreateVesselAnimation(&animHoverDoors_, 0.12);
+    auto aid = vessel.CreateVesselAnimation(animHoverDoors_);
     vessel.AddVesselAnimationComponent(aid, mIdx, &gpFrontLeft_);
     vessel.AddVesselAnimationComponent(aid, mIdx, &gpFrontRight_);
     vessel.AddVesselAnimationComponent(aid, mIdx, &gpLeft_);

@@ -19,12 +19,13 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/on_off_display.h"
 #include "../bc_orbiter/simple_event.h"
 #include "../bc_orbiter/rotary_display.h"
 #include "../bc_orbiter/transform_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_common.h"
+#include "Common.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -32,6 +33,7 @@
 #include "SR71rPanelRight_mesh.h"
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 class Avionics : public bco::vessel_component, public bco::post_step, public bco::manage_state, public bco::power_consumer
 {
@@ -70,6 +72,7 @@ public:
     bco::signal<double>& AOASignal() { return aoaSignal_; }
 
 private:
+    bco::vessel& vessel_;
     bco::power_provider& power_;
 
     bool IsPowered() const { return switchAvionPower_.is_on() && (power_.volts_available() > 24.0); }
@@ -151,60 +154,66 @@ private:
     };
 
     // ***   VSI  *** //
-    bco::rotary_display_target		vsiHand_{ { bm::vc::gaVSINeedle_id }
-                                                , bm::vc::gaVSINeedle_loc, bm::vc::VSIAxis_loc
-                                                , bm::pnl::pnlVSINeedle_id
-                                                , bm::pnl::pnlVSINeedle_vrt
-                                                , (340 * RAD)
-                                                , 2.0
+    bco::rotary_display_target  vsiHand_ {
+        { bm::vc::gaVSINeedle_id },
+        bm::vc::gaVSINeedle_loc, bm::vc::VSIAxis_loc,
+        bm::pnl::pnlVSINeedle_id,
+        bm::pnl::pnlVSINeedle_vrt,
+        (340 * RAD),
+        2.0
     };
 
-    bco::on_off_display		vsiActiveFlag_{
+    bco::state_display          vsiActiveFlag_ {
         bm::vc::VSIOffFlag_id,
-            bm::vc::VSIOffFlag_vrt,
-            bm::pnl::pnlVSIOffFlag_id,
-            bm::pnl::pnlVSIOffFlag_vrt,
-            0.0244
+        bm::vc::VSIOffFlag_vrt,
+        cmn::vc::main,
+        bm::pnl::pnlVSIOffFlag_id,
+        bm::pnl::pnlVSIOffFlag_vrt,
+        cmn::panel::main
     };
 
     // ***  ATTITUDE  *** //
-    bco::transform_display	attitudeDisplay_{
+    bco::transform_display	     attitudeDisplay_ {
         bm::vc::AttitudeIndicator_id,
-            bm::vc::AttitudeIndicator_vrt,
-            bm::pnl::pnlAttitudeIndicator_id,
-            bm::pnl::pnlAttitudeIndicator_vrt
+        bm::vc::AttitudeIndicator_vrt,
+        bm::pnl::pnlAttitudeIndicator_id,
+        bm::pnl::pnlAttitudeIndicator_vrt
     };
 
-    bco::on_off_display		attitudeFlag_{
+    bco::state_display          attitudeFlag_{
         bm::vc::AttitudeFlagOff_id,
-            bm::vc::AttitudeFlagOff_vrt,
-            bm::pnl::pnlAttitudeFlagOff_id,
-            bm::pnl::pnlAttitudeFlagOff_vrt,
-            0.0244
+        bm::vc::AttitudeFlagOff_vrt,
+        cmn::vc::main,
+        bm::pnl::pnlAttitudeFlagOff_id,
+        bm::pnl::pnlAttitudeFlagOff_vrt,
+        cmn::panel::main
     };
 
     // ***  AOA  TRIM  GFORCE  ***  //
-    bco::rotary_display_target	aoaHand_{ { bm::vc::AOANeedle_id }
-                                            , bm::vc::AOANeedle_loc, bm::vc::AOAAxis_loc
-                                            , bm::pnl::pnlAOANeedle_id
-                                            , bm::pnl::pnlAOANeedle_vrt
-                                            , (75 * RAD)
-                                            , 2.0
+    bco::rotary_display_target  aoaHand_ {
+        { bm::vc::AOANeedle_id },
+        bm::vc::AOANeedle_loc, bm::vc::AOAAxis_loc,
+        bm::pnl::pnlAOANeedle_id,
+        bm::pnl::pnlAOANeedle_vrt,
+        (75 * RAD),
+        2.0
     };
 
-    bco::rotary_display_target	trimHand_{ { bm::vc::TrimNeedle_id }
-                                            , bm::vc::TrimNeedle_loc, bm::vc::TrimAxis_loc
-                                            , bm::pnl::pnlTrimNeedle_id
-                                            , bm::pnl::pnlTrimNeedle_vrt
-                                            , (180 * RAD)
-                                            , 1.0
+    bco::rotary_display_target  trimHand_ {
+        { bm::vc::TrimNeedle_id },
+        bm::vc::TrimNeedle_loc, bm::vc::TrimAxis_loc,
+        bm::pnl::pnlTrimNeedle_id,
+        bm::pnl::pnlTrimNeedle_vrt,
+        (180 * RAD),
+        1.0
     };
 
-    bco::rotary_display_target	accelHand_{ { bm::vc::AccelNeedle_id }
-                                            , bm::vc::AccelNeedle_loc, bm::vc::AccelAxis_loc
-                                            , bm::pnl::pnlAccelNeedle_id
-                                            , bm::pnl::pnlAccelNeedle_vrt
-                                            , (295 * RAD)
-                                            , 1.0
+    bco::rotary_display_target  accelHand_ {
+        { bm::vc::AccelNeedle_id },
+        bm::vc::AccelNeedle_loc, bm::vc::AccelAxis_loc,
+        bm::pnl::pnlAccelNeedle_id,
+        bm::pnl::pnlAccelNeedle_vrt,
+        (295 * RAD),
+        1.0
     };
 };

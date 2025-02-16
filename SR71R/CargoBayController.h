@@ -96,7 +96,7 @@ private:
             (animCargoBayDoors_.GetState() < 1.0); 
     }
 
-    bco::animation_target		    animCargoBayDoors_{ 0.01 };
+    bco::animation_target    animCargoBayDoors_{ 0.01 };
 
     bco::animation_group     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
                                                     bm::main::Bay1AxisPA_loc, bm::main::Bay1AxisPF_loc,

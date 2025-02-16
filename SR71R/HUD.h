@@ -21,16 +21,19 @@
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/on_off_display.h"
 #include "../bc_orbiter/simple_event.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
 #include "SR71rPanel_mesh.h"
 #include "SR71rPanelRight_mesh.h"
 
+#include "Common.h"
+
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 /**
 	Manage the heads up display (HUD).
@@ -43,10 +46,10 @@ namespace bco = bc_orbiter;
 	The HUD mode is managed by Orbiter.
 */
 class HUD :
-    public bco::vessel_component
-    , public bco::power_consumer
-    , public bco::load_vc
-    , public bco::draw_hud
+    public bco::vessel_component,
+    public bco::power_consumer,
+    public bco::load_vc,
+    public bco::draw_hud
 {
 public:
     HUD(bco::power_provider& pwr, bco::vessel& vessel);
@@ -59,28 +62,13 @@ public:
 
     void OnHudMode(int mode);
 
-    //bco::slot<bool>&	DockModeSlot()		{ return slotDockMode_; }
-    //bco::slot<bool>&	OrbitModeSlot()		{ return slotOrbitMode_; }
-    //bco::slot<bool>&	SurfaceModeSlot()	{ return slotSurfaceMode_; }
-
-    //bco::signal<bool>&	DockModeSignal()	{ return sigDockMode_; }
-    //bco::signal<bool>&	OrbitModeSignal()	{ return sigOrbitMode_; }
-    //bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
-
 private:
+    bco::vessel vessel_;
     bco::power_provider& power_;
 
     bool IsPowered() const { return power_.volts_available() > 24.0; }
 
     void OnChanged(int mode);
-
-    //bco::slot<bool> slotDockMode_;
-    //bco::slot<bool> slotOrbitMode_;
-    //bco::slot<bool> slotSurfaceMode_;
-
-    //bco::signal<bool> sigDockMode_;
-    //bco::signal<bool> sigOrbitMode_;
-    //bco::signal<bool> sigSurfaceMode_;
 
     // *** HUD *** 
     bco::simple_event<>     btnDocking_{
@@ -91,12 +79,13 @@ private:
         0
     };
 
-    bco::on_off_display     btnLightDocking_{
+    bco::state_display      btnLightDocking_{
         bm::vc::vcHUDDock_id,
         bm::vc::vcHUDDock_vrt,
+        cmn::vc::main,
         bm::pnl::pnlHUDDock_id,
         bm::pnl::pnlHUDDock_vrt,
-        0.0352
+        cmn::panel::main
     };
 
     bco::simple_event<>     btnOrbit_{
@@ -107,12 +96,13 @@ private:
         0
     };
 
-    bco::on_off_display     btnLightOrbit_{
+    bco::state_display     btnLightOrbit_ {
         bm::vc::vcHUDOrbit_id,
         bm::vc::vcHUDOrbit_vrt,
+        cmn::vc::main,
         bm::pnl::pnlHUDOrbit_id,
         bm::pnl::pnlHUDOrbit_vrt,
-        0.0352
+        cmn::panel::main
     };
 
     bco::simple_event<>     btnSurface_ {
@@ -123,10 +113,12 @@ private:
         0
     };
 
-    bco::on_off_display		btnLightSurface_{ bm::vc::vcHUDSURF_id,
-                                                bm::vc::vcHUDSURF_vrt,
-                                                bm::pnl::pnlHUDSurf_id,
-                                                bm::pnl::pnlHUDSurf_vrt,
-                                                0.0352
+    bco::state_display      btnLightSurface_ {
+        bm::vc::vcHUDSURF_id,
+        bm::vc::vcHUDSURF_vrt,
+        cmn::vc::main,
+        bm::pnl::pnlHUDSurf_id,
+        bm::pnl::pnlHUDSurf_vrt,
+        cmn::panel::main
     };
 };

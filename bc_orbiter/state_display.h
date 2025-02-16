@@ -24,10 +24,12 @@ namespace bc_orbiter {
 
     /*
     state_display
-    Controls a display only state for 2D panels and VCs.  By convention state is the
+    Controls a display only state (no event) for 2D panels and VCs.  By convention state is the
     offset in the texture to the right.  Which means a state of 0 is the 'rest' state.
     A state of 1 moves the 'U' setting of the texture to the right one 'width' of the the
-    rectangle defined by NTVERTEX.
+    rectangle defined by NTVERTEX.  This control also assumes the same texture will be used for
+    both panel and VC, meaning the offset that is calculated for the VC will also be used for
+    the panel.
     **/
     class state_display :
         public control,
@@ -42,8 +44,7 @@ namespace bc_orbiter {
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
             const int panelId
-        ) : control(-1),
-            vcGroupId_(vcGroupId),
+        ) : vcGroupId_(vcGroupId),
             vcVerts_(vcVerts),
             pnlGroupId_(pnlGroupId),
             pnlVerts_(pnlVerts),
@@ -57,7 +58,7 @@ namespace bc_orbiter {
         }
 
         void on_panel_redraw(MESHHANDLE meshPanel) override {
-            DrawPanelOffset(meshPanel, pnlGroupId_, pnlVerts_, offset_ * static_cast<double>(state_));
+            DrawPanelOffset(meshPanel, pnlGroupId_, pnlVerts_, offset_ * state_);
         }
 
         int vc_mouse_flags()        override { return PANEL_MOUSE_IGNORE; }
@@ -67,17 +68,37 @@ namespace bc_orbiter {
         int panel_redraw_flags()    override { return PANEL_REDRAW_USER; }
         int panel_id()              override { return pnlId_; }
 
-        bool set_state(double s) {
-            if (state_ != s) {
-                state_ = s;
+        /// <summary>
+        /// Set the state of the control.
+        /// </summary>
+        /// <param name="state">New state</param>
+        /// <returns>True if the state changed</returns>
+        bool set_state(double state) {
+            if (state_ != state) {
+                state_ = state;
                 return true;
             }
-            state_ = s;
+            state_ = state;
             return false;
         }
 
+        /// <summary>
+        /// Set the state of the control.
+        /// </summary>
+        /// <param name="state">New state</param>
+        /// <returns>True if the state changed</returns>
         bool set_state(bool s) {
             return set_state(s ? 1.0 : 0.0);
+        }
+
+        void set_state(VESSEL4& vessel, bool s) {
+            if (set_state(s))
+                vessel.TriggerRedrawArea(pnlId_, vcId_, get_id());
+        }
+
+        void set_status(VESSEL4& vessel, double s) {
+            if (set_state(s))
+                vessel.TriggerRedrawArea(pnlId_, vcId_, get_id());
         }
 
     private:

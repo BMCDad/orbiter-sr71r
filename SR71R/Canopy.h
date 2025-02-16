@@ -32,8 +32,10 @@
 
 #include "ShipMets.h"
 #include "SR71r_common.h"
+#include "common.h"
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 /**	Canopy
 Controls the canopy door.
@@ -91,14 +93,6 @@ public:
 private:
     const double MIN_VOLTS = 20.0;
     
-    const double STATUS_ON      = 0.0;      // move to common
-    const double STATUS_OFF     = 1.0;
-    const double STATUS_ERROR   = 2.0;
-    const double STATUS_WARN    = 3.0;
-
-    const int   VC_ID           = 0;        // move to common
-    const int   PANEL_ID        = 0;
-
     bco::power_provider& power_;
     
     bool IsPowered() const { 
@@ -117,24 +111,26 @@ private:
 
     bco::animation_target    animCanopy_     { 0.2 };
 
-    bco::animation_group     gpCanopy_       { { bm::main::Canopy_id,
-                                                bm::main::CanopyWindowInside_id,
-                                                bm::main::CanopyWindowOutside_id},
-                                                bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
-                                                (55 * RAD),
-                                                0, 1
-                                            };
+    bco::animation_group     gpCanopy_ {
+        { bm::main::Canopy_id,
+        bm::main::CanopyWindowInside_id,
+        bm::main::CanopyWindowOutside_id},
+        bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
+        (55 * RAD),
+        0, 1
+    };
 
-    bco::animation_group     gpCanopyVC_     { { bm::vc::CanopyFI_id,
-                                                bm::vc::CanopyFO_id,
-                                                bm::vc::CanopyWindowInside_id,
-                                                bm::vc::CanopyWindowSI_id },
-                                                bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
-                                                (55 * RAD),
-                                                0, 1
-                                            };
+    bco::animation_group     gpCanopyVC_ {
+        { bm::vc::CanopyFI_id,
+        bm::vc::CanopyFO_id,
+        bm::vc::CanopyWindowInside_id,
+        bm::vc::CanopyWindowSI_id },
+        bm::main::CockpitAxisS_loc, bm::main::CockpitAxisP_loc,
+        (55 * RAD),
+        0, 1
+    };
 
-    bco::on_off_input       switchPower_{
+    bco::on_off_input       switchPower_ {
         { bm::vc::SwCanopyPower_id },
         bm::vc::SwCanopyPower_loc,
         bm::vc::PowerTopRightAxis_loc,
@@ -145,7 +141,7 @@ private:
         1
     };
 
-    bco::on_off_input       switchOpen_{
+    bco::on_off_input       switchOpen_ {
         { bm::vc::SwCanopyOpen_id },
         bm::vc::SwCanopyOpen_loc,
         bm::vc::DoorsRightAxis_loc,
@@ -159,9 +155,9 @@ private:
     bco::state_display      status_ {
         bm::vc::MsgLightCanopy_id,
         bm::vc::MsgLightCanopy_vrt,
-        VC_ID,
+        cmn::vc::main,
         bm::pnl::pnlMsgLightCanopy_id,
         bm::pnl::pnlMsgLightCanopy_vrt,
-        PANEL_ID
+        cmn::panel::main
     };
 };

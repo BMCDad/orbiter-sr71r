@@ -157,15 +157,14 @@
     <ClInclude Include="..\bc_orbiter\MFDBase.h" />
     <ClInclude Include="..\bc_orbiter\on_off_display_event.h" />
     <ClInclude Include="..\bc_orbiter\on_off_input.h" />
-    <ClInclude Include="..\bc_orbiter\on_off_display.h" />
     <ClInclude Include="..\bc_orbiter\rotary_display.h" />
     <ClInclude Include="..\bc_orbiter\signals.h" />
     <ClInclude Include="..\bc_orbiter\simple_event.h" />
-    <ClInclude Include="..\bc_orbiter\status_display.h" />
     <ClInclude Include="..\bc_orbiter\Tools.h" />
     <ClInclude Include="Canopy.h" />
     <ClInclude Include="CargoBayController.h" />
     <ClInclude Include="Clock.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="HoverEngines.h" />
     <ClInclude Include="HSI.h" />
     <ClInclude Include="HydrogenTank.h" />
