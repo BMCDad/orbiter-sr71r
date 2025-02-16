@@ -21,7 +21,7 @@
 #include "../bc_orbiter/rotary_display.h"
 #include "../bc_orbiter/on_off_input.h"
 #include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/state_display.h"
+#include "../bc_orbiter/display_full.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
@@ -76,7 +76,7 @@ private:
         1
     };
 
-    bco::state_display      lightAvailable_{
+    bco::display_full       lightAvailable_{
         bm::vc::LH2SupplyOnLight_id,
         bm::vc::LH2SupplyOnLight_vrt,
         cmn::vc::main,
@@ -93,7 +93,7 @@ private:
         1
     };
 
-    bco::state_display      btnLightFill_{
+    bco::display_full       btnLightFill_{
         bm::vc::LH2ValveOpenSwitch_id,
         bm::vc::LH2ValveOpenSwitch_vrt,
         cmn::vc::main,

@@ -201,7 +201,7 @@
     <ClInclude Include="..\bc_orbiter\on_off_input.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\panel_display.h">
+    <ClInclude Include="..\bc_orbiter\display_panel.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\pid_altitude.h">
@@ -240,13 +240,13 @@
     <ClInclude Include="..\bc_orbiter\VCEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\state_display.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\vc_display.h">
+    <ClInclude Include="..\bc_orbiter\display_vc.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\display_full.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,13 +16,13 @@
 
 #pragma once
 
-#include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/rotary_display.h"
+#include "../bc_orbiter/display_full.h"
 #include "../bc_orbiter/PanelEvent.h"
+#include "../bc_orbiter/rotary_display.h"
+#include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/VCEvent.h"
 #include "../bc_orbiter/VCAnimation.h"
-#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -126,7 +126,7 @@ private:
         1
     };
 
-    bco::state_display          status_{
+    bco::display_full       status_{
         { bm::vc::MsgLightAPU_id},
         bm::vc::MsgLightAPU_vrt,
         cmn::vc::main,

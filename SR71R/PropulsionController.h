@@ -25,7 +25,7 @@
 #include "../bc_orbiter/on_off_input.h"
 #include "../bc_orbiter/simple_event.h"
 #include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/state_display.h"
+#include "../bc_orbiter/display_full.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -208,7 +208,7 @@ private:
     };
 
     // Displays
-    bco::state_display      lightFuelAvail_ {
+    bco::display_full       lightFuelAvail_ {
         bm::vc::FuelSupplyOnLight_id,
         bm::vc::FuelSupplyOnLight_vrt,
         cmn::vc::main,
@@ -217,7 +217,7 @@ private:
         cmn::panel::right
     };
 
-    bco::state_display      lightRCSAvail_{
+    bco::display_full       lightRCSAvail_{
         bm::vc::RCSSupplyOnLight_id,
         bm::vc::RCSSupplyOnLight_vrt,
         cmn::vc::main,
@@ -235,7 +235,7 @@ private:
         1
     };
 
-    bco::state_display     lightFuelValveOpen_{
+    bco::display_full       lightFuelValveOpen_{
         bm::vc::FuelValveOpenSwitch_id,
         bm::vc::FuelValveOpenSwitch_vrt,
         cmn::vc::main,
@@ -253,7 +253,7 @@ private:
         1
     };
 
-    bco::state_display      lightRCSValveOpen_ {
+    bco::display_full       lightRCSValveOpen_ {
         bm::vc::RCSValveOpenSwitch_id,
         bm::vc::RCSValveOpenSwitch_vrt,
         cmn::vc::main,
@@ -262,7 +262,7 @@ private:
         cmn::panel::right
     };
 
-    bco::state_display     statusFuel_ {
+    bco::display_full       statusFuel_ {
         bm::vc::MsgLightFuelWarn_id,
         bm::vc::MsgLightFuelWarn_vrt,
         cmn::vc::main,
@@ -271,7 +271,7 @@ private:
         cmn::panel::main
     };
 
-    bco::state_display     statusLimiter_{
+    bco::display_full       statusLimiter_{
         bm::vc::MsgLightThrustLimit_id,
         bm::vc::MsgLightThrustLimit_vrt,
         cmn::vc::main,

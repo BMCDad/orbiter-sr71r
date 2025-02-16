@@ -21,7 +21,7 @@
 
 HUD::HUD(bco::power_provider& pwr, bco::vessel& vessel) :
     power_(pwr),
-    vessel_(vessel_)
+    vessel_(vessel)
 { 
     power_.attach_consumer(this),
     vessel.AddControl(&btnLightDocking_);

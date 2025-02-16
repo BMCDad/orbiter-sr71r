@@ -22,7 +22,7 @@
 #include "../bc_orbiter/rotary_display.h"
 #include "../bc_orbiter/transform_display.h"
 #include "../bc_orbiter/flat_roll.h"
-#include "../bc_orbiter/state_display.h"
+#include "../bc_orbiter/display_full.h"
 
 #include "Avionics.h"
 #include "Common.h"
@@ -282,7 +282,7 @@ private:
           bm::pnl::pnlHSIMilesHunds_vrt,
           0.1084 };
 
-    bco::state_display      hsiOffFlag_{
+    bco::display_full       hsiOffFlag_{
         bm::vc::HSIOffFlag_id,
         bm::vc::HSIOffFlag_vrt,
         cmn::vc::main,
@@ -291,7 +291,7 @@ private:
         cmn::panel::main
     };
 
-    bco::state_display      hsiExoFlag_ {
+    bco::display_full       hsiExoFlag_ {
        bm::vc::HSIExoFlag_id,
         bm::vc::HSIExoFlag_vrt,
         cmn::vc::main,
@@ -300,7 +300,7 @@ private:
         cmn::panel::main
     };
 
-    bco::state_display      comStatusFlag_ {
+    bco::display_full       comStatusFlag_ {
         bm::vc::COMStatusPanel_id,
         bm::vc::COMStatusPanel_vrt,
         cmn::vc::main,

@@ -178,4 +178,59 @@ namespace bc_orbiter {
     };
 
     using funcEvent = std::function<void()>;
+    using funcState = std::function<double()>;
+
+    template<typename T>
+    class display_control_base :
+        public control,
+        public T
+    {
+    public:
+        display_control_base(
+            const UINT pnlGroupId,
+            const NTVERTEX* pnlVerts,
+            const int panelId
+        ) : T(
+            pnlGroupId,
+            pnlVerts,
+            panelId,
+            [&] {return state_; }
+        )
+        {
+        }
+
+        void set_state(VESSEL4& vessel, bool s) {
+            if (set_state(s ? 1.0 : 0.0))
+                T::trigger_redraw(vessel, get_id());
+        }
+
+        void set_state(VESSEL4& vessel, double s) {
+            if (set_state(s))
+                T::trigger_redraw(vessel, get_id());
+        }
+
+        void set_state(VESSEL4& vessel, int s) {
+            if (set_state((double)s))
+                T::trigger_redraw(vessel, get_id());
+        }
+
+    protected:
+
+        /// <summary>
+        /// Set the state of the control.
+        /// </summary>
+        /// <param name="state">New state</param>
+        /// <returns>True if the state changed</returns>
+        bool set_state(double state) {
+            if (state_ != state) {
+                state_ = state;
+                return true;
+            }
+            state_ = state;
+            return false;
+        }
+
+    private:
+        double  state_{ 0.0 };
+    };
 }

@@ -130,13 +130,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\bc_orbiter\display_full.h" />
     <ClInclude Include="..\bc_orbiter\handler_interfaces.h" />
     <ClInclude Include="..\bc_orbiter\PanelDisplay.h" />
     <ClInclude Include="..\bc_orbiter\PanelEvent.h" />
-    <ClInclude Include="..\bc_orbiter\state_display.h" />
     <ClInclude Include="..\bc_orbiter\transform_display.h" />
     <ClInclude Include="..\bc_orbiter\VCAnimation.h" />
-    <ClInclude Include="..\bc_orbiter\vc_display.h" />
+    <ClInclude Include="..\bc_orbiter\display_vc.h" />
     <ClInclude Include="..\bc_orbiter\VCEvent.h" />
     <ClInclude Include="..\bc_orbiter\Visual.h" />
     <ClInclude Include="Avionics.h" />
@@ -146,7 +146,7 @@
     <ClInclude Include="APU.h" />
     <ClInclude Include="AvionBase.h" />
     <ClInclude Include="..\bc_orbiter\Animation.h" />
-    <ClInclude Include="..\bc_orbiter\panel_display.h" />
+    <ClInclude Include="..\bc_orbiter\display_panel.h" />
     <ClInclude Include="..\bc_orbiter\pid_altitude.h" />
     <ClInclude Include="..\bc_orbiter\vessel.h" />
     <ClInclude Include="..\bc_orbiter\Component.h" />

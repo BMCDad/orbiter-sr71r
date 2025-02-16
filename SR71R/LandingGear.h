@@ -20,7 +20,7 @@
 #include "../bc_orbiter/Component.h"
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/panel_display.h"
+#include "../bc_orbiter/display_panel.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -185,7 +185,7 @@ private:
         0
     };
 
-    bco::panel_display_control  pnlHudGear_ {
+    bco::display_panel_control  pnlHudGear_ {
         bm::pnl::pnlHUDGear_id,     /* 0-DOWN, 1-UP, 2-Transition*/
         bm::pnl::pnlHUDGear_vrt, 
         cmn::panel::main

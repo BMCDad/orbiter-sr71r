@@ -1,4 +1,4 @@
-//	state_display - bco Orbiter Library
+//	display_full - bco Orbiter Library
 //	Copyright(C) 2025  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
@@ -17,13 +17,14 @@
 #pragma once
 
 #include "Control.h"
-
+#include "display_vc.h"
+#include "display_panel.h"
 #include <functional>
 
 namespace bc_orbiter {
 
     /*
-    state_display
+    display_full
     Controls a display only state (no event) for 2D panels and VCs.  By convention state is the
     offset in the texture to the right.  Which means a state of 0 is the 'rest' state.
     A state of 1 moves the 'U' setting of the texture to the right one 'width' of the the
@@ -31,51 +32,32 @@ namespace bc_orbiter {
     both panel and VC, meaning the offset that is calculated for the VC will also be used for
     the panel.
     **/
-    class state_display :
+    class display_full :
         public control,
-        public vc_event_target,
-        public panel_event_target
+        public display_vc,
+        public display_panel
     {
     public:
-        state_display(
+        display_full(
             const UINT vcGroupId,
             const NTVERTEX* vcVerts,
             const int vcId,
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
             const int panelId
-        ) : vcGroupId_(vcGroupId),
-            vcVerts_(vcVerts),
-            pnlGroupId_(pnlGroupId),
-            pnlVerts_(pnlVerts),
-            offset_(UVOffset(vcVerts)),
-            vcId_(vcId),
-            pnlId_(panelId)
-        { }
-
-        void on_vc_redraw(DEVMESHHANDLE vcMesh) override {
-            DrawVCOffset(vcMesh, vcGroupId_, vcVerts_, state_ * offset_);
+        ) : display_vc(vcGroupId, vcVerts, vcId, [&] {return state_; }),
+            display_panel(pnlGroupId, pnlVerts, panelId, [&] {return state_; })
+        {
         }
-
-        void on_panel_redraw(MESHHANDLE meshPanel) override {
-            DrawPanelOffset(meshPanel, pnlGroupId_, pnlVerts_, offset_ * state_);
-        }
-
-        int vc_mouse_flags()        override { return PANEL_MOUSE_IGNORE; }
-        int vc_redraw_flags()       override { return PANEL_REDRAW_USER; }
-        int vc_id()                 override { return vcId_; }
-        int panel_mouse_flags()     override { return PANEL_MOUSE_IGNORE; }
-        int panel_redraw_flags()    override { return PANEL_REDRAW_USER; }
-        int panel_id()              override { return pnlId_; }
-
         void set_state(VESSEL4& vessel, bool s) {
-            if (set_state(s))
-                vessel.TriggerRedrawArea(pnlId_, vcId_, get_id());
+            if (set_state(s ? 1.0 : 0.0)) {
+                trigger(vessel);
+            }
         }
 
-        void set_status(VESSEL4& vessel, double s) {
+        void set_state(VESSEL4& vessel, double s) {
             if (set_state(s))
-                vessel.TriggerRedrawArea(pnlId_, vcId_, get_id());
+                trigger(vessel);
         }
 
     protected:
@@ -94,26 +76,14 @@ namespace bc_orbiter {
             return false;
         }
 
-        /// <summary>
-        /// Set the state of the control.
-        /// </summary>
-        /// <param name="state">New state</param>
-        /// <returns>True if the state changed</returns>
-        bool set_state(bool s) {
-            return set_state(s ? 1.0 : 0.0);
+    private:
+        void trigger(VESSEL4& vessel) {
+            display_vc::trigger_redraw(vessel, get_id());
+            display_panel::trigger_redraw(vessel, get_id());
         }
 
-    private:
-        UINT            vcGroupId_;
-        const NTVERTEX* vcVerts_;
-        UINT            vcId_{ 0 };
-
-        UINT            pnlGroupId_;
-        const NTVERTEX* pnlVerts_;
-        UINT            pnlId_;
-
-        double          state_{ 0.0 };
-        double          offset_{ 0.0 };
+        double  state_{ 0.0 };
     };
 }
+
 

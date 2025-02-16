@@ -17,11 +17,11 @@
 #pragma once
 
 #include "../bc_orbiter/control.h"
+#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/flat_roll.h"
+#include "../bc_orbiter/rotary_display.h"
 #include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/flat_roll.h"
-#include "../bc_orbiter/state_display.h"
 
 #include "Avionics.h"
 #include "Common.h"
@@ -126,7 +126,7 @@ private:
     roll tdiAltThou_{ bm::vc::vcTDIAltThous_id,		bm::vc::vcTDIAltThous_vrt,		bm::pnl::pnlTDIAltThous_id,		bm::pnl::pnlTDIAltThous_vrt,	ofs };
     roll tdiAltTenThou_{ bm::vc::vcTDIAltTenThous_id,	bm::vc::vcTDIAltTenThous_vrt,	bm::pnl::pnlTDIAltTenThou_id,	bm::pnl::pnlTDIAltTenThou_vrt,	ofs };
 
-    bco::state_display      enabledFlag_{
+    bco::display_full       enabledFlag_{
         bm::vc::AltimeterOffFlag_id,
         bm::vc::AltimeterOffFlag_vrt,
         cmn::vc::main,
@@ -135,7 +135,7 @@ private:
         cmn::panel::main
     };
 
-    bco::state_display      altimeterExoModeFlag_ {
+    bco::display_full       altimeterExoModeFlag_ {
         bm::vc::AltimeterGround_id,
         bm::vc::AltimeterGround_vrt,
         cmn::vc::main,

@@ -23,25 +23,27 @@
 namespace bc_orbiter {
 
     /*
-    vc_display
+    display_vc
     **/
-    class vc_display :
+    class display_vc :
         public vc_event_target
     {
     public:
-        vc_display(
+        display_vc(
             const UINT vcGroupId,
             const NTVERTEX* vcVerts,
-            const int vcId
+            const int vcId,
+            funcState func
         ) : vcGroupId_(vcGroupId),
             vcVerts_(vcVerts),
             offset_(UVOffset(vcVerts)),
-            vcId_(vcId)
+            vcId_(vcId),
+            funcState_(func)
         {
         }
 
         void on_vc_redraw(DEVMESHHANDLE vcMesh) override {
-            DrawVCOffset(vcMesh, vcGroupId_, vcVerts_, state_ * offset_);
+            DrawVCOffset(vcMesh, vcGroupId_, vcVerts_, funcState_() * offset_);
         }
 
         int vc_mouse_flags()        override { return PANEL_MOUSE_IGNORE; }
@@ -49,57 +51,10 @@ namespace bc_orbiter {
         int vc_id()                 override { return vcId_; }
 
     protected:
-        /// <summary>
-        /// Set the state of the control.
-        /// </summary>
-        /// <param name="state">New state</param>
-        /// <returns>True if the state changed</returns>
-        bool set_state(double state) {
-            if (state_ != state) {
-                state_ = state;
-                return true;
-            }
-            state_ = state;
-            return false;
-        }
-
-        /// <summary>
-        /// Set the state of the control.
-        /// </summary>
-        /// <param name="state">New state</param>
-        /// <returns>True if the state changed</returns>
-        bool set_state(bool s) {
-            return set_state(s ? 1.0 : 0.0);
-        }
 
         void trigger_redraw(VESSEL4& vessel, int ctrlId) const {
             // TriggerVCRedrawArea has not been made public yet...
             vessel.TriggerRedrawArea(-1, vcId_, ctrlId);
-        }
-
-    protected:
-
-        /// <summary>
-        /// Set the state of the control.
-        /// </summary>
-        /// <param name="state">New state</param>
-        /// <returns>True if the state changed</returns>
-        bool set_state(double state) {
-            if (state_ != state) {
-                state_ = state;
-                return true;
-            }
-            state_ = state;
-            return false;
-        }
-
-        /// <summary>
-        /// Set the state of the control.
-        /// </summary>
-        /// <param name="state">New state</param>
-        /// <returns>True if the state changed</returns>
-        bool set_state(bool s) {
-            return set_state(s ? 1.0 : 0.0);
         }
 
     private:
@@ -107,8 +62,7 @@ namespace bc_orbiter {
         const NTVERTEX* vcVerts_;
         UINT            vcId_{ 0 };
 
-        double          state_{ 0.0 };
+        funcState       funcState_{ [&] {return 0.0; } };
         double          offset_{ 0.0 };
     };
 }
-

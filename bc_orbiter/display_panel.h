@@ -28,22 +28,24 @@ namespace bc_orbiter {
     A state of 1 moves the 'U' setting of the texture to the right one 'width' of the the
     rectangle defined by NTVERTEX.
     **/
-    class panel_display :
+    class display_panel :
         public panel_event_target {
     public:
-        panel_display(
+        display_panel(
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
-            const int panelId
+            const int panelId,
+            funcState func
         ) : pnlGroupId_(pnlGroupId),
             pnlVerts_(pnlVerts),
             offset_(UVOffset(pnlVerts)),
-            pnlId_(panelId)
+            pnlId_(panelId),
+            funcState_(func)
         {
         }
 
         void on_panel_redraw(MESHHANDLE meshPanel) override {
-            DrawPanelOffset(meshPanel, pnlGroupId_, pnlVerts_, offset_ * state_);
+            DrawPanelOffset(meshPanel, pnlGroupId_, pnlVerts_, offset_ * funcState_());
         }
 
         int panel_mouse_flags()     override { return PANEL_MOUSE_IGNORE; }
@@ -51,29 +53,6 @@ namespace bc_orbiter {
         int panel_id()              override { return pnlId_; }
 
     protected:
-        /// <summary>
-        /// Set the state of the control.
-        /// </summary>
-        /// <param name="state">New state</param>
-        /// <returns>True if the state changed</returns>
-        bool set_state(double state) {
-            if (state_ != state) {
-                state_ = state;
-                return true;
-            }
-            state_ = state;
-            return false;
-        }
-
-        /// <summary>
-        /// Set the state of the control.
-        /// </summary>
-        /// <param name="state">New state</param>
-        /// <returns>True if the state changed</returns>
-        bool set_state(bool s) {
-            return set_state(s ? 1.0 : 0.0);
-        }
-
         void trigger_redraw(VESSEL4& vessel, int ctrlId) const {
             vessel.TriggerPanelRedrawArea(pnlId_, ctrlId);
         }
@@ -83,27 +62,61 @@ namespace bc_orbiter {
         const NTVERTEX* pnlVerts_;
         UINT            pnlId_;
 
-        double          state_{ 0.0 };
+        funcState       funcState_{ [&] {return 0.0; } };
         double          offset_{ 0.0 };
     };
 
 
-    class panel_display_control :
-        public control,
-        public panel_display
-    {
-    public:
-        panel_display_control(
-            const UINT pnlGroupId,
-            const NTVERTEX* pnlVerts,
-            const int panelId
-        ) : panel_display(pnlGroupId, pnlVerts, panelId)
-        {
-        }
+    using display_panel_control = display_control_base<display_panel>;
 
-        void set_state(VESSEL4& vessel, bool s) {
-            if (panel_display::set_state(s))
-                panel_display::trigger_redraw(vessel, get_id());
-        }
-    };
+    //class panel_display_control :
+    //    public control,
+    //    public display_panel
+    //{
+    //public:
+    //    panel_display_control(
+    //        const UINT pnlGroupId,
+    //        const NTVERTEX* pnlVerts,
+    //        const int panelId
+    //    ) : display_panel(
+    //        pnlGroupId, 
+    //        pnlVerts, 
+    //        panelId, 
+    //        [&] {return state_; }
+    //    )
+    //    { }
+
+    //    void set_state(VESSEL4& vessel, bool s) {
+    //        if (set_state(s))
+    //            display_panel::trigger_redraw(vessel, get_id());
+    //    }
+
+    //protected:
+
+    //    /// <summary>
+    //    /// Set the state of the control.
+    //    /// </summary>
+    //    /// <param name="state">New state</param>
+    //    /// <returns>True if the state changed</returns>
+    //    bool set_state(double state) {
+    //        if (state_ != state) {
+    //            state_ = state;
+    //            return true;
+    //        }
+    //        state_ = state;
+    //        return false;
+    //    }
+
+    //    /// <summary>
+    //    /// Set the state of the control.
+    //    /// </summary>
+    //    /// <param name="state">New state</param>
+    //    /// <returns>True if the state changed</returns>
+    //    bool set_state(bool s) {
+    //        return set_state(s ? 1.0 : 0.0);
+    //    }
+
+    //private:
+    //    double  state_{ 0.0 };
+    //};
 }

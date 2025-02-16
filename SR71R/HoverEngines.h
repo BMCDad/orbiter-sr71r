@@ -20,7 +20,7 @@
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/state_display.h"
+#include "../bc_orbiter/display_full.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
@@ -119,7 +119,7 @@ private:
         1
     };
 
-    bco::state_display     status_ {
+    bco::display_full       status_ {
         bm::vc::MsgLightHover_id,
         bm::vc::MsgLightHover_vrt,
         cmn::vc::main,

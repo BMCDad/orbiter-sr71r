@@ -17,12 +17,12 @@
 #pragma once
 
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/signals.h"
+#include "../bc_orbiter/display_full.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/simple_event.h"
 #include "../bc_orbiter/rotary_display.h"
+#include "../bc_orbiter/signals.h"
+#include "../bc_orbiter/simple_event.h"
 #include "../bc_orbiter/transform_display.h"
-#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_common.h"
 #include "Common.h"
@@ -163,7 +163,7 @@ private:
         2.0
     };
 
-    bco::state_display          vsiActiveFlag_ {
+    bco::display_full       vsiActiveFlag_ {
         bm::vc::VSIOffFlag_id,
         bm::vc::VSIOffFlag_vrt,
         cmn::vc::main,
@@ -180,7 +180,7 @@ private:
         bm::pnl::pnlAttitudeIndicator_vrt
     };
 
-    bco::state_display          attitudeFlag_{
+    bco::display_full           attitudeFlag_{
         bm::vc::AttitudeFlagOff_id,
         bm::vc::AttitudeFlagOff_vrt,
         cmn::vc::main,

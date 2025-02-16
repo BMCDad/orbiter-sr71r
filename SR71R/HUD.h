@@ -22,7 +22,7 @@
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/state_display.h"
+#include "../bc_orbiter/display_full.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -63,7 +63,7 @@ public:
     void OnHudMode(int mode);
 
 private:
-    bco::vessel vessel_;
+    bco::vessel& vessel_;
     bco::power_provider& power_;
 
     bool IsPowered() const { return power_.volts_available() > 24.0; }
@@ -79,7 +79,7 @@ private:
         0
     };
 
-    bco::state_display      btnLightDocking_{
+    bco::display_full       btnLightDocking_{
         bm::vc::vcHUDDock_id,
         bm::vc::vcHUDDock_vrt,
         cmn::vc::main,
@@ -96,7 +96,7 @@ private:
         0
     };
 
-    bco::state_display     btnLightOrbit_ {
+    bco::display_full     btnLightOrbit_ {
         bm::vc::vcHUDOrbit_id,
         bm::vc::vcHUDOrbit_vrt,
         cmn::vc::main,
@@ -113,7 +113,7 @@ private:
         0
     };
 
-    bco::state_display      btnLightSurface_ {
+    bco::display_full      btnLightSurface_ {
         bm::vc::vcHUDSURF_id,
         bm::vc::vcHUDSURF_vrt,
         cmn::vc::main,

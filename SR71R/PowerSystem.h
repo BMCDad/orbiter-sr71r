@@ -19,7 +19,7 @@
 #include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/on_off_input.h"
 #include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/state_display.h"
+#include "../bc_orbiter/display_full.h"
 
 #include "FuelCell.h"
 #include "SR71r_common.h"
@@ -134,7 +134,7 @@ private:
         1
     };
 
-    bco::state_display     lightFuelCellConnected_ {
+    bco::display_full           lightFuelCellConnected_ {
         bm::vc::FuelCellConnectedLight_id,
         bm::vc::FuelCellConnectedLight_vrt,
         cmn::vc::main,
@@ -143,7 +143,7 @@ private:
         cmn::panel::right
     };
 
-    bco::state_display     lightExternalAvail_ {
+    bco::display_full           lightExternalAvail_ {
         bm::vc::ExtAvailableLight_id,
         bm::vc::ExtAvailableLight_vrt,
         cmn::vc::main,
@@ -152,7 +152,7 @@ private:
         cmn::panel::right
     };
 
-    bco::state_display     lightExternalConnected_{
+    bco::display_full           lightExternalConnected_{
         bm::vc::ExtConnectedLight_id,
         bm::vc::ExtConnectedLight_vrt,
         cmn::vc::main,
@@ -181,7 +181,7 @@ private:
         1
     };
 
-    bco::state_display         statusBattery_ {
+    bco::display_full           statusBattery_ {
         bm::vc::MsgLightBattery_id,
         bm::vc::MsgLightBattery_vrt,
         cmn::vc::main,

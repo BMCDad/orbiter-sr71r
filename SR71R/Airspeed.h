@@ -19,7 +19,7 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/state_display.h"
+#include "../bc_orbiter/display_full.h"
 
 #include "Avionics.h"
 #include "Common.h"
@@ -153,7 +153,7 @@ private:
     roll tdiMhTens_{ bm::vc::vcTDIMachTens_id,		bm::vc::vcTDIMachTens_vrt,	bm::pnl::pnlTDIMACHTens_id,		bm::pnl::pnlTDIMACHTens_vrt,	ofs };
     roll tdiMhHunds_{ bm::vc::vcTDIMachHunds_id,	bm::vc::vcTDIMachHunds_vrt,	bm::pnl::pnlTDIMACHHunds_id,	bm::pnl::pnlTDIMACHHunds_vrt,	ofs };
 
-    bco::state_display  enabledFlag_{
+    bco::display_full       enabledFlag_{
           bm::vc::SpeedFlagOff_id,
           bm::vc::SpeedFlagOff_vrt,
           cmn::vc::main,
@@ -163,7 +163,7 @@ private:
     };
 
     // Flags: true is off (not showing)
-    bco::state_display  velocityFlag_{
+    bco::display_full       velocityFlag_{
        bm::vc::SpeedVelocityFlag_id,
        bm::vc::SpeedVelocityFlag_vrt,
        0,
@@ -172,7 +172,7 @@ private:
        0
     };
 
-    bco::state_display     status_ {
+    bco::display_full       status_ {
        bm::vc::MsgLightKeasWarn_id,
        bm::vc::MsgLightKeasWarn_vrt,
        cmn::vc::main,

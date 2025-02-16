@@ -22,7 +22,7 @@
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/state_display.h"
+#include "../bc_orbiter/display_full.h"
 
 #include "IConsumable.h"
 #include "PowerSystem.h"
@@ -122,7 +122,7 @@ private:
         1
     };
 
-    bco::state_display  lightAvailable_ {
+    bco::display_full       lightAvailable_ {
         bm::vc::FuelCellAvailableLight_id,
         bm::vc::FuelCellAvailableLight_vrt,
         cmn::vc::main,

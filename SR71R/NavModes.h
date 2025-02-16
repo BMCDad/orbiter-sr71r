@@ -18,8 +18,8 @@
 
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/panel_display.h"
-#include "../bc_orbiter/state_display.h"
+#include "../bc_orbiter/display_panel.h"
+#include "../bc_orbiter/display_full.h"
 
 #include "Avionics.h"
 #include "SR71r_mesh.h"
@@ -72,7 +72,7 @@ private:
 
     // ***  NAV MODES  *** //
     using evt = bco::simple_event<int>;
-    using dsp = bco::state_display;
+    using dsp = bco::display_full;
     const double rad = 0.01;		// hit radius
     const double ofs = 0.0352;		// tex offset
 
@@ -91,19 +91,19 @@ private:
     dsp lightAntiNorm_{     bm::vc::vcNavAntiNorm_id,   bm::vc::vcNavAntiNorm_vrt,  cmn::vc::main, bm::pnl::pnlNavAntiNorm_id,  bm::pnl::pnlNavAntiNorm_vrt, cmn::panel::main };
 
     // 2D panel mini-hud
-    bco::panel_display_control  pnlHudFrame_ {
+    bco::display_panel_control  pnlHudFrame_ {
         bm::pnl::pnlHUDNavTile_id,
         bm::pnl::pnlHUDNavTile_vrt,
         cmn::panel::main 
     };
 
-    bco::panel_display_control  pnlHudMode_ {
+    bco::display_panel_control  pnlHudMode_ {
         bm::pnl::pnlHUDNavText_id,
         bm::pnl::pnlHUDNavText_vrt,
         cmn::panel::main
     };
 
-    bco::panel_display_control  pnlHudMode2_ {
+    bco::display_panel_control  pnlHudMode2_ {
         bm::pnl::pnlHUDNavText2_id,
         bm::pnl::pnlHUDNavText2_vrt,
         cmn::panel::main
