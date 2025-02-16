@@ -20,14 +20,16 @@
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/status_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
 #include "SR71r_common.h"
+#include "Common.h"
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 class HoverEngines : 
     public bco::vessel_component,
@@ -117,11 +119,12 @@ private:
         1
     };
 
-    bco::status_display     status_{ 
+    bco::state_display     status_ {
         bm::vc::MsgLightHover_id,
         bm::vc::MsgLightHover_vrt,
+        cmn::vc::main,
         bm::pnl::pnlMsgLightHover_id,
         bm::pnl::pnlMsgLightHover_vrt,
-        0.0361
+        cmn::panel::main
     };
 };

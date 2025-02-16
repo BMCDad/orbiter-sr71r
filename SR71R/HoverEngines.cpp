@@ -37,18 +37,18 @@ void HoverEngines::handle_post_step(bco::vessel& vessel, double simt, double sim
         animHoverDoors_.Step(switchOpen_.is_on() ? 1.0 : 0.0, simdt);
     }
 
-    auto status = bco::status_display::status::off;
+    auto status = cmn::status::off;
     if (power_.volts_available() > MIN_VOLTS) {
         if ((animHoverDoors_.GetState() > 0.0) && (animHoverDoors_.GetState() < 1.0)) {
-            status = bco::status_display::status::warn;
+            status = cmn::status::warn;
         }
         else {
             if (animHoverDoors_.GetState() == 1.0) {
-                status = bco::status_display::status::on;
+                status = cmn::status::on;
             }
         }
     }
-    status_.set_state(status);
+    status_.set_state(vessel, status);
 }
 
 void HoverEngines::handle_set_class_caps(bco::vessel& vessel)

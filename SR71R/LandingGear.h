@@ -185,7 +185,7 @@ private:
         0
     };
 
-    bco::panel_display      pnlHudGear_ {
+    bco::panel_display_control  pnlHudGear_ {
         bm::pnl::pnlHUDGear_id,     /* 0-DOWN, 1-UP, 2-Transition*/
         bm::pnl::pnlHUDGear_vrt, 
         cmn::panel::main

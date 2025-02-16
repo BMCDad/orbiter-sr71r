@@ -22,7 +22,7 @@
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/status_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -31,8 +31,10 @@
 
 #include "ShipMets.h"
 #include "SR71r_common.h"
+#include "common.h"
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 /**	CargoBayController
 	Controls the cargo bay doors.
@@ -142,10 +144,12 @@ private:
         1
     };
 
-    bco::status_display     status_     {           bm::vc::MsgLightBay_id,
-                                                    bm::vc::MsgLightBay_vrt,
-                                                    bm::pnl::pnlMsgLightBay_id,
-                                                    bm::pnl::pnlMsgLightBay_vrt,
-                                                    0.0361
-                                                };
+    bco::state_display     status_ {
+        bm::vc::MsgLightBay_id,
+        bm::vc::MsgLightBay_vrt,
+        cmn::vc::main,
+        bm::pnl::pnlMsgLightBay_id,
+        bm::pnl::pnlMsgLightBay_vrt,
+        cmn::panel::main
+    };
 };

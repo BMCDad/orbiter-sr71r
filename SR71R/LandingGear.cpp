@@ -53,7 +53,7 @@ void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simd
         }
     }
 
-//    if (pnlHudGear_.set_state(hudState)) vessel.TriggerPanelRedrawArea(cmn::panel::main, pnlHudGear_.get_id());
+    pnlHudGear_.set_state(vessel, hudState);
 }
 
 bool LandingGear::handle_load_state(bco::vessel& vessel, const std::string& line)

@@ -33,29 +33,29 @@ AirBrake::AirBrake(bco::vessel& vessel, bco::hydraulic_provider& apu) :
 
 void AirBrake::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
-	// Note:  The animAirBrake can only move if there is hydraulic power, that
-	// is the actual air brake animation.  The animAirBrakeHandle_ is the air brake
-	// handle in the cockpit and can move regardless of power, therefore it must
-	// always get a piece of the time step.
+    // Note:  The animAirBrake can only move if there is hydraulic power, that
+    // is the actual air brake animation.  The animAirBrakeHandle_ is the air brake
+    // handle in the cockpit and can move regardless of power, therefore it must
+    // always get a piece of the time step.
 
-	if (apu_.level() > 0.8)
-	{
-		animAirBrake_.Step(position_, simdt);
-	}
+    if (apu_.level() > 0.8)
+    {
+        animAirBrake_.Step(position_, simdt);
+    }
 
-	animBrakeSwitch_.Step(position_, simdt);
+    animBrakeSwitch_.Step(position_, simdt);
 
-	// Update drag.
-	dragFactor_ = animAirBrake_.GetState();
-//	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
+    // Update drag.
+    dragFactor_ = animAirBrake_.GetState();
+    //	sprintf(oapiDebugString(), "air brake: %+4.2f", dragFactor_);
 
-	// This needs to be put into a switch statement eventually
-	bco::TranslateMesh(vessel.GetpanelMeshHandle(0), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_vrt, sTrans * animBrakeSwitch_.GetState());
+       // This needs to be put into a switch statement eventually
+    bco::TranslateMesh(vessel.GetpanelMeshHandle(0), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_vrt, sTrans * animBrakeSwitch_.GetState());
 
-	status_.set_state(
-		dragFactor_ > 0.05 
-		?	bco::status_display::status::warn 
-		:	bco::status_display::status::off);
+    status_.set_state(vessel,
+        dragFactor_ > 0.05
+        ? cmn::status::warn
+        : cmn::status::off);
 }
 
 bool AirBrake::handle_load_state(bco::vessel& vessel, const std::string& line)

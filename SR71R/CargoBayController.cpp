@@ -33,22 +33,22 @@ CargoBayController::CargoBayController(bco::power_provider& pwr, bco::vessel& ve
 
 void CargoBayController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
 {
-	if (IsPowered()) {
+    if (IsPowered()) {
         animCargoBayDoors_.Update(vessel, switchOpen_.is_on() ? 1.0 : 0.0, simdt);
-	}
+    }
 
-    auto status = bco::status_display::status::off;
+    auto status = cmn::status::off;
     if (power_.volts_available() > MIN_VOLTS) {
         if ((animCargoBayDoors_.GetState() > 0.0) && (animCargoBayDoors_.GetState() < 1.0)) {
-            status = bco::status_display::status::warn;
+            status = cmn::status::warn;
         }
         else {
             if (animCargoBayDoors_.GetState() == 1.0) {
-                status = bco::status_display::status::on;
+                status = cmn::status::on;
             }
         }
     }
-    status_.set_state(status);
+    status_.set_state(vessel, status);
 }
 
 bool CargoBayController::handle_load_state(bco::vessel& vessel, const std::string& line)

@@ -20,14 +20,16 @@
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/status_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
 #include "SR71r_common.h"
+#include "Common.h"
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 class RetroEngines :
     public bco::vessel_component,
@@ -95,11 +97,12 @@ private:
         1
     };
 
-    bco::status_display     status_ {
+    bco::state_display     status_ {
         bm::vc::MsgLightRetro_id,
         bm::vc::MsgLightRetro_vrt,
+        cmn::vc::main,
         bm::pnl::pnlMsgLightRetro_id,
         bm::pnl::pnlMsgLightRetro_vrt,
-        0.0361
+        cmn::panel::main
     };
 };

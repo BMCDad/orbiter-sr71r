@@ -62,8 +62,8 @@ void RCSSystem::OnRCSMode(int mode)
         rotMode = (mode == RCS_ROT);
     }
 
-    if (lightLinear_.set_state(linMode)) vessel_.TriggerRedrawArea(0, 0, lightLinear_.get_id());
-    if (lightRotate_.set_state(rotMode)) vessel_.TriggerRedrawArea(0, 0, lightRotate_.get_id());
+    lightLinear_.set_state(vessel_, linMode);
+    lightRotate_.set_state(vessel_, rotMode);
 }
 
 void RCSSystem::OnChanged(int mode)

@@ -21,10 +21,8 @@
 #include "../bc_orbiter/rotary_display.h"
 #include "../bc_orbiter/PanelEvent.h"
 #include "../bc_orbiter/VCEvent.h"
-#include "../bc_orbiter/PanelDisplay.h"
 #include "../bc_orbiter/VCAnimation.h"
-#include "../bc_orbiter/vc_display.h"
-#include "../bc_orbiter/status_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -32,8 +30,10 @@
 #include "SR71rPanelRight_mesh.h"
 
 #include "SR71r_common.h"
+#include "Common.h"
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 // TEMP SPECS:
 
@@ -66,95 +66,32 @@ class APU :
     public bco::hydraulic_provider
 {
 public:
-    APU(bco::vessel & vessel, bco::power_provider & pwr) :
-        power_(pwr)
-    {
-        power_.attach_consumer(this);
-
-        vessel.AddControl(&gaugeAPULevel_);
-//        vessel.AddControl(&status_);
-        vessel.AddControl(&pnlPowerSwitchEvent_);
-        vessel.AddControl(&vcPowerSwitchEvent_);
-        vessel.AddControl(&pnDspSwitch_);
-        vessel.AddControl(&vcDspSwitch_);
-
-        vessel.AddControl(&pnlDisplayStatus_);
-        vessel.AddControl(&vcDisplayStatus_);
-
-        bco::connect(sigSwitch_, pnDspSwitch_.Slot());
-        bco::connect(sigSwitch_, vcDspSwitch_.Slot());
-
-        bco::connect(sigStatus_, pnlDisplayStatus_.Slot());
-        bco::connect(sigStatus_, vcDisplayStatus_.Slot());
-
-        pnlPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
-        vcPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
-    }
+    APU(bco::vessel& vessel, bco::power_provider& pwr);
 
     double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
 
     // manage_state
-    bool handle_load_state(bco::vessel & vessel, const std::string & line) override {
-        std::stringstream in(line);
-        int v;
-        in >> v;
-        sigSwitch_.fire((v != 0) ? true : false);
-        return true;
-    }
-
-    std::string handle_save_state(bco::vessel & vessel) override
-    {
-        std::ostringstream os;
-        os << sigSwitch_.current() ? 1 : 0;
-        return os.str();
-    }
+    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
+    std::string handle_save_state(bco::vessel& vessel) override;
 
     // haudralic_provider
     double level() const override { return level_; }
 
-    // post_step
-    void handle_post_step(bco::vessel & vessel, double simt, double simdt, double mjd) override {
-        bool hasFuel = false;
-
-        if (!IsPowered()) {
-            level_ = 0.0;
-        }
-        else {
-            hasFuel = slotFuelLevel_.value() > 0.0;
-
-            if (hasFuel) {
-                // Note:  We don't actually draw fuel, but when its gone the APU will shutdown.
-                level_ = 1.0;
-            }
-            else {
-                level_ = 0.0;
-            }
-        }
-
-        gaugeAPULevel_.set_state(level_);
-
-        auto status = IsPowered() ? 
-            (hasFuel ? bco::status_display::status::on : bco::status_display::status::warn) : bco::status_display::status::off;
-
-        vcDisplayStatus_.Slot().notify(status);
-        pnlDisplayStatus_.Slot().notify(status);
-    }
-
+    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
     bco::slot<double>&FuelLevelSlot() { return slotFuelLevel_; }
 
-    void TogglePowerSwitch()
-    {
-        sigSwitch_.fire(!sigSwitch_.current());
+    void TogglePowerSwitch() { //        sigSwitch_.fire(!sigSwitch_.current());
     }
 
 private:
-    bco::power_provider & power_;
+    bco::vessel&            vessel_;
+    bco::power_provider&    power_;
 
-    bco::signal<bool> sigSwitch_;
-    bco::signal<bco::status_display::status> sigStatus_;
+    //bco::signal<bool> sigSwitch_;
+    //bco::signal<cmn::status> sigStatus_;
 
     bool IsPowered() const {
-        return sigSwitch_.current() && (power_.volts_available() > 24.0);
+        return true; // sigSwitch_.current() && (power_.volts_available() > 24.0);
     }
 
     double                  level_{ 0.0 };
@@ -167,17 +104,17 @@ private:
 
     };
 
-    bco::PanelDisplay<bool>   pnDspSwitch_{
-        bm::pnlright::pnlAPUSwitch_id, 
-        bm::pnlright::pnlAPUSwitch_vrt, 
-        1 
-    };
+    //bco::PanelDisplay<bool>   pnDspSwitch_{
+    //    bm::pnlright::pnlAPUSwitch_id, 
+    //    bm::pnlright::pnlAPUSwitch_vrt, 
+    //    1 
+    //};
 
-    bco::VCAnimation<bool>    vcDspSwitch_{
-        { bm::vc::SwAPUPower_id },
-        bm::vc::SwAPUPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
-        toggleOnOff.animRotation, toggleOnOff.animSpeed
-    };
+    //bco::VCAnimation<bool>    vcDspSwitch_{
+    //    { bm::vc::SwAPUPower_id },
+    //    bm::vc::SwAPUPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
+    //    toggleOnOff.animRotation, toggleOnOff.animSpeed
+    //};
 
     bco::rotary_display_target  gaugeAPULevel_{
         { bm::vc::gaHydPress_id },
@@ -189,14 +126,81 @@ private:
         1
     };
 
-    bco::PanelDisplay<bco::status_display::status> pnlDisplayStatus_{
+    bco::state_display          status_{
+        { bm::vc::MsgLightAPU_id},
+        bm::vc::MsgLightAPU_vrt,
+        cmn::vc::main,
         bm::pnl::pnlMsgLightAPU_id,
         bm::pnl::pnlMsgLightAPU_vrt,
-        0
-    };
-
-    bco::vc_display<bco::status_display::status> vcDisplayStatus_{
-        bm::vc::MsgLightAPU_id,
-        bm::vc::MsgLightAPU_vrt
+        cmn::panel::main
     };
 };
+
+inline APU::APU(bco::vessel& vessel, bco::power_provider& pwr) :
+    power_(pwr),
+    vessel_(vessel)
+{
+    power_.attach_consumer(this);
+
+    vessel.AddControl(&gaugeAPULevel_);
+    vessel.AddControl(&status_);
+    vessel.AddControl(&pnlPowerSwitchEvent_);
+    vessel.AddControl(&vcPowerSwitchEvent_);
+    //vessel.AddControl(&pnDspSwitch_);
+    //vessel.AddControl(&vcDspSwitch_);
+
+    //vessel.AddControl(&pnlDisplayStatus_);
+    //vessel.AddControl(&vcDisplayStatus_);
+
+    //bco::connect(sigSwitch_, pnDspSwitch_.Slot());
+    //bco::connect(sigSwitch_, vcDspSwitch_.Slot());
+
+    pnlPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
+    vcPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
+}
+
+inline bool APU::handle_load_state(bco::vessel& vessel, const std::string& line)
+{
+    std::stringstream in(line);
+    int v;
+    in >> v;
+    //        sigSwitch_.fire((v != 0) ? true : false);
+    return true;
+}
+
+inline std::string APU::handle_save_state(bco::vessel& vessel)
+{
+    std::ostringstream os;
+    //        os << sigSwitch_.current() ? 1 : 0;
+    return os.str();
+}
+
+// post_step
+inline void APU::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) 
+{
+    bool hasFuel = false;
+
+    if (!IsPowered()) {
+        level_ = 0.0;
+    }
+    else {
+        hasFuel = slotFuelLevel_.value() > 0.0;
+
+        if (hasFuel) {
+            // Note:  We don't actually draw fuel, but when its gone the APU will shutdown.
+            level_ = 1.0;
+        }
+        else {
+            level_ = 0.0;
+        }
+    }
+
+    gaugeAPULevel_.set_state(level_);
+
+    auto status = IsPowered() ?
+        (hasFuel ? cmn::status::on : cmn::status::warn) : cmn::status::off;
+
+    status_.set_state(vessel, status);
+    //vcDisplayStatus_.Slot().notify(status);
+    //pnlDisplayStatus_.Slot().notify(status);
+}

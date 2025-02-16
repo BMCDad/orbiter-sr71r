@@ -18,54 +18,97 @@
 
 #include "Control.h"
 
+#include <functional>
+
 namespace bc_orbiter {
 
     /*
     vc_display
-    A four state status display control intended for the status display panel.
     **/
-    template<typename T = double>
-    class vc_display : public control, public vc_event_target
+    class vc_display :
+        public vc_event_target
     {
     public:
-
-        vc_display(const UINT vcGroupId, const NTVERTEX* vcVerts) :
-            control(-1),
-            vcGroupId_(vcGroupId),
+        vc_display(
+            const UINT vcGroupId,
+            const NTVERTEX* vcVerts,
+            const int vcId
+        ) : vcGroupId_(vcGroupId),
             vcVerts_(vcVerts),
-            offset_(UVOffset(vcVerts))
-        { }
-
-        void on_vc_redraw(DEVMESHHANDLE vcMesh) override {
-            NTVERTEX* delta = new NTVERTEX[4];
-
-            TransformUV2d(
-                vcVerts_,
-                delta, 4,
-                _V(state_.value() * offset_,
-                    0.0,
-                    0.0),
-                0.0);
-
-            GROUPEDITSPEC change{};
-            change.flags = GRPEDIT_VTXTEX;
-            change.nVtx = 4;
-            change.vIdx = NULL; //Just use the mesh order
-            change.Vtx = delta;
-            auto res = oapiEditMeshGroup(vcMesh, vcGroupId_, &change);
-            delete[] delta;
+            offset_(UVOffset(vcVerts)),
+            vcId_(vcId)
+        {
         }
 
-        int vc_mouse_flags() { return PANEL_MOUSE_IGNORE; }
-        int vc_redraw_flags() { return PANEL_REDRAW_USER; }
+        void on_vc_redraw(DEVMESHHANDLE vcMesh) override {
+            DrawVCOffset(vcMesh, vcGroupId_, vcVerts_, state_ * offset_);
+        }
 
-        slot<T>& Slot() { return state_; }
+        int vc_mouse_flags()        override { return PANEL_MOUSE_IGNORE; }
+        int vc_redraw_flags()       override { return PANEL_REDRAW_USER; }
+        int vc_id()                 override { return vcId_; }
+
+    protected:
+        /// <summary>
+        /// Set the state of the control.
+        /// </summary>
+        /// <param name="state">New state</param>
+        /// <returns>True if the state changed</returns>
+        bool set_state(double state) {
+            if (state_ != state) {
+                state_ = state;
+                return true;
+            }
+            state_ = state;
+            return false;
+        }
+
+        /// <summary>
+        /// Set the state of the control.
+        /// </summary>
+        /// <param name="state">New state</param>
+        /// <returns>True if the state changed</returns>
+        bool set_state(bool s) {
+            return set_state(s ? 1.0 : 0.0);
+        }
+
+        void trigger_redraw(VESSEL4& vessel, int ctrlId) const {
+            // TriggerVCRedrawArea has not been made public yet...
+            vessel.TriggerRedrawArea(-1, vcId_, ctrlId);
+        }
+
+    protected:
+
+        /// <summary>
+        /// Set the state of the control.
+        /// </summary>
+        /// <param name="state">New state</param>
+        /// <returns>True if the state changed</returns>
+        bool set_state(double state) {
+            if (state_ != state) {
+                state_ = state;
+                return true;
+            }
+            state_ = state;
+            return false;
+        }
+
+        /// <summary>
+        /// Set the state of the control.
+        /// </summary>
+        /// <param name="state">New state</param>
+        /// <returns>True if the state changed</returns>
+        bool set_state(bool s) {
+            return set_state(s ? 1.0 : 0.0);
+        }
 
     private:
         UINT            vcGroupId_;
         const NTVERTEX* vcVerts_;
-        double          offset_;
-        slot<T>         state_{ [&](T v) { oapiTriggerRedrawArea(-1, 0, get_id()); } };
+        UINT            vcId_{ 0 };
+
+        double          state_{ 0.0 };
+        double          offset_{ 0.0 };
     };
 }
 

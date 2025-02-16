@@ -26,7 +26,6 @@
 #include "../bc_orbiter/simple_event.h"
 #include "../bc_orbiter/rotary_display.h"
 #include "../bc_orbiter/state_display.h"
-#include "../bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"

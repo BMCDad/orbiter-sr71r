@@ -39,18 +39,18 @@ void RetroEngines::handle_post_step(bco::vessel& vessel, double simt, double sim
         animRetroDoors_.Update(vessel, switchDoors_.is_on() ? 1.0 : 0.0, simdt);
     }
 
-    auto status = bco::status_display::status::off;
+    auto status = cmn::status::off;
     if (power_.volts_available() > MIN_VOLTS) {
         if ((animRetroDoors_.GetState() > 0.0) && (animRetroDoors_.GetState() < 1.0)) {
-            status = bco::status_display::status::warn;
+            status = cmn::status::warn;
         }
         else {
             if (animRetroDoors_.GetState() == 1.0) {
-                status = bco::status_display::status::on;
+                status = cmn::status::on;
             }
         }
     }
-    status_.set_state(status);
+    status_.set_state(vessel, status);
 }
 
 void RetroEngines::handle_set_class_caps(bco::vessel& vessel)

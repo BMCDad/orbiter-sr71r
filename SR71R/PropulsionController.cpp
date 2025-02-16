@@ -104,11 +104,9 @@ void PropulsionController::Update(double deltaUpdate)
 {
     isExternAvail_ = (IsPowered() && vessel_.IsStoppedOrDocked());
     
-    if (lightFuelAvail_.set_state(isExternAvail_)) 
-        vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightFuelAvail_.get_id());
+    lightFuelAvail_.set_state(vessel_, isExternAvail_);
 
-    if (lightRCSAvail_.set_state(isExternAvail_))
-        vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightRCSAvail_.get_id());
+    lightRCSAvail_.set_state(vessel_, isExternAvail_);
 
     if (!isExternAvail_)
     {
@@ -116,11 +114,9 @@ void PropulsionController::Update(double deltaUpdate)
         isRCSFilling_ = false;
     }
 
-    if (lightFuelValveOpen_.set_state(isFilling_))
-        vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightFuelValveOpen_.get_id());
+    lightFuelValveOpen_.set_state(vessel_, isFilling_);
 
-    if (lightRCSValveOpen_.set_state(isRCSFilling_))
-        vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightRCSValveOpen_.get_id());
+    lightRCSValveOpen_.set_state(vessel_, isRCSFilling_);
 
     HandleTransfer(deltaUpdate); // <- this sets the current levels.
 
@@ -131,10 +127,10 @@ void PropulsionController::Update(double deltaUpdate)
     //	sigFuelFlowRate_.fire(flow / maxMainFlow_);	 // Converted to 0-1 range.
     gaugeFuelFlow_.set_state(flow / maxMainFlow_);
 
-    if (statusLimiter_.set_state(
+    statusLimiter_.set_state(vessel_,
         (!IsPowered() || switchThrustLimit_.is_on())
         ? cmn::status::off
-        : cmn::status::on)) vessel_.TriggerRedrawArea(cmn::panel::main, cmn::vc::main, statusLimiter_.get_id());
+        : cmn::status::on);
 
 
     // Main level
@@ -187,8 +183,7 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
         ? cmn::status::off : mainFuelLevel_ == 0.0
             ? cmn::status::error : cmn::status::warn;
 
-    if (statusFuel_.set_state(fuelStatus)) 
-        vessel_.TriggerRedrawArea(cmn::panel::main, cmn::vc::main, statusFuel_.get_id());
+    statusFuel_.set_state(vessel_, fuelStatus);
 }
 
 double PropulsionController::GetVesselMainThrustLevel()

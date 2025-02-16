@@ -240,14 +240,14 @@
     <ClInclude Include="..\bc_orbiter\VCEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\vc_display.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\bc_orbiter\state_display.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\vc_display.h">
+      <Filter>bc_orbiter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -312,9 +312,6 @@
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="RetroEngines.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="Canopy.cpp">
       <Filter>Components\src</Filter>
     </ClCompile>
     <ClCompile Include="Avionics.cpp">

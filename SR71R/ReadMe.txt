@@ -51,7 +51,9 @@ Orbiter 2024: (February 10 2025)
 	 * 2/14/2025 - state_display : propulsion, oxygen, hydrogen, navmode, power,
 	 * 2/15/2025 - Animation map removed from vessel, comps manage own animations.
 	 * 2/15/2025 - retired on_off_display in favor of state_display
+	 * 2/15/2025 - Convert status_display to state_display, retire status.
 	 * Consolidate sr71_common and common.
 	 * Start work on obsolete functions.
 	 * clean up animation classes, more complex then needed probably.
+	 * clean up APU, still using old display and sigs.
 	 

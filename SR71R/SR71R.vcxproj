@@ -198,7 +198,6 @@
   <ItemGroup>
     <ClCompile Include="Avionics.cpp" />
     <ClCompile Include="AirBrake.cpp" />
-    <ClCompile Include="Canopy.cpp" />
     <ClCompile Include="CargoBayController.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="FuelCell.cpp" />

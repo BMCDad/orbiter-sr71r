@@ -90,7 +90,7 @@ void Avionics::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
     // attitude
     attitudeDisplay_.SetAngle(bank);
     attitudeDisplay_.SetTransform(0.0, (-0.100093 * pitch));
-    attitudeFlag_.set_state(IsPowered());
+    attitudeFlag_.set_state(vessel, IsPowered());
 
     // accel
     accelHand_.set_state((gforce + 2) / 6);

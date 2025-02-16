@@ -35,9 +35,9 @@ namespace cmn = sr71_common;
 Models the nav mode selector function.
 */
 class NavModes :
-    public bco::vessel_component
-    , public bco::draw_hud
-    , public bco::post_step
+    public bco::vessel_component,
+    public bco::draw_hud,
+    public bco::post_step
 {
 public:
     NavModes(bco::vessel& baseVessel, Avionics& avionics);
@@ -55,9 +55,9 @@ protected:
     void Update();
 
     void UpdatePanel() {
-        pnlHudFrame_.set_position(((navMode1_ + navMode2_) == 0) ? 1 : 0);
-        pnlHudMode_.set_position(navMode1_);
-        pnlHudMode2_.set_position(navMode2_);
+        pnlHudFrame_.set_state(vessel_, ((navMode1_ + navMode2_) == 0) ? 1 : 0);
+        pnlHudMode_.set_state(vessel_, navMode1_);
+        pnlHudMode2_.set_state(vessel_, navMode2_);
     }
 private:
     bco::vessel& vessel_;
@@ -91,7 +91,21 @@ private:
     dsp lightAntiNorm_{     bm::vc::vcNavAntiNorm_id,   bm::vc::vcNavAntiNorm_vrt,  cmn::vc::main, bm::pnl::pnlNavAntiNorm_id,  bm::pnl::pnlNavAntiNorm_vrt, cmn::panel::main };
 
     // 2D panel mini-hud
-    bco::panel_display	pnlHudFrame_{ bm::pnl::pnlHUDNavTile_id,	bm::pnl::pnlHUDNavTile_vrt,		0.0610 };
-    bco::panel_display	pnlHudMode_{ bm::pnl::pnlHUDNavText_id,	bm::pnl::pnlHUDNavText_vrt,		0.0305 };
-    bco::panel_display	pnlHudMode2_{ bm::pnl::pnlHUDNavText2_id,	bm::pnl::pnlHUDNavText2_vrt,	0.0305 };
+    bco::panel_display_control  pnlHudFrame_ {
+        bm::pnl::pnlHUDNavTile_id,
+        bm::pnl::pnlHUDNavTile_vrt,
+        cmn::panel::main 
+    };
+
+    bco::panel_display_control  pnlHudMode_ {
+        bm::pnl::pnlHUDNavText_id,
+        bm::pnl::pnlHUDNavText_vrt,
+        cmn::panel::main
+    };
+
+    bco::panel_display_control  pnlHudMode2_ {
+        bm::pnl::pnlHUDNavText2_id,
+        bm::pnl::pnlHUDNavText2_vrt,
+        cmn::panel::main
+    };
 };

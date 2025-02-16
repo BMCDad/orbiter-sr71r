@@ -19,11 +19,13 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/status_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "Avionics.h"
+#include "Common.h"
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 class Airspeed :
     public bco::vessel_component
@@ -118,12 +120,11 @@ public:
         tdiMhTens_.set_position(parts.Tens);
         tdiMhHunds_.set_position(parts.Hundreds);
 
-        status_.set_state(isOverSpeed ? bco::status_display::status::error : bco::status_display::status::off);
+        status_.set_state(vessel, isOverSpeed ? cmn::status::error : cmn::status::off);
 
-        if (enabledFlag_.set_state(avionics_.IsAeroActive())) vessel.TriggerRedrawArea(0, 0, enabledFlag_.get_id());
+        enabledFlag_.set_state(vessel, avionics_.IsAeroActive());
 
-        if (velocityFlag_.set_state(avionics_.IsAeroActive() ? avionics_.IsAeroAtmoMode() : true)) 
-            vessel.TriggerRedrawArea(0, 0, velocityFlag_.get_id());
+        velocityFlag_.set_state(vessel, avionics_.IsAeroActive() ? avionics_.IsAeroAtmoMode() : true);
     }
 
 private:
@@ -155,10 +156,10 @@ private:
     bco::state_display  enabledFlag_{
           bm::vc::SpeedFlagOff_id,
           bm::vc::SpeedFlagOff_vrt,
-          0,
+          cmn::vc::main,
           bm::pnl::pnlSpeedFlagOff_id,
           bm::pnl::pnlSpeedFlagOff_vrt,
-          0
+          cmn::panel::main
     };
 
     // Flags: true is off (not showing)
@@ -171,12 +172,13 @@ private:
        0
     };
 
-    bco::status_display     status_{
+    bco::state_display     status_ {
        bm::vc::MsgLightKeasWarn_id,
        bm::vc::MsgLightKeasWarn_vrt,
+       cmn::vc::main,
        bm::pnl::pnlMsgLightKeasWarn_id,
        bm::pnl::pnlMsgLightKeasWarn_vrt,
-       0.0361
+       cmn::panel::main
     };
 };
 

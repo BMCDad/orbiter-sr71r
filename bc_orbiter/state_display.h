@@ -68,6 +68,18 @@ namespace bc_orbiter {
         int panel_redraw_flags()    override { return PANEL_REDRAW_USER; }
         int panel_id()              override { return pnlId_; }
 
+        void set_state(VESSEL4& vessel, bool s) {
+            if (set_state(s))
+                vessel.TriggerRedrawArea(pnlId_, vcId_, get_id());
+        }
+
+        void set_status(VESSEL4& vessel, double s) {
+            if (set_state(s))
+                vessel.TriggerRedrawArea(pnlId_, vcId_, get_id());
+        }
+
+    protected:
+
         /// <summary>
         /// Set the state of the control.
         /// </summary>
@@ -89,16 +101,6 @@ namespace bc_orbiter {
         /// <returns>True if the state changed</returns>
         bool set_state(bool s) {
             return set_state(s ? 1.0 : 0.0);
-        }
-
-        void set_state(VESSEL4& vessel, bool s) {
-            if (set_state(s))
-                vessel.TriggerRedrawArea(pnlId_, vcId_, get_id());
-        }
-
-        void set_status(VESSEL4& vessel, double s) {
-            if (set_state(s))
-                vessel.TriggerRedrawArea(pnlId_, vcId_, get_id());
         }
 
     private:

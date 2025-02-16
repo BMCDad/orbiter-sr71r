@@ -54,11 +54,11 @@ public:
     void UpdateLevel(double l) override { gaugeLevel_.set_state(l); }
 
     void UpdateIsFilling(bool b) override {
-        if (btnLightFill_.set_state(b)) vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, btnLightFill_.get_id());
+        btnLightFill_.set_state(vessel_, b);
     }
 
     void UpdateIsAvailable(bool b) override {
-        if (lightAvailable_.set_state(b)) vessel_.TriggerRedrawArea(cmn::panel::right, cmn::vc::main, lightAvailable_.get_id());
+        lightAvailable_.set_state(vessel_, b);
     }
 
     double amp_draw() const override {

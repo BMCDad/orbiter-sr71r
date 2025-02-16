@@ -21,17 +21,19 @@
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/status_display.h"
+#include "../bc_orbiter/state_display.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
 #include "SR71rPanel_mesh.h"
 #include "SR71rPanelRight_mesh.h"
 
+#include "Common.h"
 
 class VESSEL;
 
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
 
 /**
 Model the air brake and its controls.
@@ -128,11 +130,12 @@ private:
         0
     };
 
-    bco::status_display     status_     {
+    bco::state_display     status_ {
         bm::vc::MsgLightSpeedBrake_id,
         bm::vc::MsgLightSpeedBrake_vrt,
+        cmn::vc::main,
         bm::pnl::pnlMsgLightSpeedBrake_id,
         bm::pnl::pnlMsgLightSpeedBrake_vrt,
-        0.0361
+        cmn::panel::main
     };
 };

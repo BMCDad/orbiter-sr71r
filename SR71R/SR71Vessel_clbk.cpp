@@ -1,5 +1,5 @@
 //	SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
+//	Copyright(C) 2025  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -185,13 +185,12 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
     vessel::clbkPostStep(simt, simdt, mjd);
-
-	statusDock_.set_state( DockingStatus(0) == 1 ? bco::status_display::status::on : bco::status_display::status::off);
+    statusDock_.set_state(*this, DockingStatus(0) == 1 ? cmn::status::on : cmn::status::off);
 }
 
 void SR71Vessel::clbkPostCreation()
 {
-	vessel::clbkPostCreation();
+    vessel::clbkPostCreation();
 }
 
 bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
@@ -259,27 +258,27 @@ bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD 
 
 void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
 {
-	char* line;
+    char* line;
 
-	while (oapiReadScenario_nextline(scn, line))
-	{
-		bool handled = false;
-		std::istringstream ps(line);
-		std::string key;
-		ps >> key;
-		std::string configLine;
-		std::getline(ps >> std::ws, configLine);
+    while (oapiReadScenario_nextline(scn, line))
+    {
+        bool handled = false;
+        std::istringstream ps(line);
+        std::string key;
+        ps >> key;
+        std::string configLine;
+        std::getline(ps >> std::ws, configLine);
 
-		auto eh = mapStateManagement_.find(key);
-		if (eh != mapStateManagement_.end()) {
-			eh->second->handle_load_state(*this, configLine);
-			handled = true;
-		}
+        auto eh = mapStateManagement_.find(key);
+        if (eh != mapStateManagement_.end()) {
+            eh->second->handle_load_state(*this, configLine);
+            handled = true;
+        }
 
-		if (!handled) {
-			ParseScenarioLineEx(line, vs);
-		}
-	}
+        if (!handled) {
+            ParseScenarioLineEx(line, vs);
+        }
+    }
 }
 
 void SR71Vessel::clbkSaveState(FILEHANDLE scn)
