@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include "..\bc_orbiter\control.h"
-#include "..\bc_orbiter\handler_interfaces.h"
-#include "..\bc_orbiter\vessel.h"
+#include "..\bc_orbiter\Control.h"
+#include "..\bc_orbiter\HandlerInterfaces.h"
+#include "..\bc_orbiter\Vessel.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
@@ -28,37 +28,37 @@
 namespace bco = bc_orbiter;
 
 class Lights :
-    public bco::vessel_component,
-    public bco::power_consumer,
-    public bco::set_class_caps ,
-    public bco::manage_state
+    public bco::VesselComponent,
+    public bco::PowerConsumer,
+    public bco::SetClassCaps ,
+    public bco::ManageState
 {
 
 public:
-    Lights(bco::vessel& vessel, bco::power_provider& pwr) : power_(pwr) {
-        switchStrobeLights_.attach_on_change([&]() { update(); });
-        switchBeaconLights_.attach_on_change([&]() { update(); });
-        switchNavigationLights_.attach_on_change([&]() { update(); });
+    Lights(bco::Vessel& vessel, bco::PowerProvider& pwr) : power_(pwr) {
+        switchStrobeLights_.AttachOnChange([&]() { update(); });
+        switchBeaconLights_.AttachOnChange([&]() { update(); });
+        switchNavigationLights_.AttachOnChange([&]() { update(); });
 
-        power_.attach_consumer(this);
+        power_.AttachConsumer(this);
         
         vessel.AddControl(&switchStrobeLights_);
         vessel.AddControl(&switchBeaconLights_);
         vessel.AddControl(&switchNavigationLights_);
     }
 
-    // power_consumer
-    void on_change(double v) override { update(); }
-    double amp_draw() const override { 
+    // PowerConsumer
+    void OnChange(double v) override { update(); }
+    double AmpDraw() const override { 
         auto total = 0.0;
-        total += switchStrobeLights_.is_on() ? 4.0 : 0.0;
-        total += switchBeaconLights_.is_on() ? 4.0 : 0.0;
-        total += switchNavigationLights_.is_on() ? 4.0 : 0.0;
+        total += switchStrobeLights_.IsOn() ? 4.0 : 0.0;
+        total += switchBeaconLights_.IsOn() ? 4.0 : 0.0;
+        total += switchNavigationLights_.IsOn() ? 4.0 : 0.0;
         return total;
     }
 
-    // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) {
+    // SetClassCaps
+    void HandleSetClassCaps(bco::Vessel& vessel) {
         vessel.AddBeacon(&specStrobeLeft_);
         vessel.AddBeacon(&specStrobeRight_);
         
@@ -70,8 +70,8 @@ public:
         vessel.AddBeacon(&specNavRight_);
     }
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override {
+    // ManageState
+    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override {
         // sscanf_s(configLine + 6, "%i%i%i%i", &nav, &beacon, &strobe, &dock);
         double dock; // not used.
         std::istringstream in(line);
@@ -79,7 +79,7 @@ public:
         return true;
     }
 
-    std::string handle_save_state(bco::vessel& vessel) override {
+    std::string HandleSaveState(bco::Vessel& vessel) override {
         std::ostringstream os;
         os << switchNavigationLights_ << " " << switchBeaconLights_ << " " << switchStrobeLights_ << 0;
         return os.str();
@@ -87,14 +87,14 @@ public:
 
 private:
 
-    bco::power_provider& power_;
+    bco::PowerProvider& power_;
 
     void update() {
-        auto power = (power_.volts_available() > 25.0);
+        auto power = (power_.VoltsAvailable() > 25.0);
 
-        auto strob = switchStrobeLights_.is_on() && power;
-        auto beacon = switchBeaconLights_.is_on() && power;
-        auto nav = switchNavigationLights_.is_on() && power;
+        auto strob = switchStrobeLights_.IsOn() && power;
+        auto beacon = switchBeaconLights_.IsOn() && power;
+        auto nav = switchNavigationLights_.IsOn() && power;
 
         specStrobeLeft_.active = strob;
         specStrobeRight_.active = strob;
@@ -196,7 +196,7 @@ private:
         false,            // active
     };
 
-    bco::on_off_input       switchStrobeLights_{        // On off switch for external strobe lights.
+    bco::OnOffInput       switchStrobeLights_{        // On off switch for external strobe lights.
         { bm::vc::SwitchStrobeLights_id },
         bm::vc::SwitchStrobeLights_loc, bm::vc::LightsRightAxis_loc,
         toggleOnOff,
@@ -206,7 +206,7 @@ private:
         1
     };
 
-    bco::on_off_input       switchBeaconLights_{        // On off switch for external beacon lights.
+    bco::OnOffInput       switchBeaconLights_{        // On off switch for external beacon lights.
         { bm::vc::SwitchBeaconLights_id },
         bm::vc::SwitchBeaconLights_loc, 
         bm::vc::LightsRightAxis_loc,
@@ -217,7 +217,7 @@ private:
         1
     };
 
-    bco::on_off_input       switchNavigationLights_ {   // On off switch for external navigation lights.
+    bco::OnOffInput       switchNavigationLights_ {   // On off switch for external navigation lights.
         { bm::vc::SwitchNavLights_id },
         bm::vc::SwitchNavLights_loc, bm::vc::LightsRightAxis_loc,
         toggleOnOff,

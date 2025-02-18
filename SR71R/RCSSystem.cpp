@@ -17,14 +17,14 @@
 #include "StdAfx.h"
 
 #include "Orbitersdk.h"
-#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/Tools.h"
 
 #include "RCSSystem.h"
 #include "SR71r_mesh.h"
 
 
-RCSSystem::RCSSystem(bco::vessel& vessel, bco::power_provider& pwr) :
+RCSSystem::RCSSystem(bco::Vessel& vessel, bco::PowerProvider& pwr) :
     vessel_(vessel),
     power_(pwr)
 {

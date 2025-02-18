@@ -19,10 +19,10 @@
 #include "OrbiterSDK.h"
 
 #include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/OnOffInput.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -38,8 +38,8 @@ namespace cmn = sr71_common;
 
 /**	CargoBayController
 	Controls the cargo bay doors.
-	Draws from the main power circuit.  The power draw only
-	happens when the doors are in motion.  That draw can be fairly high so
+	Draws from the main power circuit.  The power Draw only
+	happens when the doors are in motion.  That Draw can be fairly high so
 	try to operate one or the other at a time.
 
 	To operate the cargo bay:
@@ -57,38 +57,38 @@ namespace cmn = sr71_common;
 	c - 0.0-1.0 current door position.
 */
 class CargoBayController :
-      public bco::vessel_component
-    , public bco::set_class_caps
-    , public bco::post_step
-    , public bco::power_consumer
-    , public bco::manage_state
+      public bco::VesselComponent
+    , public bco::SetClassCaps
+    , public bco::PostStep
+    , public bco::PowerConsumer
+    , public bco::ManageState
 {
 public:
-	CargoBayController(bco::power_provider& pwr, bco::vessel& vessel);
+	CargoBayController(bco::PowerProvider& pwr, bco::Vessel& vessel);
 
-    // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) override;
+    // SetClassCaps
+    void HandleSetClassCaps(bco::Vessel& vessel) override;
 
-    // power_consumer
-    double amp_draw() const override { return IsMoving() ? 4.0 : 0.0; }
+    // PowerConsumer
+    double AmpDraw() const override { return IsMoving() ? 4.0 : 0.0; }
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    // PostStep
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    // ManageState
+    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::Vessel& vessel) override;
 
 
 private:
     const double MIN_VOLTS = 20.0;
 
-    bco::power_provider& power_;
+    bco::PowerProvider& power_;
 
 	bool IsPowered() const {
         return
-            (power_.volts_available() > MIN_VOLTS) &&
-            switchPower_.is_on();
+            (power_.VoltsAvailable() > MIN_VOLTS) &&
+            switchPower_.IsOn();
     }
 
     bool IsMoving() const {
@@ -98,33 +98,33 @@ private:
             (animCargoBayDoors_.GetState() < 1.0); 
     }
 
-    bco::animation_target    animCargoBayDoors_{ 0.01 };
+    bco::AnimationTarget    animCargoBayDoors_{ 0.01 };
 
-    bco::animation_group     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
+    bco::AnimationGroup     gpCargoLeftFront_   {   { bm::main::BayDoorPF_id },
                                                     bm::main::Bay1AxisPA_loc, bm::main::Bay1AxisPF_loc,
                                                     (160 * RAD),
                                                     0.51, 0.74
                                                 };
 
-    bco::animation_group     gpCargoRightFront_  {   { bm::main::BayDoorSF_id },
+    bco::AnimationGroup     gpCargoRightFront_  {   { bm::main::BayDoorSF_id },
                                                     bm::main::Bay1AxisSF_loc, bm::main::Bay1AxisSA_loc,
                                                     (160 * RAD),
                                                     0.76, 1.0
                                                 };
 
-    bco::animation_group     gpCargoLeftMain_    {   { bm::main::BayDoorPA_id },
+    bco::AnimationGroup     gpCargoLeftMain_    {   { bm::main::BayDoorPA_id },
                                                     bm::main::Bay2AxisPA_loc, bm::main::Bay2AxisPF_loc,
                                                     (160 * RAD),
                                                     0.0, 0.24
                                                 };
 
-    bco::animation_group     gpCargoRightMain_   {   { bm::main::BayDoorSA_id },
+    bco::AnimationGroup     gpCargoRightMain_   {   { bm::main::BayDoorSA_id },
                                                     bm::main::Bay2AxisSF_loc, bm::main::Bay2AxisSA_loc,
                                                     (160 * RAD),
                                                     0.26, 0.49
                                                 };
 
-    bco::on_off_input       switchPower_{
+    bco::OnOffInput       switchPower_{
         { bm::vc::SwCargoPower_id },
         bm::vc::SwCargoPower_loc, bm::vc::PowerTopRightAxis_loc,
         toggleOnOff,
@@ -134,7 +134,7 @@ private:
         1
     };
 
-    bco::on_off_input       switchOpen_{ 
+    bco::OnOffInput       switchOpen_{ 
         { bm::vc::SwCargoOpen_id },
         bm::vc::SwCargoOpen_loc, bm::vc::DoorsRightAxis_loc,
         toggleOnOff,
@@ -144,7 +144,7 @@ private:
         1
     };
 
-    bco::display_full       status_ {
+    bco::VesselTextureElement       status_ {
         bm::vc::MsgLightBay_id,
         bm::vc::MsgLightBay_vrt,
         cmn::vc::main,

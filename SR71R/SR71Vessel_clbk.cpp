@@ -33,7 +33,7 @@ static TOUCHDOWNVTX tdvtx_geardown[ntdvtx_geardown] = {
 
 
 /**	clbkSetClassCaps
-	Setup up vessel class caps.
+	Setup up Vessel class caps.
 */
 void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 {
@@ -79,10 +79,10 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
     CreateMainPropellant(MAX_FUEL);
     CreateRcsPropellant(MAX_RCS_FUEL);
 
-	// Controls that live in vessel : must come before the baseVessel call.
+	// Controls that live in Vessel : must come before the baseVessel call.
 	AddControl(&statusDock_);
 
-	bco::vessel::clbkSetClassCaps(cfg);
+	bco::Vessel::clbkSetClassCaps(cfg);
 
 	SetMaxWheelbrakeForce(4e5);
 }
@@ -104,7 +104,7 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 	}
 	else if (KEYMOD_CONTROL(kstate)) {
 		switch (key) {
-		case OAPI_KEY_SPACE: // open control dialog
+		case OAPI_KEY_SPACE: // open Control dialog
 			return 1;
 		
 		case OAPI_KEY_B:
@@ -158,7 +158,7 @@ bool SR71Vessel::clbkLoadVC(int id)
 		_V(-0.1, 0.0, 0.0), 0.0, 0.0,
 		_V(0.1, 0.0, 0.0), 0.0, 0.0);
 
-	return vessel::clbkLoadVC(id);
+	return Vessel::clbkLoadVC(id);
 }
 
 void SR71Vessel::clbkHUDMode(int mode)
@@ -184,13 +184,13 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
-    vessel::clbkPostStep(simt, simdt, mjd);
+    Vessel::clbkPostStep(simt, simdt, mjd);
     statusDock_.set_state(*this, DockingStatus(0) == 1 ? cmn::status::on : cmn::status::off);
 }
 
 void SR71Vessel::clbkPostCreation()
 {
-    vessel::clbkPostCreation();
+    Vessel::clbkPostCreation();
 }
 
 bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
@@ -253,7 +253,7 @@ bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD 
         break;
     }
     }
-	return vessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
+	return Vessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
 }
 
 void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
@@ -271,7 +271,7 @@ void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
 
         auto eh = mapStateManagement_.find(key);
         if (eh != mapStateManagement_.end()) {
-            eh->second->handle_load_state(*this, configLine);
+            eh->second->HandleLoadState(*this, configLine);
             handled = true;
         }
 
@@ -289,6 +289,6 @@ void SR71Vessel::clbkSaveState(FILEHANDLE scn)
 		oapiWriteScenario_string(
 			scn, 
 			(char*)p.first.c_str(), 
-			(char*)p.second->handle_save_state(*this).c_str());
+			(char*)p.second->HandleSaveState(*this).c_str());
 	}
 }

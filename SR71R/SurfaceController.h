@@ -28,10 +28,10 @@ class VESSEL3;
 
 const float AILERON_RANGE = (float)(20.0 * RAD);
 /*	Control settings.
-	These settings control the responsiveness of the flight control surfaces.  The area
+	These settings Control the responsiveness of the flight Control surfaces.  The area
 	settings are from the SR-71 manual and should probably be kept as is.  The dCl... settings
-	control the effectiveness of each control.  These can be tweaked to adjust the handling of the
-	vessel.  To see how these are applied look at the 'EnableControls' method of this class.
+	Control the effectiveness of each Control.  These can be tweaked to adjust the handling of the
+	Vessel.  To see how these are applied look at the 'EnableControls' method of this class.
 */
 const double InboardElevonArea =	3.6;		// From manual, inboard (39sf/3.6ms).
 const double dClInboard =			0.6;		// Adjust to impact mostly elevator function.
@@ -43,28 +43,28 @@ const double dClRudder =			0.2;		// Adjust to implact rudder function.
 namespace bco = bc_orbiter;
 
 /**	SurfaceController
-	Manages the control surface for the airplane.
-	Checks for hydraulic pressure and enables control if present.  If not then all control
+	Manages the Control surface for the airplane.
+	Checks for hydraulic pressure and enables Control if present.  If not then all Control
 	surfaces are disabled.
 */
 class SurfaceController : 
-	  public bco::vessel_component
-	, public bco::set_class_caps
-	, public bco::post_step
+	  public bco::VesselComponent
+	, public bco::SetClassCaps
+	, public bco::PostStep
 {
 public:
-	SurfaceController(bco::vessel& vessel, bco::hydraulic_provider& apu);
+	SurfaceController(bco::Vessel& vessel, bco::HydraulicProvider& apu);
 
-	// set_class_caps
-	void handle_set_class_caps(bco::vessel& vessel) override;
+	// SetClassCaps
+	void HandleSetClassCaps(bco::Vessel& vessel) override;
 
-	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+	// PostStep
+	void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
 	void SetRudderLevel(double level);
 
 private:
-	bco::vessel&	vessel_;
+	bco::Vessel&	vessel_;
 	void EnableControls();
 	void DisableControls();
 
@@ -86,5 +86,5 @@ private:
 	CTRLSURFHANDLE	ctrlSurfLeftTrim_		{ nullptr };
 	CTRLSURFHANDLE	ctrlSurfRightTrim_		{ nullptr };
 
-	bco::hydraulic_provider& apu_;
+	bco::HydraulicProvider& apu_;
 };

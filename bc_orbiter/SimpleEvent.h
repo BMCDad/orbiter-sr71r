@@ -1,4 +1,4 @@
-//  simple_event - bco Orbiter Library
+//  SimpleEvent - bco Orbiter Library
 //  Copyright(C) 2023  Blake Christensen
 //  
 //  This program is free software : you can redistribute it and / or modify
@@ -21,28 +21,27 @@
 namespace bc_orbiter {
 
     /**
-    * simple_event
-    * Provides a simple event only control.  No state is retained, and no UI change is made.
+    * SimpleEvent
+    * Provides a simple event only Control.  No state is retained, and no UI change is made.
     * For the VC, a VECTOR position and hit radius are required.  For panel, a RECT is required.
     * The simple event is template driven and can specify the type of signal to fire, and the data fired.
     * This can be an id or data structure.
     */
     template<typename T = bool>
-    class simple_event :
-        public control,
-        public vc_event_target,
-        public panel_event_target
+    class SimpleEvent 
+      : public Control,
+        public VCEventTarget,
+        public PanelEventTarget
     {
     public:
-        simple_event(
+        SimpleEvent(
             const VECTOR3& vcLocation,
             double vcRadius,
             int vcId,
             const RECT& pnlRect,
             int pnlId,
-            T data = T()
-        ) :
-            control(-1),
+            T data = T())
+          : Control(-1),
             vcLocation_(vcLocation),
             vcRadius_(vcRadius),
             vcId_(vcId),
@@ -51,21 +50,21 @@ namespace bc_orbiter {
             pnlId_(pnlId)
         { }
 
-        // vc_event_target
-        VECTOR3     vc_event_location()     override { return vcLocation_; }
-        double      vc_event_radius()       override { return vcRadius_; }
-        int         vc_mouse_flags()        override { return PANEL_MOUSE_LBDOWN; }
-        int         vc_redraw_flags()       override { return PANEL_REDRAW_NEVER; }
-        int         vc_id()                 override { return vcId_; }
+        // VCEventTarget
+        VECTOR3     VCEventLocation()   override { return vcLocation_; }
+        double      VCEventRadius()     override { return vcRadius_; }
+        int         VCMouseFlags()      override { return PANEL_MOUSE_LBDOWN; }
+        int         VCRedrawFlags()     override { return PANEL_REDRAW_NEVER; }
+        int         VCId()              override { return vcId_; }
 
-        // panel_event_target
-        RECT        panel_rect()            override { return pnlRect_; }
-        int         panel_mouse_flags()     override { return PANEL_MOUSE_LBDOWN; }
-        int         panel_redraw_flags()    override { return PANEL_REDRAW_NEVER; }
-        int         panel_id()              override { return pnlId_; }
+        // PanelEventTarget
+        RECT        PanelRect()         override { return pnlRect_; }
+        int         PanelMouseFlags()   override { return PANEL_MOUSE_LBDOWN; }
+        int         PanelRedrawFlags()  override { return PANEL_REDRAW_NEVER; }
+        int         PanelId()           override { return pnlId_; }
 
-        // event_target
-        bool on_event(int id, int event) override {
+        // MouseEventTarget
+        bool OnMouseClick(int id, int event) override {
             func_();
             return true;
         }

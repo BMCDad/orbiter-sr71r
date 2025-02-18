@@ -19,11 +19,11 @@
 //#include "VesselControl.h"
 //
 //VesselControl::VesselControl(
-//      bco::vessel& vessel
-//    , bco::power_provider& pwr
-//    , bco::avionics_provider& ap
-//    , bco::propulsion_control& pc
-//    , bco::surface_control& sc
+//      bco::Vessel& Vessel
+//    , bco::PowerProvider& pwr
+//    , bco::AvionicsProvider& ap
+//    , bco::PropulsionControl& pc
+//    , bco::SurfaceControl& sc
 //    ) :
 //      power_(pwr)
 //    , avionics_(ap)
@@ -36,7 +36,7 @@
 //{
 //}
 //
-//void VesselControl::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+//void VesselControl::HandlePostStep(bco::Vessel& Vessel, double simt, double simdt, double mjd)
 //{
 //    auto current = RunningPrograms();
 //    if (prevRunningProgs != current) UpdateProgs(current);

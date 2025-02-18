@@ -20,12 +20,12 @@
 
 #include "Avionics.h"
 
-Avionics::Avionics(bco::vessel& vessel, bco::power_provider& pwr) :
+Avionics::Avionics(bco::Vessel& vessel, bco::PowerProvider& pwr) :
     power_(pwr),
     setHeadingSlot_([&](double v) { setHeadingSignal_.fire(v); }),
     vessel_(vessel)
 {
-    power_.attach_consumer(this);
+    power_.AttachConsumer(this);
 
     vessel.AddControl(&switchAvionMode_);
     vessel.AddControl(&switchAvionPower_);
@@ -53,8 +53,8 @@ Avionics::Avionics(bco::vessel& vessel, bco::power_provider& pwr) :
 }
 
 
-// post_step
-void Avionics::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) {
+// PostStep
+void Avionics::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) {
     double gforce = 0.0;
     double trim = 0.0;
     double aoa = 0.0;
@@ -65,7 +65,7 @@ void Avionics::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
 
 
     isAeroDataActive_ = IsPowered();
-    isAtmoMode_ = switchAvionMode_.is_on();
+    isAtmoMode_ = switchAvionMode_.IsOn();
 
     if (isAeroDataActive_) {
         gforce = bco::GetVesselGs(vessel);
@@ -119,15 +119,15 @@ void Avionics::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
     aoaHand_.set_state((aoaR + 0.2619) / 1.136);
 }
 
-// manage_state
-bool Avionics::handle_load_state(bco::vessel& vessel, const std::string& line) {
+// ManageState
+bool Avionics::HandleLoadState(bco::Vessel& vessel, const std::string& line) {
     //sscanf_s(configLine + 8, "%i%i%i%i%i", &power, &heading, &course, &navSelect, &navMode);
     std::istringstream in(line);
     in >> switchAvionPower_ >> setHeadingSignal_ >> setCourseSignal_ >> switchNavMode_ >> switchAvionMode_;
     return true;
 }
 
-std::string Avionics::handle_save_state(bco::vessel& vessel) {
+std::string Avionics::HandleSaveState(bco::Vessel& vessel) {
     std::ostringstream os;
     os << switchAvionPower_ << " " << setHeadingSignal_ << " " << setCourseSignal_ << " " << switchNavMode_ << " " << switchAvionMode_;
     return os.str();

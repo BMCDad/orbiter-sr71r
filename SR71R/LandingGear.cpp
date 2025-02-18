@@ -19,7 +19,7 @@
 #include "LandingGear.h"
 #include "SR71r_mesh.h"
 
-LandingGear::LandingGear(bco::vessel& vessel, bco::hydraulic_provider& apu) :
+LandingGear::LandingGear(bco::Vessel& vessel, bco::HydraulicProvider& apu) :
     apu_(apu)
 {
     vessel.AddControl(&btnLowerGear_);
@@ -30,14 +30,14 @@ LandingGear::LandingGear(bco::vessel& vessel, bco::hydraulic_provider& apu) :
     btnRaiseGear_.attach([&]() { position_ = 0.0; });
 }
 
-void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void LandingGear::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Note:  The animLandingGear can only move if there is hydraulic power, that
-	// is the actual landing gear animation.  The animLGHandle_ is the landing gear
+	// is the actual landing gear Animation.  The animLGHandle_ is the landing gear
 	// handle in the cockpit and can move regardless of power, therefore it must
 	// always get a piece of the time step.
 
-	if (apu_.level() > 0.8)
+	if (apu_.Level() > 0.8)
 	{
 		animLandingGear_.Step(position_, simdt);
 	}
@@ -53,10 +53,10 @@ void LandingGear::handle_post_step(bco::vessel& vessel, double simt, double simd
         }
     }
 
-    pnlHudGear_.set_state(vessel, hudState);
+    pnlHudGear_.setState(vessel, hudState);
 }
 
-bool LandingGear::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool LandingGear::HandleLoadState(bco::Vessel& vessel, const std::string& line)
 {
     // [a b] : a: position, 1 (down) 0 (up)   b: anim state
     std::istringstream in(line);
@@ -67,7 +67,7 @@ bool LandingGear::handle_load_state(bco::vessel& vessel, const std::string& line
     return true;
 }
 
-std::string LandingGear::handle_save_state(bco::vessel& vessel)
+std::string LandingGear::HandleSaveState(bco::Vessel& vessel)
 {
     std::ostringstream os;
 
@@ -75,7 +75,7 @@ std::string LandingGear::handle_save_state(bco::vessel& vessel)
     return os.str();
 }
 
-void LandingGear::handle_set_class_caps(bco::vessel& vessel)
+void LandingGear::HandleSetClassCaps(bco::Vessel& vessel)
 {
     auto vcMeshIdx = vessel.GetVCMeshIndex();
     auto meshIdx = vessel.GetMainMeshIndex();
@@ -107,7 +107,7 @@ void LandingGear::handle_set_class_caps(bco::vessel& vessel)
     vessel.AddVesselAnimationComponent(idAnim_, meshIdx, &gpRightGearLower_, parent);
 }
 
-void LandingGear::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void LandingGear::HandleDrawHud(bco::Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
     

@@ -21,16 +21,16 @@
 
 #include "SR71r_mesh.h"
 
-SurfaceController::SurfaceController(bco::vessel& vessel, bco::hydraulic_provider& apu) :
+SurfaceController::SurfaceController(bco::Vessel& vessel, bco::HydraulicProvider& apu) :
 	  vessel_(vessel)
 	, apu_(apu)
 {
 }
 
-void SurfaceController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void SurfaceController::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Determine if our hydro state has change, enable or disable controls.
-	auto hydPress = apu_.level();
+	auto hydPress = apu_.Level();
 	if (hydPress != prevHydraulicState_)
 	{
 		if (prevHydraulicState_ == 0.0)
@@ -46,7 +46,7 @@ void SurfaceController::handle_post_step(bco::vessel& vessel, double simt, doubl
 	}
 }
 
-void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
+void SurfaceController::HandleSetClassCaps(bco::Vessel& vessel)
 {
 	// Left Aileron Animation
 	static UINT groupLeftAileron = bm::main::ElevonPO_id;
@@ -133,7 +133,7 @@ void SurfaceController::handle_set_class_caps(bco::vessel& vessel)
 		rightRudderAxis,
 		AILERON_RANGE);
 
-	// Control surface animation.
+	// Control surface Animation.
 	anim_left_rudder_ = vessel.CreateAnimation(0.5);
 	anim_right_rudder_ = vessel.CreateAnimation(0.5);
 
@@ -148,11 +148,11 @@ void SurfaceController::SetRudderLevel(double level)
 
 void SurfaceController::EnableControls()
 {
-	// Aileron control : bank left/right.  For this we will just use the outer elevon area.
+	// Aileron Control : bank left/right.  For this we will just use the outer elevon area.
 	ctrlSurfLeftAileron_ = vessel_.CreateControlSurface3(AIRCTRL_AILERON, OutboardElevonArea / 2, dClOutboard, _V(-5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_aileron_);
 	ctrlSurfRightAileron_ = vessel_.CreateControlSurface3(AIRCTRL_AILERON, OutboardElevonArea / 2, dClOutboard, _V(5.0, 0, -8.0), AIRCTRL_AXIS_AUTO, 2.0, anim_right_aileron_);
 
-	// Elevator control : pitch up/down.  For this we use the combined inner and outer area.
+	// Elevator Control : pitch up/down.  For this we use the combined inner and outer area.
 	auto fullArea = OutboardElevonArea + InboardElevonArea;
 	auto fulldc = dClInboard + dClOutboard;
 	ctrlSurfLeftElevator_ = vessel_.CreateControlSurface3(AIRCTRL_ELEVATOR, fullArea, fulldc, _V(-7.0, 0, -10.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_elevator_);
@@ -162,7 +162,7 @@ void SurfaceController::EnableControls()
 	ctrlSurfLeftRudder_ = vessel_.CreateControlSurface3(AIRCTRL_RUDDER, RudderArea, dClRudder, _V(0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_left_rudder_);
 	ctrlSurfRightRudder_ = vessel_.CreateControlSurface3(AIRCTRL_RUDDER, RudderArea, dClRudder, _V(0, 0, -8.0), AIRCTRL_AXIS_AUTO, 1.0, anim_right_rudder_);
 
-	// Trim : SR-71 does not have trim tabs, or flaps.  We will use the inBoard area and generall as smaller dCl to provide finer control.
+	// Trim : SR-71 does not have trim tabs, or flaps.  We will use the inBoard area and generall as smaller dCl to provide finer Control.
 	ctrlSurfLeftTrim_ = vessel_.CreateControlSurface3(AIRCTRL_ELEVATORTRIM, InboardElevonArea, dClInboard, _V(-7.0, 0, -10.0), AIRCTRL_AXIS_XPOS, 1.0, anim_left_elevator_);
 	ctrlSurfRightTrim_ = vessel_.CreateControlSurface3(AIRCTRL_ELEVATORTRIM, InboardElevonArea, dClInboard, _V(7.0, 0, -10.0), AIRCTRL_AXIS_XPOS, 1.0, anim_right_elevator_);
 }

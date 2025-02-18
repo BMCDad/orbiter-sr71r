@@ -16,10 +16,10 @@
 
 #pragma once
 
+#include "../bc_orbiter/OnOffInput.h"
+#include "../bc_orbiter/RotaryDisplay.h"
 #include "../bc_orbiter/signals.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "FuelCell.h"
 #include "SR71r_common.h"
@@ -46,25 +46,25 @@ class FuelCell;
 
 	What a powered component needs to do:
 	Hook a reciever slot up to the VoltLevelSignal() and an amp signal up to the AmpDrawSlot().
-	On a change to the receiver slot, check that the new voltage level is adequate.
+	On a change to the receiver slot, check that the new voltage Level is adequate.
 	On each step, report through the amp signal the current amp usage for that component.
 */
 class PowerSystem :
-    public bco::vessel_component
-    , public bco::power_provider
-    , public bco::post_step
-    , public bco::manage_state
+    public bco::VesselComponent
+    , public bco::PowerProvider
+    , public bco::PostStep
+    , public bco::ManageState
 {
 public:
-    PowerSystem(bco::vessel& vessel);
+    PowerSystem(bco::Vessel& vessel);
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override
+    // PostStep
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override
     {
         double draw = 0.0;
 
         for (auto & c : consumers_) {
-            draw += c->amp_draw();
+            draw += c->AmpDraw();
         }
 
         ampDraw_ = fmin(draw, AMP_OVERLOAD);
@@ -72,28 +72,28 @@ public:
         Update(vessel);
     }
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    // ManageState
+    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::Vessel& vessel) override;
 
     // Fuelcell:
     bco::slot<double>& FuelCellAvailablePowerSlot() { return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
 
-    void attach_consumer(bco::power_consumer* consumer) override {
+    void AttachConsumer(bco::PowerConsumer* consumer) override {
         consumers_.push_back(consumer);
     }
 
-    double volts_available() const override { return prevVolts_; }
-    double amp_load() const override { return ampDraw_; }
+    double VoltsAvailable() const override { return prevVolts_; }
+    double AmpLoad() const override { return ampDraw_; }
 
 private:
-    void Update(bco::vessel& vessel);
+    void Update(bco::Vessel& vessel);
 
     const double			FULL_POWER = 28.0;
     const double			USEABLE_POWER = 24.0;
     const double			AMP_OVERLOAD = 100.0;
 
-    std::vector<bco::power_consumer*>  consumers_;
+    std::vector<bco::PowerConsumer*>  consumers_;
 
     bco::signal<bool>		signalIsDrawingBattery_;
     bco::slot<double>		slotFuelCellAvailablePower_;
@@ -104,7 +104,7 @@ private:
     double					prevStep_{ 0.0 };
     double					prevVolts_{ -1.0 };
 
-    bco::on_off_input       switchEnabled{
+    bco::OnOffInput       switchEnabled{
         { bm::vc::swMainPower_id },
         bm::vc::swMainPower_loc, bm::vc::PowerTopRightAxis_loc,
         toggleOnOff,
@@ -114,7 +114,7 @@ private:
         1
     };
 
-    bco::on_off_input       switchConnectExternal_{
+    bco::OnOffInput       switchConnectExternal_{
         { bm::vc::swConnectExternalPower_id },
         bm::vc::swConnectExternalPower_loc, bm::vc::PowerBottomRightAxis_loc,
         toggleOnOff,
@@ -124,7 +124,7 @@ private:
         1
     };
 
-    bco::on_off_input       switchConnectFuelCell_{
+    bco::OnOffInput       switchConnectFuelCell_{
         { bm::vc::swConnectFuelCell_id },
         bm::vc::swConnectFuelCell_loc, bm::vc::PowerBottomRightAxis_loc,
         toggleOnOff,
@@ -134,7 +134,7 @@ private:
         1
     };
 
-    bco::display_full           lightFuelCellConnected_ {
+    bco::VesselTextureElement           lightFuelCellConnected_ {
         bm::vc::FuelCellConnectedLight_id,
         bm::vc::FuelCellConnectedLight_vrt,
         cmn::vc::main,
@@ -143,7 +143,7 @@ private:
         cmn::panel::right
     };
 
-    bco::display_full           lightExternalAvail_ {
+    bco::VesselTextureElement           lightExternalAvail_ {
         bm::vc::ExtAvailableLight_id,
         bm::vc::ExtAvailableLight_vrt,
         cmn::vc::main,
@@ -152,7 +152,7 @@ private:
         cmn::panel::right
     };
 
-    bco::display_full           lightExternalConnected_{
+    bco::VesselTextureElement           lightExternalConnected_{
         bm::vc::ExtConnectedLight_id,
         bm::vc::ExtConnectedLight_vrt,
         cmn::vc::main,
@@ -161,7 +161,7 @@ private:
         cmn::panel::right
     };
 
-    bco::rotary_display_target  gaugePowerVolts_{
+    bco::RotaryDisplayTarget  gaugePowerVolts_{
         { bm::vc::gaugeVoltMeter_id },
         bm::vc::gaugeVoltMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
         bm::pnlright::pnlVoltMeter_id,
@@ -171,7 +171,7 @@ private:
         1
     };
 
-    bco::rotary_display_target  gaugePowerAmps_{
+    bco::RotaryDisplayTarget  gaugePowerAmps_{
         { bm::vc::gaugeAmpMeter_id },
         bm::vc::gaugeAmpMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
         bm::pnlright::pnlAmpMeter_id,
@@ -181,7 +181,7 @@ private:
         1
     };
 
-    bco::display_full           statusBattery_ {
+    bco::VesselTextureElement           statusBattery_ {
         bm::vc::MsgLightBattery_id,
         bm::vc::MsgLightBattery_vrt,
         cmn::vc::main,

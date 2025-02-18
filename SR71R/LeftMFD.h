@@ -31,20 +31,20 @@ namespace bco = bc_orbiter;
 
 class LeftMFD :
     public bco::MFDBase
-    , public bco::set_class_caps
-    , public bco::load_vc
-    , public bco::load_panel
+    , public bco::SetClassCaps
+    , public bco::LoadVC
+    , public bco::LoadPanel
 {
 public:
-    LeftMFD(bco::power_provider& pwr, bco::vessel* vessel);
+    LeftMFD(bco::PowerProvider& pwr, bco::Vessel* vessel);
 
-    virtual void handle_set_class_caps(bco::vessel& vessel) override;
+    virtual void HandleSetClassCaps(bco::Vessel& vessel) override;
 
-    // load_vc
-    bool handle_load_vc(bco::vessel& vessel, int vcid) override;
+    // LoadVC
+    bool HandleLoadVC(bco::Vessel& vessel, int vcid) override;
     bool OnVCRedrawEvent(int id, int event, SURFHANDLE surf);
 
-    bool handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel) override;
+    bool HandleLoadPanel(bco::Vessel& vessel, int id, PANELHANDLE hPanel) override;
     bool OnPanelRedrawEvent(int id, int event, SURFHANDLE surf);
 
 private:
@@ -67,17 +67,17 @@ private:
 
     std::vector<MFDData> data_
     {
-        { vessel_.GetIdForComponent(this), 0,  0, 0, bm::vc::MFCLeftL1_loc, bm::pnl::pnlLeftMFD1_RC },
-        { vessel_.GetIdForComponent(this), 1,  1, 0, bm::vc::MFCLeftL2_loc, bm::pnl::pnlLeftMFD2_RC },
-        { vessel_.GetIdForComponent(this), 2,  2, 0, bm::vc::MFCLeftL3_loc, bm::pnl::pnlLeftMFD3_RC },
-        { vessel_.GetIdForComponent(this), 3,  3, 0, bm::vc::MFCLeftL4_loc, bm::pnl::pnlLeftMFD4_RC },
-        { vessel_.GetIdForComponent(this), 4,  4, 0, bm::vc::MFCLeftL5_loc, bm::pnl::pnlLeftMFD5_RC },
-        { vessel_.GetIdForComponent(this), 5,  5, 0, bm::vc::MFCLeftL6_loc, bm::pnl::pnlLeftMFD6_RC },
-        { vessel_.GetIdForComponent(this), 6,  0, 1, bm::vc::MFCLeftR1_loc, bm::pnl::pnlLeftMFD7_RC },
-        { vessel_.GetIdForComponent(this), 7,  1, 1, bm::vc::MFCLeftR2_loc, bm::pnl::pnlLeftMFD8_RC },
-        { vessel_.GetIdForComponent(this), 8,  2, 1, bm::vc::MFCLeftR3_loc, bm::pnl::pnlLeftMFD9_RC },
-        { vessel_.GetIdForComponent(this), 9,  3, 1, bm::vc::MFCLeftR4_loc, bm::pnl::pnlLeftMFD10_RC },
-        { vessel_.GetIdForComponent(this), 10, 4, 1, bm::vc::MFCLeftR5_loc, bm::pnl::pnlLeftMFD11_RC },
-        { vessel_.GetIdForComponent(this), 11, 5, 1, bm::vc::MFCLeftR6_loc, bm::pnl::pnlLeftMFD12_RC }
+        //{ vessel_.GetIdForComponent(this), 0,  0, 0, bm::vc::MFCLeftL1_loc, bm::pnl::pnlLeftMFD1_RC },
+        //{ vessel_.GetIdForComponent(this), 1,  1, 0, bm::vc::MFCLeftL2_loc, bm::pnl::pnlLeftMFD2_RC },
+        //{ vessel_.GetIdForComponent(this), 2,  2, 0, bm::vc::MFCLeftL3_loc, bm::pnl::pnlLeftMFD3_RC },
+        //{ vessel_.GetIdForComponent(this), 3,  3, 0, bm::vc::MFCLeftL4_loc, bm::pnl::pnlLeftMFD4_RC },
+        //{ vessel_.GetIdForComponent(this), 4,  4, 0, bm::vc::MFCLeftL5_loc, bm::pnl::pnlLeftMFD5_RC },
+        //{ vessel_.GetIdForComponent(this), 5,  5, 0, bm::vc::MFCLeftL6_loc, bm::pnl::pnlLeftMFD6_RC },
+        //{ vessel_.GetIdForComponent(this), 6,  0, 1, bm::vc::MFCLeftR1_loc, bm::pnl::pnlLeftMFD7_RC },
+        //{ vessel_.GetIdForComponent(this), 7,  1, 1, bm::vc::MFCLeftR2_loc, bm::pnl::pnlLeftMFD8_RC },
+        //{ vessel_.GetIdForComponent(this), 8,  2, 1, bm::vc::MFCLeftR3_loc, bm::pnl::pnlLeftMFD9_RC },
+        //{ vessel_.GetIdForComponent(this), 9,  3, 1, bm::vc::MFCLeftR4_loc, bm::pnl::pnlLeftMFD10_RC },
+        //{ vessel_.GetIdForComponent(this), 10, 4, 1, bm::vc::MFCLeftR5_loc, bm::pnl::pnlLeftMFD11_RC },
+        //{ vessel_.GetIdForComponent(this), 11, 5, 1, bm::vc::MFCLeftR6_loc, bm::pnl::pnlLeftMFD12_RC }
     };
 };

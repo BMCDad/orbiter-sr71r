@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include "../bc_orbiter/Component.h"
+
 #include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/OnOffInput.h"
 #include "../bc_orbiter/signals.h"
-#include "../bc_orbiter/on_off_input.h"
+#include "../bc_orbiter/Vessel.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -32,15 +32,15 @@
 namespace bco = bc_orbiter;
 
 class Shutters : 
-	public bco::vessel_component,
-	public bco::manage_state
+	public bco::VesselComponent,
+	public bco::ManageState
 {
 public:
-	Shutters(bco::vessel& vessel);
+	Shutters(bco::Vessel& vessel);
 
-	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::vessel& vessel) override;
+	// ManageState
+	bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+	std::string HandleSaveState(bco::Vessel& vessel) override;
 
 	bco::slot<bool>& ShuttersSlot() { return shuttersSlot_; }
 
@@ -52,7 +52,7 @@ private:
 	const char*				ConfigKey = "SHUTTERS";
 
     // ***  Shutters  *** //
-    bco::on_off_input   switchShutters_{    // Open close shutters
+    bco::OnOffInput   switchShutters_{    // Open close shutters
         { bm::vc::swShutter_id },
         bm::vc::swShutter_loc, bm::vc::DoorsRightAxis_loc,
         toggleOnOff,

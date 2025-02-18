@@ -16,19 +16,19 @@
 
 #pragma once
 
-#include "../bc_orbiter/on_off_input.h"
+#include "../bc_orbiter/OnOffInput.h"
 
 namespace bco = bc_orbiter;
 
-/* control data for on/off up/down physical toggle switches */
-const bco::on_off_input_meta toggleOnOff {
+/* Control data for on/off up/down physical toggle switches */
+const bco::OnOffInputMeta toggleOnOff {
 		 1.5708,			// Rotation angle (RAD)
 		10.0,				// Anim speed
 		 0.0,				// anim start
 		 1.0,				// anim end
 		 0.01,				// VC hit radius
 		 0.0148,			// Panel offset
-		PANEL_REDRAW_NEVER,	// vcRedrawFlags
+		PANEL_REDRAW_NEVER,	// VCRedrawFlags
 		PANEL_MOUSE_LBDOWN, // vcMouseFlag
 		PANEL_REDRAW_MOUSE, // panel redraw flag
 		PANEL_MOUSE_LBDOWN	// panel mouse flag

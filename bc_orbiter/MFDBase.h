@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "Component.h"
 #include "vessel.h"
 #include "Control.h"
 #include <map>
@@ -24,28 +23,28 @@
 namespace bc_orbiter
 {
 	class MFDBase : 
-		public Component,
-		public vessel_component,
-		public power_consumer
+//		public Component,
+		public VesselComponent,
+		public PowerConsumer
 	{
 	public:
-		MFDBase(power_provider& pwr, vessel* vessel, int mfdId, double amps) :
-			Component(vessel),
+		MFDBase(PowerProvider& pwr, Vessel* vessel, int mfdId, double amps) :
+//			Component(vessel),
 			power_(pwr),
 			mfdId_(mfdId),
 			vessel_(*vessel)
 		{
-			power_.attach_consumer(this);
+			power_.AttachConsumer(this);
 		}
 
-		// power_consumer
-		double amp_draw() const { 
+		// PowerConsumer
+		double AmpDraw() const { 
 			return 
 				(IsPowered() && (oapiGetMFDMode(mfdId_) != MFD_NONE)) 
 				? 4.0 : 0.0; 
 		}
 
-		void on_change(double v) {
+		void OnChange(double v) {
 			if (!IsPowered()) { oapiOpenMFD(MFD_NONE, mfdId_); }
 		}
 
@@ -72,12 +71,12 @@ namespace bc_orbiter
 //		virtual double CurrentDraw() override;
 
 	protected:
-		power_provider& power_;
-		vessel& vessel_;
+		PowerProvider& power_;
+		Vessel& vessel_;
 
 		bool IsPowered() const { 
-			return (power_.volts_available() > 24.0);
-		} // power_.volts_available() > 24.0; }
+			return (power_.VoltsAvailable() > 24.0);
+		} // power_.VoltsAvailable() > 24.0; }
 
 		void Update();
 		void Redraw();

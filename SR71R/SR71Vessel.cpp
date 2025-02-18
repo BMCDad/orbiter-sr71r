@@ -21,7 +21,7 @@
 #include "ShipMets.h"
 
 SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) : 
-	bco::vessel(hvessel, flightmodel),
+	bco::Vessel(hvessel, flightmodel),
 	meshVirtualCockpit_(nullptr)
 {
 	AddComponent(&avionics_);

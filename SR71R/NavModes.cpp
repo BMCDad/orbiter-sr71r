@@ -24,7 +24,7 @@
 
 #include <assert.h>
 
-NavModes::NavModes(bco::vessel& baseVessel, Avionics& avionics) :
+NavModes::NavModes(bco::Vessel& baseVessel, Avionics& avionics) :
       vessel_(baseVessel)
     , avionics_(avionics)
 {
@@ -110,7 +110,7 @@ void NavModes::Update()
 	}
 }
 
-void NavModes::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void NavModes::HandleDrawHud(bco::Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
     int xLeft = 2;

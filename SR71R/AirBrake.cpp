@@ -19,7 +19,7 @@
 #include "AirBrake.h"
 #include "SR71r_mesh.h"
 
-AirBrake::AirBrake(bco::vessel& vessel, bco::hydraulic_provider& apu) :
+AirBrake::AirBrake(bco::Vessel& vessel, bco::HydraulicProvider& apu) :
 	dragFactor_(0.0),
 	apu_(apu)
 {
@@ -31,14 +31,14 @@ AirBrake::AirBrake(bco::vessel& vessel, bco::hydraulic_provider& apu) :
 	btnDecreaseAirbrake_.attach([&]() { DecreaseDrag(); });
 }
 
-void AirBrake::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void AirBrake::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
 {
     // Note:  The animAirBrake can only move if there is hydraulic power, that
-    // is the actual air brake animation.  The animAirBrakeHandle_ is the air brake
+    // is the actual air brake Animation.  The animAirBrakeHandle_ is the air brake
     // handle in the cockpit and can move regardless of power, therefore it must
     // always get a piece of the time step.
 
-    if (apu_.level() > 0.8)
+    if (apu_.Level() > 0.8)
     {
         animAirBrake_.Step(position_, simdt);
     }
@@ -58,7 +58,7 @@ void AirBrake::handle_post_step(bco::vessel& vessel, double simt, double simdt, 
         : cmn::status::off);
 }
 
-bool AirBrake::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool AirBrake::HandleLoadState(bco::Vessel& vessel, const std::string& line)
 {
 	// [a b] : a: air brake switch position.   b: air brake actual position (they can differ)
 
@@ -69,22 +69,22 @@ bool AirBrake::handle_load_state(bco::vessel& vessel, const std::string& line)
 	return true;
 }
 
-std::string AirBrake::handle_save_state(bco::vessel& vessel)
+std::string AirBrake::HandleSaveState(bco::Vessel& vessel)
 {
 	std::ostringstream os;
 	os << position_ << " " << animAirBrake_;
 	return os.str();
 }
 
-void AirBrake::handle_set_class_caps(bco::vessel& vessel)
+void AirBrake::HandleSetClassCaps(bco::Vessel& vessel)
 {
-    // Setup VC animation
+    // Setup VC Animation
     auto vcIdx = vessel.GetVCMeshIndex();
     auto aid = vessel.CreateVesselAnimation(animBrakeSwitch_);
     animBrakeSurface_.VesselId(aid);
     vessel.AddVesselAnimationComponent(aid, vcIdx, &gpBrakeHandle_);
 
-    // Setup external animation   
+    // Setup external Animation   
     auto exIdx = vessel.GetMainMeshIndex();
     aid = vessel.CreateVesselAnimation(animAirBrake_);
     vessel.AddVesselAnimationComponent(aid, exIdx, &gpLeftTop_);

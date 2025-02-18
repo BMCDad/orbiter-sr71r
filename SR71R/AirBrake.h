@@ -17,11 +17,10 @@
 #pragma once
 
 #include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/Component.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/display_full.h"
-#include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -46,30 +45,30 @@ AIRBRAKE a
 a = 0.0 position, 0.0 closed, 1.0 fully open
 */
 class AirBrake :
-	  public bco::vessel_component
-    , public bco::set_class_caps 
-    , public bco::post_step
-    , public bco::manage_state
+	  public bco::VesselComponent
+    , public bco::SetClassCaps 
+    , public bco::PostStep
+    , public bco::ManageState
 {
 public:
-	AirBrake(bco::vessel& vessel, bco::hydraulic_provider& apu);
+	AirBrake(bco::Vessel& vessel, bco::HydraulicProvider& apu);
 
-    // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) override;
+    // SetClassCaps
+    void HandleSetClassCaps(bco::Vessel& vessel) override;
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    // PostStep
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    // ManageState
+    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::Vessel& vessel) override;
 
     void IncreaseDrag() { position_ = min(1.0, position_ + 0.33); }
     void DecreaseDrag() { position_ = max(0.0, position_ - 0.33); }
 
 private:
 
-    bco::hydraulic_provider& apu_;
+    bco::HydraulicProvider& apu_;
 
 	double					dragFactor_;
     double                  position_           { 0.0 };
@@ -78,34 +77,34 @@ private:
     //              key off of that, as well as the drag factor.  animSwitch will show the desired state regardless
     //              of hydraulic power.  The vc and panel switches key off of that.
 
-    bco::animation_target   animBrakeSurface_;
-    bco::animation_target   animBrakeSwitch_    {   2.0 };
-    bco::animation_target   animAirBrake_       {   2.0 };
+    bco::AnimationTarget   animBrakeSurface_;
+    bco::AnimationTarget   animBrakeSwitch_    {   2.0 };
+    bco::AnimationTarget   animAirBrake_       {   2.0 };
 
-    bco::animation_group    gpBrakeHandle_     {   { bm::vc::AirBrakeLever_id },
+    bco::AnimationGroup    gpBrakeHandle_     {   { bm::vc::AirBrakeLever_id },
                                                     bm::vc::SpBrakeAxisRight_loc, bm::vc::SpBrakeAxisLeft_loc,
                                                     (58 * RAD),
                                                     0.0, 1.0 };
 
-    bco::animation_group     gpLeftTop_         {   { bm::main::ElevonPIT_id },
+    bco::AnimationGroup     gpLeftTop_         {   { bm::main::ElevonPIT_id },
                                                     bm::main::AirBrakeAxisPTO_loc, bm::main::AirBrakeAxisPTI_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::animation_group     gpLeftBottom_      {   { bm::main::ElevonPIB_id },
+    bco::AnimationGroup     gpLeftBottom_      {   { bm::main::ElevonPIB_id },
                                                     bm::main::AirBrakeAxisPTI_loc, bm::main::AirBrakeAxisPTO_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::animation_group     gpRightTop_        {   { bm::main::ElevonSIT_id },
+    bco::AnimationGroup     gpRightTop_        {   { bm::main::ElevonSIT_id },
                                                     bm::main::AirBrakeAxisSTO_loc, bm::main::AirBrakeAxisSTI_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
                                                 };
 
-    bco::animation_group     gpRightBottom_     {   { bm::main::ElevonSIB_id },
+    bco::AnimationGroup     gpRightBottom_     {   { bm::main::ElevonSIB_id },
                                                     bm::main::AirBrakeAxisSBI_loc, bm::main::AirBrakeAxisSBO_loc,
                                                     (70 * RAD),
                                                     0.0, 1.0 
@@ -114,7 +113,7 @@ private:
     // Panel
     const VECTOR3 sTrans { bm::pnl::pnlSpeedBrakeFull_loc - bm::pnl::pnlSpeedBrakeOff_loc };
 
-    bco::simple_event<>		btnDecreaseAirbrake_ {  
+    bco::SimpleEvent<>		btnDecreaseAirbrake_ {  
         bm::vc::ABTargetDecrease_loc,
         0.01,
         0,
@@ -122,7 +121,7 @@ private:
         0
     };
 
-    bco::simple_event<>		btnIncreaseAirbrake_{ 
+    bco::SimpleEvent<>		btnIncreaseAirbrake_{ 
         bm::vc::ABTargetIncrease_loc,
         0.01,
         0,
@@ -130,7 +129,7 @@ private:
         0
     };
 
-    bco::display_full       status_ {
+    bco::VesselTextureElement       status_ {
         bm::vc::MsgLightSpeedBrake_id,
         bm::vc::MsgLightSpeedBrake_vrt,
         cmn::vc::main,

@@ -130,15 +130,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\bc_orbiter\display_full.h" />
-    <ClInclude Include="..\bc_orbiter\handler_interfaces.h" />
-    <ClInclude Include="..\bc_orbiter\PanelDisplay.h" />
-    <ClInclude Include="..\bc_orbiter\PanelEvent.h" />
+    <ClInclude Include="..\bc_orbiter\VesselTextureElement.h" />
+    <ClInclude Include="..\bc_orbiter\HandlerInterfaces.h" />
     <ClInclude Include="..\bc_orbiter\transform_display.h" />
-    <ClInclude Include="..\bc_orbiter\VCAnimation.h" />
-    <ClInclude Include="..\bc_orbiter\display_vc.h" />
-    <ClInclude Include="..\bc_orbiter\VCEvent.h" />
-    <ClInclude Include="..\bc_orbiter\Visual.h" />
+    <ClInclude Include="..\bc_orbiter\VCTextureElement.h" />
     <ClInclude Include="Avionics.h" />
     <ClInclude Include="AirBrake.h" />
     <ClInclude Include="Airspeed.h" />
@@ -146,20 +141,17 @@
     <ClInclude Include="APU.h" />
     <ClInclude Include="AvionBase.h" />
     <ClInclude Include="..\bc_orbiter\Animation.h" />
-    <ClInclude Include="..\bc_orbiter\display_panel.h" />
-    <ClInclude Include="..\bc_orbiter\pid_altitude.h" />
-    <ClInclude Include="..\bc_orbiter\vessel.h" />
-    <ClInclude Include="..\bc_orbiter\Component.h" />
-    <ClInclude Include="..\bc_orbiter\control.h" />
-    <ClInclude Include="..\bc_orbiter\flat_roll.h" />
-    <ClInclude Include="..\bc_orbiter\generic_tank.h" />
-    <ClInclude Include="..\bc_orbiter\IAnimationState.h" />
+    <ClInclude Include="..\bc_orbiter\PanelTextureElement.h" />
+    <ClInclude Include="..\bc_orbiter\PIDAltitude.h" />
+    <ClInclude Include="..\bc_orbiter\Vessel.h" />
+    <ClInclude Include="..\bc_orbiter\Control.h" />
+    <ClInclude Include="..\bc_orbiter\TextureRoll.h" />
+    <ClInclude Include="..\bc_orbiter\GenericTank.h" />
     <ClInclude Include="..\bc_orbiter\MFDBase.h" />
-    <ClInclude Include="..\bc_orbiter\on_off_display_event.h" />
-    <ClInclude Include="..\bc_orbiter\on_off_input.h" />
-    <ClInclude Include="..\bc_orbiter\rotary_display.h" />
+    <ClInclude Include="..\bc_orbiter\OnOffInput.h" />
+    <ClInclude Include="..\bc_orbiter\RotaryDisplay.h" />
     <ClInclude Include="..\bc_orbiter\signals.h" />
-    <ClInclude Include="..\bc_orbiter\simple_event.h" />
+    <ClInclude Include="..\bc_orbiter\SimpleEvent.h" />
     <ClInclude Include="..\bc_orbiter\Tools.h" />
     <ClInclude Include="Canopy.h" />
     <ClInclude Include="CargoBayController.h" />
@@ -263,20 +255,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </None>
-    <None Include="..\Blender\SR71r_pnlMain.blend">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\Blender\SR71r_VC.blend">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </None>
     <None Include="..\Docs\SR71r Manual.docx" />
     <None Include="..\Docs\SR71r Manual.pdf" />
     <None Include="..\Orbiter\Meshes\SR71r.msh">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\Orbiter\Meshes\SR71r2DRight.msh">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
     <None Include="..\Orbiter\Meshes\SR71rPanel.msh">

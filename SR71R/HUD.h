@@ -19,10 +19,10 @@
 #include "Orbitersdk.h"
 
 #include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -39,39 +39,39 @@ namespace cmn = sr71_common;
 	Manage the heads up display (HUD).
 
 	The HUD requires power from the main circuit to operate (see Power System to enable
-	main power).  The HUD draw a constant amp level when powered on (one of the HUD modes
+	main power).  The HUD Draw a constant amp Level when powered on (one of the HUD modes
 	is selected and main power is available).
 
 	Configuration:
 	The HUD mode is managed by Orbiter.
 */
 class HUD :
-    public bco::vessel_component,
-    public bco::power_consumer,
-    public bco::load_vc,
-    public bco::draw_hud
+    public bco::VesselComponent,
+    public bco::PowerConsumer,
+    public bco::LoadVC,
+    public bco::DrawHud
 {
 public:
-    HUD(bco::power_provider& pwr, bco::vessel& vessel);
+    HUD(bco::PowerProvider& pwr, bco::Vessel& vessel);
 
-    bool handle_load_vc(bco::vessel& vessel, int vcid) override;
+    bool HandleLoadVC(bco::Vessel& vessel, int vcid) override;
 
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void HandleDrawHud(bco::Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-    double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
+    double AmpDraw() const override { return IsPowered() ? 4.0 : 0.0; }
 
     void OnHudMode(int mode);
 
 private:
-    bco::vessel& vessel_;
-    bco::power_provider& power_;
+    bco::Vessel& vessel_;
+    bco::PowerProvider& power_;
 
-    bool IsPowered() const { return power_.volts_available() > 24.0; }
+    bool IsPowered() const { return power_.VoltsAvailable() > 24.0; }
 
     void OnChanged(int mode);
 
     // *** HUD *** 
-    bco::simple_event<>     btnDocking_{
+    bco::SimpleEvent<>     btnDocking_{
         bm::vc::vcHUDDock_loc,
         0.01,
         0,
@@ -79,7 +79,7 @@ private:
         0
     };
 
-    bco::display_full       btnLightDocking_{
+    bco::VesselTextureElement       btnLightDocking_{
         bm::vc::vcHUDDock_id,
         bm::vc::vcHUDDock_vrt,
         cmn::vc::main,
@@ -88,7 +88,7 @@ private:
         cmn::panel::main
     };
 
-    bco::simple_event<>     btnOrbit_{
+    bco::SimpleEvent<>     btnOrbit_{
         bm::vc::vcHUDOrbit_loc,
         0.01,
         0,
@@ -96,7 +96,7 @@ private:
         0
     };
 
-    bco::display_full     btnLightOrbit_ {
+    bco::VesselTextureElement     btnLightOrbit_ {
         bm::vc::vcHUDOrbit_id,
         bm::vc::vcHUDOrbit_vrt,
         cmn::vc::main,
@@ -105,7 +105,7 @@ private:
         cmn::panel::main
     };
 
-    bco::simple_event<>     btnSurface_ {
+    bco::SimpleEvent<>     btnSurface_ {
         bm::vc::vcHUDSURF_loc,
         0.01,
         0,
@@ -113,7 +113,7 @@ private:
         0
     };
 
-    bco::display_full      btnLightSurface_ {
+    bco::VesselTextureElement      btnLightSurface_ {
         bm::vc::vcHUDSURF_id,
         bm::vc::vcHUDSURF_vrt,
         cmn::vc::main,

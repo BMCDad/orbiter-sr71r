@@ -18,7 +18,7 @@
 
 /*  Control Provider
     Virtual base for classes that will provide input control to
-    the vessel controller.  These classes will be the auto pilot
+    the Vessel controller.  These classes will be the auto pilot
     and flight computer.
 */
 

@@ -17,11 +17,11 @@
 #pragma once
 
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/display_full.h"
-#include "../bc_orbiter/flat_roll.h"
-#include "../bc_orbiter/rotary_display.h"
+#include "../bc_orbiter/TextureRoll.h"
+#include "../bc_orbiter/RotaryDisplay.h"
 #include "../bc_orbiter/signals.h"
-#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "Avionics.h"
 #include "Common.h"
@@ -30,12 +30,12 @@ namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
 class Altimeter :
-    public bco::vessel_component,
-    public bco::post_step {
+    public bco::VesselComponent,
+    public bco::PostStep {
 
 public:
 
-    Altimeter(bco::vessel& vessel, Avionics& avionics) :
+    Altimeter(bco::Vessel& vessel, Avionics& avionics) :
         avionics_(avionics),
         vessel_(vessel) {
         vessel.AddControl(&onesHand_);
@@ -55,8 +55,8 @@ public:
     ~Altimeter() {}
 
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+    // PostStep
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override {
         double altFeet = 0.0;
         if (avionics_.IsAeroActive()) {
             auto altMode = avionics_.IsAeroAtmoMode() ? AltitudeMode::ALTMODE_GROUND : AltitudeMode::ALTMODE_MEANRAD;
@@ -86,11 +86,11 @@ public:
 
         //sprintf(oapiDebugString(), "Alt: : %+2i : %+2i : %+2i", altFeet, parts.Tens, parts.Hundreds);
 
-        tdiAltOnes_.set_position(parts.Hundreds);
-        tdiAltTens_.set_position(parts.Thousands);
-        tdiAltHunds_.set_position(parts.TenThousands);
-        tdiAltThou_.set_position(parts.HundredThousands);
-        tdiAltTenThou_.set_position(parts.Millions);
+        tdiAltOnes_.SetPosition(parts.Hundreds);
+        tdiAltTens_.SetPosition(parts.Thousands);
+        tdiAltHunds_.SetPosition(parts.TenThousands);
+        tdiAltThou_.SetPosition(parts.HundredThousands);
+        tdiAltTenThou_.SetPosition(parts.Millions);
 
         altimeterExoModeFlag_.set_state(    // FALSE show flag, TRUE hide flag
             vessel_,
@@ -109,12 +109,12 @@ public:
     }
 
 private:
-    bco::vessel& vessel_;
+    bco::Vessel& vessel_;
     Avionics& avionics_;
 
-    using dial = bco::rotary_display_wrap;
-    using roll = bco::flat_roll;
-    const double ofs = 0.1084;		// flat_roll offset.
+    using dial = bco::RotaryDisplayWrap;
+    using roll = bco::TextureRoll;
+    const double ofs = 0.1084;		// TextureRoll offset.
 
     dial onesHand_{ bm::vc::vcAlt1Hand_id,	bm::vc::vcAlt1Hand_loc,		bm::vc::AltimeterAxis_loc, bm::pnl::pnlAlt1Hand_id,		bm::pnl::pnlAlt1Hand_vrt,	(360 * RAD), 2.0 };
     dial tensHand_{ bm::vc::vcAlt10Hand_id,	bm::vc::vcAlt10Hand_loc,	bm::vc::AltimeterAxis_loc, bm::pnl::pnlAlt10Hand_id,	bm::pnl::pnlAlt10Hand_vrt,	(360 * RAD), 2.0 };
@@ -126,7 +126,7 @@ private:
     roll tdiAltThou_{ bm::vc::vcTDIAltThous_id,		bm::vc::vcTDIAltThous_vrt,		bm::pnl::pnlTDIAltThous_id,		bm::pnl::pnlTDIAltThous_vrt,	ofs };
     roll tdiAltTenThou_{ bm::vc::vcTDIAltTenThous_id,	bm::vc::vcTDIAltTenThous_vrt,	bm::pnl::pnlTDIAltTenThou_id,	bm::pnl::pnlTDIAltTenThou_vrt,	ofs };
 
-    bco::display_full       enabledFlag_{
+    bco::VesselTextureElement       enabledFlag_{
         bm::vc::AltimeterOffFlag_id,
         bm::vc::AltimeterOffFlag_vrt,
         cmn::vc::main,
@@ -135,7 +135,7 @@ private:
         cmn::panel::main
     };
 
-    bco::display_full       altimeterExoModeFlag_ {
+    bco::VesselTextureElement       altimeterExoModeFlag_ {
         bm::vc::AltimeterGround_id,
         bm::vc::AltimeterGround_vrt,
         cmn::vc::main,

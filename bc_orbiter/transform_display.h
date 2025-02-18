@@ -22,9 +22,9 @@
 namespace bc_orbiter {
 
     class transform_display :
-        public control,
-        public vc_tex_animation,
-        public panel_animation {
+        public Control,
+        public VCTexAnimation,
+        public PanelAnimation {
     public:
         transform_display(
             const UINT vcGroupId,
@@ -33,7 +33,7 @@ namespace bc_orbiter {
             const NTVERTEX* pnlVerts,
             int pnlId = 0)
             :
-            control(0),       // id not used
+            Control(0),       // id not used
             vcGroup_(vcGroupId),
             vcVerts_(vcVerts),
             pnlGroup_(pnlGroupId),
@@ -42,19 +42,19 @@ namespace bc_orbiter {
         {
         }
 
-        // vc_tex_animation
-        void vc_step(DEVMESHHANDLE mesh, double simdt) override {
+        // VCTexAnimation
+        void VCStep(DEVMESHHANDLE mesh, double simdt) override {
 //            RotateMesh<DEVMESHHANDLE>(mesh, vcGroup_, vcVerts_, angle_);
             TransformUV<DEVMESHHANDLE>(mesh, vcGroup_, vcVerts_, angle_, vecTrans_);
         }
 
-        // panel_animation
-        void panel_step(MESHHANDLE mesh, double simdt) override {
+        // PanelAnimation
+        void PanelStep(MESHHANDLE mesh, double simdt) override {
 //            RotateMesh<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, angle_);
             TransformUV<MESHHANDLE>(mesh, pnlGroup_, pnlVerts_, angle_, vecTrans_);
         }
 
-        int panel_id() override { return pnlId_; }
+        int PanelID() override { return pnlId_; }
 
         void SetAngle(double a) { angle_ = a; }
         void SetTransform(double x, double y) { vecTrans_.x = x; vecTrans_.y = y; }

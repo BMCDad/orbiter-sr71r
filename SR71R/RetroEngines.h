@@ -18,9 +18,9 @@
 
 #include "Orbitersdk.h"
 #include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/OnOffInput.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
@@ -32,40 +32,40 @@ namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
 class RetroEngines :
-    public bco::vessel_component,
-    public bco::power_consumer,
-    public bco::post_step,
-    public bco::set_class_caps,
-    public bco::draw_hud,
-    public bco::manage_state
+    public bco::VesselComponent,
+    public bco::PowerConsumer,
+    public bco::PostStep,
+    public bco::SetClassCaps,
+    public bco::DrawHud,
+    public bco::ManageState
 {
 public:
-    RetroEngines(bco::power_provider& pwr, bco::vessel& vessel);
+    RetroEngines(bco::PowerProvider& pwr, bco::Vessel& vessel);
 
-    // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) override;
+    // SetClassCaps
+    void HandleSetClassCaps(bco::Vessel& vessel) override;
 
-    // power_consumer
-    double amp_draw() const override { return IsMoving() ? 4.0 : 0.0; }
+    // PowerConsumer
+    double AmpDraw() const override { return IsMoving() ? 4.0 : 0.0; }
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    // PostStep
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void HandleDrawHud(bco::Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    // ManageState
+    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::Vessel& vessel) override;
 
 private:
     const double MIN_VOLTS = 20.0;
 
-    bco::power_provider& power_;
-    bco::vessel& vessel_;
+    bco::PowerProvider& power_;
+    bco::Vessel& vessel_;
 
     bool IsPowered() const {
         return
-            power_.volts_available() > MIN_VOLTS;
+            power_.VoltsAvailable() > MIN_VOLTS;
     }
 
     bool IsMoving() const {
@@ -79,15 +79,15 @@ private:
 
     THRUSTER_HANDLE         retroThrustHandles_[2];
 
-    bco::animation_target   animRetroDoors_{ 0.2 };
+    bco::AnimationTarget   animRetroDoors_{ 0.2 };
 
-    bco::animation_group    gpDoors_ {
+    bco::AnimationGroup    gpDoors_ {
         {bm::main::EngineCone_id },
         _V(0, 0, -1.2), 
         0.0, 1.0 
     };
 
-    bco::on_off_input       switchDoors_ {
+    bco::OnOffInput       switchDoors_ {
         { bm::vc::swRetroDoors_id },
         bm::vc::swRetroDoors_loc, bm::vc::DoorsRightAxis_loc,
         toggleOnOff,
@@ -97,7 +97,7 @@ private:
         1
     };
 
-    bco::display_full       status_ {
+    bco::VesselTextureElement       status_ {
         bm::vc::MsgLightRetro_id,
         bm::vc::MsgLightRetro_vrt,
         cmn::vc::main,

@@ -21,11 +21,11 @@
 #include <string>
 
 #include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/OnOffInput.h"
+#include "../bc_orbiter/RotaryDisplay.h"
+#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -42,12 +42,12 @@ namespace cmn = sr71_common;
 class VESSEL3;
 
 /**
-Manages propulsion and propellents for the vessel including thrust limiter and fuel
+Manages propulsion and propellents for the Vessel including thrust limiter and fuel
 fill, transfer, and dump functions.
 
 Thrust Limit:
 The Thrust Limit switch has two modes; A/B (down) limits maximum thrust to the SR71's after burner
-thrust at sea level (68000 lbs).  FULL mode boots the top thrust level to about 110000 lbs.
+thrust at sea Level (68000 lbs).  FULL mode boots the top thrust Level to about 110000 lbs.
 
 Fuel Management:
 Fuel can be added to the Main tank when the supply available light is on.  Press the valve 'OPEN'
@@ -86,31 +86,31 @@ e = 0/1 Dump pump is active.
 */
 
 class PropulsionController :
-    public bco::vessel_component,
-    public bco::set_class_caps,
-    public bco::power_consumer,
-    public bco::post_step,
-    public bco::manage_state,
-    public bco::draw_hud
+    public bco::VesselComponent,
+    public bco::SetClassCaps,
+    public bco::PowerConsumer,
+    public bco::PostStep,
+    public bco::ManageState,
+    public bco::DrawHud
 {
 public:
-    PropulsionController(bco::power_provider& pwr, bco::vessel& vessel);
+    PropulsionController(bco::PowerProvider& pwr, bco::Vessel& vessel);
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    // PostStep
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
-    // power_consumer
-    double amp_draw() const { return (isFilling_ ? 4.0 : 0.0) + (isRCSFilling_ ? 4.0 : 0.0); }
+    // PowerConsumer
+    double AmpDraw() const { return (isFilling_ ? 4.0 : 0.0) + (isRCSFilling_ ? 4.0 : 0.0); }
 
-    // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) override;
+    // SetClassCaps
+    void HandleSetClassCaps(bco::Vessel& vessel) override;
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    // ManageState
+    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::Vessel& vessel) override;
 
-    // draw_hud
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    // DrawHud
+    void HandleDrawHud(bco::Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
     double GetVesselMainThrustLevel();
     void SetVesselMainThrustLevel(double level);
@@ -122,10 +122,10 @@ public:
     void ToggleThrustLimit() { switchThrustLimit_.toggle_state(); }
 
 private:
-    bco::vessel& vessel_;
-    bco::power_provider& power_;
+    bco::Vessel& vessel_;
+    bco::PowerProvider& power_;
 
-    bool IsPowered() { return power_.volts_available() > 24.0; }
+    bool IsPowered() { return power_.VoltsAvailable() > 24.0; }
 
     bco::signal<double>		signalMainFuelLevel_;
 
@@ -160,7 +160,7 @@ private:
     bool		isRCSFilling_{ false };
 
     // Switches
-    bco::on_off_input		switchThrustLimit_{		// Thrust Limit
+    bco::OnOffInput		switchThrustLimit_{		// Thrust Limit
         { bm::vc::swThrottleLimit_id },
         bm::vc::swThrottleLimit_loc, bm::vc::navPanelAxis_loc,
         toggleOnOff,
@@ -169,7 +169,7 @@ private:
         bm::pnl::pnlThrottleLimit_RC
     };
 
-    bco::on_off_input       switchFuelDump_{        // Fuel dump
+    bco::OnOffInput       switchFuelDump_{        // Fuel dump
         { bm::vc::swDumpFuel_id },
         bm::vc::swDumpFuel_loc, bm::vc::FuelTransferRightAxis_loc,
         toggleOnOff,
@@ -180,7 +180,7 @@ private:
     };
 
     // Gauges
-    bco::rotary_display<bco::animation_target>		gaugeFuelFlow_{
+    bco::RotaryDisplay<bco::AnimationTarget>		gaugeFuelFlow_{
         { bm::vc::gaFuelFlow_id },
         bm::vc::gaFuelFlow_loc, bm::vc::FuelFlowAxisFront_loc,
         bm::pnl::pnlGaFuelFlow_id,
@@ -189,7 +189,7 @@ private:
         1.0
     };
 
-    bco::rotary_display<bco::animation_target>		gaugeFuelMain_{
+    bco::RotaryDisplay<bco::AnimationTarget>		gaugeFuelMain_{
         { bm::vc::gaMainFuel_id },
         bm::vc::gaMainFuel_loc, bm::vc::FuelLevelAxisFront_loc,
         bm::pnl::pnlGaFuelMain_id,
@@ -198,7 +198,7 @@ private:
         1.0
     };
 
-    bco::rotary_display<bco::animation_target>		gaugeFuelRCS_{
+    bco::RotaryDisplay<bco::AnimationTarget>		gaugeFuelRCS_{
         { bm::vc::gaRCSFuel_id },
         bm::vc::gaRCSFuel_loc, bm::vc::RCSLevelAxisFront_loc,
         bm::pnl::pnlGaFuelRCS_id,
@@ -208,7 +208,7 @@ private:
     };
 
     // Displays
-    bco::display_full       lightFuelAvail_ {
+    bco::VesselTextureElement       lightFuelAvail_ {
         bm::vc::FuelSupplyOnLight_id,
         bm::vc::FuelSupplyOnLight_vrt,
         cmn::vc::main,
@@ -217,7 +217,7 @@ private:
         cmn::panel::right
     };
 
-    bco::display_full       lightRCSAvail_{
+    bco::VesselTextureElement       lightRCSAvail_{
         bm::vc::RCSSupplyOnLight_id,
         bm::vc::RCSSupplyOnLight_vrt,
         cmn::vc::main,
@@ -227,7 +227,7 @@ private:
     };
 
     // Load FUEL pump
-    bco::simple_event<>     btnFuelValveOpen_{
+    bco::SimpleEvent<>     btnFuelValveOpen_{
         bm::vc::FuelValveOpenSwitch_loc,
         0.01,
         0,
@@ -235,7 +235,7 @@ private:
         1
     };
 
-    bco::display_full       lightFuelValveOpen_{
+    bco::VesselTextureElement       lightFuelValveOpen_{
         bm::vc::FuelValveOpenSwitch_id,
         bm::vc::FuelValveOpenSwitch_vrt,
         cmn::vc::main,
@@ -245,7 +245,7 @@ private:
     };
 
     // Load RCS pump
-    bco::simple_event<>     btnRCSValveOpen_{
+    bco::SimpleEvent<>     btnRCSValveOpen_{
         bm::vc::RCSValveOpenSwitch_loc,
         0.01,
         0,
@@ -253,7 +253,7 @@ private:
         1
     };
 
-    bco::display_full       lightRCSValveOpen_ {
+    bco::VesselTextureElement       lightRCSValveOpen_ {
         bm::vc::RCSValveOpenSwitch_id,
         bm::vc::RCSValveOpenSwitch_vrt,
         cmn::vc::main,
@@ -262,7 +262,7 @@ private:
         cmn::panel::right
     };
 
-    bco::display_full       statusFuel_ {
+    bco::VesselTextureElement       statusFuel_ {
         bm::vc::MsgLightFuelWarn_id,
         bm::vc::MsgLightFuelWarn_vrt,
         cmn::vc::main,
@@ -271,7 +271,7 @@ private:
         cmn::panel::main
     };
 
-    bco::display_full       statusLimiter_{
+    bco::VesselTextureElement       statusLimiter_{
         bm::vc::MsgLightThrustLimit_id,
         bm::vc::MsgLightThrustLimit_vrt,
         cmn::vc::main,

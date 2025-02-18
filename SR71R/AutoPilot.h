@@ -44,7 +44,7 @@ const double AP_MIN_VOLT        =        20.0   ;
 namespace bco = bc_orbiter;
 
 /**	AutoPilot
-	The vessel's auto pilot.  When enabled it has the following modes:
+	The Vessel's auto pilot.  When enabled it has the following modes:
 	
 	Hold Heading:
 	Turns the plane to the heading selected with the HDG knob and follows that heading.

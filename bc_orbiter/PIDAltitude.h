@@ -2,17 +2,18 @@
 
 namespace bc_orbiter {
 
-    class pid_altitude {
+    class PIDAltitude 
+    {
     public:
-        pid_altitude() {}
+        PIDAltitude() {}
 
-        void reset(double target, double kp, double ki, double kd) {
+        void Reset(double target, double kp, double ki, double kd) {
             target_ = target;
             kp = kp;
             ki = ki;
             kd = kd;
         }
-        double compute(double current_altitude, double target_altitude) {
+        double Compute(double current_altitude, double target_altitude) {
             // Calculate the error
             double error = target_altitude - current_altitude;
 
@@ -23,13 +24,13 @@ namespace bc_orbiter {
             //// Calculate the derivative term
             //double derivative = (error - prev_error_);
 
-            //// Compute the control output
+            //// Compute the Control output
             //double control_output = kp_ * error + ki_ * integral_ + kd_ * derivative;
 
             //// Update previous error for the next iteration
             //prev_error_ = error;
 
-            //// Apply the control output to adjust the vertical speed
+            //// Apply the Control output to adjust the vertical speed
             //double adjusted_vertical_speed = current_speed + control_output;
 
             //return adjusted_vertical_speed;

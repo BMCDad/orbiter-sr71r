@@ -52,8 +52,14 @@ Orbiter 2024: (February 10 2025)
 	 * 2/15/2025 - Animation map removed from vessel, comps manage own animations.
 	 * 2/15/2025 - retired on_off_display in favor of state_display
 	 * 2/15/2025 - Convert status_display to state_display, retire status.
+	 * 2/17/2025 - Massive rename, style update.
+	 * obsolete functions: last in OnOffInpute - refactor
 	 * Consolidate sr71_common and common.
-	 * Start work on obsolete functions.
 	 * clean up animation classes, more complex then needed probably.
+	 * remove slot signals.
 	 * clean up APU, still using old display and sigs.
+	 * MFD rewrite
+	 * Refactor Tools into namespaces.
+	 * Refactro transform_display, used in HSI
+	 * Organize component files, remove src
 	 

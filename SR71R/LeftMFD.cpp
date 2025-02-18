@@ -22,30 +22,30 @@
 
 #include <assert.h>
 
-LeftMFD::LeftMFD(bco::power_provider& pwr, bco::vessel* vessel) :
+LeftMFD::LeftMFD(bco::PowerProvider& pwr, bco::Vessel* vessel) :
 bco::MFDBase(pwr, vessel, MFD_LEFT, 4.0)
 {
 }
 
-void LeftMFD::handle_set_class_caps(bco::vessel& vessel)
+void LeftMFD::HandleSetClassCaps(bco::Vessel& vessel)
 {
     for (auto& a : data_) {
         AssignKey(a.id, a.key);
     }
 
-    AssignPwrKey(GetBaseVessel()->GetIdForComponent(this));
-    AssignSelect(GetBaseVessel()->GetIdForComponent(this));
-    AssignMenu(GetBaseVessel()->GetIdForComponent(this));
+    //AssignPwrKey(GetBaseVessel()->GetIdForComponent(this));
+    //AssignSelect(GetBaseVessel()->GetIdForComponent(this));
+    //AssignMenu(GetBaseVessel()->GetIdForComponent(this));
 }
 
-bool LeftMFD::handle_load_vc(bco::vessel& vessel, int vcid)
+bool LeftMFD::HandleLoadVC(bco::Vessel& vessel, int vcid)
 {
     auto vcMeshHandle = vessel.GetVCMeshHandle0();
     assert(vcMeshHandle != nullptr);
 
     SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
 
-    // handle_set_class_caps our font:
+    // HandleSetClassCaps our font:
     vcFont_.surfSource = surfHandle;
     vcFont_.charWidth = 12;
     vcFont_.charHeight = 20;
@@ -113,7 +113,7 @@ bool LeftMFD::OnVCRedrawEvent(int id, int event, SURFHANDLE surf)
     return true;
 }
 
-bool LeftMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
+bool LeftMFD::HandleLoadPanel(bco::Vessel& vessel, int id, PANELHANDLE hPanel)
 {
     if (id != 0) return false;
 
@@ -140,7 +140,7 @@ bool LeftMFD::handle_load_panel(bco::vessel& vessel, int id, PANELHANDLE hPanel)
 
     SURFHANDLE surfHandle = oapiGetTextureHandle(panelMesh, bm::pnl::TXIDX_SR71R_100_2DPanel_dds);
 
-    // handle_set_class_caps our font:
+    // HandleSetClassCaps our font:
     vcFont_.surfSource = surfHandle;
     vcFont_.charWidth = 12;
     vcFont_.charHeight = 20;

@@ -19,10 +19,10 @@
 #include "Orbitersdk.h"
 
 #include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
+#include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/OnOffInput.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "IConsumable.h"
 #include "PowerSystem.h"
@@ -65,44 +65,44 @@ namespace cmn = sr71_common;
 		
 */
 class FuelCell : 
-    public bco::vessel_component,
-    public bco::post_step,
-    public bco::power_consumer,
-    public bco::manage_state
+    public bco::VesselComponent,
+    public bco::PostStep,
+    public bco::PowerConsumer,
+    public bco::ManageState
 {
     const double MAX_VOLTS = 28.0;
     const double MIN_VOLTS = 20.0;
     const double AMP_DRAW =	  4.0;
 
 public:
-    FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumable& lox, bco::consumable& hydro);
+    FuelCell(bco::PowerProvider& pwr, bco::Vessel& vessel, bco::Consumable& lox, bco::Consumable& hydro);
 
     /**
         Draw down the oxygen and hydrogen levels based on the current amp load.
     */
 
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
-    // power_consumer
-    double amp_draw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
+    // PowerConsumer
+    double AmpDraw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    // ManageState
+    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::Vessel& vessel) override;
 
     // Outputs
     bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
 
 private:
-    bco::vessel&            vessel_;
-    bco::power_provider&    power_;
-    bco::consumable&        lox_;
-    bco::consumable&        hydro_;
+    bco::Vessel&            vessel_;
+    bco::PowerProvider&    power_;
+    bco::Consumable&        lox_;
+    bco::Consumable&        hydro_;
 
     bool IsPowered() const {
         return
-            switchEnabled_.is_on() &&
-            (power_.volts_available() > MIN_VOLTS);
+            switchEnabled_.IsOn() &&
+            (power_.VoltsAvailable() > MIN_VOLTS);
     }
 
     void SetIsFuelCellPowerAvailable(bool newValue);
@@ -112,7 +112,7 @@ private:
     bool                isFuelCellAvailable_;
     double              ampDrawFactor_{ 0.0 };
 
-    bco::on_off_input	switchEnabled_{ 
+    bco::OnOffInput	switchEnabled_{ 
         { bm::vc::swFuelCellPower_id },
         bm::vc::swFuelCellPower_loc, bm::vc::PowerTopRightAxis_loc,
         toggleOnOff,
@@ -122,7 +122,7 @@ private:
         1
     };
 
-    bco::display_full       lightAvailable_ {
+    bco::VesselTextureElement       lightAvailable_ {
         bm::vc::FuelCellAvailableLight_id,
         bm::vc::FuelCellAvailableLight_vrt,
         cmn::vc::main,

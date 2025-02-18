@@ -16,10 +16,10 @@
 
 #pragma
 
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/display_panel.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/PanelTextureElement.h"
+#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "Avionics.h"
 #include "SR71r_mesh.h"
@@ -35,18 +35,18 @@ namespace cmn = sr71_common;
 Models the nav mode selector function.
 */
 class NavModes :
-    public bco::vessel_component,
-    public bco::draw_hud,
-    public bco::post_step
+    public bco::VesselComponent,
+    public bco::DrawHud,
+    public bco::PostStep
 {
 public:
-    NavModes(bco::vessel& baseVessel, Avionics& avionics);
+    NavModes(bco::Vessel& baseVessel, Avionics& avionics);
 
     // These overrides come directly from SR71Vessel callbacks.
     void OnNavMode(int mode, bool active);
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
+    void HandleDrawHud(bco::Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp);
 
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override {
         if (oapiCockpitMode() != COCKPIT_PANELS) return;
         UpdatePanel();
     }
@@ -55,12 +55,12 @@ protected:
     void Update();
 
     void UpdatePanel() {
-        pnlHudFrame_.set_state(vessel_, ((navMode1_ + navMode2_) == 0) ? 1 : 0);
-        pnlHudMode_.set_state(vessel_, navMode1_);
-        pnlHudMode2_.set_state(vessel_, navMode2_);
+        pnlHudFrame_.setState(vessel_, ((navMode1_ + navMode2_) == 0) ? 1 : 0);
+        pnlHudMode_.setState(vessel_, navMode1_);
+        pnlHudMode2_.setState(vessel_, navMode2_);
     }
 private:
-    bco::vessel& vessel_;
+    bco::Vessel& vessel_;
     Avionics& avionics_;
 
     void ToggleMode(int mode);
@@ -71,8 +71,8 @@ private:
     int		navMode2_{ 0 };	// HUD nav right area
 
     // ***  NAV MODES  *** //
-    using evt = bco::simple_event<int>;
-    using dsp = bco::display_full;
+    using evt = bco::SimpleEvent<int>;
+    using dsp = bco::VesselTextureElement;
     const double rad = 0.01;		// hit radius
     const double ofs = 0.0352;		// tex offset
 
@@ -91,19 +91,19 @@ private:
     dsp lightAntiNorm_{     bm::vc::vcNavAntiNorm_id,   bm::vc::vcNavAntiNorm_vrt,  cmn::vc::main, bm::pnl::pnlNavAntiNorm_id,  bm::pnl::pnlNavAntiNorm_vrt, cmn::panel::main };
 
     // 2D panel mini-hud
-    bco::display_panel_control  pnlHudFrame_ {
+    bco::PanelTextureControl  pnlHudFrame_ {
         bm::pnl::pnlHUDNavTile_id,
         bm::pnl::pnlHUDNavTile_vrt,
         cmn::panel::main 
     };
 
-    bco::display_panel_control  pnlHudMode_ {
+    bco::PanelTextureControl  pnlHudMode_ {
         bm::pnl::pnlHUDNavText_id,
         bm::pnl::pnlHUDNavText_vrt,
         cmn::panel::main
     };
 
-    bco::display_panel_control  pnlHudMode2_ {
+    bco::PanelTextureControl  pnlHudMode2_ {
         bm::pnl::pnlHUDNavText2_id,
         bm::pnl::pnlHUDNavText2_vrt,
         cmn::panel::main

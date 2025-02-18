@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/OnOffInput.h"
+#include "../bc_orbiter/RotaryDisplay.h"
+#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
 #include "SR71r_common.h"
@@ -32,11 +32,11 @@ namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
 class HydrogenTank :
-    public bco::generic_tank
+    public bco::GenericTank
 {
 public:
-    HydrogenTank(bco::power_provider& pwr, bco::vessel& vessel) :
-        bco::generic_tank(pwr, HYDRO_SUPPLY, HYDROGEN_FILL_RATE),
+    HydrogenTank(bco::PowerProvider& pwr, bco::Vessel& vessel) :
+        bco::GenericTank(pwr, HYDRO_SUPPLY, HYDROGEN_FILL_RATE),
         vessel_(vessel)
     {
         vessel.AddControl(&gaugeLevel_);
@@ -57,16 +57,16 @@ public:
         lightAvailable_.set_state(vessel_, b);
     }
 
-    double amp_draw() const override {
-        return generic_tank::amp_draw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
+    double AmpDraw() const override {
+        return GenericTank::AmpDraw() + (IsPowered() ? 5.0 : 0.0);	// Cryo cooling.
     }
 
 private:
 
-    bco::vessel& vessel_;
+    bco::Vessel& vessel_;
 
     // ***  HYDROGEN SUPPLY  *** //
-    bco::rotary_display_target      gaugeLevel_{
+    bco::RotaryDisplayTarget      gaugeLevel_{
         { bm::vc::gaHydrogenLevel_id },
         bm::vc::gaHydrogenLevel_loc, bm::vc::axisHydrogenLevel_loc,
         bm::pnlright::pnlLH2Press_id,
@@ -76,7 +76,7 @@ private:
         1
     };
 
-    bco::display_full       lightAvailable_{
+    bco::VesselTextureElement       lightAvailable_{
         bm::vc::LH2SupplyOnLight_id,
         bm::vc::LH2SupplyOnLight_vrt,
         cmn::vc::main,
@@ -85,7 +85,7 @@ private:
         cmn::panel::right
     };
 
-    bco::simple_event<>             btnFill_{
+    bco::SimpleEvent<>             btnFill_{
         bm::vc::LH2ValveOpenSwitch_loc,
         0.01,
         0,
@@ -93,7 +93,7 @@ private:
         1
     };
 
-    bco::display_full       btnLightFill_{
+    bco::VesselTextureElement       btnLightFill_{
         bm::vc::LH2ValveOpenSwitch_id,
         bm::vc::LH2ValveOpenSwitch_vrt,
         cmn::vc::main,

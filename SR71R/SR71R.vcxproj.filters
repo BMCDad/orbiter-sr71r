@@ -174,46 +174,34 @@
     <ClInclude Include="..\bc_orbiter\Animation.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\Component.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="..\bc_orbiter\control.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\flat_roll.h">
+    <ClInclude Include="..\bc_orbiter\TextureRoll.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\generic_tank.h">
+    <ClInclude Include="..\bc_orbiter\GenericTank.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\handler_interfaces.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\IAnimationState.h">
+    <ClInclude Include="..\bc_orbiter\HandlerInterfaces.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\MFDBase.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\on_off_display_event.h">
+    <ClInclude Include="..\bc_orbiter\OnOffInput.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\on_off_input.h">
+    <ClInclude Include="..\bc_orbiter\PIDAltitude.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\display_panel.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\pid_altitude.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\rotary_display.h">
+    <ClInclude Include="..\bc_orbiter\RotaryDisplay.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\signals.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\simple_event.h">
+    <ClInclude Include="..\bc_orbiter\SimpleEvent.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\Tools.h">
@@ -225,28 +213,16 @@
     <ClInclude Include="..\bc_orbiter\vessel.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\Visual.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\PanelDisplay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\PanelEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\VCAnimation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\VCEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\display_vc.h">
+    <ClInclude Include="..\bc_orbiter\PanelTextureElement.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\display_full.h">
+    <ClInclude Include="..\bc_orbiter\VCTextureElement.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\VesselTextureElement.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
   </ItemGroup>
@@ -434,9 +410,6 @@
     <None Include="..\Art\SR71R_200_Body.xcf">
       <Filter>Art</Filter>
     </None>
-    <None Include="..\Orbiter\Meshes\SR71r2DRight.msh" />
-    <None Include="..\Blender\SR71r_pnlMain.blend" />
-    <None Include="..\Blender\SR71r_VC.blend" />
     <None Include="..\Blender\SR71rVC.blend">
       <Filter>Blender</Filter>
     </None>

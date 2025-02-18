@@ -17,12 +17,12 @@
 #pragma once
 
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/display_full.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/rotary_display.h"
+#include "../bc_orbiter/OnOffInput.h"
+#include "../bc_orbiter/RotaryDisplay.h"
 #include "../bc_orbiter/signals.h"
-#include "../bc_orbiter/simple_event.h"
+#include "../bc_orbiter/SimpleEvent.h"
 #include "../bc_orbiter/transform_display.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_common.h"
 #include "Common.h"
@@ -35,24 +35,28 @@
 namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
-class Avionics : public bco::vessel_component, public bco::post_step, public bco::manage_state, public bco::power_consumer
+class Avionics 
+  : public bco::VesselComponent,
+    public bco::PostStep,
+    public bco::ManageState,
+    public bco::PowerConsumer
 {
 
 public:
     enum AvionMode { AvionAtmo, AvionExo };
 
-    Avionics(bco::vessel& vessel, bco::power_provider& pwr);
+    Avionics(bco::Vessel& vessel, bco::PowerProvider& pwr);
     ~Avionics() {}
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    // PostStep
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    // ManageState
+    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    std::string HandleSaveState(bco::Vessel& vessel) override;
 
-    // power_consumer
-    double amp_draw() const { return IsPowered() ? 6.0 : 0.0; }
+    // PowerConsumer
+    double AmpDraw() const { return IsPowered() ? 6.0 : 0.0; }
 
     void SetCourse(double s);
     void SetHeading(double s);
@@ -72,10 +76,10 @@ public:
     bco::signal<double>& AOASignal() { return aoaSignal_; }
 
 private:
-    bco::vessel& vessel_;
-    bco::power_provider& power_;
+    bco::Vessel& vessel_;
+    bco::PowerProvider& power_;
 
-    bool IsPowered() const { return switchAvionPower_.is_on() && (power_.volts_available() > 24.0); }
+    bool IsPowered() const { return switchAvionPower_.IsOn() && (power_.VoltsAvailable() > 24.0); }
 
     bool		isAeroDataActive_;
     bool		isAtmoMode_;
@@ -93,7 +97,7 @@ private:
     void UpdateSetCourse(double i);
     void UpdateSetHeading(double i);
 
-    bco::on_off_input       switchAvionPower_{      // Main avionics power
+    bco::OnOffInput       switchAvionPower_{      // Main avionics power
         { bm::vc::SwAvionics_id },
         bm::vc::SwAvionics_loc, bm::vc::PowerTopRightAxis_loc,
         toggleOnOff,
@@ -103,7 +107,7 @@ private:
         1
     };
 
-    bco::on_off_input       switchAvionMode_{       // Atmosphere=On, External=Off
+    bco::OnOffInput       switchAvionMode_{       // Atmosphere=On, External=Off
         { bm::vc::vcAvionMode_id },
         bm::vc::vcAvionMode_loc, bm::vc::navPanelAxis_loc,
         toggleOnOff,
@@ -112,7 +116,7 @@ private:
         bm::pnl::pnlAvionMode_RC,
     };
 
-    bco::on_off_input		switchNavMode_{		// Nav mode 1 2
+    bco::OnOffInput		switchNavMode_{		// Nav mode 1 2
         { bm::vc::vcNavMode_id },
         bm::vc::vcNavMode_loc, bm::vc::navPanelAxis_loc,
         toggleOnOff,
@@ -121,7 +125,7 @@ private:
         bm::pnl::pnlNavMode_RC,
     };
 
-    bco::simple_event<>		dialSetCourseIncrement_{
+    bco::SimpleEvent<>		dialSetCourseIncrement_{
         bm::vc::CourseKnobInc_loc,
         0.01,
         0,
@@ -129,7 +133,7 @@ private:
         0
     };
 
-    bco::simple_event<>     dialSetCourseDecrement_{
+    bco::SimpleEvent<>     dialSetCourseDecrement_{
         bm::vc::CourseKnobDec_loc,
         0.01,
         0,
@@ -137,7 +141,7 @@ private:
         0
     };
 
-    bco::simple_event<>     dialSetHeadingIncrement_{
+    bco::SimpleEvent<>     dialSetHeadingIncrement_{
         bm::vc::HeadingKnobInc_loc,
         0.01,
         0,
@@ -145,7 +149,7 @@ private:
         0
     };
 
-    bco::simple_event<>     dialSetHeadingDecrement_{
+    bco::SimpleEvent<>     dialSetHeadingDecrement_{
         bm::vc::HeadingKnobDec_loc,
         0.01,
         0,
@@ -154,7 +158,7 @@ private:
     };
 
     // ***   VSI  *** //
-    bco::rotary_display_target  vsiHand_ {
+    bco::RotaryDisplayTarget  vsiHand_ {
         { bm::vc::gaVSINeedle_id },
         bm::vc::gaVSINeedle_loc, bm::vc::VSIAxis_loc,
         bm::pnl::pnlVSINeedle_id,
@@ -163,7 +167,7 @@ private:
         2.0
     };
 
-    bco::display_full       vsiActiveFlag_ {
+    bco::VesselTextureElement       vsiActiveFlag_ {
         bm::vc::VSIOffFlag_id,
         bm::vc::VSIOffFlag_vrt,
         cmn::vc::main,
@@ -180,7 +184,7 @@ private:
         bm::pnl::pnlAttitudeIndicator_vrt
     };
 
-    bco::display_full           attitudeFlag_{
+    bco::VesselTextureElement           attitudeFlag_{
         bm::vc::AttitudeFlagOff_id,
         bm::vc::AttitudeFlagOff_vrt,
         cmn::vc::main,
@@ -190,7 +194,7 @@ private:
     };
 
     // ***  AOA  TRIM  GFORCE  ***  //
-    bco::rotary_display_target  aoaHand_ {
+    bco::RotaryDisplayTarget  aoaHand_ {
         { bm::vc::AOANeedle_id },
         bm::vc::AOANeedle_loc, bm::vc::AOAAxis_loc,
         bm::pnl::pnlAOANeedle_id,
@@ -199,7 +203,7 @@ private:
         2.0
     };
 
-    bco::rotary_display_target  trimHand_ {
+    bco::RotaryDisplayTarget  trimHand_ {
         { bm::vc::TrimNeedle_id },
         bm::vc::TrimNeedle_loc, bm::vc::TrimAxis_loc,
         bm::pnl::pnlTrimNeedle_id,
@@ -208,7 +212,7 @@ private:
         1.0
     };
 
-    bco::rotary_display_target  accelHand_ {
+    bco::RotaryDisplayTarget  accelHand_ {
         { bm::vc::AccelNeedle_id },
         bm::vc::AccelNeedle_loc, bm::vc::AccelAxis_loc,
         bm::pnl::pnlAccelNeedle_id,

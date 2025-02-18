@@ -23,36 +23,37 @@
 namespace bc_orbiter {
 
     /*
-    display_vc
+    A texture based visual element for virtual cockpits.  This Control takes the mesh id and NTVERTEX coordinates
+    of a mesh group that has been UV mapped to a texture.  The texture mapping is updated based on a 'state'.
+    By convention, the rest state of the element is state '0'.  State '1' would be 1 width of the mesh group
+    to the right on the mapped texture.  A state of 2 would be two widths.  The width is determined by finding
+    the difference between the max and min UV values found in pnlVerts.  This class can be paired with a VC
+    element to Control the same Vessel Control in both the VC and 2-D panels.  To facilitate this the Control
+    state is maintained outside of the class and is retrieved using the passed in funcState function.
     **/
-    class display_vc :
-        public vc_event_target
+    class VCTextureElement :
+        public VCEventTarget
     {
     public:
-        display_vc(
-            const UINT vcGroupId,
-            const NTVERTEX* vcVerts,
-            const int vcId,
-            funcState func
-        ) : vcGroupId_(vcGroupId),
+        VCTextureElement(const UINT vcGroupId, const NTVERTEX* vcVerts, const int vcId, funcState func) 
+          : vcGroupId_(vcGroupId),
             vcVerts_(vcVerts),
             offset_(UVOffset(vcVerts)),
             vcId_(vcId),
             funcState_(func)
-        {
-        }
+        {}
 
-        void on_vc_redraw(DEVMESHHANDLE vcMesh) override {
+        void OnVCRedraw(DEVMESHHANDLE vcMesh) override {
             DrawVCOffset(vcMesh, vcGroupId_, vcVerts_, funcState_() * offset_);
         }
 
-        int vc_mouse_flags()        override { return PANEL_MOUSE_IGNORE; }
-        int vc_redraw_flags()       override { return PANEL_REDRAW_USER; }
-        int vc_id()                 override { return vcId_; }
+        int VCMouseFlags()        override { return PANEL_MOUSE_IGNORE; }
+        int VCRedrawFlags()       override { return PANEL_REDRAW_USER; }
+        int VCId()                 override { return vcId_; }
 
     protected:
 
-        void trigger_redraw(VESSEL4& vessel, int ctrlId) const {
+        void triggerRedraw(VESSEL4& vessel, int ctrlId) const {
             // TriggerVCRedrawArea has not been made public yet...
             vessel.TriggerRedrawArea(-1, vcId_, ctrlId);
         }

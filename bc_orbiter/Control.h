@@ -18,7 +18,7 @@
 
 namespace bc_orbiter
 {
-	class vessel;
+	class Vessel;
 }
 
 
@@ -32,146 +32,152 @@ namespace bc_orbiter
 #include <memory>
 
 namespace bc_orbiter {
-	/**
-	vc_animation
-	Implemented by a control that needs to take part in the VC cockpit animation step.
-	The implementing class will provide the group to animate, as well as the speed.  It
-	will also implement the actual step that will update the animation.  The presence of 
-	this base class instructs vessel to add it to a collection that will be called during
-	the VC step.
-	*/
-	struct vc_animation {
-		virtual animation_group*		vc_animation_group() = 0;
-		virtual double				vc_animation_speed() const = 0;
-		virtual double				vc_step(double simdt) { return 0.0; }
-	};
-
-	/**
-	panel_animation
-	Implemented by a control that needs to animate as part of the panel animation step.
-	Remember:  Panel animations are just mesh transforms, and are not part of Orbiter animations.
-	*/
-	struct panel_animation {
-		virtual void panel_step(MESHHANDLE mesh, double simdt) = 0;
-        virtual int panel_id() = 0;
-	};
-
-	/**
-	* vc_tex_animation
-	* Similar to panel_animation where the animation is a texture, and not a mesh group.  vc_animation
-	* animates a group.  Better naming is needed to avoid confusion.  Note that panels use MESHHANDLE where
-	* VCs use DEVMESHHANDLEs.
-	*/
-	struct vc_tex_animation {
-		virtual void vc_step(DEVMESHHANDLE mesh, double simdt) = 0;
-	};
-
     /**
-    * event_target
-    * Base class for any control that will be an event target.
+    VCAnimation
+    Implemented by a Control that needs to take part in the VC cockpit Animation step.
+    The implementing class will provide the group to animate, as well as the speed.  It
+    will also implement the actual step that will update the Animation.  The presence of 
+    this base class instructs Vessel to add it to a collection that will be called during
+    the VC step.
     */
-    struct event_target {
-        virtual bool on_event(int id, int event) { return false; }
+    struct VCAnimation {
+        virtual ~VCAnimation() = default;
+        virtual AnimationGroup* VCAnimationGroup() = 0;
+        virtual double          VCAnimationSpeed() const = 0;
+        virtual double          VCStep(double simdt) { return 0.0; }
     };
 
     /**
-    vc_event_target
-    Implemented to indicate that a VC control is a target for either mouse events, or redraw
-    events, or both.  If you need mouse events, override vc_mouse_flags to enable mouse events.
-    For redraw events, override vc_redraw_flags.
+    PanelAnimation
+    Implemented by a Control that needs to animate as part of the panel Animation step.
+    Remember:  Panel animations are just mesh transforms, and are not part of Orbiter animations.
     */
-    struct vc_event_target : public event_target {
-        virtual VECTOR3     vc_event_location()                 { return _V(0.0, 0.0, 0.0); }
-        virtual double      vc_event_radius()                   { return 0.0; }
-        virtual int         vc_mouse_flags()                    { return PANEL_MOUSE_IGNORE; }
-        virtual int         vc_redraw_flags()                   { return PANEL_REDRAW_NEVER; }
-        virtual void        on_vc_redraw(DEVMESHHANDLE meshVC)  {}
-        virtual int         vc_id()                             { return 0; }
+    struct PanelAnimation {
+        virtual void    PanelStep(MESHHANDLE mesh, double simdt) = 0;
+        virtual int     PanelID() = 0;
     };
 
     /**
-    panel_event_target
-    Implemented to indicate that a panel control is a target for either mouse events, or redraw
-    events, or both.  If you need mouse events, override vc_mouse_flags to enable mouse events.
-    For redraw events, override vc_redraw_flags.
+    * VCTexAnimation
+    * Similar to PanelAnimation where the Animation is a texture, and not a mesh group.  VCAnimation
+    * animates a group.  Better naming is needed to avoid confusion.  Note that panels use MESHHANDLE where
+    * VCs use DEVMESHHANDLEs.
     */
-    struct panel_event_target : public event_target {
-        virtual RECT        panel_rect()                            { return _R(0, 0, 0, 0); }
-        virtual int         panel_mouse_flags()                     { return PANEL_MOUSE_IGNORE; }
-        virtual int         panel_redraw_flags()                    { return PANEL_REDRAW_NEVER; }
-        virtual void        on_panel_redraw(MESHHANDLE meshPanel)   {}
-        virtual int         panel_id()                              { return 0; }
+    struct VCTexAnimation {
+        virtual void    VCStep(DEVMESHHANDLE mesh, double simdt) = 0;
+    };
+
+    /**
+    * MouseEventTarget
+    * Base class for a Control that will be the target of a mouse event.
+    */
+    struct MouseEventTarget {
+        virtual ~MouseEventTarget() = default;
+        virtual bool OnMouseClick(int id, int event) = 0;
+    };
+
+    /**
+    VCEventTarget
+    Implemented to indicate that a VC Control is a target for either mouse events, or redraw
+    events, or both.  If you need mouse events, override VCMouseFlags to enable mouse events.
+    For redraw events, override VCRedrawFlags.
+    */
+    struct VCEventTarget : public MouseEventTarget {
+        virtual             ~VCEventTarget() = default;
+        virtual VECTOR3     VCEventLocation()                   { return _V(0.0, 0.0, 0.0); }
+        virtual double      VCEventRadius()                     { return 0.0; }
+        virtual int         VCMouseFlags()                      { return PANEL_MOUSE_IGNORE; }
+        virtual int         VCRedrawFlags()                     { return PANEL_REDRAW_NEVER; }
+        virtual void        OnVCRedraw(DEVMESHHANDLE meshVC)    {}
+        virtual int         VCId()                              { return 0; }
+        virtual bool        OnMouseClick(int id, int event) override { return false; }
+    };
+
+    /**
+    PanelEventTarget
+    Implemented to indicate that a panel Control is a target for either mouse events, or redraw
+    events, or both.  If you need mouse events, override VCMouseFlags to enable mouse events.
+    For redraw events, override VCRedrawFlags.
+    */
+    struct PanelEventTarget : public MouseEventTarget {
+        virtual             ~PanelEventTarget() = default;
+        virtual RECT        PanelRect()                         { return _R(0, 0, 0, 0); }
+        virtual int         PanelMouseFlags()                   { return PANEL_MOUSE_IGNORE; }
+        virtual int         PanelRedrawFlags()                  { return PANEL_REDRAW_NEVER; }
+        virtual void        OnPanelRedraw(MESHHANDLE meshPanel) {}
+        virtual int         PanelId()                           { return 0; }
+        virtual bool        OnMouseClick(int id, int event) override { return false; }
     };
 
 
 
-	struct power_consumer {
-		virtual void on_change(double v) { };  // A class that has a time step may not need change notification.
-		virtual double amp_draw() const = 0;
-	};
+    struct PowerConsumer {
+        virtual void OnChange(double v) {};  // A class that has a time step may not need change notification.
+        virtual double AmpDraw() const = 0;
+    };
 
-	struct power_provider {
-		virtual void attach_consumer(power_consumer* consumer) = 0;
-		virtual double volts_available() const = 0;
-		virtual double amp_load() const = 0;
-	};
+    struct PowerProvider {
+        virtual void AttachConsumer(PowerConsumer* consumer) = 0;
+        virtual double VoltsAvailable() const = 0;
+        virtual double AmpLoad() const = 0;
+    };
 
-	struct one_way_switch {
-		virtual bool is_on() const = 0;
-		virtual void attach_on_change(const std::function<void()>& func) = 0;
-	};
-
-	/**
-	consumable
-	Implemented but a component that manages a consumable that can be drawn from
-	by other components.
-	*/
-	struct consumable {
-		// Current level espressed a 0-empty, 1-full.
-		virtual double level() const = 0;
-		
-		// Removes 'amount' from the tank, returns the amount actually drawn.
-		virtual double draw(double amount) = 0;
-	};
-
-	struct hydraulic_provider {
-		virtual double level() const = 0;
-	};
-
-	struct avionics_provider {
-		virtual double get_altitude() const = 0;
-		virtual void   get_angular_velocity(VECTOR3& v) = 0;
-		virtual double get_bank() const = 0;
-		virtual double get_heading() const = 0;
-		virtual double get_keas() const = 0;
-		virtual double get_mach() const = 0;
-		virtual double get_pitch() const = 0;
-		virtual double get_vertical_speed() const = 0;
-	};
-
-	enum class Axis { Pitch = 0, Yaw = 1, Roll = 2 };
-
-	struct propulsion_control {
-		virtual double get_main_thrust_level() const = 0;
-		virtual void set_main_thrust_level(double l) = 0;
-		virtual void set_attitude_rotation(Axis axit, double level) = 0;
-	};
-
-	struct surface_control {
-		virtual void set_aileron_level(double l) = 0;
-		virtual void set_elevator_level(double l) = 0;
-	};
+    struct OneWaySwitch {
+        virtual bool IsOn() const = 0;
+        virtual void AttachOnChange(const std::function<void()>& func) = 0;
+    };
 
     /**
-    * Base class for a control.
+    Consumable
+    Implemented but a component that manages a Consumable that can be drawn from
+    by other components.
     */
-    class control {
+    struct Consumable {
+        // Current Level espressed a 0-empty, 1-full.
+        virtual double Level() const = 0;
+
+        // Removes 'amount' from the tank, returns the amount actually drawn.
+        virtual double Draw(double amount) = 0;
+    };
+
+    struct HydraulicProvider {
+        virtual double Level() const = 0;
+    };
+
+    struct AvionicsProvider {
+        virtual double GetAvAltitude() const = 0;
+        virtual void   GetAngularVelocity(VECTOR3& v) = 0;
+        virtual double GetBank() const = 0;
+        virtual double GetHeading() const = 0;
+        virtual double GetKEAS() const = 0;
+        virtual double GetMACH() const = 0;
+        virtual double GetPitch() const = 0;
+        virtual double GetVerticalSpeed() const = 0;
+    };
+
+    enum class Axis { Pitch = 0, Yaw = 1, Roll = 2 };
+
+    struct PropulsionControl {
+        virtual double  GetMainThrustLevel() const = 0;
+        virtual void    SetMainThrustLevel(double l) = 0;
+        virtual void    SetAttitudeRotation(Axis axit, double level) = 0;
+    };
+
+    struct SurfaceControl {
+        virtual void    SetAileronLevel(double l) = 0;
+        virtual void    SetElevatorLevel(double l) = 0;
+    };
+
+    /**
+    * Base class for a Control.
+    */
+    class Control {
     public:
-        control(int ctrlId) : ctrlId_(ctrlId) {}
-        control() : ctrlId_(-1) {}
+        Control(int ctrlId) : ctrlId_(ctrlId) {}
+        Control() : ctrlId_(-1) {}
 
-        virtual void set_id(int id) { ctrlId_ = id; }
-        virtual int get_id() const { return ctrlId_; }
+        virtual void SetId(int id) { ctrlId_ = id; }
+        virtual int GetId() const { return ctrlId_; }
 
     private:
         int ctrlId_;
@@ -181,47 +187,43 @@ namespace bc_orbiter {
     using funcState = std::function<double()>;
 
     template<typename T>
-    class display_control_base :
-        public control,
+    class ElementControlBase :
+        public Control,
         public T
     {
     public:
-        display_control_base(
-            const UINT pnlGroupId,
-            const NTVERTEX* pnlVerts,
-            const int panelId
-        ) : T(
+        ElementControlBase(const UINT pnlGroupId, const NTVERTEX* pnlVerts, const int panelId) 
+          : T(
             pnlGroupId,
             pnlVerts,
             panelId,
             [&] {return state_; }
         )
-        {
+        { }
+
+        void setState(VESSEL4& vessel, bool s) {
+            if (setState(s ? 1.0 : 0.0))
+                T::triggerRedraw(vessel, GetId());
         }
 
-        void set_state(VESSEL4& vessel, bool s) {
-            if (set_state(s ? 1.0 : 0.0))
-                T::trigger_redraw(vessel, get_id());
+        void setState(VESSEL4& vessel, double s) {
+            if (setState(s))
+                T::triggerRedraw(vessel, GetId());
         }
 
-        void set_state(VESSEL4& vessel, double s) {
-            if (set_state(s))
-                T::trigger_redraw(vessel, get_id());
-        }
-
-        void set_state(VESSEL4& vessel, int s) {
-            if (set_state((double)s))
-                T::trigger_redraw(vessel, get_id());
+        void setState(VESSEL4& vessel, int s) {
+            if (setState((double)s))
+                T::triggerRedraw(vessel, GetId());
         }
 
     protected:
 
         /// <summary>
-        /// Set the state of the control.
+        /// Set the state of the Control.
         /// </summary>
         /// <param name="state">New state</param>
         /// <returns>True if the state changed</returns>
-        bool set_state(double state) {
+        bool setState(double state) {
             if (state_ != state) {
                 state_ = state;
                 return true;

@@ -24,7 +24,7 @@
 
 #include <assert.h>
 
-PropulsionController::PropulsionController(bco::power_provider& pwr, bco::vessel& vessel) :
+PropulsionController::PropulsionController(bco::PowerProvider& pwr, bco::Vessel& vessel) :
 	power_(pwr),
 	vessel_(vessel),
 	mainFuelLevel_(0.0),
@@ -34,7 +34,7 @@ PropulsionController::PropulsionController(bco::power_provider& pwr, bco::vessel
 	//slotTransferSel_(	[&](bool v) { }),
 	//slotFuelValveOpen_(	[&](bool b) { ToggleFill(); slotFuelValveOpen_.set(); })
 {
-	power_.attach_consumer(this);
+	power_.AttachConsumer(this);
 
 	maxMainFlow_ = (ENGINE_THRUST / THRUST_ISP) * 2;
 
@@ -54,7 +54,7 @@ PropulsionController::PropulsionController(bco::power_provider& pwr, bco::vessel
 	vessel.AddControl(&statusFuel_);
 	vessel.AddControl(&statusLimiter_);
 
-	switchThrustLimit_.attach([&]() { SetThrustLevel(switchThrustLimit_.is_on() ? ENGINE_THRUST : ENGINE_THRUST_AB); });
+	switchThrustLimit_.attach([&]() { SetThrustLevel(switchThrustLimit_.IsOn() ? ENGINE_THRUST : ENGINE_THRUST_AB); });
 
 	btnFuelValveOpen_.attach([&]() { ToggleFill(); });
 	btnRCSValveOpen_.attach([&]() { ToggleRCSFill(); });
@@ -90,7 +90,7 @@ void PropulsionController::ToggleRCSFill()
 	}
 }
 
-void PropulsionController::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void PropulsionController::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
 {
 	// Limit how often we run
 	if (fabs(simt - prevTime_) > 0.1)
@@ -123,17 +123,17 @@ void PropulsionController::Update(double deltaUpdate)
     // Main flow
     auto flow = vessel_.GetPropellantFlowrate(vessel_.MainPropellant());
     //    auto trFlow = (flow / maxMainFlow_) * (PI2 * 0.75);	// 90.718 = 200lbs per hour : 270 deg.
-    if ((flow < 0.0) || switchFuelDump_.is_on()) flow = 0.0;	 // Don't report flow if dumping.
+    if ((flow < 0.0) || switchFuelDump_.IsOn()) flow = 0.0;	 // Don't report flow if dumping.
     //	sigFuelFlowRate_.fire(flow / maxMainFlow_);	 // Converted to 0-1 range.
     gaugeFuelFlow_.set_state(flow / maxMainFlow_);
 
     statusLimiter_.set_state(vessel_,
-        (!IsPowered() || switchThrustLimit_.is_on())
+        (!IsPowered() || switchThrustLimit_.IsOn())
         ? cmn::status::off
         : cmn::status::on);
 
 
-    // Main level
+    // Main Level
 //    auto trMain = GetMainFuelLevel() * (PI2 * 0.71111);	// 256 deg.
 //	sigMainFuelLevel_.fire(mainFuelLevel_);
 
@@ -172,7 +172,7 @@ void PropulsionController::HandleTransfer(double deltaUpdate)
         }
     }
 
-    if (IsPowered() && switchFuelDump_.is_on())
+    if (IsPowered() && switchFuelDump_.IsOn())
     {
         auto actualDump = DrawMainFuel(FUEL_DUMP_RATE * deltaUpdate);
     }
@@ -246,7 +246,7 @@ double PropulsionController::FillRCSFuel(double amount)
 	return result;
 }
 
-void PropulsionController::handle_set_class_caps(bco::vessel& vessel)
+void PropulsionController::HandleSetClassCaps(bco::Vessel& vessel)
 {
 	//	Start with max thrust (ENGINE_THRUST) this will change base on the max thrust selector.
 	mainThrustHandles_[0] = vessel.CreateThruster(
@@ -354,14 +354,14 @@ void PropulsionController::handle_set_class_caps(bco::vessel& vessel)
 //	areaId_ = GetBaseVessel()->RegisterVCRedrawEvent(this);
 }
 
-bool PropulsionController::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool PropulsionController::HandleLoadState(bco::Vessel& vessel, const std::string& line)
 {
 	std::istringstream in(line);
 	in >> switchThrustLimit_;
 	return true;
 }
 
-std::string PropulsionController::handle_save_state(bco::vessel& vessel)
+std::string PropulsionController::HandleSaveState(bco::Vessel& vessel)
 {
 	std::ostringstream os;
 	os << switchThrustLimit_;
@@ -385,7 +385,7 @@ void PropulsionController::SetThrustLevel(double newLevel)
 	vessel_.SetThrusterMax0(mainThrustHandles_[1], maxThrustLevel_);
 }
 
-void PropulsionController::handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+void PropulsionController::HandleDrawHud(bco::Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
 {
     if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
 

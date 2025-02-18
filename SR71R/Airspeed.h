@@ -18,8 +18,8 @@
 
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/signals.h"
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "Avionics.h"
 #include "Common.h"
@@ -28,12 +28,12 @@ namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
 class Airspeed :
-    public bco::vessel_component
-    , public bco::post_step
+    public bco::VesselComponent
+    , public bco::PostStep
 {
 public:
 
-    Airspeed(bco::vessel& vessel, Avionics& avionics) :
+    Airspeed(bco::Vessel& vessel, Avionics& avionics) :
         avionics_(avionics)
     {
         vessel.AddControl(&kiesHand_);
@@ -56,8 +56,8 @@ public:
 
     ~Airspeed() {}
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+    // PostStep
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override {
         double  keas = 0.0;		// equivalent airspeed, shows in TDI
         double  kias = 0.0;		// indicated, shows as dial.
         double  mach = 0.0;		// shows in TDI and as a dial
@@ -105,9 +105,9 @@ public:
 
         bco::TensParts parts;
         bco::GetDigits(keas, parts);
-        tdiKeasOnes_.set_position(parts.Tens);
-        tdieasTens_.set_position(parts.Hundreds);
-        tdiKeasHunds_.set_position(parts.Thousands);
+        tdiKeasOnes_.SetPosition(parts.Tens);
+        tdieasTens_.SetPosition(parts.Hundreds);
+        tdiKeasHunds_.SetPosition(parts.Thousands);
 
         maxMachHand_.set_state(maxMachRatio);
         machHand_.set_state(speedRatio);
@@ -116,9 +116,9 @@ public:
         //		sprintf(oapiDebugString(), "speedRatio (mach hand): %+4.2f", speedRatio);
 
         bco::GetDigits(mach, parts);
-        tdiMhOnes_.set_position(parts.Tenths);
-        tdiMhTens_.set_position(parts.Tens);
-        tdiMhHunds_.set_position(parts.Hundreds);
+        tdiMhOnes_.SetPosition(parts.Tenths);
+        tdiMhTens_.SetPosition(parts.Tens);
+        tdiMhHunds_.SetPosition(parts.Hundreds);
 
         status_.set_state(vessel, isOverSpeed ? cmn::status::error : cmn::status::off);
 
@@ -137,9 +137,9 @@ private:
     const double MAX_MACH = 22.0;
     double l22 = log(23);
 
-    using dial = bco::rotary_display_target;
-    using roll = bco::flat_roll;
-    const double ofs = 0.1084;		// flat_roll offset.
+    using dial = bco::RotaryDisplayTarget;
+    using roll = bco::TextureRoll;
+    const double ofs = 0.1084;		// TextureRoll offset.
 
     dial machHand_{ bm::vc::vcMachHand_id,	bm::vc::vcMachHand_loc,		bm::vc::SpeedAxis_loc,	bm::pnl::pnlMachHand_id,	bm::pnl::pnlMachHand_vrt,	(300 * RAD), 2.0 };
     dial kiesHand_{ bm::vc::vcKiesHand_id,	bm::vc::vcKiesHand_loc,		bm::vc::SpeedAxis_loc,	bm::pnl::pnlKiesHand_id,	bm::pnl::pnlKiesHand_vrt,	(300 * RAD), 2.0 };
@@ -153,7 +153,7 @@ private:
     roll tdiMhTens_{ bm::vc::vcTDIMachTens_id,		bm::vc::vcTDIMachTens_vrt,	bm::pnl::pnlTDIMACHTens_id,		bm::pnl::pnlTDIMACHTens_vrt,	ofs };
     roll tdiMhHunds_{ bm::vc::vcTDIMachHunds_id,	bm::vc::vcTDIMachHunds_vrt,	bm::pnl::pnlTDIMACHHunds_id,	bm::pnl::pnlTDIMACHHunds_vrt,	ofs };
 
-    bco::display_full       enabledFlag_{
+    bco::VesselTextureElement       enabledFlag_{
           bm::vc::SpeedFlagOff_id,
           bm::vc::SpeedFlagOff_vrt,
           cmn::vc::main,
@@ -163,7 +163,7 @@ private:
     };
 
     // Flags: true is off (not showing)
-    bco::display_full       velocityFlag_{
+    bco::VesselTextureElement       velocityFlag_{
        bm::vc::SpeedVelocityFlag_id,
        bm::vc::SpeedVelocityFlag_vrt,
        0,
@@ -172,7 +172,7 @@ private:
        0
     };
 
-    bco::display_full       status_ {
+    bco::VesselTextureElement       status_ {
        bm::vc::MsgLightKeasWarn_id,
        bm::vc::MsgLightKeasWarn_vrt,
        cmn::vc::main,

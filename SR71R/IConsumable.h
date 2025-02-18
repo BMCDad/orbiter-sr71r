@@ -20,12 +20,12 @@ class IConsumable
 {
 public:
 	/**
-	Get the current level.
+	Get the current Level.
 	*/
 	virtual double GetLevel() const = 0;
 
 	/**
-	Draw down the consumable by 'amount'.
+	Draw down the Consumable by 'amount'.
 	*/
 	virtual double Draw(double amount) = 0;
 

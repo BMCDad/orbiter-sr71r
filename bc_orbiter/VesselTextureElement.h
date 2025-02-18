@@ -1,4 +1,4 @@
-//	display_full - bco Orbiter Library
+//	VesselTextureElement - bco Orbiter Library
 //	Copyright(C) 2025  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
@@ -17,36 +17,31 @@
 #pragma once
 
 #include "Control.h"
-#include "display_vc.h"
-#include "display_panel.h"
+#include "VCTextureElement.h"
+#include "PanelTextureElement.h"
 #include <functional>
 
 namespace bc_orbiter {
 
     /*
-    display_full
-    Controls a display only state (no event) for 2D panels and VCs.  By convention state is the
-    offset in the texture to the right.  Which means a state of 0 is the 'rest' state.
-    A state of 1 moves the 'U' setting of the texture to the right one 'width' of the the
-    rectangle defined by NTVERTEX.  This control also assumes the same texture will be used for
-    both panel and VC, meaning the offset that is calculated for the VC will also be used for
-    the panel.
+    Combines a VCTextureElement and PanelTextureElement into a single Control.  This allows the Control
+    state to be shared between VC and panel cockpits.
     **/
-    class display_full :
-        public control,
-        public display_vc,
-        public display_panel
+    class VesselTextureElement :
+        public Control,
+        public VCTextureElement,
+        public PanelTextureElement
     {
     public:
-        display_full(
+        VesselTextureElement(
             const UINT vcGroupId,
             const NTVERTEX* vcVerts,
             const int vcId,
             const UINT pnlGroupId,
             const NTVERTEX* pnlVerts,
             const int panelId
-        ) : display_vc(vcGroupId, vcVerts, vcId, [&] {return state_; }),
-            display_panel(pnlGroupId, pnlVerts, panelId, [&] {return state_; })
+        ) : VCTextureElement(vcGroupId, vcVerts, vcId, [&] {return state_; }),
+            PanelTextureElement(pnlGroupId, pnlVerts, panelId, [&] {return state_; })
         {
         }
         void set_state(VESSEL4& vessel, bool s) {
@@ -63,7 +58,7 @@ namespace bc_orbiter {
     protected:
 
         /// <summary>
-        /// Set the state of the control.
+        /// Set the state of the Control.
         /// </summary>
         /// <param name="state">New state</param>
         /// <returns>True if the state changed</returns>
@@ -78,8 +73,8 @@ namespace bc_orbiter {
 
     private:
         void trigger(VESSEL4& vessel) {
-            display_vc::trigger_redraw(vessel, get_id());
-            display_panel::trigger_redraw(vessel, get_id());
+            VCTextureElement::triggerRedraw(vessel, GetId());
+            PanelTextureElement::triggerRedraw(vessel, GetId());
         }
 
         double  state_{ 0.0 };

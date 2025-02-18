@@ -2,14 +2,14 @@
 
 #include "Orbitersdk.h"
 
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/simple_event.h"
+#include "../bc_orbiter/GenericTank.h"
+#include "../bc_orbiter/OnOffInput.h"
+#include "../bc_orbiter/RotaryDisplay.h"
+#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/TextureRoll.h"
 #include "../bc_orbiter/transform_display.h"
-#include "../bc_orbiter/flat_roll.h"
-#include "../bc_orbiter/generic_tank.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
@@ -47,7 +47,7 @@
 
 namespace cmn = sr71_common;
 
-class SR71Vessel : public bco::vessel
+class SR71Vessel : public bco::Vessel
 {
 public:
     SR71Vessel(OBJHANDLE hvessel, int flightmodel);
@@ -117,7 +117,7 @@ private:
 
 
        // Map components that handle config state with a key for that component.
-    std::map <std::string, bco::manage_state*>		mapStateManagement_{
+    std::map <std::string, bco::ManageState*>		mapStateManagement_{
           { "AIRBRAKE",     &airBrake_      }   // [a b]        : (a)Switch position,  (b)Brake position
         , { "APU",          &apu_           }   // [a]          : (a)Enabled switch
         , { "AVIONICS",     &avionics_      }   // [a b c d e]  : (a)Set course, (b)Set heading, (c)power, (d)Mode switch[1=atmo], (c)Nav select
@@ -137,7 +137,7 @@ private:
     };
 
     // Put status here that does not go anywhere else.
-    bco::display_full       statusDock_ {
+    bco::VesselTextureElement       statusDock_ {
         bm::vc::MsgLightDock_id,
         bm::vc::MsgLightDock_vrt,
         cmn::vc::main,

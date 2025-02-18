@@ -23,7 +23,7 @@
 #include "SR71r_mesh.h"
 
 
-Clock::Clock(bco::vessel& vessel) :
+Clock::Clock(bco::Vessel& vessel) :
 	startElapsedTime_(0.0),
 	startTimerTime_(0.0),
 	isTimerRunning_(false),
@@ -49,9 +49,9 @@ void Clock::ResetElapsed()
 
 void Clock::ResetTimer()
 {
-    // The timer has three states; isTimerRunning, stopped, reset.
-    // If isTimerRunning, then we just stop.  If stopped we reset
-    // and if reset we start isTimerRunning.
+    // The timer has three states; isTimerRunning, stopped, Reset.
+    // If isTimerRunning, then we just stop.  If stopped we Reset
+    // and if Reset we start isTimerRunning.
     if (isTimerRunning_)
     {
         isTimerRunning_ = false;
@@ -72,7 +72,7 @@ void Clock::ResetTimer()
     }
 }
 
-void Clock::handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd)
+void Clock::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
 {
 	// simt is simulator time in seconds.
 	//  3600 - seconds in 60 minutes (minute hand).
@@ -94,7 +94,7 @@ void Clock::handle_post_step(bco::vessel& vessel, double simt, double simdt, dou
 }
 
 // [elapsedMissionTime] [isTimerRunning] [elapsedTimer]
-bool Clock::handle_load_state(bco::vessel& vessel, const std::string& line)
+bool Clock::HandleLoadState(bco::Vessel& vessel, const std::string& line)
 {
 	int elapsedMission = 0;
 	int isTimerRunning = 0;
@@ -121,7 +121,7 @@ bool Clock::handle_load_state(bco::vessel& vessel, const std::string& line)
 	return true;
 }
 
-std::string Clock::handle_save_state(bco::vessel& vessel)
+std::string Clock::HandleSaveState(bco::Vessel& vessel)
 {
 	std::ostringstream os;
 

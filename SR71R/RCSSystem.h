@@ -17,8 +17,8 @@
 #pragma once
 
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -32,28 +32,28 @@ class VESSEL3;
 */
 
 class RCSSystem :
-    public bco::vessel_component
-    , public bco::power_consumer
+    public bco::VesselComponent
+    , public bco::PowerConsumer
 {
 public:
-    RCSSystem(bco::vessel& vessel, bco::power_provider& pwr);
+    RCSSystem(bco::Vessel& vessel, bco::PowerProvider& pwr);
 
     // Callback:
     void OnRCSMode(int mode);
 
-    double amp_draw() const override { return IsPowered() ? 2.0 : 0.0; }
-    void on_change(double v) override { }
+    double AmpDraw() const override { return IsPowered() ? 2.0 : 0.0; }
+    void OnChange(double v) override { }
 
 private:
-    bco::vessel& vessel_;
-    bco::power_provider& power_;
+    bco::Vessel& vessel_;
+    bco::PowerProvider& power_;
 
-    bool IsPowered() const { return power_.volts_available() > 24; }
+    bool IsPowered() const { return power_.VoltsAvailable() > 24; }
 
     void OnChanged(int mode);
     void ActiveChanged(bool isActive);
 
-    bco::simple_event<>     btnLinear_{
+    bco::SimpleEvent<>     btnLinear_{
         bm::vc::vcRCSLin_loc,
         0.01,
         0,
@@ -61,7 +61,7 @@ private:
         0
     };
 
-    bco::display_full       lightLinear_{
+    bco::VesselTextureElement       lightLinear_{
         bm::vc::vcRCSLin_id,
         bm::vc::vcRCSLin_vrt,
         0,
@@ -70,7 +70,7 @@ private:
         0
     };
 
-    bco::simple_event<>     btnRotate_{
+    bco::SimpleEvent<>     btnRotate_{
         bm::vc::vcRCSRot_loc,
         0.01,
         0,
@@ -78,7 +78,7 @@ private:
         0
     };
 
-    bco::display_full       lightRotate_{
+    bco::VesselTextureElement       lightRotate_{
         bm::vc::vcRCSRot_id,
         bm::vc::vcRCSRot_vrt,
         0,

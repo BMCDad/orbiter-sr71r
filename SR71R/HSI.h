@@ -16,13 +16,13 @@
 
 #pragma once
 
-#include "../bc_orbiter/control.h"
+#include "../bc_orbiter/Control.h"
+#include "../bc_orbiter/RotaryDisplay.h"
 #include "../bc_orbiter/signals.h"
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/rotary_display.h"
+#include "../bc_orbiter/TextureRoll.h"
 #include "../bc_orbiter/transform_display.h"
-#include "../bc_orbiter/flat_roll.h"
-#include "../bc_orbiter/display_full.h"
+#include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselTextureElement.h"
 
 #include "Avionics.h"
 #include "Common.h"
@@ -31,12 +31,12 @@ namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
 class HSI :
-    public bco::vessel_component,
-    public bco::post_step {
+    public bco::VesselComponent,
+    public bco::PostStep {
 
 public:
 
-    HSI(bco::vessel& vessel, Avionics& avionics) :
+    HSI(bco::Vessel& vessel, Avionics& avionics) :
         avionics_(avionics),
         vessel_(vessel)
     {
@@ -62,8 +62,8 @@ public:
 
     ~HSI() {}
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override {
+    // PostStep
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override {
         double		yaw = 0.0;
         double		rotHdg = 0.0;
         double		rotCrs = 0.0;
@@ -93,9 +93,9 @@ public:
 
         // sprintf(oapiDebugString(), "CRS %+4f %+4f %+4f %+4f", deg, parts.Thousands, parts.Hundreds, parts.Tens );
 
-        CRSOnes_.set_position(parts.Tens / 10);
-        CRSTens_.set_position(parts.Hundreds / 10);
-        CRSHunds_.set_position(parts.Thousands / 10);
+        CRSOnes_.SetPosition(parts.Tens / 10);
+        CRSTens_.SetPosition(parts.Hundreds / 10);
+        CRSHunds_.SetPosition(parts.Thousands / 10);
 
         signalGlideScope_.fire(glideSlope);
 
@@ -110,9 +110,9 @@ public:
 
         // Miles barrels
         bco::GetDigits(milesBeacon, parts);
-        MilesOnes_.set_position(parts.Tens);
-        MilesTens_.set_position(parts.Hundreds);
-        MilesHunds_.set_position(parts.Thousands);
+        MilesOnes_.SetPosition(parts.Tens);
+        MilesTens_.SetPosition(parts.Hundreds);
+        MilesHunds_.SetPosition(parts.Thousands);
 
         hsiOffFlag_.set_state(vessel_, avionics_.IsAeroActive());
         hsiExoFlag_.set_state(vessel_,
@@ -129,7 +129,7 @@ public:
     bco::slot<bool>& NavModeSignal() { return slotNavMode_; }
 
 private:
-    bco::vessel&            vessel_;
+    bco::Vessel&            vessel_;
     Avionics& avionics_;
     bco::signal<double>		signalGlideScope_;
 
@@ -137,7 +137,7 @@ private:
     bco::slot<double>		slotSetHeading_;
     bco::slot<bool>			slotNavMode_;
 
-    bool CalcNavMetrics(bco::vessel& vessel, NAVHANDLE handle, double& bearing, double& glideSlope, double& navError, double& milesBeacon) {
+    bool CalcNavMetrics(bco::Vessel& vessel, NAVHANDLE handle, double& bearing, double& glideSlope, double& navError, double& milesBeacon) {
         bool result = false;  //comstatus
 
         auto navType = oapiGetNavType(handle);
@@ -155,7 +155,7 @@ private:
             double navlng, navlat, rad;
             oapiGlobalToEqu(navRef, navPosition, &navlng, &navlat, &rad);
 
-            // Now get the location of our vessel.
+            // Now get the location of our Vessel.
             double vlng, vlat, vrad, slope;
             double navDistance;
             OBJHANDLE hRef = vessel.GetEquPos(vlng, vlat, vrad);
@@ -177,7 +177,7 @@ private:
             navError = devB / Range * Slide;
 
             // Glide slope
-            slope = atan2(vessel.GetAltitude(), navDistance);
+            slope = atan2(vessel.GetAvAltitude(), navDistance);
 
             const double tgtslope = 3.0 * RAD;
             const double tgtvar = 0.6 * RAD;
@@ -197,7 +197,7 @@ private:
         return result;
     }
 
-    bco::rotary_display_wrap	hsiRoseCompass_{
+    bco::RotaryDisplayWrap	hsiRoseCompass_{
        { bm::vc::RoseCompass_id },
           bm::vc::RoseCompass_loc, bm::vc::HSIAxis_loc,
           bm::pnl::pnlRoseCompass_id,
@@ -206,7 +206,7 @@ private:
           1.0
     };
 
-    bco::rotary_display_wrap	hsiHeadingBug_{
+    bco::RotaryDisplayWrap	hsiHeadingBug_{
        { bm::vc::HSICompassHeading_id },
           bm::vc::HSICompassHeading_loc, bm::vc::HSIAxis_loc,
           bm::pnl::pnlHSICompassHeading_id,
@@ -215,7 +215,7 @@ private:
           1.0
     };
 
-    bco::rotary_display_wrap	hsiCourse_{
+    bco::RotaryDisplayWrap	hsiCourse_{
        { bm::vc::HSICourse_id },
           bm::vc::HSICourse_loc, bm::vc::HSIAxis_loc,
           bm::pnl::pnlHSICourse_id,
@@ -224,7 +224,7 @@ private:
           1.0
     };
 
-    bco::rotary_display_wrap	hsiBearing_{
+    bco::RotaryDisplayWrap	hsiBearing_{
        { bm::vc::HSIBearingArrow_id },
           bm::vc::HSIBearingArrow_loc, bm::vc::HSIAxis_loc,
           bm::pnl::pnlHSIBearingArrow_id,
@@ -240,49 +240,49 @@ private:
           bm::pnl::pnlHSICourseNeedle_vrt
     };
 
-    bco::flat_roll			CRSOnes_{
+    bco::TextureRoll			CRSOnes_{
        bm::vc::vcCrsOnes_id,
           bm::vc::vcCrsOnes_vrt,
           bm::pnl::pnlHSICRSOnes_id,
           bm::pnl::pnlHSICRSOnes_vrt,
           0.1084 };
 
-    bco::flat_roll			CRSTens_{
+    bco::TextureRoll			CRSTens_{
        bm::vc::vcCrsTens_id,
           bm::vc::vcCrsTens_vrt,
           bm::pnl::pnlHSICRSTens_id,
           bm::pnl::pnlHSICRSTens_vrt,
           0.1084 };
 
-    bco::flat_roll			CRSHunds_{
+    bco::TextureRoll			CRSHunds_{
        bm::vc::vcCrsHunds_id,
           bm::vc::vcCrsHunds_vrt,
           bm::pnl::pnlHSICRSHunds_id,
           bm::pnl::pnlHSICRSHunds_vrt,
           0.1084 };
 
-    bco::flat_roll			MilesOnes_{
+    bco::TextureRoll			MilesOnes_{
        bm::vc::vcMilesOnes_id,
           bm::vc::vcMilesOnes_vrt,
           bm::pnl::pnlHSIMilesOnes_id,
           bm::pnl::pnlHSIMilesOnes_vrt,
           0.1084 };
 
-    bco::flat_roll			MilesTens_{
+    bco::TextureRoll			MilesTens_{
        bm::vc::vcMilesTens_id,
           bm::vc::vcMilesTens_vrt,
           bm::pnl::pnlHSIMilesTens_id,
           bm::pnl::pnlHSIMilesTens_vrt,
           0.1084 };
 
-    bco::flat_roll			MilesHunds_{
+    bco::TextureRoll			MilesHunds_{
        bm::vc::vcMilesHunds_id,
           bm::vc::vcMilesHunds_vrt,
           bm::pnl::pnlHSIMilesHunds_id,
           bm::pnl::pnlHSIMilesHunds_vrt,
           0.1084 };
 
-    bco::display_full       hsiOffFlag_{
+    bco::VesselTextureElement       hsiOffFlag_{
         bm::vc::HSIOffFlag_id,
         bm::vc::HSIOffFlag_vrt,
         cmn::vc::main,
@@ -291,7 +291,7 @@ private:
         cmn::panel::main
     };
 
-    bco::display_full       hsiExoFlag_ {
+    bco::VesselTextureElement       hsiExoFlag_ {
        bm::vc::HSIExoFlag_id,
         bm::vc::HSIExoFlag_vrt,
         cmn::vc::main,
@@ -300,7 +300,7 @@ private:
         cmn::panel::main
     };
 
-    bco::display_full       comStatusFlag_ {
+    bco::VesselTextureElement       comStatusFlag_ {
         bm::vc::COMStatusPanel_id,
         bm::vc::COMStatusPanel_vrt,
         cmn::vc::main,
