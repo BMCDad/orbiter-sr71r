@@ -18,7 +18,6 @@
 
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/OnOffInput.h"
-#include "../bc_orbiter/PanelEvent.h"
 #include "../bc_orbiter/RotaryDisplay.h"
 #include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/VesselTextureElement.h"
@@ -57,12 +56,7 @@ class VESSEL3;
 	Short cuts:
 	None.
 */
-class APU :
-    public bco::VesselComponent,
-    public bco::PostStep,
-    public bco::PowerConsumer,
-    public bco::ManageState,
-    public bco::HydraulicProvider
+class APU : public bco::VesselComponent, public bco::PowerConsumer, public bco::HydraulicProvider
 {
 public:
     APU(bco::Vessel& vessel, bco::PowerProvider& pwr);

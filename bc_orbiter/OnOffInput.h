@@ -108,9 +108,10 @@ namespace bc_orbiter {
         }
 
         // MouseEventTarget
-        bool OnMouseClick(int id, int event) override {
-            state_ = !state_;
-            fire();
+        bool OnMouseClick(VESSEL4& vessel, int id, int event) override {
+            //state_ = !state_;
+            //fire();
+            toggle_state(vessel);
             return true;
         }
 
@@ -118,10 +119,10 @@ namespace bc_orbiter {
             attach(func);
         }
 
-        void toggle_state() {
+        void toggle_state(VESSEL4& vessel) {
             state_ = !state_;
-            fire();
-            oapiTriggerRedrawArea(0, 0, GetId());
+//            fire();
+            vessel.TriggerRedrawArea(pnlId_, 0, GetId());
         }
 
         friend std::istream& operator>>(std::istream& input, OnOffInput& obj) {

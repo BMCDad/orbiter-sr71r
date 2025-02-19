@@ -27,9 +27,7 @@
 namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
-class Airspeed :
-    public bco::VesselComponent
-    , public bco::PostStep
+class Airspeed : public bco::VesselComponent
 {
 public:
 

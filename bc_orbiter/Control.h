@@ -73,7 +73,7 @@ namespace bc_orbiter {
     */
     struct MouseEventTarget {
         virtual ~MouseEventTarget() = default;
-        virtual bool OnMouseClick(int id, int event) = 0;
+        virtual bool OnMouseClick(VESSEL4& vessel, int id, int event) = 0;
     };
 
     /**
@@ -90,7 +90,7 @@ namespace bc_orbiter {
         virtual int         VCRedrawFlags()                     { return PANEL_REDRAW_NEVER; }
         virtual void        OnVCRedraw(DEVMESHHANDLE meshVC)    {}
         virtual int         VCId()                              { return 0; }
-        virtual bool        OnMouseClick(int id, int event) override { return false; }
+        virtual bool        OnMouseClick(VESSEL4& vessel, int id, int event) override { return false; }
     };
 
     /**
@@ -106,7 +106,7 @@ namespace bc_orbiter {
         virtual int         PanelRedrawFlags()                  { return PANEL_REDRAW_NEVER; }
         virtual void        OnPanelRedraw(MESHHANDLE meshPanel) {}
         virtual int         PanelId()                           { return 0; }
-        virtual bool        OnMouseClick(int id, int event) override { return false; }
+        virtual bool        OnMouseClick(VESSEL4& vessel, int id, int event) override { return false; }
     };
 
 
@@ -147,11 +147,11 @@ namespace bc_orbiter {
     struct AvionicsProvider {
         virtual double GetAvAltitude() const = 0;
         virtual void   GetAngularVelocity(VECTOR3& v) = 0;
-        virtual double GetBank() const = 0;
+        virtual double GetAvBank() const = 0;
         virtual double GetHeading() const = 0;
         virtual double GetKEAS() const = 0;
         virtual double GetMACH() const = 0;
-        virtual double GetPitch() const = 0;
+        virtual double GetAvPitch() const = 0;
         virtual double GetVerticalSpeed() const = 0;
     };
 
@@ -185,6 +185,7 @@ namespace bc_orbiter {
 
     using funcEvent = std::function<void()>;
     using funcState = std::function<double()>;
+    using funcVesselEvent = std::function<void(VESSEL4&)>;
 
     template<typename T>
     class ElementControlBase :

@@ -20,7 +20,7 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/RotaryDisplay.h"
-#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/VesselEvent.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -30,10 +30,7 @@
 
 namespace bco = bc_orbiter;
 
-class Clock :
-    public bco::VesselComponent,
-    public bco::PostStep,
-    public bco::ManageState
+class Clock : public bco::VesselComponent
 {
 public:
     Clock(bco::Vessel& vessel);
@@ -92,20 +89,128 @@ private:
                                                 0.4
     };
 
-    bco::SimpleEvent<>         clockTimerReset_{
+    bco::VesselEvent         clockTimerReset_{
         bm::vc::ClockTimerReset_loc,
         0.01,
-        0,
+        cmn::vc::main,
         bm::pnl::pnlClockTimerReset_RC,
-        0
+        cmn::panel::main
     };
 
-    bco::SimpleEvent<>         clockElapsedReset_{
+    bco::VesselEvent         clockElapsedReset_{
         bm::vc::ClockElapsedReset_loc,
         0.01,
-        0,
+        cmn::vc::main,
         bm::pnl::pnlClockElapsedReset_RC,
-        0
+        cmn::panel::main
     };
 
 };
+
+inline Clock::Clock(bco::Vessel& vessel) 
+  : startElapsedTime_(0.0),
+    startTimerTime_(0.0),
+    isTimerRunning_(false),
+    currentTimerTime_(0.0)
+{
+    vessel.AddControl(&clockTimerMinutesHand_);
+    vessel.AddControl(&clockTimerSecondsHand_);
+    vessel.AddControl(&clockElapsedHoursHand_);
+    vessel.AddControl(&clockElapsedMinutesHand_);
+    vessel.AddControl(&clockTimerReset_);
+    vessel.AddControl(&clockElapsedReset_);
+
+    clockTimerReset_.Attach([&](VESSEL4&) { ResetTimer(); });
+    clockElapsedReset_.Attach([&](VESSEL4&) { ResetElapsed(); });
+}
+
+inline void Clock::ResetElapsed()
+{
+    // The elapsed time is always isTimerRunning, when
+    // pressed the elapsed time just restarts at zero.
+    startElapsedTime_ = oapiGetSimTime();
+}
+
+inline void Clock::ResetTimer()
+{
+    // The timer has three states; isTimerRunning, stopped, Reset.
+    // If isTimerRunning, then we just stop.  If stopped we Reset
+    // and if Reset we start isTimerRunning.
+    if (isTimerRunning_)
+    {
+        isTimerRunning_ = false;
+    }
+    else
+    {
+        if (currentTimerTime_ == 0.0)
+        {
+            startTimerTime_ = oapiGetSimTime();
+            currentTimerTime_ = startTimerTime_;
+            isTimerRunning_ = true;
+        }
+        else
+        {
+            currentTimerTime_ = 0.0;
+            startTimerTime_ = 0.0;
+        }
+    }
+}
+
+inline void Clock::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
+{
+    // simt is simulator time in seconds.
+    //  3600 - seconds in 60 minutes (minute hand).
+    // 43200 - seconds in 12 hours (hour hand).
+
+    auto elapsedRun = simt - startElapsedTime_;
+
+
+    clockElapsedMinutesHand_.set_state(fmod((elapsedRun / 60), 60) / 60);
+    clockElapsedHoursHand_.set_state(fmod((elapsedRun / 3600), 12) / 60);
+
+    if (isTimerRunning_)
+    {
+        currentTimerTime_ = simt - startTimerTime_;
+    }
+
+    clockTimerSecondsHand_.set_state(fmod(currentTimerTime_, 60) / 60);
+    clockTimerMinutesHand_.set_state(fmod((currentTimerTime_ / 60), 60) / 60);
+}
+
+// [elapsedMissionTime] [isTimerRunning] [elapsedTimer]
+inline bool Clock::HandleLoadState(bco::Vessel& vessel, const std::string& line)
+{
+    int elapsedMission = 0;
+    int isTimerRunning = 0;
+    int elapsedTimer = 0;
+
+    std::istringstream in(line);
+
+    if (in >> elapsedMission >> isTimerRunning >> elapsedTimer) {
+        auto current = oapiGetSimTime();
+        startElapsedTime_ = current - (double)elapsedMission;
+
+        isTimerRunning_ = (isTimerRunning == 1);
+
+        if (isTimerRunning_)
+        {
+            startTimerTime_ = current - elapsedTimer;
+        }
+        else
+        {
+            currentTimerTime_ = elapsedTimer;
+        }
+    }
+
+    return true;
+}
+
+inline std::string Clock::HandleSaveState(bco::Vessel& vessel)
+{
+    std::ostringstream os;
+
+    auto current = oapiGetSimTime();
+
+    os << (int)(current - startElapsedTime_) << " " << (isTimerRunning_ ? 1 : 0) << " " << (int)(current - startTimerTime_);
+    return os.str();
+}

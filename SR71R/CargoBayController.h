@@ -56,12 +56,7 @@ namespace cmn = sr71_common;
 	b - 0/1 Open close switch closed/open.
 	c - 0.0-1.0 current door position.
 */
-class CargoBayController :
-      public bco::VesselComponent
-    , public bco::SetClassCaps
-    , public bco::PostStep
-    , public bco::PowerConsumer
-    , public bco::ManageState
+class CargoBayController : public bco::VesselComponent, public bco::PowerConsumer
 {
 public:
 	CargoBayController(bco::PowerProvider& pwr, bco::Vessel& vessel);
@@ -153,3 +148,58 @@ private:
         cmn::panel::main
     };
 };
+
+inline CargoBayController::CargoBayController(bco::PowerProvider& pwr, bco::Vessel& vessel) :
+    power_(pwr)
+{
+    power_.AttachConsumer(this);
+    vessel.AddControl(&switchOpen_);
+    vessel.AddControl(&switchPower_);
+    vessel.AddControl(&status_);
+}
+
+inline void CargoBayController::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
+{
+    if (IsPowered()) {
+        animCargoBayDoors_.Update(vessel, switchOpen_.IsOn() ? 1.0 : 0.0, simdt);
+    }
+
+    auto status = cmn::status::off;
+    if (power_.VoltsAvailable() > MIN_VOLTS) {
+        if ((animCargoBayDoors_.GetState() > 0.0) && (animCargoBayDoors_.GetState() < 1.0)) {
+            status = cmn::status::warn;
+        }
+        else {
+            if (animCargoBayDoors_.GetState() == 1.0) {
+                status = cmn::status::on;
+            }
+        }
+    }
+    status_.set_state(vessel, status);
+}
+
+inline bool CargoBayController::HandleLoadState(bco::Vessel& vessel, const std::string& line)
+{
+    std::istringstream in(line);
+    in >> switchPower_ >> switchOpen_ >> animCargoBayDoors_;
+    vessel.SetAnimationState(animCargoBayDoors_);
+    return true;
+}
+
+inline std::string CargoBayController::HandleSaveState(bco::Vessel& vessel)
+{
+    std::ostringstream os;
+    os << switchPower_ << " " << switchOpen_ << " " << animCargoBayDoors_;
+    return os.str();
+}
+
+inline void CargoBayController::HandleSetClassCaps(bco::Vessel& vessel)
+{
+    auto mIdx = vessel.GetMainMeshIndex();
+
+    auto id = vessel.CreateVesselAnimation(animCargoBayDoors_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftFront_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightFront_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoLeftMain_);
+    vessel.AddVesselAnimationComponent(id, mIdx, &gpCargoRightMain_);
+}

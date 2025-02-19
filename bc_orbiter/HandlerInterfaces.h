@@ -33,6 +33,18 @@ namespace bc_orbiter {
     {
     public:
         virtual ~VesselComponent() = default;
+
+        virtual void HandleDrawHud(Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) {}
+        virtual void HandlePostStep(Vessel& vessel, double simt, double simdt, double mjd) {}
+        virtual void HandleSetClassCaps(Vessel& vessel) {}
+        virtual bool HandleLoadState(Vessel& vessel, const std::string& line) { return false; }
+        virtual std::string HandleSaveState(Vessel& vessel) { return ""; }
+        virtual bool HandleLoadVC(Vessel& vessel, int vcid) { return false; }
+        virtual bool HandleRedrawVC(Vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
+        virtual bool HandleMouseVC(Vessel& vessel, int id, int event) { return false; }
+        virtual bool HandleLoadPanel(Vessel& vessel, int id, PANELHANDLE hPanel) { return false; }
+        virtual bool HandleRedrawPanel(Vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
+        virtual bool HandleMousePanel(Vessel& vessel, int id, int event) { return false; }
     };
 
     /**

@@ -64,11 +64,7 @@ namespace cmn = sr71_common;
 	a = 0/1 fuel cell power switch off/on.
 		
 */
-class FuelCell : 
-    public bco::VesselComponent,
-    public bco::PostStep,
-    public bco::PowerConsumer,
-    public bco::ManageState
+class FuelCell : public bco::VesselComponent, public bco::PowerConsumer
 {
     const double MAX_VOLTS = 28.0;
     const double MIN_VOLTS = 20.0;
@@ -131,3 +127,64 @@ private:
         cmn::panel::right
     };
 };
+
+inline FuelCell::FuelCell(bco::PowerProvider& pwr, bco::Vessel& vessel, bco::Consumable& lox, bco::Consumable& hydro) :
+    power_(pwr),
+    lox_(lox),
+    hydro_(hydro),
+    isFuelCellAvailable_(false),
+    vessel_(vessel)
+{
+    vessel.AddControl(&switchEnabled_);
+    vessel.AddControl(&lightAvailable_);
+}
+
+inline void FuelCell::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
+{
+    if (!IsPowered())
+    {
+        SetIsFuelCellPowerAvailable(false);
+    }
+    else
+    {
+        auto ampFac = power_.AmpLoad();
+
+        auto isLOX = lox_.Level() > 0.0;
+        auto isHYD = hydro_.Level() > 0.0;
+
+        if (isLOX) {
+            lox_.Draw(OXYGEN_BURN_RATE_PER_SEC_100A * ampFac);
+        }
+
+        if (isHYD) {
+            hydro_.Draw(HYDROGEN_BURN_RATE_PER_SEC_100A * ampFac);
+        }
+
+        SetIsFuelCellPowerAvailable(isLOX && isHYD);
+    }
+
+    sigAvailPower_.fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
+}
+
+inline bool FuelCell::HandleLoadState(bco::Vessel& vessel, const std::string& line)
+{
+    std::istringstream in(line);
+    in >> switchEnabled_;
+    return true;
+}
+
+inline std::string FuelCell::HandleSaveState(bco::Vessel& vessel)
+{
+    std::ostringstream os;
+    os << switchEnabled_;
+    return os.str();
+}
+
+
+inline void FuelCell::SetIsFuelCellPowerAvailable(bool newValue)
+{
+    if (newValue != isFuelCellAvailable_) {
+        isFuelCellAvailable_ = newValue;
+        lightAvailable_.set_state(vessel_, isFuelCellAvailable_);
+    }
+}

@@ -29,9 +29,8 @@
 namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
-class Altimeter :
-    public bco::VesselComponent,
-    public bco::PostStep {
+class Altimeter : public bco::VesselComponent
+{
 
 public:
 

@@ -112,7 +112,7 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
 			return 1;
 
 		case OAPI_KEY_1:
-			propulsion_.ToggleThrustLimit();
+			propulsion_.ToggleThrustLimit(*this);
 			return 1;
 		}
 	}

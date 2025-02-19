@@ -17,7 +17,7 @@
 #pragma once
 
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/VesselEvent.h"
 #include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
@@ -31,9 +31,7 @@ class VESSEL3;
 /** RCSMode
 */
 
-class RCSSystem :
-    public bco::VesselComponent
-    , public bco::PowerConsumer
+class RCSSystem : public bco::VesselComponent, public bco::PowerConsumer
 {
 public:
     RCSSystem(bco::Vessel& vessel, bco::PowerProvider& pwr);
@@ -53,12 +51,12 @@ private:
     void OnChanged(int mode);
     void ActiveChanged(bool isActive);
 
-    bco::SimpleEvent<>     btnLinear_{
+    bco::VesselEvent     btnLinear_{
         bm::vc::vcRCSLin_loc,
         0.01,
-        0,
+        cmn::vc::main ,
         bm::pnl::pnlRCSLin_RC,
-        0
+        cmn::panel::main
     };
 
     bco::VesselTextureElement       lightLinear_{
@@ -70,12 +68,12 @@ private:
         0
     };
 
-    bco::SimpleEvent<>     btnRotate_{
+    bco::VesselEvent     btnRotate_{
         bm::vc::vcRCSRot_loc,
         0.01,
-        0,
+        cmn::vc::main,
         bm::pnl::pnlRCSRot_RC,
-        0
+        cmn::panel::main
     };
 
     bco::VesselTextureElement       lightRotate_{
@@ -87,3 +85,52 @@ private:
         0
     };
 };
+
+inline RCSSystem::RCSSystem(bco::Vessel& vessel, bco::PowerProvider& pwr) :
+    vessel_(vessel),
+    power_(pwr)
+{
+    vessel_.AddControl(&btnLinear_);
+    vessel_.AddControl(&btnRotate_);
+    vessel_.AddControl(&lightLinear_);
+    vessel_.AddControl(&lightRotate_);
+
+    btnLinear_.Attach([&](VESSEL4&) { OnChanged(RCS_LIN); });
+    btnRotate_.Attach([&](VESSEL4&) { OnChanged(RCS_ROT); });
+}
+
+inline void RCSSystem::ActiveChanged(bool isActive)
+{
+    if (!isActive) {
+        if (vessel_.IsCreated()) {
+            vessel_.SetAttitudeMode(RCS_NONE);
+        }
+    }
+}
+
+
+// Callback:
+inline void RCSSystem::OnRCSMode(int mode)
+{
+    auto linMode = false;
+    auto rotMode = false;
+    if ((RCS_NONE != mode) && (!IsPowered())) {
+        vessel_.SetAttitudeMode(RCS_NONE);
+    }
+    else {
+        linMode = (mode == RCS_LIN);
+        rotMode = (mode == RCS_ROT);
+    }
+
+    lightLinear_.set_state(vessel_, linMode);
+    lightRotate_.set_state(vessel_, rotMode);
+}
+
+inline void RCSSystem::OnChanged(int mode)
+{
+    if (!vessel_.IsCreated()) return;
+
+    auto currentMode = vessel_.GetAttitudeMode();
+    auto newMode = (mode == currentMode) ? RCS_NONE : mode;
+    vessel_.SetAttitudeMode(newMode);
+}

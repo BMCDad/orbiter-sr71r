@@ -28,9 +28,6 @@
     <Filter Include="Interfaces">
       <UniqueIdentifier>{838109ba-93c2-46aa-8675-f67b40b032f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Components\src">
-      <UniqueIdentifier>{068ec136-39e2-4e25-b99c-3544153ea839}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Deployment">
       <UniqueIdentifier>{9869f40e-6aef-43f6-a93a-c7da9918a425}</UniqueIdentifier>
     </Filter>
@@ -39,9 +36,6 @@
     </Filter>
     <Filter Include="Scenarios">
       <UniqueIdentifier>{a9e6c9aa-edc2-44a3-b754-b113fb3bb38c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Components\Computer">
-      <UniqueIdentifier>{78fad8f5-d9fb-4a9a-8a35-78cc5e2235b5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scenarios\Moon">
       <UniqueIdentifier>{9cdc8e44-f856-410f-8113-88f50a437720}</UniqueIdentifier>
@@ -150,9 +144,6 @@
     <ClInclude Include="AvionBase.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="TestComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="HSI.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -201,9 +192,6 @@
     <ClInclude Include="..\bc_orbiter\signals.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\SimpleEvent.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="..\bc_orbiter\Tools.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
@@ -225,6 +213,15 @@
     <ClInclude Include="..\bc_orbiter\VesselTextureElement.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
+    <ClInclude Include="..\bc_orbiter\PanelEvent.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\VCEvent.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\VesselEvent.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">
@@ -239,62 +236,8 @@
     <ClCompile Include="LiftCoeff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PropulsionController.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="PowerSystem.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="CargoBayController.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="HUD.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="NavModes.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="RCSSystem.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="LandingGear.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="FuelCell.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="LeftMFD.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="RightMfd.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AirBrake.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="Clock.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="Shutters.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="VesselControl.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="HoverEngines.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="RetroEngines.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="Avionics.cpp">
-      <Filter>Components\src</Filter>
-    </ClCompile>
-    <ClCompile Include="SurfaceController.cpp">
-      <Filter>Components\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

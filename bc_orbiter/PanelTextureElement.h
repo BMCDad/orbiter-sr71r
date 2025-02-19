@@ -30,8 +30,7 @@ namespace bc_orbiter {
     element to Control the same Vessel Control in both the VC and 2-D panels.  To facilitate this the Control
     state is maintained outside of the class and is retrieved using the passed in funcState function.
     **/
-    class PanelTextureElement :
-        public PanelEventTarget {
+    class PanelTextureElement : public PanelEventTarget {
     public:
         PanelTextureElement(const UINT pnlGroupId, const NTVERTEX* pnlVerts, const int panelId, funcState func) 
           : pnlGroupId_(pnlGroupId),

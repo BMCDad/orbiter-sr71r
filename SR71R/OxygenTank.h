@@ -19,8 +19,8 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/OnOffInput.h"
 #include "../bc_orbiter/RotaryDisplay.h"
-#include "../bc_orbiter/SimpleEvent.h"
 #include "../bc_orbiter/Vessel.h"
+#include "../bc_orbiter/VesselEvent.h"
 #include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
@@ -31,12 +31,11 @@
 namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
-class OxygenTank :
-    public bco::GenericTank
+class OxygenTank : public bco::GenericTank
 {
 public:
-    OxygenTank(bco::PowerProvider& pwr, bco::Vessel& vessel) :
-        bco::GenericTank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE),
+    OxygenTank(bco::PowerProvider& pwr, bco::Vessel& vessel) 
+      : bco::GenericTank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE),
         vessel_(vessel)
     {
         vessel.AddControl(&gaugeLevel_);
@@ -44,7 +43,7 @@ public:
         vessel.AddControl(&btnFill_);
         vessel.AddControl(&btnLightFill_);
 
-        btnFill_.attach([&]() { ToggleFilling(); });
+        btnFill_.Attach([&](VESSEL4&) { ToggleFilling(); });
 
         //LevelSignal().attach(		gaugeLevel_.Slot());
         //IsFillingSignal().attach(	btnLightFill_.Slot());
@@ -88,12 +87,12 @@ private:
         cmn::panel::right
     };
 
-    bco::SimpleEvent<> btnFill_{
+    bco::VesselEvent btnFill_{
         bm::vc::LOXValveOpenSwitch_loc,
         0.01,
-        0,
+        cmn::vc::main,
         bm::pnlright::pnlO2Switch_RC,
-        1
+        cmn::panel::right
     };
 
     bco::VesselTextureElement       btnLightFill_ {

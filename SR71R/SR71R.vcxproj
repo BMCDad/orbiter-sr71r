@@ -130,6 +130,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\bc_orbiter\PanelEvent.h" />
+    <ClInclude Include="..\bc_orbiter\VCEvent.h" />
+    <ClInclude Include="..\bc_orbiter\VesselEvent.h" />
     <ClInclude Include="..\bc_orbiter\VesselTextureElement.h" />
     <ClInclude Include="..\bc_orbiter\HandlerInterfaces.h" />
     <ClInclude Include="..\bc_orbiter\transform_display.h" />
@@ -151,7 +154,6 @@
     <ClInclude Include="..\bc_orbiter\OnOffInput.h" />
     <ClInclude Include="..\bc_orbiter\RotaryDisplay.h" />
     <ClInclude Include="..\bc_orbiter\signals.h" />
-    <ClInclude Include="..\bc_orbiter\SimpleEvent.h" />
     <ClInclude Include="..\bc_orbiter\Tools.h" />
     <ClInclude Include="Canopy.h" />
     <ClInclude Include="CargoBayController.h" />
@@ -184,27 +186,10 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="SurfaceController.h" />
-    <ClInclude Include="TestComponent.h" />
     <ClInclude Include="VesselControl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Avionics.cpp" />
-    <ClCompile Include="AirBrake.cpp" />
-    <ClCompile Include="CargoBayController.cpp" />
-    <ClCompile Include="Clock.cpp" />
-    <ClCompile Include="FuelCell.cpp" />
-    <ClCompile Include="HoverEngines.cpp" />
-    <ClCompile Include="HUD.cpp" />
-    <ClCompile Include="LandingGear.cpp" />
-    <ClCompile Include="LeftMFD.cpp" />
-    <ClCompile Include="NavModes.cpp" />
-    <ClCompile Include="PowerSystem.cpp" />
-    <ClCompile Include="PropulsionController.cpp" />
     <ClCompile Include="LiftCoeff.cpp" />
-    <ClCompile Include="RCSSystem.cpp" />
-    <ClCompile Include="RetroEngines.cpp" />
-    <ClCompile Include="RightMfd.cpp" />
-    <ClCompile Include="Shutters.cpp" />
     <ClCompile Include="SR71r.cpp" />
     <ClCompile Include="SR71Vessel.cpp" />
     <ClCompile Include="SR71Vessel_clbk.cpp" />
@@ -212,8 +197,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SurfaceController.cpp" />
-    <ClCompile Include="VesselControl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Art\SR71rBody.xcf" />

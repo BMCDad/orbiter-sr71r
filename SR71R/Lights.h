@@ -27,15 +27,12 @@
 
 namespace bco = bc_orbiter;
 
-class Lights :
-    public bco::VesselComponent,
-    public bco::PowerConsumer,
-    public bco::SetClassCaps ,
-    public bco::ManageState
+class Lights : public bco::VesselComponent, public bco::PowerConsumer
 {
 
 public:
-    Lights(bco::Vessel& vessel, bco::PowerProvider& pwr) : power_(pwr) {
+    Lights(bco::Vessel& vessel, bco::PowerProvider& pwr) 
+      : power_(pwr) {
         switchStrobeLights_.AttachOnChange([&]() { update(); });
         switchBeaconLights_.AttachOnChange([&]() { update(); });
         switchNavigationLights_.AttachOnChange([&]() { update(); });

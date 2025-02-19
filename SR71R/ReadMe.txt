@@ -53,7 +53,10 @@ Orbiter 2024: (February 10 2025)
 	 * 2/15/2025 - retired on_off_display in favor of state_display
 	 * 2/15/2025 - Convert status_display to state_display, retire status.
 	 * 2/17/2025 - Massive rename, style update.
-	 * obsolete functions: last in OnOffInpute - refactor
+	 * 2/18/2025 - Consolidate components.  header only
+	 * 2/18/2025 - Replace simple event.
+	 * 2/19/2025 - Removed last obsolete function.
+	 * Refactor OnOffInput (toggle switch) its working, but could be cleaned up.
 	 * Consolidate sr71_common and common.
 	 * clean up animation classes, more complex then needed probably.
 	 * remove slot signals.
@@ -61,5 +64,4 @@ Orbiter 2024: (February 10 2025)
 	 * MFD rewrite
 	 * Refactor Tools into namespaces.
 	 * Refactro transform_display, used in HSI
-	 * Organize component files, remove src
 	 

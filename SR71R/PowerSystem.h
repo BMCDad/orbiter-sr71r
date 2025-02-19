@@ -49,28 +49,13 @@ class FuelCell;
 	On a change to the receiver slot, check that the new voltage Level is adequate.
 	On each step, report through the amp signal the current amp usage for that component.
 */
-class PowerSystem :
-    public bco::VesselComponent
-    , public bco::PowerProvider
-    , public bco::PostStep
-    , public bco::ManageState
+class PowerSystem : public bco::VesselComponent, public bco::PowerProvider
 {
 public:
     PowerSystem(bco::Vessel& vessel);
 
     // PostStep
-    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override
-    {
-        double draw = 0.0;
-
-        for (auto & c : consumers_) {
-            draw += c->AmpDraw();
-        }
-
-        ampDraw_ = fmin(draw, AMP_OVERLOAD);
-        gaugePowerAmps_.set_state(ampDraw_ / AMP_OVERLOAD);
-        Update(vessel);
-    }
+    void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
     // ManageState
     bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
@@ -79,9 +64,7 @@ public:
     // Fuelcell:
     bco::slot<double>& FuelCellAvailablePowerSlot() { return slotFuelCellAvailablePower_; }	// Volt quantity available from fuelcell.
 
-    void AttachConsumer(bco::PowerConsumer* consumer) override {
-        consumers_.push_back(consumer);
-    }
+    void AttachConsumer(bco::PowerConsumer* consumer) override { consumers_.push_back(consumer); }
 
     double VoltsAvailable() const override { return prevVolts_; }
     double AmpLoad() const override { return ampDraw_; }
@@ -190,3 +173,105 @@ private:
         cmn::panel::main
     };
 };
+
+inline PowerSystem::PowerSystem(bco::Vessel& vessel) :
+    batteryLevel_(1.0),			// Always available for now.
+    slotFuelCellAvailablePower_([&](double v) {})
+{
+    vessel.AddControl(&switchEnabled);
+    vessel.AddControl(&switchConnectExternal_);
+    vessel.AddControl(&switchConnectFuelCell_);
+    vessel.AddControl(&lightFuelCellConnected_);
+    vessel.AddControl(&lightExternalAvail_);
+    vessel.AddControl(&lightExternalConnected_);
+    vessel.AddControl(&gaugePowerAmps_);
+    vessel.AddControl(&gaugePowerVolts_);
+    vessel.AddControl(&statusBattery_);
+}
+
+inline bool PowerSystem::HandleLoadState(bco::Vessel& vessel, const std::string& line)
+{
+    // sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
+    double volt, bl; // Not used, but we read them.
+
+    std::stringstream ss(line);
+    ss >> switchEnabled >> switchConnectExternal_ >> switchConnectFuelCell_ >> volt >> bl;
+    return true;
+}
+
+inline std::string PowerSystem::HandleSaveState(bco::Vessel& vessel)
+{
+    std::stringstream ss;
+    ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_ << " 0.0 0.0";
+    return ss.str();
+}
+
+//void PowerSystem::AddMainCircuitDevice(bco::PoweredComponent* device)
+//{
+//	mainCircuit_.AddDevice(device);
+//}
+
+inline void PowerSystem::Update(bco::Vessel& vessel)
+{
+    /* Power system update:
+    *	Determine if we have a power source available and how much it provides.
+    *	Check the current amp total and determine if we have an overload.
+    *	Report the voltage available signal so components know what they have to work with.
+    */
+    auto externalConnected = vessel.IsStoppedOrDocked();
+    lightExternalAvail_.set_state(vessel, externalConnected);
+
+    // handle connected power
+    auto availExternal =
+        externalConnected &&				// External power is available
+        switchConnectExternal_.IsOn() 		// External power is connected to the bus
+        ? FULL_POWER : 0.0;
+
+    lightExternalConnected_.set_state(vessel, availExternal > USEABLE_POWER);
+
+    // handle fuelcell power
+    auto availFuelCell = switchConnectFuelCell_.IsOn() ? slotFuelCellAvailablePower_.value() : 0.0;
+    lightFuelCellConnected_.set_state(vessel, availFuelCell > USEABLE_POWER);
+
+    // handle battery power
+    auto availBattery = batteryLevel_ * FULL_POWER;
+    auto availPower = 0.0;
+    isDrawingBattery_ = false;
+
+    if (switchEnabled.IsOn()) {
+        availPower = fmax(availExternal, availFuelCell);
+        if (availPower < USEABLE_POWER) {
+            isDrawingBattery_ = true;
+            availPower = availBattery;
+        }
+    }
+
+    if (availPower != prevVolts_) {
+        prevVolts_ = availPower;
+
+        for (auto& c : consumers_) {
+            c->OnChange(prevVolts_);
+        }
+    }
+
+    gaugePowerVolts_.set_state(availPower / FULL_POWER);
+
+    statusBattery_.set_state(vessel,
+        (switchEnabled.IsOn() && isDrawingBattery_)
+        ? cmn::status::warn
+        : cmn::status::off
+    );
+}
+
+inline void PowerSystem::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
+{
+    double draw = 0.0;
+
+    for (auto& c : consumers_) {
+        draw += c->AmpDraw();
+    }
+
+    ampDraw_ = fmin(draw, AMP_OVERLOAD);
+    gaugePowerAmps_.set_state(ampDraw_ / AMP_OVERLOAD);
+    Update(vessel);
+}

@@ -5,7 +5,6 @@
 #include "../bc_orbiter/GenericTank.h"
 #include "../bc_orbiter/OnOffInput.h"
 #include "../bc_orbiter/RotaryDisplay.h"
-#include "../bc_orbiter/SimpleEvent.h"
 #include "../bc_orbiter/TextureRoll.h"
 #include "../bc_orbiter/transform_display.h"
 #include "../bc_orbiter/Vessel.h"
@@ -117,7 +116,7 @@ private:
 
 
        // Map components that handle config state with a key for that component.
-    std::map <std::string, bco::ManageState*>		mapStateManagement_{
+    std::map <std::string, bco::VesselComponent*>		mapStateManagement_{
           { "AIRBRAKE",     &airBrake_      }   // [a b]        : (a)Switch position,  (b)Brake position
         , { "APU",          &apu_           }   // [a]          : (a)Enabled switch
         , { "AVIONICS",     &avionics_      }   // [a b c d e]  : (a)Set course, (b)Set heading, (c)power, (d)Mode switch[1=atmo], (c)Nav select

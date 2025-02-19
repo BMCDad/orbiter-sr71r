@@ -66,12 +66,7 @@ OnOffInput (canopy open):
 - inputs:
 :slot - has power
 */
-class Canopy : 
-    public bco::VesselComponent,
-    public bco::SetClassCaps,
-    public bco::PostStep,
-    public bco::PowerConsumer,
-    public bco::ManageState
+class Canopy : public bco::VesselComponent, public bco::PowerConsumer
 {
 public:
     Canopy(bco::PowerProvider& pwr, bco::Vessel& vessel);
@@ -140,6 +135,16 @@ private:
         1
     };
 
+    //SR71Toggle       switchPower_ {
+    //    { bm::vc::SwCanopyPower_id },
+    //    bm::vc::SwCanopyPower_loc,
+    //    bm::vc::PowerTopRightAxis_loc,
+    //    bm::pnlright::pnlPwrCanopy_id,
+    //    bm::pnlright::pnlPwrCanopy_vrt,
+    //    bm::pnlright::pnlPwrCanopy_RC,
+    //    cmn::panel::right
+    //};
+
     bco::OnOffInput       switchOpen_ {
         { bm::vc::SwCanopyOpen_id },
         bm::vc::SwCanopyOpen_loc,
@@ -202,13 +207,15 @@ inline bool Canopy::HandleLoadState(bco::Vessel& vessel, const std::string& line
     in >> switchOpen_;
     in >> animCanopy_;
     vessel.SetAnimationState(animCanopy_);
+
+//    switchPower_.SetState(vessel, switchPower);
     return true;
 }
 
 inline std::string Canopy::HandleSaveState(bco::Vessel& vessel)
 {
     std::ostringstream os;
-    os << switchPower_ << " " << switchOpen_ << " " << animCanopy_;
+    os << switchPower_.IsOn() << " " << switchOpen_ << " " << animCanopy_;
     return os.str();
 }
 

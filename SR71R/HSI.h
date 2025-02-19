@@ -30,14 +30,13 @@
 namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
 
-class HSI :
-    public bco::VesselComponent,
-    public bco::PostStep {
+class HSI : public bco::VesselComponent
+{
 
 public:
 
-    HSI(bco::Vessel& vessel, Avionics& avionics) :
-        avionics_(avionics),
+    HSI(bco::Vessel& vessel, Avionics& avionics) 
+      : avionics_(avionics),
         vessel_(vessel)
     {
         vessel.AddControl(&hsiBearing_);

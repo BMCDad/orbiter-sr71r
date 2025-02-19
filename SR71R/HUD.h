@@ -21,7 +21,7 @@
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/SimpleEvent.h"
+#include "../bc_orbiter/VesselEvent.h"
 #include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
@@ -45,11 +45,7 @@ namespace cmn = sr71_common;
 	Configuration:
 	The HUD mode is managed by Orbiter.
 */
-class HUD :
-    public bco::VesselComponent,
-    public bco::PowerConsumer,
-    public bco::LoadVC,
-    public bco::DrawHud
+class HUD : public bco::VesselComponent, public bco::PowerConsumer
 {
 public:
     HUD(bco::PowerProvider& pwr, bco::Vessel& vessel);
@@ -71,12 +67,12 @@ private:
     void OnChanged(int mode);
 
     // *** HUD *** 
-    bco::SimpleEvent<>     btnDocking_{
+    bco::VesselEvent     btnDocking_{
         bm::vc::vcHUDDock_loc,
         0.01,
-        0,
+        cmn::vc::main,
         bm::pnl::pnlHUDDock_RC,
-        0
+        cmn::panel::main
     };
 
     bco::VesselTextureElement       btnLightDocking_{
@@ -88,12 +84,12 @@ private:
         cmn::panel::main
     };
 
-    bco::SimpleEvent<>     btnOrbit_{
+    bco::VesselEvent     btnOrbit_{
         bm::vc::vcHUDOrbit_loc,
         0.01,
-        0,
+        cmn::vc::main,
         bm::pnl::pnlHUDOrbit_RC,
-        0
+        cmn::panel::main
     };
 
     bco::VesselTextureElement     btnLightOrbit_ {
@@ -105,12 +101,12 @@ private:
         cmn::panel::main
     };
 
-    bco::SimpleEvent<>     btnSurface_ {
+    bco::VesselEvent     btnSurface_{
         bm::vc::vcHUDSURF_loc,
         0.01,
-        0,
+        cmn::vc::main,
         bm::pnl::pnlHUDSurf_RC,
-        0
+        cmn::panel::main
     };
 
     bco::VesselTextureElement      btnLightSurface_ {
@@ -122,3 +118,84 @@ private:
         cmn::panel::main
     };
 };
+
+inline HUD::HUD(bco::PowerProvider& pwr, bco::Vessel& vessel) :
+    power_(pwr),
+    vessel_(vessel)
+{
+    power_.AttachConsumer(this),
+    vessel.AddControl(&btnLightDocking_);
+    vessel.AddControl(&btnLightSurface_);
+    vessel.AddControl(&btnLightOrbit_);
+
+    vessel.AddControl(&btnDocking_);
+    vessel.AddControl(&btnSurface_);
+    vessel.AddControl(&btnOrbit_);
+
+    btnDocking_.Attach([&](VESSEL4&) { OnChanged(HUD_DOCKING); });
+    btnOrbit_.Attach([&](VESSEL4&) { OnChanged(HUD_ORBIT); });
+    btnSurface_.Attach([&](VESSEL4&) { OnChanged(HUD_SURFACE); });
+}
+
+inline bool HUD::HandleLoadVC(bco::Vessel& vessel, int vcid)
+{
+    // Register HUD
+    static VCHUDSPEC huds = {
+       1,                   // Mesh number (VC)
+       bm::vc::HUD_id,      // mesh group
+       { 0.0, 0.8, 15.25 }, // hud center (location)
+       0.12                 // hud size
+    };
+
+    oapiVCRegisterHUD(&huds);	// HUD parameters
+    return true;
+}
+
+inline void HUD::OnHudMode(int mode)
+{
+    btnLightDocking_.set_state(vessel_, mode == HUD_DOCKING);
+    btnLightSurface_.set_state(vessel_, mode == HUD_SURFACE);
+    btnLightOrbit_.set_state(vessel_, mode == HUD_ORBIT);
+
+    // HUD mode is changing, if it is NOT changing to NONE, and we don't have power, turn it off.
+    if (!IsPowered()) {
+        oapiSetHUDMode(HUD_NONE);
+    }
+}
+
+inline void HUD::OnChanged(int mode)
+{
+    auto currentMode = oapiGetHUDMode();
+    auto newMode = ((mode == currentMode) || !IsPowered()) ? HUD_NONE : mode;
+    oapiSetHUDMode(newMode);;
+}
+
+inline void HUD::HandleDrawHud(bco::Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
+{
+    if (oapiCockpitMode() != COCKPIT_VIRTUAL) return;
+
+    auto am = vessel.GetAttitudeMode();
+
+    if (am != RCS_NONE) {
+        int xLeft = 200;
+        int yTop = hps->H - 30;
+
+        skp->Rectangle(
+            xLeft,
+            yTop,
+            xLeft + 45,
+            yTop + 25);
+
+        skp->Text(xLeft + 3, yTop + 1, "RCS", 3);
+
+        // show RCS mode
+        switch (am) {
+        case RCS_ROT:
+            skp->Text(xLeft + 50, yTop, "ROT", 3);
+            break;
+        case RCS_LIN:
+            skp->Text(xLeft + 50, yTop, "LIN", 3);
+            break;
+        }
+    }
+}

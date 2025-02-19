@@ -154,22 +154,22 @@ namespace bc_orbiter
         void AddComponent(VesselComponent* c) { components_.push_back(c); }
 
         // Clean this up later when Component goes away
-        void RegisterVCComponent(int id, LoadVC* vc) {
+        void RegisterVCComponent(int id, VesselComponent* vc) {
             map_vc_component_[id] = vc;
         }
 
-        void RegisterPanelComponent(int id, LoadPanel* pnl) {
+        void RegisterPanelComponent(int id, VesselComponent* pnl) {
             map_panel_component_[id] = pnl;
         }
 
         // AvionicsProvider
-        double GetAvAltitude() const				override { return this->GetAvAltitude(); }
+        double GetAvAltitude() const				override { return this->GetAltitude(); }
         void   GetAngularVelocity(VECTOR3& v)	override { this->GetAngularVel(v); }
-        double GetBank() const					override { return this->GetBank(); }
+        double GetAvBank() const					override { return this->GetBank(); }
         double GetHeading() const				override { return this->GetYaw(); }
         double GetKEAS() const					override { return GetVesselKeas(this); }
         double GetMACH() const					override { return this->GetMachNumber(); }
-        double GetPitch() const				override { return this->GetPitch(); }
+        double GetAvPitch() const				override { return this->GetPitch(); }
         double GetVerticalSpeed() const		override { return GetVerticalSpeedFPM(this); }
 
         // PropulsionControl
@@ -190,14 +190,9 @@ namespace bc_orbiter
         std::vector<VCTexAnimation*>					vc_texture_animations_;
         std::map<int, VCAnimation*>					map_vc_animations_;
 
-        std::vector<VesselComponent*>					components_;
-        std::vector<PostStep*>							post_step_components_;
-        std::vector<SetClassCaps*>					set_class_caps_components_;
-        std::vector<DrawHud*>							draw_hud_components_;
-        std::vector<LoadVC*>							load_vc_components_;
-        std::vector<LoadPanel*>						load_panel_components_;
-        std::map<int, LoadVC*>							map_vc_component_;
-        std::map<int, LoadPanel*>                  map_panel_component_;
+        std::vector<VesselComponent*>       components_;
+        std::map<int, VesselComponent*>     map_vc_component_;
+        std::map<int, VesselComponent*>     map_panel_component_;
 
         std::map<int, Component*>                   idComponentMap_;		// still used by MFDs.  Need to figure that out, then we can get rid of Component
 //        std::map<UINT, std::unique_ptr<Animation>>  animations_;
@@ -230,7 +225,7 @@ namespace bc_orbiter
 
     inline bool Vessel::clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp)
     {
-        for (auto& ps : draw_hud_components_) {
+        for (auto& ps : components_) {
             ps->HandleDrawHud(*this, mode, hps, skp);
         }
 
@@ -254,7 +249,7 @@ namespace bc_orbiter
         }
 
         // handle Vessel components that require load vc.
-        for (auto & vc : load_vc_components_) {
+        for (auto & vc : components_) {
             vc->HandleLoadVC(*this, id);
         }
 
@@ -263,15 +258,6 @@ namespace bc_orbiter
 
     inline void Vessel::clbkSetClassCaps(FILEHANDLE cfg)
     {
-        // SetClassCaps will flesh out to a more general 'component' list (non-ui/Control intities)
-        for (auto & cc : components_) {
-            if (auto* ac = dynamic_cast<PostStep*>(cc))        post_step_components_.push_back(ac);
-            if (auto* ac = dynamic_cast<SetClassCaps*>(cc))   set_class_caps_components_.push_back(ac);
-            if (auto* ac = dynamic_cast<DrawHud*>(cc))         draw_hud_components_.push_back(ac);
-            if (auto* ac = dynamic_cast<LoadVC*>(cc))          load_vc_components_.push_back(ac);
-            if (auto* ac = dynamic_cast<LoadPanel*>(cc))       load_panel_components_.push_back(ac);
-        }
-
         // Handle controls that need initialization.
         for (auto & vc : controls_) {
             if (auto* c = dynamic_cast<VCAnimation*>(vc)) {
@@ -293,7 +279,7 @@ namespace bc_orbiter
             if (auto* c = dynamic_cast<VCTexAnimation*>(vc)) vc_texture_animations_.push_back(c);
         }
 
-        for (auto & sc : set_class_caps_components_) {
+        for (auto & sc : components_) {
             sc->HandleSetClassCaps(*this);
         }
     }
@@ -309,7 +295,7 @@ namespace bc_orbiter
         // NEW mode
         auto vc = map_vc_targets_.find(id);
         if (vc != map_vc_targets_.end()) {
-            vc->second->OnMouseClick(id, event);
+            vc->second->OnMouseClick(*this, id, event);
         }
 
         return false;
@@ -383,7 +369,7 @@ namespace bc_orbiter
             }
         }
 
-        for (auto& ps : post_step_components_) {
+        for (auto& ps : components_) {
             ps->HandlePostStep(*this, simt, simdt, mjd);
         }
     }
@@ -413,7 +399,7 @@ namespace bc_orbiter
                 p.second->PanelMouseFlags()); // PANEL_MOUSE_*
         }
 
-        for (auto & vc : load_panel_components_) {
+        for (auto & vc : components_) {
             vc->HandleLoadPanel(*this, id, hPanel);
         }
 
@@ -456,7 +442,7 @@ namespace bc_orbiter
         // NEW mode
         auto pe = map_panel_targets_.find(id);
         if (pe != map_panel_targets_.end()) {
-            pe->second->OnMouseClick(id, event);
+            pe->second->OnMouseClick(*this, id, event);
         }
 
         return true;
