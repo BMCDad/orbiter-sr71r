@@ -185,7 +185,7 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
     Vessel::clbkPostStep(simt, simdt, mjd);
-    statusDock_.set_state(*this, DockingStatus(0) == 1 ? cmn::status::on : cmn::status::off);
+    statusDock_.SetState(*this, DockingStatus(0) == 1 ? cmn::status::on : cmn::status::off);
 }
 
 void SR71Vessel::clbkPostCreation()

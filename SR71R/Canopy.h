@@ -30,7 +30,6 @@
 #include "SR71rPanelRight_mesh.h"
 
 #include "ShipMets.h"
-#include "SR71r_common.h"
 #include "common.h"
 
 namespace bco = bc_orbiter;
@@ -128,7 +127,7 @@ private:
         { bm::vc::SwCanopyPower_id },
         bm::vc::SwCanopyPower_loc,
         bm::vc::PowerTopRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlPwrCanopy_id,
         bm::pnlright::pnlPwrCanopy_vrt,
         bm::pnlright::pnlPwrCanopy_RC,
@@ -149,7 +148,7 @@ private:
         { bm::vc::SwCanopyOpen_id },
         bm::vc::SwCanopyOpen_loc,
         bm::vc::DoorsRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlDoorCanopy_id,
         bm::pnlright::pnlDoorCanopy_vrt,
         bm::pnlright::pnlDoorCanopy_RC,
@@ -197,7 +196,7 @@ inline void Canopy::HandlePostStep(bco::Vessel& vessel, double simt, double simd
         }
     }
 
-    status_.set_state(vessel, status);
+    status_.SetState(vessel, status);
 }
 
 inline bool Canopy::HandleLoadState(bco::Vessel& vessel, const std::string& line)

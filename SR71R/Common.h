@@ -15,6 +15,8 @@
 //	along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#include "..\bc_orbiter\OnOffInput.h"
+
 
 namespace sr71_common
 {
@@ -36,4 +38,19 @@ namespace sr71_common
     {
         constexpr int main = 0;
     }
+
+    /* Control data for on/off up/down physical toggle switches */
+    const bc_orbiter::OnOffInputMeta toggleOnOff{
+           1.5708,              // Rotation angle (RAD)
+          10.0,                 // Anim speed
+           0.0,                 // anim start
+           1.0,                 // anim end
+           0.01,                // VC hit radius
+           0.0148,              // Panel offset
+          PANEL_REDRAW_NEVER,   // VCRedrawFlags
+          PANEL_MOUSE_LBDOWN,   // vcMouseFlag
+          PANEL_REDRAW_MOUSE,   // panel redraw flag
+          PANEL_MOUSE_LBDOWN    // panel mouse flag
+    };
+
 }

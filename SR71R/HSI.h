@@ -18,7 +18,6 @@
 
 #include "../bc_orbiter/Control.h"
 #include "../bc_orbiter/RotaryDisplay.h"
-#include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/TextureRoll.h"
 #include "../bc_orbiter/transform_display.h"
 #include "../bc_orbiter/Vessel.h"
@@ -75,10 +74,10 @@ public:
 
         if (avionics_.IsAeroActive()) {
             yaw = vessel.GetYaw();
-            rotHdg = yaw - slotSetHeading_.value();
-            rotCrs = yaw - slotSetCourse_.value();
+            rotHdg = yaw - avionics_.SetHeading();
+            rotCrs = yaw - avionics_.SetCourse();
 
-            navHandle = vessel.GetNavSource(slotNavMode_.value() ? 0 : 1);
+            navHandle = vessel.GetNavSource(avionics_.NavMode());
 
             if (navHandle != nullptr) {
                 comStatus = CalcNavMetrics(vessel, navHandle, bearing, glideSlope, navError, milesBeacon);
@@ -86,7 +85,7 @@ public:
         }
 
         // Set course barrels
-        auto deg = slotSetCourse_.value();
+        auto deg = avionics_.SetCourse();
         bco::TensParts parts;
         bco::GetDigits(deg * DEG, parts);
 
@@ -96,16 +95,16 @@ public:
         CRSTens_.SetPosition(parts.Hundreds / 10);
         CRSHunds_.SetPosition(parts.Thousands / 10);
 
-        signalGlideScope_.fire(glideSlope);
+        glideScope_ = glideSlope;
 
-        hsiRoseCompass_.set_state(-yaw / PI2);
-        hsiHeadingBug_.set_state(-rotHdg / PI2);
-        hsiCourse_.set_state(-rotCrs / PI2);
+        hsiRoseCompass_.SetState(-yaw / PI2);
+        hsiHeadingBug_.SetState(-rotHdg / PI2);
+        hsiCourse_.SetState(-rotCrs / PI2);
 
         hsiCourseError_.SetAngle(-rotCrs);
         hsiCourseError_.SetTransform(navError, 0.0);
 
-        comStatusFlag_.set_state(vessel_, comStatus);
+        comStatusFlag_.SetState(vessel_, comStatus);
 
         // Miles barrels
         bco::GetDigits(milesBeacon, parts);
@@ -113,28 +112,21 @@ public:
         MilesTens_.SetPosition(parts.Hundreds);
         MilesHunds_.SetPosition(parts.Thousands);
 
-        hsiOffFlag_.set_state(vessel_, avionics_.IsAeroActive());
-        hsiExoFlag_.set_state(vessel_,
+        hsiOffFlag_.SetState(vessel_, avionics_.IsAeroActive());
+        hsiExoFlag_.SetState(vessel_,
             !avionics_.IsAeroActive()
             ? true
             : avionics_.IsAeroAtmoMode());
     }
 
-    bco::signal<double>& GlideScopeSignal() { return signalGlideScope_; }
-
-    bco::slot<double>& SetCourseSlot() { return slotSetCourse_; }
-    bco::slot<double>& SetHeadingSlot() { return slotSetHeading_; }
-
-    bco::slot<bool>& NavModeSignal() { return slotNavMode_; }
+    double GlideScope() { return glideScope_; }
 
 private:
     bco::Vessel&            vessel_;
     Avionics& avionics_;
-    bco::signal<double>		signalGlideScope_;
+    double  glideScope_;
 
-    bco::slot<double>		slotSetCourse_;
-    bco::slot<double>		slotSetHeading_;
-    bco::slot<bool>			slotNavMode_;
+    double      setCourse_;
 
     bool CalcNavMetrics(bco::Vessel& vessel, NAVHANDLE handle, double& bearing, double& glideSlope, double& navError, double& milesBeacon) {
         bool result = false;  //comstatus
@@ -163,7 +155,7 @@ private:
             bco::Orthodome(vlng, vlat, navlng, navlat, navDistance, bearing);
             navDistance *= oapiGetSize(hRef);
 
-            double courseDeviation = bearing - slotSetCourse_.value();
+            double courseDeviation = bearing - avionics_.SetCourse();
             if (courseDeviation < -PI) courseDeviation += PI2;
             else if (courseDeviation >= PI) courseDeviation -= PI2;
             if (courseDeviation < -PI05) courseDeviation = -PI - courseDeviation;

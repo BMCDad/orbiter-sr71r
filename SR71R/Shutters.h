@@ -26,7 +26,6 @@
 #include "SR71rPanel_mesh.h"
 #include "SR71rPanelRight_mesh.h"
 
-#include "SR71r_common.h"
 
 namespace bco = bc_orbiter;
 
@@ -42,7 +41,7 @@ public:
 private:
     void Update();
 
-    bco::slot<bool>		shuttersSlot_;
+//    bco::slot<bool>		shuttersSlot_;
 
     const char* ConfigKey = "SHUTTERS";
 
@@ -50,7 +49,7 @@ private:
     bco::OnOffInput   switchShutters_{    // Open close shutters
         { bm::vc::swShutter_id },
         bm::vc::swShutter_loc, bm::vc::DoorsRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlScreenSwitch_id,
         bm::pnlright::pnlScreenSwitch_vrt,
         bm::pnlright::pnlScreenSwitch_RC,
@@ -61,7 +60,7 @@ private:
 inline Shutters::Shutters(bco::Vessel& vessel)
 {
     vessel.AddControl(&switchShutters_);
-    switchShutters_.attach([&]() { Update(); });
+//    switchShutters_.attach([&]() { Update(); });
 }
 
 inline bool Shutters::HandleLoadState(bco::Vessel& vessel, const std::string& line)
@@ -100,7 +99,7 @@ inline void Shutters::Update()
     //}
 
     //auto trans = swShutters_.IsOn() ? 0.22 : 0.0;
-    auto trans = shuttersSlot_.value() ? 0.22 : 0.0;
+  //  auto trans = shuttersSlot_.value() ? 0.22 : 0.0;
 
     //visShuttersFrontLeft_.SetTranslate(_V(trans, 0.0, 0.0));
     //visShuttersFrontLeft_.TranslateMesh(devMesh);

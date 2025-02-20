@@ -24,7 +24,6 @@
 #include "../bc_orbiter/VesselTextureElement.h"
 
 #include "SR71r_mesh.h"
-#include "SR71r_common.h"
 #include "Common.h"
 #include "ShipMets.h"
 
@@ -50,14 +49,14 @@ public:
         //IsAvailableSignal().attach(	lightAvailable_.Slot());
     }
 
-    void UpdateLevel(double l) override { gaugeLevel_.set_state(l); }
+    void UpdateLevel(double l) override { gaugeLevel_.SetState(l); }
 
     void UpdateIsFilling(bool b) override {
-        btnLightFill_.set_state(vessel_, b);
+        btnLightFill_.SetState(vessel_, b);
     }
 
     void UpdateIsAvailable(bool b) override {
-        lightAvailable_.set_state(vessel_, b);
+        lightAvailable_.SetState(vessel_, b);
     }
 
     double AmpDraw() const override {

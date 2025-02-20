@@ -81,7 +81,7 @@ namespace bc_orbiter {
 
         int PanelID() override { return panel_id_; }
 
-        void set_state(double d) { 
+        void SetState(double d) { 
             state_ = d;
         }
 

@@ -153,7 +153,6 @@
     <ClInclude Include="..\bc_orbiter\MFDBase.h" />
     <ClInclude Include="..\bc_orbiter\OnOffInput.h" />
     <ClInclude Include="..\bc_orbiter\RotaryDisplay.h" />
-    <ClInclude Include="..\bc_orbiter\signals.h" />
     <ClInclude Include="..\bc_orbiter\Tools.h" />
     <ClInclude Include="Canopy.h" />
     <ClInclude Include="CargoBayController.h" />
@@ -170,7 +169,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="RetroEngines.h" />
     <ClInclude Include="Shutters.h" />
-    <ClInclude Include="SR71r_common.h" />
     <ClInclude Include="LeftMFD.h" />
     <ClInclude Include="MfdMets.h" />
     <ClInclude Include="NavModes.h" />

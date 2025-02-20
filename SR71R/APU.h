@@ -27,7 +27,6 @@
 #include "SR71rPanel_mesh.h"
 #include "SR71rPanelRight_mesh.h"
 
-#include "SR71r_common.h"
 #include "Common.h"
 
 namespace bco = bc_orbiter;
@@ -59,7 +58,7 @@ class VESSEL3;
 class APU : public bco::VesselComponent, public bco::PowerConsumer, public bco::HydraulicProvider
 {
 public:
-    APU(bco::Vessel& vessel, bco::PowerProvider& pwr);
+    APU(bco::Vessel& vessel, bco::PowerProvider& pwr, PropulsionController& propulsion);
 
     double AmpDraw() const override { return IsPowered() ? 5.0 : 0.0; }
 
@@ -71,27 +70,24 @@ public:
     double Level() const override { return level_; }
 
     void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
-    bco::slot<double>&FuelLevelSlot() { return slotFuelLevel_; }
-
-    void TogglePowerSwitch() { //        sigSwitch_.fire(!sigSwitch_.current());
-    }
+//    bco::slot<double>&FuelLevelSlot() { return slotFuelLevel_; }
 
 private:
     bco::Vessel&            vessel_;
-    bco::PowerProvider&    power_;
+    bco::PowerProvider&     power_;
+    PropulsionController&   propulsion_;
 
     bool IsPowered() const {
         return swPower_.IsOn() && (power_.VoltsAvailable() > 24.0);
     }
 
     double                  level_{ 0.0 };
-    bco::slot<double>       slotFuelLevel_;
 
     bco::OnOffInput       swPower_{
         {bm::vc::SwAPUPower_id },
         bm::vc::SwAPUPower_loc,
         bm::vc::LeftPanelTopRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlAPUSwitch_id,
         bm::pnlright::pnlAPUSwitch_vrt,
         bm::pnlright::pnlAPUSwitch_RC,
@@ -118,9 +114,10 @@ private:
     };
 };
 
-inline APU::APU(bco::Vessel& vessel, bco::PowerProvider& pwr) :
-    power_(pwr),
-    vessel_(vessel)
+inline APU::APU(bco::Vessel& vessel, bco::PowerProvider& pwr, PropulsionController& propulsion) 
+  : power_(pwr),
+    vessel_(vessel),
+    propulsion_(propulsion)
 {
     power_.AttachConsumer(this);
 
@@ -152,7 +149,7 @@ inline void APU::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, 
         level_ = 0.0;
     }
     else {
-        hasFuel = slotFuelLevel_.value() > 0.0;
+        hasFuel = propulsion_.MainFuelLevel() > 0.0;
 
         if (hasFuel) {
             // Note:  We don't actually Draw fuel, but when its gone the APU will shutdown.
@@ -163,10 +160,10 @@ inline void APU::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, 
         }
     }
 
-    gaugeAPULevel_.set_state(level_);
+    gaugeAPULevel_.SetState(level_);
 
     auto status = IsPowered() ?
         (hasFuel ? cmn::status::on : cmn::status::warn) : cmn::status::off;
 
-    status_.set_state(vessel, status);
+    status_.SetState(vessel, status);
 }

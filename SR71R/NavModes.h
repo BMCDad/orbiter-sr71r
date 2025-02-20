@@ -142,27 +142,27 @@ inline void NavModes::OnNavMode(int mode, bool active)
 {
     switch (mode) {
     case NAVMODE_ANTINORMAL:
-        lightAntiNorm_.set_state(vessel_, active);
+        lightAntiNorm_.SetState(vessel_, active);
         navMode1_ = active ? NAVMODE_ANTINORMAL : 0;
         break;
     case NAVMODE_HLEVEL:
-        lightHorzLevel_.set_state(vessel_, active);
+        lightHorzLevel_.SetState(vessel_, active);
         navMode2_ = active ? NAVMODE_HLEVEL : 0;
         break;
     case NAVMODE_KILLROT:
-        lightKillRot_.set_state(vessel_, active);
+        lightKillRot_.SetState(vessel_, active);
         navMode1_ = active ? NAVMODE_KILLROT : 0;
         break;
     case NAVMODE_NORMAL:
-        lightNormal_.set_state(vessel_, active);
+        lightNormal_.SetState(vessel_, active);
         navMode1_ = active ? NAVMODE_NORMAL : 0;
         break;
     case NAVMODE_PROGRADE:
-        lightPrograde_.set_state(vessel_, active);
+        lightPrograde_.SetState(vessel_, active);
         navMode1_ = active ? NAVMODE_PROGRADE : 0;
         break;
     case NAVMODE_RETROGRADE:
-        lightRetro_.set_state(vessel_, active);
+        lightRetro_.SetState(vessel_, active);
         navMode1_ = active ? NAVMODE_RETROGRADE : 0;
         break;
     }

@@ -26,7 +26,6 @@
 
 #include "IConsumable.h"
 #include "PowerSystem.h"
-#include "SR71r_common.h"
 #include "Common.h"
 
 #include "SR71r_mesh.h"
@@ -87,11 +86,11 @@ public:
     std::string HandleSaveState(bco::Vessel& vessel) override;
 
     // Outputs
-    bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
+    double AvailablePower() const { return isFuelCellAvailable_ ? MAX_VOLTS : 0.0; }
 
 private:
     bco::Vessel&            vessel_;
-    bco::PowerProvider&    power_;
+    bco::PowerProvider&     power_;
     bco::Consumable&        lox_;
     bco::Consumable&        hydro_;
 
@@ -103,15 +102,13 @@ private:
 
     void SetIsFuelCellPowerAvailable(bool newValue);
 
-    bco::signal<double>	sigAvailPower_;
-
     bool                isFuelCellAvailable_;
     double              ampDrawFactor_{ 0.0 };
 
     bco::OnOffInput	switchEnabled_{ 
         { bm::vc::swFuelCellPower_id },
         bm::vc::swFuelCellPower_loc, bm::vc::PowerTopRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlPwrFC_id,
         bm::pnlright::pnlPwrFC_vrt,
         bm::pnlright::pnlPwrFC_RC,
@@ -162,8 +159,6 @@ inline void FuelCell::HandlePostStep(bco::Vessel& vessel, double simt, double si
 
         SetIsFuelCellPowerAvailable(isLOX && isHYD);
     }
-
-    sigAvailPower_.fire(isFuelCellAvailable_ ? MAX_VOLTS : 0.0);
 }
 
 inline bool FuelCell::HandleLoadState(bco::Vessel& vessel, const std::string& line)
@@ -185,6 +180,6 @@ inline void FuelCell::SetIsFuelCellPowerAvailable(bool newValue)
 {
     if (newValue != isFuelCellAvailable_) {
         isFuelCellAvailable_ = newValue;
-        lightAvailable_.set_state(vessel_, isFuelCellAvailable_);
+        lightAvailable_.SetState(vessel_, isFuelCellAvailable_);
     }
 }

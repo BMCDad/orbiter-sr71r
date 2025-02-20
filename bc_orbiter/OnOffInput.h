@@ -52,8 +52,7 @@ namespace bc_orbiter {
         public VCAnimation,
         public VCEventTarget,
         public PanelEventTarget,
-        public OneWaySwitch,
-        public signaller
+        public OneWaySwitch
     {
     public:
         OnOffInput(
@@ -115,13 +114,15 @@ namespace bc_orbiter {
             return true;
         }
 
-        void AttachOnChange(const std::function<void()>& func) override {
-            attach(func);
+        void AttachOnChange(funcEvent func) override
+        {
+            func_ = func;
         }
 
         void toggle_state(VESSEL4& vessel) {
             state_ = !state_;
 //            fire();
+            func_();
             vessel.TriggerRedrawArea(pnlId_, 0, GetId());
         }
 
@@ -131,7 +132,6 @@ namespace bc_orbiter {
                 input >> isEnabled;
                 obj.state_ = isEnabled;
                 obj.animVC_.SetState(isEnabled ? 1.0 : 0.0);
-                obj.fire();
             }
 
             return input;
@@ -152,5 +152,6 @@ namespace bc_orbiter {
         double              pnlOffset_;
         AnimationTarget    animVC_;
         int                 pnlId_;
+        funcEvent           func_{ [&] {} };
     };
 }

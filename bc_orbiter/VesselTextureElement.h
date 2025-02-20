@@ -44,14 +44,14 @@ namespace bc_orbiter {
             PanelTextureElement(pnlGroupId, pnlVerts, panelId, [&] {return state_; })
         {
         }
-        void set_state(VESSEL4& vessel, bool s) {
-            if (set_state(s ? 1.0 : 0.0)) {
+        void SetState(VESSEL4& vessel, bool s) {
+            if (SetState(s ? 1.0 : 0.0)) {
                 trigger(vessel);
             }
         }
 
-        void set_state(VESSEL4& vessel, double s) {
-            if (set_state(s))
+        void SetState(VESSEL4& vessel, double s) {
+            if (SetState(s))
                 trigger(vessel);
         }
 
@@ -62,7 +62,7 @@ namespace bc_orbiter {
         /// </summary>
         /// <param name="state">New state</param>
         /// <returns>True if the state changed</returns>
-        bool set_state(double state) {
+        bool SetState(double state) {
             if (state_ != state) {
                 state_ = state;
                 return true;

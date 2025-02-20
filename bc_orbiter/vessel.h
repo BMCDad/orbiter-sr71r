@@ -20,7 +20,6 @@
 #include "Control.h"
 #include "HandlerInterfaces.h"
 #include "Orbitersdk.h"
-#include "signals.h"
 
 #include <vector>
 #include <map>

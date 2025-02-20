@@ -25,7 +25,6 @@
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
-#include "SR71r_common.h"
 #include "Common.h"
 
 namespace bco = bc_orbiter;
@@ -84,7 +83,7 @@ private:
     bco::OnOffInput       switchDoors_ {
         { bm::vc::swRetroDoors_id },
         bm::vc::swRetroDoors_loc, bm::vc::DoorsRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlDoorRetro_id,
         bm::pnlright::pnlDoorRetro_vrt,
         bm::pnlright::pnlDoorRetro_RC,
@@ -129,7 +128,7 @@ inline void RetroEngines::HandlePostStep(bco::Vessel& vessel, double simt, doubl
             }
         }
     }
-    status_.set_state(vessel, status);
+    status_.SetState(vessel, status);
 }
 
 inline void RetroEngines::HandleSetClassCaps(bco::Vessel& vessel)

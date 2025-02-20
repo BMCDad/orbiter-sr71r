@@ -19,12 +19,10 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/OnOffInput.h"
 #include "../bc_orbiter/RotaryDisplay.h"
-#include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/transform_display.h"
 #include "../bc_orbiter/VesselEvent.h"
 #include "../bc_orbiter/VesselTextureElement.h"
 
-#include "SR71r_common.h"
 #include "Common.h"
 
 #include "SR71r_mesh.h"
@@ -62,15 +60,14 @@ public:
     bool	IsAeroAtmoMode() const { return isAtmoMode_; }
 
     // Signals:
-    bco::signal<double>& SetCourseSignal() { return setCourseSignal_; }
+    double SetCourse() const {return setCourse_; }
+    double SetHeading() const { return setHeading_; }
 
-    bco::signal<double>& SetHeadingSignal() { return setHeadingSignal_; }
-    bco::slot<double>& SetHeadingSlot() { return setHeadingSlot_; }
+    double GForce() const { return gforce_; }
+    double Trim() const { return trim_; }
+    double AOA() const { return aoa_; }
 
-    bco::signal<double>& GForceSignal() { return gforceSignal_; }
-    bco::signal<double>& TrimSignal() { return trimSignal_; }
-    bco::signal<double>& AOASignal() { return aoaSignal_; }
-
+    double NavMode() const { return switchNavMode_.IsOn() ? 1 : 0; }
 private:
     bco::Vessel& vessel_;
     bco::PowerProvider& power_;
@@ -81,14 +78,13 @@ private:
     bool		isAtmoMode_;
 
     // Signals:
-    bco::signal<double>		setCourseSignal_;
+    double          setCourse_;
+    double          setHeading_;
+//    bco::slot<double>		setHeadingSlot_;
 
-    bco::signal<double>		setHeadingSignal_;
-    bco::slot<double>		setHeadingSlot_;
-
-    bco::signal<double>		gforceSignal_;
-    bco::signal<double>		trimSignal_;
-    bco::signal<double>		aoaSignal_;
+    double          gforce_;
+    double          trim_;
+    double          aoa_;
 
     void UpdateSetCourse(double i);
     void UpdateSetHeading(double i);
@@ -96,7 +92,7 @@ private:
     bco::OnOffInput       switchAvionPower_{      // Main avionics power
         { bm::vc::SwAvionics_id },
         bm::vc::SwAvionics_loc, bm::vc::PowerTopRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlPwrAvion_id,
         bm::pnlright::pnlPwrAvion_vrt,
         bm::pnlright::pnlPwrAvion_RC,
@@ -106,7 +102,7 @@ private:
     bco::OnOffInput       switchAvionMode_{       // Atmosphere=On, External=Off
         { bm::vc::vcAvionMode_id },
         bm::vc::vcAvionMode_loc, bm::vc::navPanelAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnl::pnlAvionMode_id,
         bm::pnl::pnlAvionMode_vrt,
         bm::pnl::pnlAvionMode_RC,
@@ -115,7 +111,7 @@ private:
     bco::OnOffInput		switchNavMode_{		// Nav mode 1 2
         { bm::vc::vcNavMode_id },
         bm::vc::vcNavMode_loc, bm::vc::navPanelAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnl::pnlNavMode_id,
         bm::pnl::pnlNavMode_vrt,
         bm::pnl::pnlNavMode_RC,
@@ -220,7 +216,6 @@ private:
 
 inline Avionics::Avionics(bco::Vessel& vessel, bco::PowerProvider& pwr) :
     power_(pwr),
-    setHeadingSlot_([&](double v) { setHeadingSignal_.fire(v); }),
     vessel_(vessel)
 {
     power_.AttachConsumer(this);
@@ -282,19 +277,19 @@ inline void Avionics::HandlePostStep(bco::Vessel& vessel, double simt, double si
     double spRot = (1 - pow((6000 - absSpd) / 6000, 2)) / 2;
 
     // vsi
-    vsiHand_.set_state(0.5 + (isPos * spRot));
-    vsiActiveFlag_.set_state(vessel_, IsPowered());
+    vsiHand_.SetState(0.5 + (isPos * spRot));
+    vsiActiveFlag_.SetState(vessel_, IsPowered());
 
     // attitude
     attitudeDisplay_.SetAngle(bank);
     attitudeDisplay_.SetTransform(0.0, (-0.100093 * pitch));
-    attitudeFlag_.set_state(vessel, IsPowered());
+    attitudeFlag_.SetState(vessel, IsPowered());
 
     // accel
-    accelHand_.set_state((gforce + 2) / 6);
+    accelHand_.SetState((gforce + 2) / 6);
 
     // trim
-    trimHand_.set_state((trim + 1) / 2);
+    trimHand_.SetState((trim + 1) / 2);
 
     // aoa
     // ** AOA **
@@ -314,51 +309,51 @@ inline void Avionics::HandlePostStep(bco::Vessel& vessel, double simt, double si
         aoaR = aoaR * 3; // Translate to guage angle.
     }
 
-    aoaHand_.set_state((aoaR + 0.2619) / 1.136);
+    aoaHand_.SetState((aoaR + 0.2619) / 1.136);
 }
 
 // ManageState
 inline bool Avionics::HandleLoadState(bco::Vessel& vessel, const std::string& line) {
     //sscanf_s(configLine + 8, "%i%i%i%i%i", &power, &heading, &course, &navSelect, &navMode);
     std::istringstream in(line);
-    in >> switchAvionPower_ >> setHeadingSignal_ >> setCourseSignal_ >> switchNavMode_ >> switchAvionMode_;
+    in >> switchAvionPower_ >> setHeading_ >> setCourse_ >> switchNavMode_ >> switchAvionMode_;
     return true;
 }
 
 inline std::string Avionics::HandleSaveState(bco::Vessel& vessel) {
     std::ostringstream os;
-    os << switchAvionPower_ << " " << setHeadingSignal_ << " " << setCourseSignal_ << " " << switchNavMode_ << " " << switchAvionMode_;
+    os << switchAvionPower_ << " " << setHeading_ << " " << setCourse_ << " " << switchNavMode_ << " " << switchAvionMode_;
     return os.str();
 }
 
 inline void Avionics::SetCourse(double s)
 {
-    setCourseSignal_.update(s * RAD);
+    setCourse_ = s * RAD;
     UpdateSetCourse(0.0);	 // force the signal to fire.
 }
 
 inline void Avionics::UpdateSetCourse(double i)
 {
-    auto inc = setCourseSignal_.current() + i;
+    auto inc = setCourse_ + i;
     if (inc > PI2) inc -= PI2;
     if (inc < 0) inc += PI2;
-    setCourseSignal_.fire(inc);
+    setCourse_ = inc;
 
     //	sprintf(oapiDebugString(), "Set Course: %+4.2f", setCourseSignal_.current());
 }
 
 inline void Avionics::SetHeading(double s)
 {
-    setHeadingSignal_.update(s * RAD);
+    setHeading_ = s * RAD;
     UpdateSetHeading(0.0);	 // force the signal to fire.
 }
 
 inline void Avionics::UpdateSetHeading(double i)
 {
-    auto inc = setHeadingSignal_.current() + i;
+    auto inc = setHeading_ + i;
     if (inc > PI2) inc -= PI2;
     if (inc < 0) inc += PI2;
-    setHeadingSignal_.fire(inc);
+    setHeading_ = inc;
 
     //	sprintf(oapiDebugString(), "Set Course: %+4.2f", setCourseSignal_.current());
 }

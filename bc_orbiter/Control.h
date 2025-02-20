@@ -25,13 +25,17 @@ namespace bc_orbiter
 #include "OrbiterAPI.h"
 #include "Animation.h"
 #include "Tools.h"
-#include "signals.h"
 
 #include <vector>
 #include <functional>
 #include <memory>
 
 namespace bc_orbiter {
+    using funcEvent = std::function<void()>;
+    using funcState = std::function<double()>;
+    using funcVesselEvent = std::function<void(VESSEL4&)>;
+
+
     /**
     VCAnimation
     Implemented by a Control that needs to take part in the VC cockpit Animation step.
@@ -124,7 +128,7 @@ namespace bc_orbiter {
 
     struct OneWaySwitch {
         virtual bool IsOn() const = 0;
-        virtual void AttachOnChange(const std::function<void()>& func) = 0;
+        virtual void AttachOnChange(const funcEvent func) = 0;
     };
 
     /**
@@ -182,10 +186,6 @@ namespace bc_orbiter {
     private:
         int ctrlId_;
     };
-
-    using funcEvent = std::function<void()>;
-    using funcState = std::function<double()>;
-    using funcVesselEvent = std::function<void(VESSEL4&)>;
 
     template<typename T>
     class ElementControlBase :

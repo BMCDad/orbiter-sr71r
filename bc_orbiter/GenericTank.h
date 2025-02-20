@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "signals.h"
 #include "control.h"
 #include "vessel.h"
 
@@ -159,7 +158,7 @@ namespace bc_orbiter {
         const double    VOLTS_MIN = 24.0;
         const double    AMPS_PUMP = 4.0;
 
-        signal<bool>    sigIsFilling_;
+//        signal<bool>    sigIsFilling_;
 
         bool            isFilling_{ false };
         bool            isExternal_{ false };

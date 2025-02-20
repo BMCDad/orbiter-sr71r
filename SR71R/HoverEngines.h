@@ -25,7 +25,6 @@
 #include "PropulsionController.h"
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
-#include "SR71r_common.h"
 #include "Common.h"
 
 namespace bco = bc_orbiter;
@@ -106,7 +105,7 @@ private:
     bco::OnOffInput       switchOpen_{
         { bm::vc::swHoverDoor_id },
         bm::vc::swHoverDoor_loc, bm::vc::DoorsRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlHoverDoor_id,
         bm::pnlright::pnlHoverDoor_vrt,
         bm::pnlright::pnlHoverDoor_RC,
@@ -150,7 +149,7 @@ inline void HoverEngines::HandlePostStep(bco::Vessel& vessel, double simt, doubl
             }
         }
     }
-    status_.set_state(vessel, status);
+    status_.SetState(vessel, status);
 }
 
 inline void HoverEngines::HandleSetClassCaps(bco::Vessel& vessel)

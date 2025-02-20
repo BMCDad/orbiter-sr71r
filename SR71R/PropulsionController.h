@@ -33,7 +33,6 @@
 #include "SR71rPanelRight_mesh.h"
 
 #include "Common.h"
-#include "SR71r_common.h"
 #include "ShipMets.h"
 
 namespace bco = bc_orbiter;
@@ -111,7 +110,9 @@ public:
     void SetAttitudeRotLevel(bco::Axis axis, double level);
     double CurrentMaxThrust() { return maxThrustLevel_; }
 
-    bco::signal<double>& MainFuelLevelSignal() { return signalMainFuelLevel_; }
+//    bco::signal<double>& MainFuelLevelSignal() { return signalMainFuelLevel_; }
+
+    double MainFuelLevel() const { return mainFuelLevel_; }
 
     void ToggleThrustLimit(VESSEL4& vessel) { switchThrustLimit_.toggle_state(vessel); }
 
@@ -121,7 +122,7 @@ private:
 
     bool IsPowered() { return power_.VoltsAvailable() > 24.0; }
 
-    bco::signal<double>		signalMainFuelLevel_;
+//    bco::signal<double>		signalMainFuelLevel_;
 
     double DrawMainFuel(double amount);
     double FillMainFuel(double amount);
@@ -157,7 +158,7 @@ private:
     bco::OnOffInput		switchThrustLimit_{		// Thrust Limit
         { bm::vc::swThrottleLimit_id },
         bm::vc::swThrottleLimit_loc, bm::vc::navPanelAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnl::pnlThrottleLimit_id,
         bm::pnl::pnlThrottleLimit_vrt,
         bm::pnl::pnlThrottleLimit_RC
@@ -166,7 +167,7 @@ private:
     bco::OnOffInput       switchFuelDump_{        // Fuel dump
         { bm::vc::swDumpFuel_id },
         bm::vc::swDumpFuel_loc, bm::vc::FuelTransferRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlFuelDump_id,
         bm::pnlright::pnlFuelDump_vrt,
         bm::pnlright::pnlFuelDump_RC,
@@ -305,7 +306,7 @@ inline PropulsionController::PropulsionController(bco::PowerProvider& pwr, bco::
     vessel.AddControl(&statusFuel_);
     vessel.AddControl(&statusLimiter_);
 
-    switchThrustLimit_.attach([&]() { SetThrustLevel(switchThrustLimit_.IsOn() ? ENGINE_THRUST : ENGINE_THRUST_AB); });
+    switchThrustLimit_.AttachOnChange([&]() { SetThrustLevel(switchThrustLimit_.IsOn() ? ENGINE_THRUST : ENGINE_THRUST_AB); });
 
     btnFuelValveOpen_.Attach([&](VESSEL4&) { ToggleFill(); });
     btnRCSValveOpen_.Attach([&](VESSEL4&) { ToggleRCSFill(); });
@@ -348,18 +349,18 @@ inline void PropulsionController::Update(double deltaUpdate)
 {
     isExternAvail_ = (IsPowered() && vessel_.IsStoppedOrDocked());
 
-    lightFuelAvail_.set_state(vessel_, isExternAvail_);
+    lightFuelAvail_.SetState(vessel_, isExternAvail_);
 
-    lightRCSAvail_.set_state(vessel_, isExternAvail_);
+    lightRCSAvail_.SetState(vessel_, isExternAvail_);
 
     if (!isExternAvail_) {
         isFilling_ = false;
         isRCSFilling_ = false;
     }
 
-    lightFuelValveOpen_.set_state(vessel_, isFilling_);
+    lightFuelValveOpen_.SetState(vessel_, isFilling_);
 
-    lightRCSValveOpen_.set_state(vessel_, isRCSFilling_);
+    lightRCSValveOpen_.SetState(vessel_, isRCSFilling_);
 
     HandleTransfer(deltaUpdate); // <- this sets the current levels.
 
@@ -368,9 +369,9 @@ inline void PropulsionController::Update(double deltaUpdate)
     //    auto trFlow = (flow / maxMainFlow_) * (PI2 * 0.75);	// 90.718 = 200lbs per hour : 270 deg.
     if ((flow < 0.0) || switchFuelDump_.IsOn()) flow = 0.0;	 // Don't report flow if dumping.
     //	sigFuelFlowRate_.fire(flow / maxMainFlow_);	 // Converted to 0-1 range.
-    gaugeFuelFlow_.set_state(flow / maxMainFlow_);
+    gaugeFuelFlow_.SetState(flow / maxMainFlow_);
 
-    statusLimiter_.set_state(vessel_,
+    statusLimiter_.SetState(vessel_,
         (!IsPowered() || switchThrustLimit_.IsOn())
         ? cmn::status::off
         : cmn::status::on);
@@ -385,8 +386,8 @@ inline void PropulsionController::HandleTransfer(double deltaUpdate)
     rcsFuelLevel_ = vessel_.GetPropellantMass(vessel_.RcsPropellant()) /
         vessel_.GetPropellantMaxMass(vessel_.RcsPropellant());
 
-    gaugeFuelMain_.set_state(mainFuelLevel_);
-    gaugeFuelRCS_.set_state(rcsFuelLevel_);
+    gaugeFuelMain_.SetState(mainFuelLevel_);
+    gaugeFuelRCS_.SetState(rcsFuelLevel_);
 
     // Dumping and filling of the main tank will happen regardless of the transfer switch position.
     if (isFilling_) { // cannot be enabled if external fuel is unavailable.
@@ -408,13 +409,13 @@ inline void PropulsionController::HandleTransfer(double deltaUpdate)
         auto actualDump = DrawMainFuel(FUEL_DUMP_RATE * deltaUpdate);
     }
 
-    signalMainFuelLevel_.fire(mainFuelLevel_);
+//    signalMainFuelLevel_.fire(mainFuelLevel_);
 
     auto fuelStatus = (mainFuelLevel_ > 0.2) || !IsPowered()
         ? cmn::status::off : mainFuelLevel_ == 0.0
         ? cmn::status::error : cmn::status::warn;
 
-    statusFuel_.set_state(vessel_, fuelStatus);
+    statusFuel_.SetState(vessel_, fuelStatus);
 }
 
 inline double PropulsionController::GetVesselMainThrustLevel()

@@ -56,11 +56,8 @@ Orbiter 2024: (February 10 2025)
 	 * 2/18/2025 - Consolidate components.  header only
 	 * 2/18/2025 - Replace simple event.
 	 * 2/19/2025 - Removed last obsolete function.
-	 * Refactor OnOffInput (toggle switch) its working, but could be cleaned up.
-	 * Consolidate sr71_common and common.
-	 * clean up animation classes, more complex then needed probably.
-	 * remove slot signals.
-	 * clean up APU, still using old display and sigs.
+	 * 2/19/2025 - Signals removed.
+	 * 2/19/2025 - Merge common
 	 * MFD rewrite
 	 * Refactor Tools into namespaces.
 	 * Refactro transform_display, used in HSI

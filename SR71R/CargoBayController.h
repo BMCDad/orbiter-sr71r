@@ -30,7 +30,6 @@
 #include "SR71rPanelRight_mesh.h"
 
 #include "ShipMets.h"
-#include "SR71r_common.h"
 #include "common.h"
 
 namespace bco = bc_orbiter;
@@ -122,7 +121,7 @@ private:
     bco::OnOffInput       switchPower_{
         { bm::vc::SwCargoPower_id },
         bm::vc::SwCargoPower_loc, bm::vc::PowerTopRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlPwrCargo_id,
         bm::pnlright::pnlPwrCargo_vrt,
         bm::pnlright::pnlPwrCargo_RC,
@@ -132,7 +131,7 @@ private:
     bco::OnOffInput       switchOpen_{ 
         { bm::vc::SwCargoOpen_id },
         bm::vc::SwCargoOpen_loc, bm::vc::DoorsRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlDoorCargo_id,
         bm::pnlright::pnlDoorCargo_vrt,
         bm::pnlright::pnlDoorCargo_RC,
@@ -175,7 +174,7 @@ inline void CargoBayController::HandlePostStep(bco::Vessel& vessel, double simt,
             }
         }
     }
-    status_.set_state(vessel, status);
+    status_.SetState(vessel, status);
 }
 
 inline bool CargoBayController::HandleLoadState(bco::Vessel& vessel, const std::string& line)

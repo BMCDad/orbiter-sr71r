@@ -19,7 +19,6 @@
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/TextureRoll.h"
 #include "../bc_orbiter/RotaryDisplay.h"
-#include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/VesselTextureElement.h"
 
@@ -68,14 +67,14 @@ public:
         if (altFeet < 100000) {
             bco::BreakTens((altFeet > 100000 ? 0.0 : altFeet), iOut);
 
-            onesHand_.set_state(iOut.Hundreds / 10.0);
-            tensHand_.set_state(iOut.Thousands / 10.0);
-            hundsHand_.set_state(iOut.TenThousands / 10.0);
+            onesHand_.SetState(iOut.Hundreds / 10.0);
+            tensHand_.SetState(iOut.Thousands / 10.0);
+            hundsHand_.SetState(iOut.TenThousands / 10.0);
         }
         else {
-            onesHand_.set_state(0);
-            tensHand_.set_state(0);
-            hundsHand_.set_state(0);
+            onesHand_.SetState(0);
+            tensHand_.SetState(0);
+            hundsHand_.SetState(0);
         }
 
 
@@ -91,13 +90,13 @@ public:
         tdiAltThou_.SetPosition(parts.HundredThousands);
         tdiAltTenThou_.SetPosition(parts.Millions);
 
-        altimeterExoModeFlag_.set_state(    // FALSE show flag, TRUE hide flag
+        altimeterExoModeFlag_.SetState(    // FALSE show flag, TRUE hide flag
             vessel_,
             !avionics_.IsAeroActive()       // So if altimeter is OFF set TRUE so the flag does NOT show.
             ? true
             : avionics_.IsAeroAtmoMode());  // True for this switch means ATMO mode.
 
-        enabledFlag_.set_state(             // FALSE show flag, TRUE hide flag
+        enabledFlag_.SetState(             // FALSE show flag, TRUE hide flag
             vessel_,
             !avionics_.IsAeroActive()
             ? false                         // Avionics off, so show flag.

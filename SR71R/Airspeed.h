@@ -17,7 +17,6 @@
 #pragma once
 
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/VesselTextureElement.h"
 
@@ -107,9 +106,9 @@ public:
         tdieasTens_.SetPosition(parts.Hundreds);
         tdiKeasHunds_.SetPosition(parts.Thousands);
 
-        maxMachHand_.set_state(maxMachRatio);
-        machHand_.set_state(speedRatio);
-        kiesHand_.set_state(speedRatio - (kias / 600));
+        maxMachHand_.SetState(maxMachRatio);
+        machHand_.SetState(speedRatio);
+        kiesHand_.SetState(speedRatio - (kias / 600));
 
         //		sprintf(oapiDebugString(), "speedRatio (mach hand): %+4.2f", speedRatio);
 
@@ -118,11 +117,11 @@ public:
         tdiMhTens_.SetPosition(parts.Tens);
         tdiMhHunds_.SetPosition(parts.Hundreds);
 
-        status_.set_state(vessel, isOverSpeed ? cmn::status::error : cmn::status::off);
+        status_.SetState(vessel, isOverSpeed ? cmn::status::error : cmn::status::off);
 
-        enabledFlag_.set_state(vessel, avionics_.IsAeroActive());
+        enabledFlag_.SetState(vessel, avionics_.IsAeroActive());
 
-        velocityFlag_.set_state(vessel, avionics_.IsAeroActive() ? avionics_.IsAeroAtmoMode() : true);
+        velocityFlag_.SetState(vessel, avionics_.IsAeroActive() ? avionics_.IsAeroAtmoMode() : true);
     }
 
 private:

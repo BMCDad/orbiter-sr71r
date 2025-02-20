@@ -153,9 +153,9 @@ inline bool HUD::HandleLoadVC(bco::Vessel& vessel, int vcid)
 
 inline void HUD::OnHudMode(int mode)
 {
-    btnLightDocking_.set_state(vessel_, mode == HUD_DOCKING);
-    btnLightSurface_.set_state(vessel_, mode == HUD_SURFACE);
-    btnLightOrbit_.set_state(vessel_, mode == HUD_ORBIT);
+    btnLightDocking_.SetState(vessel_, mode == HUD_DOCKING);
+    btnLightSurface_.SetState(vessel_, mode == HUD_SURFACE);
+    btnLightOrbit_.SetState(vessel_, mode == HUD_ORBIT);
 
     // HUD mode is changing, if it is NOT changing to NONE, and we don't have power, turn it off.
     if (!IsPowered()) {

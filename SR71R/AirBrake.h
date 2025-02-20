@@ -174,7 +174,7 @@ inline void AirBrake::HandlePostStep(bco::Vessel& vessel, double simt, double si
        // This needs to be put into a switch statement eventually
     bco::TranslateMesh(vessel.GetpanelMeshHandle(0), bm::pnl::pnlAirBrake_id, bm::pnl::pnlAirBrake_vrt, sTrans * animBrakeSwitch_.GetState());
 
-    status_.set_state(vessel,
+    status_.SetState(vessel,
         dragFactor_ > 0.05
         ? cmn::status::warn
         : cmn::status::off);

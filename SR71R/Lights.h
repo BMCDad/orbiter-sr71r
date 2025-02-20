@@ -21,7 +21,6 @@
 #include "..\bc_orbiter\Vessel.h"
 
 #include "SR71r_mesh.h"
-#include "SR71r_common.h"
 
 #include <map>
 
@@ -196,7 +195,7 @@ private:
     bco::OnOffInput       switchStrobeLights_{        // On off switch for external strobe lights.
         { bm::vc::SwitchStrobeLights_id },
         bm::vc::SwitchStrobeLights_loc, bm::vc::LightsRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlLightStrobe_id,
         bm::pnlright::pnlLightStrobe_vrt,
         bm::pnlright::pnlLightStrobe_RC,
@@ -207,7 +206,7 @@ private:
         { bm::vc::SwitchBeaconLights_id },
         bm::vc::SwitchBeaconLights_loc, 
         bm::vc::LightsRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlLightBeacon_id,
         bm::pnlright::pnlLightBeacon_vrt,
         bm::pnlright::pnlLightBeacon_RC,
@@ -217,7 +216,7 @@ private:
     bco::OnOffInput       switchNavigationLights_ {   // On off switch for external navigation lights.
         { bm::vc::SwitchNavLights_id },
         bm::vc::SwitchNavLights_loc, bm::vc::LightsRightAxis_loc,
-        toggleOnOff,
+        cmn::toggleOnOff,
         bm::pnlright::pnlLightNav_id,
         bm::pnlright::pnlLightNav_vrt,
         bm::pnlright::pnlLightNav_RC,

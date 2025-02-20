@@ -12,7 +12,6 @@
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
-#include "SR71r_common.h"
 #include "PropulsionController.h"
 #include "HUD.h"
 #include "RCSSystem.h"
@@ -85,8 +84,8 @@ private:
     // DRAG
     double              bDrag{ 0.0 };
 
-    PowerSystem         powerSystem_{ *this };
-    APU                 apu_{ *this, powerSystem_ };
+    PowerSystem         powerSystem_{ *this, fuelCell_ };
+    APU                 apu_{ *this, powerSystem_, propulsion_ };
 
     AirBrake            airBrake_{ *this, apu_ };
     LandingGear         landingGear_{ *this, apu_ };

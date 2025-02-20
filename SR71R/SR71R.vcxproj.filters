@@ -150,9 +150,6 @@
     <ClInclude Include="Airspeed.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="SR71r_common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HydrogenTank.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -187,9 +184,6 @@
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\RotaryDisplay.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\signals.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\Tools.h">

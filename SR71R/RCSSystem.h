@@ -122,8 +122,8 @@ inline void RCSSystem::OnRCSMode(int mode)
         rotMode = (mode == RCS_ROT);
     }
 
-    lightLinear_.set_state(vessel_, linMode);
-    lightRotate_.set_state(vessel_, rotMode);
+    lightLinear_.SetState(vessel_, linMode);
+    lightRotate_.SetState(vessel_, rotMode);
 }
 
 inline void RCSSystem::OnChanged(int mode)

@@ -18,7 +18,6 @@
 
 #include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/signals.h"
 #include "../bc_orbiter/RotaryDisplay.h"
 #include "../bc_orbiter/VesselEvent.h"
 
@@ -165,16 +164,16 @@ inline void Clock::HandlePostStep(bco::Vessel& vessel, double simt, double simdt
     auto elapsedRun = simt - startElapsedTime_;
 
 
-    clockElapsedMinutesHand_.set_state(fmod((elapsedRun / 60), 60) / 60);
-    clockElapsedHoursHand_.set_state(fmod((elapsedRun / 3600), 12) / 60);
+    clockElapsedMinutesHand_.SetState(fmod((elapsedRun / 60), 60) / 60);
+    clockElapsedHoursHand_.SetState(fmod((elapsedRun / 3600), 12) / 60);
 
     if (isTimerRunning_)
     {
         currentTimerTime_ = simt - startTimerTime_;
     }
 
-    clockTimerSecondsHand_.set_state(fmod(currentTimerTime_, 60) / 60);
-    clockTimerMinutesHand_.set_state(fmod((currentTimerTime_ / 60), 60) / 60);
+    clockTimerSecondsHand_.SetState(fmod(currentTimerTime_, 60) / 60);
+    clockTimerMinutesHand_.SetState(fmod((currentTimerTime_ / 60), 60) / 60);
 }
 
 // [elapsedMissionTime] [isTimerRunning] [elapsedTimer]

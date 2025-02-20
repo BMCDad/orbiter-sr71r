@@ -232,13 +232,6 @@ namespace bc_orbiter
     public:
         AnimationBase() = default;
 
-        //AnimationBase(IAnimationState* state, double speed, func_target_achieved func = nullptr) :
-        //    stateProvider_(state),
-        //    funcTarget_(func)
-        //{
-        //    updateState_.speed_ = speed;
-        //}
-
         AnimationBase(double speed)
         {
             updateState_.speed_ = speed;
@@ -259,16 +252,6 @@ namespace bc_orbiter
                 }
             }
         }
-
-        //void Step(double dt) override
-        //{
-        //    updateState_.target_state_ = stateProvider_->GetState();
-        //    if (T::UpdateState(updateState_, dt)) {
-        //        if (funcTarget_ && (updateState_.target_state_ == updateState_.state_)) {
-        //            funcTarget_();
-        //        }
-        //    }
-        //}
 
         void Update(VESSEL4& vessel, double target, double simdt)
         {
@@ -328,7 +311,6 @@ namespace bc_orbiter
 
         StateUpdate			updateState_;
         func_target_achieved  funcTarget_;
-//        IAnimationState*    stateProvider_{ nullptr };
         UINT                vesselId_{ 0 };
     };
 
