@@ -122,7 +122,7 @@ namespace bc_orbiter {
         void toggle_state(VESSEL4& vessel) {
             state_ = !state_;
 //            fire();
-            func_();
+//            func_();
             vessel.TriggerRedrawArea(pnlId_, 0, GetId());
         }
 
@@ -152,6 +152,6 @@ namespace bc_orbiter {
         double              pnlOffset_;
         AnimationTarget    animVC_;
         int                 pnlId_;
-        funcEvent           func_{ [&] {} };
+        funcEvent           func_{ [&](IVessel&) {} };
     };
 }

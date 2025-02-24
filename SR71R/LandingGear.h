@@ -61,7 +61,7 @@ public:
 
     void HandleDrawHud(bco::Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-    void Toggle() { position_ = (position_ == 0.0) ? 1.0 : 0.0; }
+    void ToggleSwitch() { position_ = (position_ == 0.0) ? 1.0 : 0.0; }
 private:
 
     bco::HydraulicProvider& apu_;

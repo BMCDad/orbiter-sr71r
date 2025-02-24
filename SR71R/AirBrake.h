@@ -50,7 +50,7 @@ public:
     AirBrake(bco::Vessel& vessel, bco::HydraulicProvider& apu);
 
     // SetClassCaps
-    void HandleSetClassCaps(bco::Vessel& vessel) override;
+//    void HandleSetClassCaps(bco::Vessel& vessel) override;
 
     // PostStep
     void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
@@ -198,23 +198,23 @@ inline std::string AirBrake::HandleSaveState(bco::Vessel& vessel)
     return os.str();
 }
 
-inline void AirBrake::HandleSetClassCaps(bco::Vessel& vessel)
-{
-    // Setup VC Animation
-    auto vcIdx = vessel.GetVCMeshIndex();
-    auto aid = vessel.CreateVesselAnimation(animBrakeSwitch_);
-    animBrakeSurface_.VesselId(aid);
-    vessel.AddVesselAnimationComponent(aid, vcIdx, &gpBrakeHandle_);
-
-    // Setup external Animation   
-    auto exIdx = vessel.GetMainMeshIndex();
-    aid = vessel.CreateVesselAnimation(animAirBrake_);
-    vessel.AddVesselAnimationComponent(aid, exIdx, &gpLeftTop_);
-    vessel.AddVesselAnimationComponent(aid, exIdx, &gpLeftBottom_);
-    vessel.AddVesselAnimationComponent(aid, exIdx, &gpRightTop_);
-    vessel.AddVesselAnimationComponent(aid, exIdx, &gpRightBottom_);
-    animAirBrake_.VesselId(aid);
-
-    // Setup drag.
-    vessel.CreateVariableDragElement(animAirBrake_.GetStatePtr(), 10.0, bm::main::BrakeDragPoint_loc);
-}
+//inline void AirBrake::HandleSetClassCaps(bco::Vessel& vessel)
+//{
+//    // Setup VC Animation
+//    auto vcIdx = vessel.GetVCMeshIndex();
+//    auto aid = vessel.CreateVesselAnimation(animBrakeSwitch_);
+//    animBrakeSurface_.VesselId(aid);
+//    vessel.AddVesselAnimationComponent(aid, vcIdx, &gpBrakeHandle_);
+//
+//    // Setup external Animation   
+//    auto exIdx = vessel.GetMainMeshIndex();
+//    aid = vessel.CreateVesselAnimation(animAirBrake_);
+//    vessel.AddVesselAnimationComponent(aid, exIdx, &gpLeftTop_);
+//    vessel.AddVesselAnimationComponent(aid, exIdx, &gpLeftBottom_);
+//    vessel.AddVesselAnimationComponent(aid, exIdx, &gpRightTop_);
+//    vessel.AddVesselAnimationComponent(aid, exIdx, &gpRightBottom_);
+//    animAirBrake_.VesselId(aid);
+//
+//    // Setup drag.
+//    vessel.CreateVariableDragElement(animAirBrake_.GetStatePtr(), 10.0, bm::main::BrakeDragPoint_loc);
+//}

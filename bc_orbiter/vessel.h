@@ -20,6 +20,8 @@
 #include "Control.h"
 #include "HandlerInterfaces.h"
 #include "Orbitersdk.h"
+#include "IVessel.h"
+#include "Animation.h"
 
 #include <vector>
 #include <map>
@@ -35,13 +37,48 @@ namespace bc_orbiter
 
 namespace bc_orbiter
 {
+    struct IPowerConsumer
+    {
+        virtual auto AmpDraw() -> double = 0;
+    };
+
+    class RPowerProvider : public PowerProvider
+    {
+    public:
+        void AttachConsumer(PowerConsumer* consumer) {}
+        double VoltsAvailable() const { return 28.0; }
+        double AmpLoad() const { return 0.0; }
+    };
+
+    struct PanelEvent
+    {
+        RECT        rect;
+        int         panelId;
+        funcEvent   event;
+    };
+
+    struct RedrawEvent
+    {
+        int         id;     // panel or vc id.s
+        funcRedraw  redraw;
+    };
+
+    struct VCEvent
+    {
+        int             vcId;
+        const VECTOR3&  location;
+        double          radius;
+        funcEvent       event;
+    };
+
     /**
     Base class for Orbiter vessels.
     */
     class Vessel 
       : public VESSEL4,
         public AvionicsProvider,
-        public PropulsionControl
+        public PropulsionControl,
+        public IVessel
     {
     public:
         Vessel(OBJHANDLE hvessel, int flightmodel);
@@ -62,6 +99,26 @@ namespace bc_orbiter
 
         virtual ~Vessel() {}
 
+        // IVessel
+        auto AddAnimation(UINT meshIndex, AnimationGroup* group) -> UINT override;
+        auto AddAnimation(UINT meshIndex, MGROUP_TRANSFORM* transform) -> UINT override;
+        auto AddVesselMesh(const char* name) -> UINT override;
+        auto AddVesselAnimationComponent(UINT animId, UINT meshIdx, AnimationGroup* transform, ANIMATIONCOMPONENT_HANDLE parent = nullptr) -> ANIMATIONCOMPONENT_HANDLE override;
+        auto CreateVesselAnimation(Animation& animation) -> UINT override;
+        auto GetMeshHandle(const char* name) -> MESHHANDLE override;
+        auto GetDeviceMesh(int id) -> DEVMESHHANDLE override;
+        auto GetMeshIndex(const char* name) -> UINT override;
+        auto RegisterForPanelEvent(int panelId, RECT hitLocation, funcEvent eventFunc) -> UINT override;
+        auto RegisterForPanelRedraw(int panelId, funcRedraw redrawFunc) -> UINT override;
+        auto RegisterForVCRedraw(int vcId, funcRedraw redrawFunc) -> UINT override;
+        auto RegisterForVCEvent(int vcId, const VECTOR3& location, double radius, funcEvent eventFunc) -> UINT override;
+        auto RequestPanelRedraw(int panelId, UINT id) -> void override;
+        auto RequestVCRedraw(int vcId, UINT id) -> void override;
+        auto SetAnimationState(UINT animationId, double state) -> void override;
+
+        // END IVessel
+
+
         DEVMESHHANDLE   GetVirtualCockpitMesh0() { return meshVirtualCockpit0_; }
         MESHHANDLE      GetVCMeshHandle0() { return vcMeshHandle0_; }
         void            SetVCMeshHandle0(MESHHANDLE mh) { vcMeshHandle0_ = mh; }
@@ -71,7 +128,7 @@ namespace bc_orbiter
 
         UINT            GetMainMeshIndex() const { return mainIndex_; }
         void            SetPanelMeshHandle(int id, MESHHANDLE mh) { panel_mesh_handles_[id] = mh; }
-        MESHHANDLE      GetpanelMeshHandle(int id) const {
+        MESHHANDLE      GetpanelMeshHandle(int id) override {
             auto c = panel_mesh_handles_.find(id);
             return (c == panel_mesh_handles_.end()) ? nullptr : c->second;
         }
@@ -84,44 +141,6 @@ namespace bc_orbiter
         PROPELLANT_HANDLE MainPropellant() const { return mainPropellant_; }
         PROPELLANT_HANDLE RcsPropellant() const { return rcsPropellant_; }
 
-        /**
-        Registers Animation with the base Vessel, and assigns its id.
-        @param Animation Animation to register.
-        */
-        UINT CreateVesselAnimation(Animation& animation)
-        {
-            auto animId = VESSEL3::CreateAnimation(0.0);
-            animation.VesselId(animId);
-            return animId;
-        }
-
-        /**
-        Adds an Animation group to an existing Animation.  See CreateVesselAnimation.
-        @param animId The Animation id returned from CreateVesselAnimation.
-        @param meshIdx The mesh index to animate.
-        @param trans The mesh transformation.
-        @param parent The parent group if any.
-        */
-        ANIMATIONCOMPONENT_HANDLE AddVesselAnimationComponent(
-            UINT animId,
-            UINT meshIdx,
-            AnimationGroup* transform,
-            ANIMATIONCOMPONENT_HANDLE parent = nullptr)
-        {
-            ANIMATIONCOMPONENT_HANDLE result = nullptr;
-
-            //auto eh = animations_.find(animId);
-
-            transform->transform_->mesh = meshIdx;
-            result = VESSEL3::AddAnimationComponent(
-                animId,
-                transform->start_,
-                transform->stop_,
-                transform->transform_.get(),
-                parent);
-
-            return result;
-        }
 
         /**
         Sets the state of an Animation directly.  Call this when an Animation
@@ -195,7 +214,14 @@ namespace bc_orbiter
 
         std::map<int, Component*>                   idComponentMap_;		// still used by MFDs.  Need to figure that out, then we can get rid of Component
 //        std::map<UINT, std::unique_ptr<Animation>>  animations_;
-        std::map<int, MESHHANDLE>                   panel_mesh_handles_;
+        std::map<int, MESHHANDLE>                   panel_mesh_handles_; // this should go away
+        std::map<std::string, UINT>         map_mesh_index_;
+        
+        // concepts...new
+        std::map<int, std::unique_ptr<PanelEvent>>  map_panel_event_;
+        std::map<int, std::unique_ptr<RedrawEvent>> map_panel_redraw_;
+        std::map<int, std::unique_ptr<RedrawEvent>> map_vc_redraw_;
+        std::map<int, std::unique_ptr<VCEvent>>     map_vc_event_;
 
         int					nextEventId_{ 0 };
         bool				isCreated_{ false };	// Set true after clbkPostCreation
@@ -252,6 +278,18 @@ namespace bc_orbiter
             vc->HandleLoadVC(*this, id);
         }
 
+        for (auto& vcp : map_vc_event_) {
+            if (vcp.second->vcId == id) {
+                oapiVCRegisterArea(vcp.first, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+                oapiVCSetAreaClickmode_Spherical(vcp.first, vcp.second->location, vcp.second->radius);
+            }
+        }
+
+        for (auto& vcp : map_vc_redraw_) {
+            if (vcp.second->id == id) {
+                oapiVCRegisterArea(vcp.first, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
+            }
+        }
         return true;
     }
 
@@ -297,6 +335,11 @@ namespace bc_orbiter
             vc->second->OnMouseClick(*this, id, event);
         }
 
+        auto vce = map_vc_event_.find(id);
+        if (vce != map_vc_event_.end()) {
+            vce->second->event(*this);
+        }
+
         return false;
     }
 
@@ -320,6 +363,11 @@ namespace bc_orbiter
         if (pc != map_vc_component_.end()) {
             pc->second->HandleRedrawVC(*this, id, event, surf);
             return true;
+        }
+
+        auto pce = map_vc_redraw_.find(id);
+        if (pce != map_vc_redraw_.end()) {
+            pce->second->redraw(*this);
         }
 
         return false;
@@ -402,6 +450,16 @@ namespace bc_orbiter
             vc->HandleLoadPanel(*this, id, hPanel);
         }
 
+        for (auto& pnl : map_panel_event_) {
+            if (pnl.second->panelId != id) continue;
+            RegisterPanelArea(hPanel, pnl.first, pnl.second->rect, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+        }
+
+        for (auto& pnl : map_panel_redraw_) {
+            if (pnl.second->id != id) continue;
+            RegisterPanelArea(hPanel, pnl.first, _R(0, 0, 0, 0), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
+        }
+
         return true;
     }
 
@@ -426,6 +484,10 @@ namespace bc_orbiter
             pc->second->HandleRedrawPanel(*this, id, event, surf);
         }
 
+        auto pnl = map_panel_redraw_.find(id);
+        if (pnl != map_panel_redraw_.end()) {
+            pnl->second->redraw(*this);
+        }
         return true;
     }
 
@@ -444,6 +506,130 @@ namespace bc_orbiter
             pe->second->OnMouseClick(*this, id, event);
         }
 
+        auto pnl = map_panel_event_.find(id);
+        if (pnl != map_panel_event_.end()) {
+            pnl->second->event(*this);
+        }
+
         return true;
+    }
+
+    //  IVessel defs:
+    inline UINT Vessel::AddAnimation(UINT meshIndex, AnimationGroup* group)
+    {
+        group->transform_->mesh = meshIndex;
+        auto aid = VESSEL3::CreateAnimation(0);
+        VESSEL3::AddAnimationComponent(
+            aid,
+            group->start_,
+            group->stop_,
+            group->transform_.get());
+
+        return aid;
+    }
+
+    inline UINT Vessel::AddAnimation(UINT meshIndex, MGROUP_TRANSFORM* group)
+    {
+        group->mesh = meshIndex;
+        auto aid = VESSEL3::CreateAnimation(0);
+        VESSEL3::AddAnimationComponent(aid, 0, 1.0, group);
+        return aid;
+    }
+
+    inline UINT Vessel::AddVesselMesh(const char* name)
+    {
+        auto handle = oapiLoadMeshGlobal(name);
+        auto index = AddMesh(handle);
+        map_mesh_index_[name] = index;
+        return index;
+    }
+
+    inline ANIMATIONCOMPONENT_HANDLE Vessel::AddVesselAnimationComponent(
+        UINT animId,
+        UINT meshIdx,
+        AnimationGroup* transform,
+        ANIMATIONCOMPONENT_HANDLE parent)
+    {
+        ANIMATIONCOMPONENT_HANDLE result = nullptr;
+
+        //auto eh = animations_.find(animId);
+
+        transform->transform_->mesh = meshIdx;
+        result = VESSEL3::AddAnimationComponent(
+            animId,
+            transform->start_,
+            transform->stop_,
+            transform->transform_.get(),
+            parent);
+
+        return result;
+    }
+
+    inline UINT Vessel::CreateVesselAnimation(Animation& animation)
+    {
+        auto animId = VESSEL3::CreateAnimation(0.0);
+        animation.VesselId(animId);
+        return animId;
+    }
+
+    inline MESHHANDLE Vessel::GetMeshHandle(const char* name)
+    {
+        return oapiLoadMeshGlobal(name);
+    }
+
+    inline DEVMESHHANDLE Vessel::GetDeviceMesh(int id)
+    {
+        return meshVirtualCockpit0_;
+    }
+
+    inline UINT Vessel::GetMeshIndex(const char* name)
+    {
+        auto i = map_mesh_index_.find(name);
+        if (i == map_mesh_index_.end()) return -1;
+        return i->second;
+    }
+
+    inline UINT Vessel::RegisterForPanelEvent(int panelId, RECT hitLocation, funcEvent eventFunc)
+    {
+        // Create a new unique area/control id.
+        auto id = GetControlId();
+        map_panel_event_[id] = std::make_unique<PanelEvent>(hitLocation, panelId, eventFunc);
+        return id;
+    }
+
+    inline UINT Vessel::RegisterForPanelRedraw(int panelId, funcRedraw redrawFunc)
+    {
+        auto id = GetControlId();
+        map_panel_redraw_[id] = std::make_unique<RedrawEvent>(panelId, redrawFunc);
+        return id;
+    }
+
+    inline UINT Vessel::RegisterForVCRedraw(int vcId, funcRedraw redrawFunc)
+    {
+        auto id = GetControlId();
+        map_vc_redraw_[id] = std::make_unique<RedrawEvent>(vcId, redrawFunc);
+        return id;
+    }
+
+    inline UINT Vessel::RegisterForVCEvent(int vcId, const VECTOR3& location, double radius, funcEvent eventFunc)
+    {
+        auto id = GetControlId();
+        map_vc_event_[id] = std::make_unique<VCEvent>(vcId, location, radius, eventFunc);
+        return id;
+    }
+
+    inline void Vessel::RequestPanelRedraw(int panelId, UINT id)
+    {
+        VESSEL4::TriggerPanelRedrawArea(panelId, id);
+    }
+
+    inline void Vessel::RequestVCRedraw(int vcId, UINT id)
+    {
+        VESSEL4::TriggerRedrawArea(-1, vcId, id);
+    }
+
+    inline void Vessel::SetAnimationState(UINT animationId, double state)
+    {
+        VESSEL4::SetAnimation(animationId, state);
     }
 }

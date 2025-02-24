@@ -21,6 +21,8 @@
 
 #include <OrbiterAPI.h>
 
+#include "IVessel.h"
+
 namespace bc_orbiter {
 
     class Vessel;   // forward declare.
@@ -36,7 +38,7 @@ namespace bc_orbiter {
 
         virtual void HandleDrawHud(Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) {}
         virtual void HandlePostStep(Vessel& vessel, double simt, double simdt, double mjd) {}
-        virtual void HandleSetClassCaps(Vessel& vessel) {}
+        virtual void HandleSetClassCaps(IVessel& vessel) {}
         virtual bool HandleLoadState(Vessel& vessel, const std::string& line) { return false; }
         virtual std::string HandleSaveState(Vessel& vessel) { return ""; }
         virtual bool HandleLoadVC(Vessel& vessel, int vcid) { return false; }
@@ -45,6 +47,19 @@ namespace bc_orbiter {
         virtual bool HandleLoadPanel(Vessel& vessel, int id, PANELHANDLE hPanel) { return false; }
         virtual bool HandleRedrawPanel(Vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
         virtual bool HandleMousePanel(Vessel& vessel, int id, int event) { return false; }
+    };
+
+    struct IComponent
+    {
+        virtual auto HandleDrawHud(Vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) -> void {}
+        virtual auto HandlePostStep(Vessel& vessel, double simt, double simdt, double mjd) -> void {}
+        virtual auto HandleSetClassCaps(Vessel& vessel) -> void {}
+        virtual auto HandleLoadVC(Vessel& vessel, int vcid) -> bool { return false; }
+        virtual auto HandleRedrawVC(Vessel& vessel, int id, int event, SURFHANDLE surf) -> bool { return false; }
+        virtual auto HandleMouseVC(Vessel& vessel, int id, int event) -> bool { return false; }
+        virtual auto HandleLoadPanel(Vessel& vessel, int id, PANELHANDLE hPanel) -> bool { return false; }
+        virtual auto HandleRedrawPanel(Vessel& vessel, int id, int event, SURFHANDLE surf) -> bool { return false; }
+        virtual auto HandleMousePanel(Vessel& vessel, int id, int event) -> bool { return false; }
     };
 
     /**

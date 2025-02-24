@@ -25,13 +25,13 @@ namespace bc_orbiter
 #include "OrbiterAPI.h"
 #include "Animation.h"
 #include "Tools.h"
+#include "IVessel.h"
 
 #include <vector>
 #include <functional>
 #include <memory>
 
 namespace bc_orbiter {
-    using funcEvent = std::function<void()>;
     using funcState = std::function<double()>;
     using funcVesselEvent = std::function<void(VESSEL4&)>;
 
@@ -118,6 +118,8 @@ namespace bc_orbiter {
     struct PowerConsumer {
         virtual void OnChange(double v) {};  // A class that has a time step may not need change notification.
         virtual double AmpDraw() const = 0;
+
+        virtual ~PowerConsumer() = default;
     };
 
     struct PowerProvider {

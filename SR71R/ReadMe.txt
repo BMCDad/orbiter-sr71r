@@ -58,7 +58,7 @@ Orbiter 2024: (February 10 2025)
 	 * 2/19/2025 - Removed last obsolete function.
 	 * 2/19/2025 - Signals removed.
 	 * 2/19/2025 - Merge common
-	 * MFD rewrite
+	 * MFD rewrite - oapiBlt error, look at how DeltaGlider is handling.
 	 * Refactor Tools into namespaces.
 	 * Refactro transform_display, used in HSI
 	 

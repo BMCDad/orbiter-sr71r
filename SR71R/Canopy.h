@@ -20,6 +20,7 @@
 
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/control.h"
+#include "../bc_orbiter/IVessel.h"
 #include "../bc_orbiter/OnOffInput.h"
 #include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/VesselTextureElement.h"
@@ -28,12 +29,26 @@
 #include "SR71rVC_mesh.h"
 #include "SR71rPanel_mesh.h"
 #include "SR71rPanelRight_mesh.h"
+#include "ToggleSwitch.h"
+#include "StatusLight.h"
 
 #include "ShipMets.h"
 #include "common.h"
 
 namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
+
+struct ICanopy
+{
+    virtual auto IsPowerSwitchOn() -> bool = 0;
+    virtual auto SetPowerSwitch(bool power) -> void = 0;
+    virtual auto IsOpenSwitchOn() -> bool = 0;
+    virtual auto SetOpenSwitch(bool open) -> void = 0;
+    virtual auto IsClosed() -> bool = 0;
+    virtual auto IsMoving() -> bool = 0;
+
+    virtual ~ICanopy() = default;
+};
 
 /**	Canopy
 Controls the canopy door.
@@ -65,13 +80,72 @@ OnOffInput (canopy open):
 - inputs:
 :slot - has power
 */
-class Canopy : public bco::VesselComponent, public bco::PowerConsumer
+
+
+// Canopy open close togggle switch
+inline ToggleData togCanopyOpen = {
+    bm::vc::MESH_NAME,
+    bm::pnlright::MESH_NAME,
+    bm::vc::SwCanopyOpen_id,
+    bm::vc::SwCanopyOpen_loc,
+    bm::vc::DoorsRightAxis_loc,
+    cmn::vc::main,
+    cmn::panel::right,
+    bm::pnlright::pnlDoorCanopy_RC,
+    bm::pnlright::pnlDoorCanopy_id,
+    bm::pnlright::pnlDoorCanopy_vrt
+};
+
+// Canopy power toggle switch
+inline ToggleData togCanopyPower = {
+    bm::vc::MESH_NAME,
+    bm::pnlright::MESH_NAME,
+    bm::vc::SwCanopyPower_id,
+    bm::vc::SwCanopyPower_loc,
+    bm::vc::PowerTopRightAxis_loc,
+    cmn::vc::main,
+    cmn::panel::right,
+    bm::pnlright::pnlPwrCanopy_RC,
+    bm::pnlright::pnlPwrCanopy_id,
+    bm::pnlright::pnlPwrCanopy_vrt
+};
+
+// Status board canopy light
+inline StatusData lgtStatus_ = {
+    bm::vc::MESH_NAME,
+    bm::pnl::MESH_NAME,
+    bm::vc::MsgLightCanopy_id,
+    bm::vc::MsgLightCanopy_vrt,
+    cmn::vc::main,
+    bm::pnl::pnlMsgLightCanopy_id,
+    bm::pnl::pnlMsgLightCanopy_vrt,
+    cmn::panel::main
+};
+
+//bm::vc::MsgLightCanopy_id,
+//bm::vc::MsgLightCanopy_vrt,
+//cmn::vc::main,
+//bm::pnl::pnlMsgLightCanopy_id,
+//bm::pnl::pnlMsgLightCanopy_vrt,
+//cmn::panel::main
+
+
+class Canopy : public ICanopy, public bco::VesselComponent, public bco::PowerConsumer
 {
 public:
-    Canopy(bco::PowerProvider& pwr, bco::Vessel& vessel);
+    Canopy(bco::PowerProvider& pwr, bco::IVessel& vessel);
+
+    // ICanopy
+    auto IsPowerSwitchOn() -> bool          override    { return swPower_.IsOn(); }
+    auto SetPowerSwitch(bool power) -> void override    { swPower_.SetState(power); }
+    auto IsOpenSwitchOn() -> bool           override    { return swOpen_.IsOn(); }
+    auto SetOpenSwitch(bool open) -> void   override    { swOpen_.SetState(open); }
+    auto IsClosed() -> bool                 override    { return animCanopy_.GetState() == 0.0; }
+    auto IsMoving() -> bool                 override    { return (!IsClosed() && (animCanopy_.GetState() != 1.0)); }
+
 
     // SetClassCaps
-    void HandleSetClassCaps(bco::Vessel& vessel) override;
+    void HandleSetClassCaps(bco::IVessel& vessel) override;
 
     // PowerConsumer
     double AmpDraw() const override { return CanopyIsMoving() ? 4.0 : 0.0; }
@@ -80,24 +154,27 @@ public:
     void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
     // ManageState
-    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
-    std::string HandleSaveState(bco::Vessel& vessel) override;
+    //bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    //std::string HandleSaveState(bco::Vessel& vessel) override;
 
 private:
+    bco::IVessel& vessel_;
+    ToggleSwitch<ToggleData> swOpen_{ togCanopyOpen };
+    ToggleSwitch<ToggleData> swPower_{ togCanopyPower };
+
+    StatusLight<StatusData> lightStatus_{ lgtStatus_ };
+
     const double MIN_VOLTS = 20.0;
-    
+
     bco::PowerProvider& power_;
     
-    bool IsPowered() const { 
-        return 
-            (power_.VoltsAvailable() > MIN_VOLTS) &&
-            switchPower_.IsOn();
-    }
+    // bool IsPowered() const { return (power_.VoltsAvailable() > MIN_VOLTS) && swPower_.IsOn(); }
+    bool IsPowered() const { return swPower_.IsOn(); }
     
     bool CanopyIsMoving() const { 
         return 
             IsPowered() && 
-            switchOpen_.IsOn() &&
+            swOpen_.IsOn() &&
             (animCanopy_.GetState() > 0.0) && 
             (animCanopy_.GetState() < 1.0); 
     }
@@ -123,61 +200,27 @@ private:
         0, 1
     };
 
-    bco::OnOffInput       switchPower_ {
-        { bm::vc::SwCanopyPower_id },
-        bm::vc::SwCanopyPower_loc,
-        bm::vc::PowerTopRightAxis_loc,
-        cmn::toggleOnOff,
-        bm::pnlright::pnlPwrCanopy_id,
-        bm::pnlright::pnlPwrCanopy_vrt,
-        bm::pnlright::pnlPwrCanopy_RC,
-        1
-    };
-
-    //SR71Toggle       switchPower_ {
-    //    { bm::vc::SwCanopyPower_id },
-    //    bm::vc::SwCanopyPower_loc,
-    //    bm::vc::PowerTopRightAxis_loc,
-    //    bm::pnlright::pnlPwrCanopy_id,
-    //    bm::pnlright::pnlPwrCanopy_vrt,
-    //    bm::pnlright::pnlPwrCanopy_RC,
-    //    cmn::panel::right
+    //bco::VesselTextureElement       status_ {
+    //    bm::vc::MsgLightCanopy_id,
+    //    bm::vc::MsgLightCanopy_vrt,
+    //    cmn::vc::main,
+    //    bm::pnl::pnlMsgLightCanopy_id,
+    //    bm::pnl::pnlMsgLightCanopy_vrt,
+    //    cmn::panel::main
     //};
-
-    bco::OnOffInput       switchOpen_ {
-        { bm::vc::SwCanopyOpen_id },
-        bm::vc::SwCanopyOpen_loc,
-        bm::vc::DoorsRightAxis_loc,
-        cmn::toggleOnOff,
-        bm::pnlright::pnlDoorCanopy_id,
-        bm::pnlright::pnlDoorCanopy_vrt,
-        bm::pnlright::pnlDoorCanopy_RC,
-        1
-    };
-
-    bco::VesselTextureElement       status_ {
-        bm::vc::MsgLightCanopy_id,
-        bm::vc::MsgLightCanopy_vrt,
-        cmn::vc::main,
-        bm::pnl::pnlMsgLightCanopy_id,
-        bm::pnl::pnlMsgLightCanopy_vrt,
-        cmn::panel::main
-    };
 };
 
-inline Canopy::Canopy(bco::PowerProvider& pwr, bco::Vessel& vessel) :
-    power_(pwr)
+inline Canopy::Canopy(bco::PowerProvider& pwr, bco::IVessel& vessel) 
+  : power_(pwr),
+    vessel_(vessel)
 {
     power_.AttachConsumer(this);
-    vessel.AddControl(&switchOpen_);
-    vessel.AddControl(&switchPower_);
-    vessel.AddControl(&status_);
 }
 
 inline void Canopy::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
-        animCanopy_.Update(vessel, switchOpen_.IsOn() ? 1.0 : 0.0, simdt);
+        animCanopy_.Update(vessel, swOpen_.IsOn() ? 1.0 : 0.0, simdt);
     }
     /*
         off     - no power OR closed
@@ -195,36 +238,46 @@ inline void Canopy::HandlePostStep(bco::Vessel& vessel, double simt, double simd
             }
         }
     }
+    lightStatus_.UpdateStatus(vessel, status);
+    swOpen_.Step(vessel_, simdt);
+    swPower_.Step(vessel_, simdt);
 
-    status_.SetState(vessel, status);
+//    status_.SetState(vessel, status);
 }
 
-inline bool Canopy::HandleLoadState(bco::Vessel& vessel, const std::string& line)
+//inline bool Canopy::HandleLoadState(bco::Vessel& vessel, const std::string& line)
+//{
+//    std::istringstream in(line);
+//    in >> switchPower_;
+//    in >> switchOpen_;
+//    in >> animCanopy_;
+//    vessel.SetAnimationState(animCanopy_);
+//
+////    switchPower_.SetState(vessel, switchPower);
+//    return true;
+//}
+
+//inline std::string Canopy::HandleSaveState(bco::Vessel& vessel)
+//{
+//    std::ostringstream os;
+//    os << switchPower_.IsOn() << " " << switchOpen_ << " " << animCanopy_;
+//    return os.str();
+//}
+
+inline void Canopy::HandleSetClassCaps(bco::IVessel& vessel)
 {
-    std::istringstream in(line);
-    in >> switchPower_;
-    in >> switchOpen_;
-    in >> animCanopy_;
-    vessel.SetAnimationState(animCanopy_);
-
-//    switchPower_.SetState(vessel, switchPower);
-    return true;
-}
-
-inline std::string Canopy::HandleSaveState(bco::Vessel& vessel)
-{
-    std::ostringstream os;
-    os << switchPower_.IsOn() << " " << switchOpen_ << " " << animCanopy_;
-    return os.str();
-}
-
-inline void Canopy::HandleSetClassCaps(bco::Vessel& vessel)
-{
-    auto vcIdx = vessel.GetVCMeshIndex();
-    auto mIdx = vessel.GetMainMeshIndex();
-
+    auto vcIdx = vessel.GetMeshIndex(bm::vc::MESH_NAME);
+    auto mIdx = vessel.GetMeshIndex(bm::main::MESH_NAME);
+    
     auto idAnim = vessel.CreateVesselAnimation(animCanopy_);
     animCanopy_.VesselId(idAnim);
     vessel.AddVesselAnimationComponent(idAnim, vcIdx, &gpCanopyVC_);
     vessel.AddVesselAnimationComponent(idAnim, mIdx, &gpCanopy_);
+
+    // Switches
+    swOpen_.Register(vessel);
+    swPower_.Register(vessel);
+
+    // Lights
+    lightStatus_.Register(vessel);
 }

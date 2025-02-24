@@ -65,18 +65,18 @@ private:
 
     std::vector<MFDData> data_
     {
-        //{ vessel_.GetIdForComponent(this), 0,  0, 0, bm::vc::MFCLeftL1_loc, bm::pnl::pnlLeftMFD1_RC },
-        //{ vessel_.GetIdForComponent(this), 1,  1, 0, bm::vc::MFCLeftL2_loc, bm::pnl::pnlLeftMFD2_RC },
-        //{ vessel_.GetIdForComponent(this), 2,  2, 0, bm::vc::MFCLeftL3_loc, bm::pnl::pnlLeftMFD3_RC },
-        //{ vessel_.GetIdForComponent(this), 3,  3, 0, bm::vc::MFCLeftL4_loc, bm::pnl::pnlLeftMFD4_RC },
-        //{ vessel_.GetIdForComponent(this), 4,  4, 0, bm::vc::MFCLeftL5_loc, bm::pnl::pnlLeftMFD5_RC },
-        //{ vessel_.GetIdForComponent(this), 5,  5, 0, bm::vc::MFCLeftL6_loc, bm::pnl::pnlLeftMFD6_RC },
-        //{ vessel_.GetIdForComponent(this), 6,  0, 1, bm::vc::MFCLeftR1_loc, bm::pnl::pnlLeftMFD7_RC },
-        //{ vessel_.GetIdForComponent(this), 7,  1, 1, bm::vc::MFCLeftR2_loc, bm::pnl::pnlLeftMFD8_RC },
-        //{ vessel_.GetIdForComponent(this), 8,  2, 1, bm::vc::MFCLeftR3_loc, bm::pnl::pnlLeftMFD9_RC },
-        //{ vessel_.GetIdForComponent(this), 9,  3, 1, bm::vc::MFCLeftR4_loc, bm::pnl::pnlLeftMFD10_RC },
-        //{ vessel_.GetIdForComponent(this), 10, 4, 1, bm::vc::MFCLeftR5_loc, bm::pnl::pnlLeftMFD11_RC },
-        //{ vessel_.GetIdForComponent(this), 11, 5, 1, bm::vc::MFCLeftR6_loc, bm::pnl::pnlLeftMFD12_RC }
+        { vessel_.GetControlId(), 0,  0, 0, bm::vc::MFCLeftL1_loc, bm::pnl::pnlLeftMFD1_RC },
+        { vessel_.GetControlId(), 1,  1, 0, bm::vc::MFCLeftL2_loc, bm::pnl::pnlLeftMFD2_RC },
+        { vessel_.GetControlId(), 2,  2, 0, bm::vc::MFCLeftL3_loc, bm::pnl::pnlLeftMFD3_RC },
+        { vessel_.GetControlId(), 3,  3, 0, bm::vc::MFCLeftL4_loc, bm::pnl::pnlLeftMFD4_RC },
+        { vessel_.GetControlId(), 4,  4, 0, bm::vc::MFCLeftL5_loc, bm::pnl::pnlLeftMFD5_RC },
+        { vessel_.GetControlId(), 5,  5, 0, bm::vc::MFCLeftL6_loc, bm::pnl::pnlLeftMFD6_RC },
+        { vessel_.GetControlId(), 6,  0, 1, bm::vc::MFCLeftR1_loc, bm::pnl::pnlLeftMFD7_RC },
+        { vessel_.GetControlId(), 7,  1, 1, bm::vc::MFCLeftR2_loc, bm::pnl::pnlLeftMFD8_RC },
+        { vessel_.GetControlId(), 8,  2, 1, bm::vc::MFCLeftR3_loc, bm::pnl::pnlLeftMFD9_RC },
+        { vessel_.GetControlId(), 9,  3, 1, bm::vc::MFCLeftR4_loc, bm::pnl::pnlLeftMFD10_RC },
+        { vessel_.GetControlId(), 10, 4, 1, bm::vc::MFCLeftR5_loc, bm::pnl::pnlLeftMFD11_RC },
+        { vessel_.GetControlId(), 11, 5, 1, bm::vc::MFCLeftR6_loc, bm::pnl::pnlLeftMFD12_RC }
     };
 };
 
@@ -90,9 +90,9 @@ inline void LeftMFD::HandleSetClassCaps(bco::Vessel& vessel)
         AssignKey(a.id, a.key);
     }
 
-    //AssignPwrKey(GetBaseVessel()->GetIdForComponent(this));
-    //AssignSelect(GetBaseVessel()->GetIdForComponent(this));
-    //AssignMenu(GetBaseVessel()->GetIdForComponent(this));
+    AssignPwrKey(vessel_.GetControlId());
+    AssignSelect(vessel_.GetControlId());
+    AssignMenu(  vessel_.GetControlId());
 }
 
 inline bool LeftMFD::HandleLoadVC(bco::Vessel& vessel, int vcid)
@@ -116,12 +116,12 @@ inline bool LeftMFD::HandleLoadVC(bco::Vessel& vessel, int vcid)
 
     // These are texture metrics, not mesh, so they don't live in the mesh file.
 
-    int rc_left = MFDLLTEXL;                        // Left side of left buttons;
-    int rc_col2_offset = MFDLRTEXL - MFDLLTEXL;            // Diff between right col and left
-    int rc_top = MFD_B1TEX_TOP;                    // Top of row 1 buttons
-    int rc_row_offset = MFD_B2TEX_TOP - MFD_B1TEX_TOP;    // Difference in button y axis
-    int btn_height = MFD_B1TEX_BOT - MFD_B1TEX_TOP;    // Button height
-    int btn_width = MFDLLTEXR - MFDLLTEXL;            // Button width;
+    int rc_left         = MFDLLTEXL;                        // Left side of left buttons;
+    int rc_col2_offset  = MFDLRTEXL - MFDLLTEXL;            // Diff between right col and left
+    int rc_top          = MFD_B1TEX_TOP;                    // Top of row 1 buttons
+    int rc_row_offset   = MFD_B2TEX_TOP - MFD_B1TEX_TOP;    // Difference in button y axis
+    int btn_height      = MFD_B1TEX_BOT - MFD_B1TEX_TOP;    // Button height
+    int btn_width       = MFDLLTEXR - MFDLLTEXL;            // Button width;
 
     // This can be confusing:  oapiVCRegisterArea takes a RECT that is in TEXTURE space, not MESH space, this
     // tells Orbiter where to redraw.  The area ID is then also associated with a mouse event.  HOWEVER the 

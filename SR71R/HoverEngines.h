@@ -284,7 +284,7 @@ inline void HoverEngines::HandleDrawHud(bco::Vessel& vessel, int mode, const HUD
 //
 //bool HoverEngines::OnPanelMouseEvent(int id, int event)
 //{
-//    swOpen_.Toggle();
+//    swOpen_.ToggleSwitch();
 //    return true;
 //}
 //

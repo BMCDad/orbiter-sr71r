@@ -16,172 +16,170 @@
 
 #pragma once
 
-#include "vessel.h"
+#include "Vessel.h"
 #include "Control.h"
 #include <map>
 
 namespace bc_orbiter
 {
-	class MFDBase : 
-//		public Component,
-		public VesselComponent,
-		public PowerConsumer
-	{
-	public:
-		MFDBase(PowerProvider& pwr, Vessel* vessel, int mfdId, double amps) :
-//			Component(vessel),
-			power_(pwr),
-			mfdId_(mfdId),
-			vessel_(*vessel)
-		{
-			power_.AttachConsumer(this);
-		}
+    class MFDBase :
+        public VesselComponent,
+        public PowerConsumer
+    {
+    public:
+        MFDBase(PowerProvider& pwr, Vessel* vessel, int mfdId, double amps) :
+            power_(pwr),
+            mfdId_(mfdId),
+            vessel_(*vessel)
+        {
+            power_.AttachConsumer(this);
+        }
 
-		// PowerConsumer
-		double AmpDraw() const { 
-			return 
-				(IsPowered() && (oapiGetMFDMode(mfdId_) != MFD_NONE)) 
-				? 4.0 : 0.0; 
-		}
+        // PowerConsumer
+        double AmpDraw() const {
+            return
+                (IsPowered() && (oapiGetMFDMode(mfdId_) != MFD_NONE))
+                ? 4.0 : 0.0;
+        }
 
-		void OnChange(double v) {
-			if (!IsPowered()) { oapiOpenMFD(MFD_NONE, mfdId_); }
-		}
+        void OnChange(double v) {
+            if (!IsPowered()) { oapiOpenMFD(MFD_NONE, mfdId_); }
+        }
 
-		bool OnVCMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
-		bool OnPanelMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
+        bool OnVCMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
+        bool OnPanelMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
 
-//		virtual void ChangePowerLevel(double newLevel) override;
+        //		virtual void ChangePowerLevel(double newLevel) override;
 
-		/**
-		Notification when the MFD mode changes.
-		*/
-		void OnMfdMode(int mfdId, int mode);
+              /**
+              Notification when the MFD mode changes.
+              */
+        void OnMfdMode(int mfdId, int mode);
 
-		/**
-		Returns the label for 'button'.
-		*/
-		const char* GetButtonLabel(int button);
+        /**
+        Returns the label for 'button'.
+        */
+        const char* GetButtonLabel(int button);
 
-		/**
-		Handles the mouse event.
-		*/
-		bool OnMouseEvent(int id, int event);
+        /**
+        Handles the mouse event.
+        */
+        bool OnMouseEvent(int id, int event);
 
-//		virtual double CurrentDraw() override;
+        //		virtual double CurrentDraw() override;
 
-	protected:
-		PowerProvider& power_;
-		Vessel& vessel_;
+    protected:
+        PowerProvider& power_;
+        Vessel& vessel_;
 
-		bool IsPowered() const { 
-			return (power_.VoltsAvailable() > 24.0);
-		} // power_.VoltsAvailable() > 24.0; }
+        bool IsPowered() const {
+            return (power_.VoltsAvailable() > 24.0);
+        } // power_.VoltsAvailable() > 24.0; }
 
-		void Update();
-		void Redraw();
-		void AssignKey(int areaId, int mfdKey);
-		void AssignPwrKey(int areaId) { idPower_ = areaId; }
-		int GetPwrKey() const { return idPower_; }
-		void AssignSelect(int areaId) { idSelect_ = areaId; }
-		int GetSelectKey() const { return idSelect_; }
-		void AssignMenu(int areaId) { idMenu_ = areaId; }
-		int GetMenuKey() const { return idMenu_; }
-	private:
-		
-		int						mfdId_{ 0 };
-		std::map<int, int>		mfdButtonIds_;
+        void Update();
+        void Redraw();
+        void AssignKey(int areaId, int mfdKey);
+        void AssignPwrKey(int areaId) { idPower_ = areaId; }
+        int GetPwrKey() const { return idPower_; }
+        void AssignSelect(int areaId) { idSelect_ = areaId; }
+        int GetSelectKey() const { return idSelect_; }
+        void AssignMenu(int areaId) { idMenu_ = areaId; }
+        int GetMenuKey() const { return idMenu_; }
+    private:
 
-		int						idPower_{ 0 };
-		int						idSelect_{ 0 };
-		int						idMenu_{ 0 };
-	};
+        int                 mfdId_{ 0 };
+        std::map<int, int>  mfdButtonIds_;
 
-	//inline void MFDBase::ChangePowerLevel(double newLevel)
-	//{
-	//	PoweredComponent::ChangePowerLevel(newLevel);
-	//	Update();
-	//}
+        int                 idPower_{ 0 };
+        int                 idSelect_{ 0 };
+        int                 idMenu_{ 0 };
+    };
 
-	inline void MFDBase::OnMfdMode(int mfdId, int mode)
-	{
-		if (mfdId == mfdId_)
-		{
-			Redraw();
-		}
-	}
+    //inline void MFDBase::ChangePowerLevel(double newLevel)
+    //{
+    //	PoweredComponent::ChangePowerLevel(newLevel);
+    //	Update();
+    //}
 
-	inline const char* MFDBase::GetButtonLabel(int button)
-	{
-		const char* label = NULL;
+    inline void MFDBase::OnMfdMode(int mfdId, int mode)
+    {
+        if (mfdId == mfdId_)
+        {
+            Redraw();
+        }
+    }
 
-		auto btn = mfdButtonIds_.find(button);
-		if (btn != mfdButtonIds_.end())
-		{
-			label = oapiMFDButtonLabel(mfdId_, btn->second);
-		}
+    inline const char* MFDBase::GetButtonLabel(int button)
+    {
+        const char* label = NULL;
 
-		return label;
-	}
+        auto btn = mfdButtonIds_.find(button);
+        if (btn != mfdButtonIds_.end())
+        {
+            label = oapiMFDButtonLabel(mfdId_, btn->second);
+        }
 
-	inline bool MFDBase::OnMouseEvent(int id, int event)
-	{
-		bool result = false;
+        return label;
+    }
 
-		if (!IsPowered()) return false;
+    inline bool MFDBase::OnMouseEvent(int id, int event)
+    {
+        bool result = false;
 
-		auto key = mfdButtonIds_.find(id);
-		if (key != mfdButtonIds_.end())
-		{
-			oapiProcessMFDButton(mfdId_, key->second, event);
-			result = true;
-		}
-		else
-		{
-			if (id == idPower_)
-			{
-				oapiToggleMFD_on(mfdId_);
-				result = true;
-			}
-			else if (id == idSelect_)
-			{
-				oapiSendMFDKey(mfdId_, OAPI_KEY_F1);
-				result = true;
-			}
-			else if (id == idMenu_)
-			{
-				oapiSendMFDKey(mfdId_, OAPI_KEY_GRAVE);
-				result = true;
-			}
-		}
+        if (!IsPowered()) return false;
 
-		return result;
-	}
+        auto key = mfdButtonIds_.find(id);
+        if (key != mfdButtonIds_.end())
+        {
+            oapiProcessMFDButton(mfdId_, key->second, event);
+            result = true;
+        }
+        else
+        {
+            if (id == idPower_)
+            {
+                oapiToggleMFD_on(mfdId_);
+                result = true;
+            }
+            else if (id == idSelect_)
+            {
+                oapiSendMFDKey(mfdId_, OAPI_KEY_F1);
+                result = true;
+            }
+            else if (id == idMenu_)
+            {
+                oapiSendMFDKey(mfdId_, OAPI_KEY_GRAVE);
+                result = true;
+            }
+        }
 
-	inline void MFDBase::Update()
-	{
-		auto mode = oapiGetMFDMode(mfdId_);
+        return result;
+    }
 
-		if (mode != MFD_NONE)
-		{
-			oapiRefreshMFDButtons(mfdId_);
-		}
-	}
+    inline void MFDBase::Update()
+    {
+        auto mode = oapiGetMFDMode(mfdId_);
 
-	inline void MFDBase::Redraw()
-	{
-		for (auto &p : mfdButtonIds_)
-		{
+        if (mode != MFD_NONE)
+        {
+            oapiRefreshMFDButtons(mfdId_);
+        }
+    }
+
+    inline void MFDBase::Redraw()
+    {
+        for (auto& p : mfdButtonIds_)
+        {
             vessel_.TriggerRedrawArea(0, 0, p.first);
-		}
+        }
 
         vessel_.TriggerRedrawArea(0, 0, idPower_);
         vessel_.TriggerRedrawArea(0, 0, idSelect_);
         vessel_.TriggerRedrawArea(0, 0, idMenu_);
-	}
+    }
 
-	inline void MFDBase::AssignKey(int areaId, int mfdKey)
-	{
-		mfdButtonIds_[areaId] = mfdKey;
-	}
+    inline void MFDBase::AssignKey(int areaId, int mfdKey)
+    {
+        mfdButtonIds_[areaId] = mfdKey;
+    }
 }

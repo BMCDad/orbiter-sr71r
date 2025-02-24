@@ -37,149 +37,153 @@ static TOUCHDOWNVTX tdvtx_geardown[ntdvtx_geardown] = {
 */
 void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
 {
-	// Load global mesh files.  These are the 'template' meshes Orbiter will use.
-	// You use these mesh handles to the AddMesh the meshes and set how they will be viewed.
-	// If you ever need this handle again, call oapiLoadMeshGlobal with the same name and it
-	// we be returned, the mesh will not be reloaded.
-	auto mainGlobalMesh = oapiLoadMeshGlobal(bm::main::MESH_NAME);
-	mainMeshIndex_ = AddMesh(mainGlobalMesh);
-	SetMeshVisibilityMode(mainMeshIndex_, MESHVIS_EXTERNAL);
+    bco::IVessel* vessel = this;
+
+    // Load global mesh files.  These are the 'template' meshes Orbiter will use.
+    // You use these mesh handles to the AddMesh the meshes and set how they will be viewed.
+    // If you ever need this handle again, call oapiLoadMeshGlobal with the same name and it
+    // we be returned, the mesh will not be reloaded.
+    auto mainGlobalMesh = oapiLoadMeshGlobal(bm::main::MESH_NAME);
+    mainMeshIndex_ = AddMesh(mainGlobalMesh);
+    SetMeshVisibilityMode(mainMeshIndex_, MESHVIS_EXTERNAL);
     SetMainMeshIndex(mainMeshIndex_);  // The index will be needed when adding animations to the mesh.
 
-	// In case of the VC mesh we hold on to the mesh handle as it will be needed to get the texture
-	// that will be modified for things like MFD font painting.
-	vcMeshHandle_ = oapiLoadMeshGlobal(bm::vc::MESH_NAME);
-	auto idx = AddMesh(vcMeshHandle_);
-	SetMeshVisibilityMode(idx, MESHVIS_VC);
-	SetVCMeshIndex0(idx);
-	SetVCMeshHandle0(vcMeshHandle_);
+    // In case of the VC mesh we hold on to the mesh handle as it will be needed to get the texture
+    // that will be modified for things like MFD font painting.
+    //vcMeshHandle_ = oapiLoadMeshGlobal(bm::vc::MESH_NAME);
+    //auto idx = AddMesh(vcMeshHandle_);
+    auto idx = vessel->AddVesselMesh(bm::vc::MESH_NAME);
+    SetMeshVisibilityMode(idx, MESHVIS_VC);
+    SetVCMeshIndex0(idx);
+    SetVCMeshHandle0(vcMeshHandle_);
 
-	// Load 2D Panel:
-	auto panelMeshHandle = oapiLoadMeshGlobal(bm::pnl::MESH_NAME);
-	SetPanelMeshHandle(0, panelMeshHandle);
+    // Load 2D Panel:
+    auto panelMeshHandle = oapiLoadMeshGlobal(bm::pnl::MESH_NAME);
+    SetPanelMeshHandle(cmn::panel::main, panelMeshHandle);
     panelMeshHandle = oapiLoadMeshGlobal(bm::pnlright::MESH_NAME);
-    SetPanelMeshHandle(1, panelMeshHandle);
+    SetPanelMeshHandle(cmn::panel::right, panelMeshHandle);
 
-		// Setup ship metrics:
-	SetSize(SHIP_SIZE);
-	SetEmptyMass(EMPTY_MASS);
-	SetPMI(PMI);
-	SetCrossSections(CROSSSECTIONS);
-	SetRotDrag(ROTDRAG);
-	SetDockParams(bm::main::DockingPort_loc, _V(0, 1, 0), _V(0, 0, 1));
+
+    // Setup ship metrics:
+    SetSize(SHIP_SIZE);
+    SetEmptyMass(EMPTY_MASS);
+    SetPMI(PMI);
+    SetCrossSections(CROSSSECTIONS);
+    SetRotDrag(ROTDRAG);
+    SetDockParams(bm::main::DockingPort_loc, _V(0, 1, 0), _V(0, 0, 1));
     SetTouchdownPoints(tdvtx_geardown, ntdvtx_geardown);
     SetNosewheelSteering(true);
-	SetNosewheelSteering(true);
+    SetNosewheelSteering(true);
 
-	// Setups:
-	SetupAerodynamics();
-	SetCameraOffset(bm::main::PilotPOV_loc);
+    // Setups:
+    SetupAerodynamics();
+    SetCameraOffset(bm::main::PilotPOV_loc);
 
     // Propellent, move to setup method:
     CreateMainPropellant(MAX_FUEL);
     CreateRcsPropellant(MAX_RCS_FUEL);
 
-	// Controls that live in Vessel : must come before the baseVessel call.
-	AddControl(&statusDock_);
+    // Controls that live in Vessel : must come before the baseVessel call.
+    AddControl(&statusDock_);
 
-	bco::Vessel::clbkSetClassCaps(cfg);
+    bco::Vessel::clbkSetClassCaps(cfg);
 
-	SetMaxWheelbrakeForce(4e5);
+    SetMaxWheelbrakeForce(4e5);
 }
 
-int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate)
+int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char* kstate)
 {
-	if (!down) return 0; // only process keydown events
-	if (Playback()) return 0; // don't allow manual user input during a playback
+    if (!down) return 0; // only process keydown events
+    if (Playback()) return 0; // don't allow manual user input during a playback
 
-	if (KEYMOD_SHIFT(kstate)) {
-	}
-	else if (KEYMOD_ALT(kstate)) {
-		switch (key)
-		{
-		case OAPI_KEY_B:
-			airBrake_.DecreaseDrag();
-			return 1;
-		}
-	}
-	else if (KEYMOD_CONTROL(kstate)) {
-		switch (key) {
-		case OAPI_KEY_SPACE: // open Control dialog
-			return 1;
-		
-		case OAPI_KEY_B:
-			airBrake_.IncreaseDrag();
-			return 1;
+    if (KEYMOD_SHIFT(kstate)) {
+    }
+    else if (KEYMOD_ALT(kstate)) {
+        switch (key)
+        {
+        case OAPI_KEY_B:
+//            airBrake_.DecreaseDrag();
+            return 1;
+        }
+    }
+    else if (KEYMOD_CONTROL(kstate)) {
+        switch (key) {
+        case OAPI_KEY_SPACE: // open Control dialog
+            return 1;
 
-		case OAPI_KEY_1:
-			propulsion_.ToggleThrustLimit(*this);
-			return 1;
-		}
-	}
-	else {
-		switch (key) {
-		case OAPI_KEY_G:  // "operate landing gear"
-			landingGear_.Toggle();
-			return 1;
+        case OAPI_KEY_B:
+//            airBrake_.IncreaseDrag();
+            return 1;
 
-		case OAPI_KEY_1:	// Main auto pilot toggle.
-//			computer_.ToggleProgram(FCProgFlags::AtmoActive);
-			return 1;
+        case OAPI_KEY_1:
+//            propulsion_.ToggleThrustLimit(*this);
+            return 1;
+        }
+    }
+    else {
+        switch (key) {
+        case OAPI_KEY_G:  // "operate landing gear"
+//            landingGear_.ToggleSwitch();
+            return 1;
 
-		case OAPI_KEY_2:	// Toggle hold heading
-//			computer_.ToggleProgram(FCProgFlags::HoldHeading);
-			return 1;
+        case OAPI_KEY_1:	// Main auto pilot toggle.
+            //			computer_.ToggleProgram(FCProgFlags::AtmoActive);
+            return 1;
 
-		case OAPI_KEY_3:
-//			computer_.ToggleProgram(FCProgFlags::HoldAttitude);
-			return 1;
+        case OAPI_KEY_2:	// ToggleSwitch hold heading
+            //			computer_.ToggleProgram(FCProgFlags::HoldHeading);
+            return 1;
 
-		case OAPI_KEY_4:
-//			computer_.ToggleProgram(FCProgFlags::HoldKEAS);
-			return 1;
+        case OAPI_KEY_3:
+            //			computer_.ToggleProgram(FCProgFlags::HoldAttitude);
+            return 1;
 
-		case OAPI_KEY_5:
-//			computer_.ToggleProgram(FCProgFlags::HoldMACH);
-			return 1;
+        case OAPI_KEY_4:
+            //			computer_.ToggleProgram(FCProgFlags::HoldKEAS);
+            return 1;
 
-		//case OAPI_KEY_6:
-		//	autoPilot_.HoldAttitudeSwitch().Toggle();
-		//	return 1;
-		}
-	}
-	return 0;
+        case OAPI_KEY_5:
+            //			computer_.ToggleProgram(FCProgFlags::HoldMACH);
+            return 1;
+
+            //case OAPI_KEY_6:
+            //	autoPilot_.HoldAttitudeSwitch().ToggleSwitch();
+            //	return 1;
+        }
+    }
+    return 0;
 }
 
 
 bool SR71Vessel::clbkLoadVC(int id)
 {
-	SetCameraMovement(
-		_V(0.0, -0.13, 0.08), 0.0, -0.13,
-		_V(-0.1, 0.0, 0.0), 0.0, 0.0,
-		_V(0.1, 0.0, 0.0), 0.0, 0.0);
+    SetCameraMovement(
+        _V(0.0, -0.13, 0.08), 0.0, -0.13,
+        _V(-0.1, 0.0, 0.0), 0.0, 0.0,
+        _V(0.1, 0.0, 0.0), 0.0, 0.0);
 
-	return Vessel::clbkLoadVC(id);
+    return Vessel::clbkLoadVC(id);
 }
 
 void SR71Vessel::clbkHUDMode(int mode)
 {
-	headsUpDisplay_.OnHudMode(mode);
+//    headsUpDisplay_.OnHudMode(mode);
 }
 
 void SR71Vessel::clbkRCSMode(int mode)
 {
-	rcs_.OnRCSMode(mode);
+//    rcs_.OnRCSMode(mode);
 }
 
 void SR71Vessel::clbkNavMode(int mode, bool active)
 {
-	navModes_.OnNavMode(mode, active);
+//    navModes_.OnNavMode(mode, active);
 }
 
 void SR71Vessel::clbkMFDMode(int mfd, int mode)
 {
-//	mfdLeft_.OnMfdMode(mfd, mode);
-//	mfdRight_.OnMfdMode(mfd, mode);
+//    mfdLeft_.OnMfdMode(mfd, mode);
+    //	mfdRight_.OnMfdMode(mfd, mode);
 }
 
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
@@ -195,19 +199,19 @@ void SR71Vessel::clbkPostCreation()
 
 bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
 {
-	/*	Panel definition tasks (panel 0):
-	*	viewW is the width of the Orbiter window (view port).
-	*	viewH is the height of the Orbiter window (view port).  These values are used to scale the panel.
-	*
-		- SetPanelBackground
-		- MFD setup
-		- SetPanelScale
-		- Set neighbours: oapiSetPanelNeighbours (-1,-1,1,-1);
-		- SetCameraDefaultDirection (_V(0,0,1)); // forward
-		- oapiCameraSetCockpitDir (0,0);
+    /*	Panel definition tasks (panel 0):
+    *	viewW is the width of the Orbiter window (view port).
+    *	viewH is the height of the Orbiter window (view port).  These values are used to scale the panel.
+    *
+       - SetPanelBackground
+       - MFD setup
+       - SetPanelScale
+       - Set neighbours: oapiSetPanelNeighbours (-1,-1,1,-1);
+       - SetCameraDefaultDirection (_V(0,0,1)); // forward
+       - oapiCameraSetCockpitDir (0,0);
 
-		Other panels referenced from oapiSetPanelNeighbours will come through this call those ids.
-	*/
+       Other panels referenced from oapiSetPanelNeighbours will come through this call those ids.
+    */
 
     switch (id) {
     case 0:
@@ -253,7 +257,7 @@ bool SR71Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD 
         break;
     }
     }
-	return Vessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
+    return Vessel::clbkLoadPanel2D(id, hPanel, viewW, viewH);
 }
 
 void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
@@ -263,17 +267,17 @@ void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
     while (oapiReadScenario_nextline(scn, line))
     {
         bool handled = false;
-        std::istringstream ps(line);
-        std::string key;
-        ps >> key;
-        std::string configLine;
-        std::getline(ps >> std::ws, configLine);
+        //std::istringstream ps(line);
+        //std::string key;
+        //ps >> key;
+        //std::string configLine;
+        //std::getline(ps >> std::ws, configLine);
 
-        auto eh = mapStateManagement_.find(key);
-        if (eh != mapStateManagement_.end()) {
-            eh->second->HandleLoadState(*this, configLine);
-            handled = true;
-        }
+        //auto eh = mapStateManagement_.find(key);
+        //if (eh != mapStateManagement_.end()) {
+        //    eh->second->HandleLoadState(*this, configLine);
+        //    handled = true;
+        //}
 
         if (!handled) {
             ParseScenarioLineEx(line, vs);
@@ -281,14 +285,14 @@ void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
     }
 }
 
-void SR71Vessel::clbkSaveState(FILEHANDLE scn)
-{
-	VESSEL3::clbkSaveState(scn);	// Save default state.
-
-	for (auto& p : mapStateManagement_) {
-		oapiWriteScenario_string(
-			scn, 
-			(char*)p.first.c_str(), 
-			(char*)p.second->HandleSaveState(*this).c_str());
-	}
-}
+//void SR71Vessel::clbkSaveState(FILEHANDLE scn)
+//{
+//    VESSEL3::clbkSaveState(scn);	// Save default state.
+//
+//    //for (auto& p : mapStateManagement_) {
+//    //    oapiWriteScenario_string(
+//    //        scn,
+//    //        (char*)p.first.c_str(),
+//    //        (char*)p.second->HandleSaveState(*this).c_str());
+//    //}
+//}

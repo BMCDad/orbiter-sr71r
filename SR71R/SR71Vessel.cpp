@@ -21,48 +21,49 @@
 #include "ShipMets.h"
 
 SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) : 
-	bco::Vessel(hvessel, flightmodel),
-	meshVirtualCockpit_(nullptr)
+    bco::Vessel(hvessel, flightmodel),
+    meshVirtualCockpit_(nullptr)
 {
-	AddComponent(&avionics_);
-	AddComponent(&airBrake_);
-	AddComponent(&airspeed_);
-	AddComponent(&altimeter_);
-	AddComponent(&apu_);
-	AddComponent(&canopy_);
-	AddComponent(&cargobay_);
-	AddComponent(&clock_);
-	AddComponent(&fuelCell_);
-	AddComponent(&headsUpDisplay_);
-	AddComponent(&hoverEngines_);
-	AddComponent(&hydrogenTank_);
-	AddComponent(&hsi_);
-	AddComponent(&landingGear_);
-	AddComponent(&navModes_);
-	AddComponent(&oxygenTank_);
-	AddComponent(&propulsion_);
-	AddComponent(&powerSystem_);
-	AddComponent(&retroEngines_);
-	AddComponent(&lights_);
+    AddComponent(&canopy_);
 
-//	AddComponent(&mfdLeft_);
-//	AddComponent(&mfdRight_);
-//	AddComponent(&computer_);
-	AddComponent(&surfaceCtrl_);
+    //AddComponent(&avionics_);
+    //AddComponent(&airBrake_);
+    //AddComponent(&airspeed_);
+    //AddComponent(&altimeter_);
+    //AddComponent(&apu_);
+    //AddComponent(&cargobay_);
+    //AddComponent(&clock_);
+    //AddComponent(&fuelCell_);
+    //AddComponent(&headsUpDisplay_);
+    //AddComponent(&hoverEngines_);
+    //AddComponent(&hydrogenTank_);
+    //AddComponent(&hsi_);
+    //AddComponent(&landingGear_);
+    //AddComponent(&navModes_);
+    //AddComponent(&oxygenTank_);
+    //AddComponent(&propulsion_);
+    //AddComponent(&powerSystem_);
+    //AddComponent(&retroEngines_);
+    //AddComponent(&lights_);
 
-	// Fuel cell					// A signal can drive more then one slot
-//	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
+    //AddComponent(&mfdLeft_);
+    ////	AddComponent(&mfdRight_);
+    ////	AddComponent(&computer_);
+    //AddComponent(&surfaceCtrl_);
 
-//	bco::connect( propulsion_.MainFuelLevelSignal(),		apu_.FuelLevelSlot());
+    // Fuel cell					// A signal can drive more then one slot
+ //	bco::connect( fuelCell_.AvailablePowerSignal(),			powerSystem_.FuelCellAvailablePowerSlot());
 
-	// RCS
+ //	bco::connect( propulsion_.MainFuelLevelSignal(),		apu_.FuelLevelSlot());
 
-	// ...which in turn drive the HSI course and heading
-//	bco::connect( avionics_.SetCourseSignal(),				hsi_.SetCourseSlot());
-//	bco::connect( avionics_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
-	//bco::connect( avionics_.SetHeadingSignal(),				computer_.HeadingSlot());
-	//bco::connect( computer_.HeadingSignal(),				avionics_.SetHeadingSlot());
-			// ...which drives the course and heading needle and wheels.
+    // RCS
+
+    // ...which in turn drive the HSI course and heading
+ //	bco::connect( avionics_.SetCourseSignal(),				hsi_.SetCourseSlot());
+ //	bco::connect( avionics_.SetHeadingSignal(),				hsi_.SetHeadingSlot());
+    //bco::connect( avionics_.SetHeadingSignal(),				computer_.HeadingSlot());
+    //bco::connect( computer_.HeadingSignal(),				avionics_.SetHeadingSlot());
+          // ...which drives the course and heading needle and wheels.
 }
 
 SR71Vessel::~SR71Vessel()
@@ -71,22 +72,22 @@ SR71Vessel::~SR71Vessel()
 
 void SR71Vessel::SetupAerodynamics()
 {
-	// Aerodynamics - see notes in ShipMets file.
-	CreateAirfoil3(
-		LIFT_VERTICAL, 
-		_V(0, 0, -0.3), 
-		VLiftCoeff, 
-		0, 
-		VERT_WING_CHORD, 
-		VERT_WING_AREA, 
-		VERT_WING_AR);
+    // Aerodynamics - see notes in ShipMets file.
+    CreateAirfoil3(
+        LIFT_VERTICAL,
+        _V(0, 0, -0.3),
+        VLiftCoeff,
+        0,
+        VERT_WING_CHORD,
+        VERT_WING_AREA,
+        VERT_WING_AR);
 
-	CreateAirfoil3(
-		LIFT_HORIZONTAL, 
-		_V(0, 0, -4), 
-		HLiftCoeff, 
-		0, 
-		HORZ_WING_CHORD,
-		HORZ_WING_AREA,
-		HORZ_WING_AR);
+    CreateAirfoil3(
+        LIFT_HORIZONTAL,
+        _V(0, 0, -4),
+        HLiftCoeff,
+        0,
+        HORZ_WING_CHORD,
+        HORZ_WING_AREA,
+        HORZ_WING_AR);
 }

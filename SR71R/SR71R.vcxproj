@@ -130,6 +130,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\bc_orbiter\IVessel.h" />
     <ClInclude Include="..\bc_orbiter\PanelEvent.h" />
     <ClInclude Include="..\bc_orbiter\VCEvent.h" />
     <ClInclude Include="..\bc_orbiter\VesselEvent.h" />
@@ -181,9 +182,11 @@
     <ClInclude Include="ShipMets.h" />
     <ClInclude Include="SR71r_mesh.h" />
     <ClInclude Include="SR71Vessel.h" />
+    <ClInclude Include="StatusLight.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="SurfaceController.h" />
+    <ClInclude Include="ToggleSwitch.h" />
     <ClInclude Include="VesselControl.h" />
   </ItemGroup>
   <ItemGroup>
