@@ -91,7 +91,7 @@ private:
     HydrogenTank            hydrogenTank_   { *this, powerSystem_};
     OxygenTank	             oxygenTank_     { *this, powerSystem_ };
     FuelCell                fuelCell_       { *this, powerSystem_, oxygenTank_,	hydrogenTank_ };
-    Canopy                  canopy_         { *this, powerSystem_ };
+//    Canopy                  canopy_         { *this, powerSystem_ };
 
     //PowerSystem         powerSystem_{ *this, fuelCell_ };
     //APU                 apu_{ *this, powerSystem_, propulsion_ };

@@ -167,7 +167,6 @@
     <ClInclude Include="StatusLight.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="ToggleSwitch.h" />
-    <ClInclude Include="VesselControl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LiftCoeff.cpp" />

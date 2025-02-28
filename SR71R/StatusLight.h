@@ -13,11 +13,9 @@ namespace cmn = sr71_common;
 namespace con = bc_orbiter::contracts;
 namespace dta = bc_orbiter::data_type;
 
-//template <con::Cockpit TVCcp, con::Texture TVCtex, con::Cockpit TPNLcp, con::Texture TPNLtex >
 class StatusLight
 {
 public:
-//    StatusLight(const TVCcp& tvccp, const TVCtex& tvctex, const TPNLcp& tpnlcp, const TPNLtex& tpnltex) 
     StatusLight(dta::Cockpit& tvccp, dta::Texture& tvctex, dta::Cockpit& tpnlcp, dta::Texture& tpnltex)
       : vcCockpit_(tvccp),
         vcTexture_(tvctex),
@@ -49,17 +47,10 @@ private:
         bco::DrawVCOffset(vcMesh, vcTexture_.GroupID, vcTexture_.Verts, state_ * textureOffset_);
     }
 
-
-    //TVCcp   vcCockpit_;
-    //TVCtex  vcTexture_;
-    //TPNLcp  pnlCockpit_;
-    //TPNLtex pnlTexture_;
-
     dta::Cockpit&       vcCockpit_;
     dta::Texture& vcTexture_;
     dta::Cockpit&       pnlCockpit_;
     dta::Texture& pnlTexture_;
-
 
     UINT            panelRedrawId_{ (UINT)-1};
     UINT            vcRedrawId_{ (UINT)-1};
@@ -67,20 +58,13 @@ private:
     double          state_{ 0.0 };
     MESHHANDLE      meshPanel_{ nullptr };
     MESHHANDLE      meshVC_{ nullptr };
-
 };
 
-//inline void StatusLight<dta::Cockpit, dta::Texture, dta::Cockpit, dta::Texture>::Register(bco::IVessel& vessel)
 inline void StatusLight::Register(bco::IVessel& vessel)
 {
     panelRedrawId_ = vessel.RegisterForPanelRedraw(pnlCockpit_.ID, [&](bco::IVessel& v) {onPanelRedraw(v); });
     vcRedrawId_ = vessel.RegisterForVCRedraw(vcCockpit_.ID, [&](bco::IVessel& v) {onVCRedraw(v); });
 
     meshPanel_ = vessel.GetpanelMeshHandle(pnlCockpit_.ID);
-//    meshVC_ = vessel.GetMeshHandle(data_.VCMeshName);
-
     textureOffset_ = bco::UVOffset(pnlTexture_.Verts);
 }
-
-//using Status = StatusLight<dta::Cockpit, dta::Texture, dta::Cockpit, dta::Texture>;
-using Status = StatusLight;

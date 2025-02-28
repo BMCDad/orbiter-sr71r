@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "OrbiterSDK.h"
 
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/control.h"
@@ -100,7 +99,7 @@ private:
     Toggle swOpen_  { cmn::VCCockpit, vOpenToggle,   cmn::PNLRightCockpit, pOpenToggle };
     Toggle swPower_ { cmn::VCCockpit, vPowerToggle,  cmn::PNLRightCockpit, pPowerToggle };
 
-    Status lightStatus_{ cmn::VCCockpit, vStatusLight, cmn::PNLMainCockpit, pStatusLight };
+    StatusLight lightStatus_{ cmn::VCCockpit, vStatusLight, cmn::PNLMainCockpit, pStatusLight };
 
     bco::AnimationTarget    animCanopy_ { 0.2 };
     bco::AnimGroupRotate    gpCanopy_   { AGCanopy };
@@ -208,7 +207,7 @@ inline void Canopy::HandlePostStep(bco::Vessel& vessel, double simt, double simd
             }
         }
     }
-    lightStatus_.UpdateStatus(vessel, status);
+//    lightStatus_.UpdateStatus(vessel, status);
     swOpen_.Step(vessel_, simdt);
     swPower_.Step(vessel_, simdt);
 

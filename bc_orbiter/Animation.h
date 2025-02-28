@@ -35,12 +35,26 @@ namespace bc_orbiter
     //};
 
     struct AnimGroupDataRotate {
+        AnimGroupDataRotate(
+            std::initializer_list<UINT> gl,
+            const VECTOR3& la,
+            const VECTOR3& lb,
+            double an,
+            double srt,
+            double stp) :
+            GroupList(gl),
+            LocationA(la),
+            LocationB(lb),
+            Angle(an),
+            Start(srt),
+            Stop(stp){ }
+
         std::initializer_list<UINT> GroupList;
-        const VECTOR3&              LocationA;
-        const VECTOR3&              LocationB;
-        double                      Angle;
-        double                      Start;
-        double                      Stop;
+        const VECTOR3& LocationA;
+        const VECTOR3& LocationB;
+        double Angle;
+        double Start;
+        double Stop;
     };
 
     //template<typename T>

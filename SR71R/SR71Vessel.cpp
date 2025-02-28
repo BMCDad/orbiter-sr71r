@@ -24,7 +24,7 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
     bco::Vessel(hvessel, flightmodel),
     meshVirtualCockpit_(nullptr)
 {
-    AddComponent(&canopy_);
+//    AddComponent(&canopy_);
     AddComponent(&powerSystem_);
 
     //AddComponent(&avionics_);

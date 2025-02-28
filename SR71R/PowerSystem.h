@@ -150,9 +150,9 @@ private:
     Toggle swExternalConnected_     { cmn::VCCockpit, tVCExternalConnectedData, cmn::PNLRightCockpit, tPNLExternalConnectedData };
     Toggle swFuelCellConnected_     { cmn::VCCockpit, tVCFuelCellConnectedData, cmn::PNLRightCockpit, tPNLFuelCellConnectedData };
     
-    Status lightFuelCellConnected_  { cmn::VCCockpit, lgtVCFuelCellConnectedData, cmn::PNLRightCockpit, lgtPNLFuelCellConnectedData };
-    Status lightExternalAvailable_  { cmn::VCCockpit, lgtVCExternalAvailableData, cmn::PNLRightCockpit, lgtPNLExternalAvailableData };
-    Status lightExternalConnected_  { cmn::VCCockpit, lgtVCExternalConnectedData, cmn::PNLRightCockpit, lgtPNLExternalConnectedData };
+    StatusLight lightFuelCellConnected_  { cmn::VCCockpit, lgtVCFuelCellConnectedData, cmn::PNLRightCockpit, lgtPNLFuelCellConnectedData };
+    StatusLight lightExternalAvailable_  { cmn::VCCockpit, lgtVCExternalAvailableData, cmn::PNLRightCockpit, lgtPNLExternalAvailableData };
+    StatusLight lightExternalConnected_  { cmn::VCCockpit, lgtVCExternalConnectedData, cmn::PNLRightCockpit, lgtPNLExternalConnectedData };
 
     void Update(bco::Vessel& vessel);
 
