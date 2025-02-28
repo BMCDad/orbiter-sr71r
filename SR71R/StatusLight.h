@@ -1,7 +1,5 @@
 #pragma once
 
-#include <concepts>
-
 #include "..\bc_orbiter\IVessel.h"
 #include "..\bc_orbiter\Tools.h"
 #include "..\bc_orbiter\Types.h"
@@ -15,11 +13,12 @@ namespace cmn = sr71_common;
 namespace con = bc_orbiter::contracts;
 namespace dta = bc_orbiter::data_type;
 
-template <con::Cockpit TVCcp, con::Texture TVCtex, con::Cockpit TPNLcp, con::Texture TPNLtex >
+//template <con::Cockpit TVCcp, con::Texture TVCtex, con::Cockpit TPNLcp, con::Texture TPNLtex >
 class StatusLight
 {
 public:
-    StatusLight(const TVCcp& tvccp, const TVCtex& tvctex, const TPNLcp& tpnlcp, const TPNLtex& tpnltex) 
+//    StatusLight(const TVCcp& tvccp, const TVCtex& tvctex, const TPNLcp& tpnlcp, const TPNLtex& tpnltex) 
+    StatusLight(dta::Cockpit& tvccp, dta::Texture& tvctex, dta::Cockpit& tpnlcp, dta::Texture& tpnltex)
       : vcCockpit_(tvccp),
         vcTexture_(tvctex),
         pnlCockpit_(tpnlcp),
@@ -51,10 +50,15 @@ private:
     }
 
 
-    TVCcp   vcCockpit_;
-    TVCtex  vcTexture_;
-    TPNLcp  pnlCockpit_;
-    TPNLtex pnlTexture_;
+    //TVCcp   vcCockpit_;
+    //TVCtex  vcTexture_;
+    //TPNLcp  pnlCockpit_;
+    //TPNLtex pnlTexture_;
+
+    dta::Cockpit&       vcCockpit_;
+    dta::Texture& vcTexture_;
+    dta::Cockpit&       pnlCockpit_;
+    dta::Texture& pnlTexture_;
 
 
     UINT            panelRedrawId_{ (UINT)-1};
@@ -66,7 +70,8 @@ private:
 
 };
 
-inline void StatusLight<dta::Cockpit, dta::Texture, dta::Cockpit, dta::Texture>::Register(bco::IVessel& vessel)
+//inline void StatusLight<dta::Cockpit, dta::Texture, dta::Cockpit, dta::Texture>::Register(bco::IVessel& vessel)
+inline void StatusLight::Register(bco::IVessel& vessel)
 {
     panelRedrawId_ = vessel.RegisterForPanelRedraw(pnlCockpit_.ID, [&](bco::IVessel& v) {onPanelRedraw(v); });
     vcRedrawId_ = vessel.RegisterForVCRedraw(vcCockpit_.ID, [&](bco::IVessel& v) {onVCRedraw(v); });
@@ -77,4 +82,5 @@ inline void StatusLight<dta::Cockpit, dta::Texture, dta::Cockpit, dta::Texture>:
     textureOffset_ = bco::UVOffset(pnlTexture_.Verts);
 }
 
-using Status = StatusLight<dta::Cockpit, dta::Texture, dta::Cockpit, dta::Texture>;
+//using Status = StatusLight<dta::Cockpit, dta::Texture, dta::Cockpit, dta::Texture>;
+using Status = StatusLight;

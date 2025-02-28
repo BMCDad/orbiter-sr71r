@@ -52,6 +52,7 @@ namespace bc_orbiter
 
     struct PanelEvent
     {
+        PanelEvent(RECT rc, int id, funcEvent func) : rect(rc), panelId(id), event(func){}
         RECT        rect;
         int         panelId;
         funcEvent   event;
@@ -59,12 +60,14 @@ namespace bc_orbiter
 
     struct RedrawEvent
     {
+        RedrawEvent(int _id, funcRedraw func) : id(_id), redraw(func) {}
         int         id;     // panel or vc id.s
         funcRedraw  redraw;
     };
 
     struct VCEvent
     {
+        VCEvent(int id, const VECTOR3& v, double rad, funcEvent func) : vcId(id), location(v), radius(rad), event(func){}
         int             vcId;
         const VECTOR3&  location;
         double          radius;

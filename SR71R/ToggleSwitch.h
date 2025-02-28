@@ -1,6 +1,5 @@
 #pragma once
 
-#include <concepts>
 #include <functional>
 #include <memory>
 
@@ -17,12 +16,12 @@ namespace bco = bc_orbiter;
 namespace con = bc_orbiter::contracts;
 namespace dta = bc_orbiter::data_type;
 
-template <con::Cockpit Tvc, con::RotateControl TvcCtrl, con::Cockpit Tpnl, con::StaticControl TpnlCtrl>
+//template <con::Cockpit Tvc, con::RotateControl TvcCtrl, con::Cockpit Tpnl, con::StaticControl TpnlCtrl>
 class ToggleSwitch
 {
 public:
-    explicit ToggleSwitch(const Tvc& vct, const TvcCtrl& vcc, const Tpnl& pnlt, TpnlCtrl& pnlc) 
-//    explicit ToggleSwitch(dta::Cockpit& vct, dta::RotateControl& vcc, dta::Cockpit& pnlt, dta::StaticControl& pnlc)
+//    explicit ToggleSwitch(const Tvc& vct, const TvcCtrl& vcc, const Tpnl& pnlt, TpnlCtrl& pnlc) 
+    explicit ToggleSwitch(dta::Cockpit& vct, dta::RotateControl& vcc, dta::Cockpit& pnlt, dta::StaticControl& pnlc)
       : vcCockpitData_(vct),
         vcControlData_(vcc),
         pnlCockpitData_(pnlt),
@@ -50,15 +49,15 @@ private:
         bco::DrawPanelOffset(meshPanel_, pnlControlData_.Group, pnlControlData_.Verts, textureOffset_ * (isOn_ ? 1.0 : 0.0));
     }
 
-    Tvc         vcCockpitData_;
-    TvcCtrl     vcControlData_;
-    Tpnl        pnlCockpitData_;
-    TpnlCtrl    pnlControlData_;
+    //Tvc         vcCockpitData_;
+    //TvcCtrl     vcControlData_;
+    //Tpnl        pnlCockpitData_;
+    //TpnlCtrl    pnlControlData_;
 
-    //dta::Cockpit&       vcCockpitData_;
-    //dta::RotateControl& vcControlData_;
-    //dta::Cockpit&       pnlCockpitData_;
-    //dta::StaticControl& pnlControlData_;
+    dta::Cockpit&       vcCockpitData_;
+    dta::RotateControl& vcControlData_;
+    dta::Cockpit&       pnlCockpitData_;
+    dta::StaticControl& pnlControlData_;
 
 
     const double            HitRadius   = 0.01;
@@ -78,8 +77,8 @@ private:
     MESHHANDLE                      meshPanel_{ nullptr };
 };
 
-inline void ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::StaticControl>::Register(bco::IVessel& vessel)
-//inline void ToggleSwitch::Register(bco::IVessel& vessel)
+//inline void ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::StaticControl>::Register(bco::IVessel& vessel)
+inline void ToggleSwitch::Register(bco::IVessel& vessel)
 {
     auto vcMeshIndex = vessel.GetMeshIndex(vcCockpitData_.MeshName);
     VECTOR3 axis = vcControlData_.LocationB - vcControlData_.LocationA;
@@ -114,12 +113,13 @@ inline void ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::St
     textureOffset_ = bco::UVOffset(pnlControlData_.Verts);
 }
 
-inline void ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::StaticControl>::Step(bco::IVessel& vessel, double simdt)
-//inline void ToggleSwitch::Step(bco::IVessel& vessel, double simdt)
+//inline void ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::StaticControl>::Step(bco::IVessel& vessel, double simdt)
+inline void ToggleSwitch::Step(bco::IVessel& vessel, double simdt)
 {
     state_.target_state_ = isOn_ ? 1.0 : 0.0;
     animUpdate_.UpdateState(state_, simdt);
     vessel.SetAnimationState(animId_, state_.state_);
 }
 
-using Toggle = ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::StaticControl>;
+//using Toggle = ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::StaticControl>;
+using Toggle = ToggleSwitch;

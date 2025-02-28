@@ -126,13 +126,7 @@
     <ClInclude Include="..\bc_orbiter\VesselTextureElement.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\PanelEvent.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="..\bc_orbiter\VCEvent.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bc_orbiter\VesselEvent.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\IVessel.h">

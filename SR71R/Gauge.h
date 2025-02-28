@@ -1,6 +1,5 @@
 #pragma once
 
-#include <concepts>
 #include <functional>
 #include <memory>
 
@@ -15,11 +14,11 @@ namespace bco = bc_orbiter;
 namespace con = bc_orbiter::contracts;
 namespace dta = bc_orbiter::data_type;
 
-template <con::Cockpit Tvc, con::RotateControl TvcCtrl, con::Cockpit Tpnl, con::Texture TpnlCtrl>
+//template <con::Cockpit Tvc, con::RotateControl TvcCtrl, con::Cockpit Tpnl, con::Texture TpnlCtrl>
 class Gauge
 {
 public:
-    explicit Gauge(const Tvc& vct, const TvcCtrl& vcc, const Tpnl& pnlt, TpnlCtrl& pnlc, double range, double speed)
+    explicit Gauge(dta::Cockpit& vct, dta::Texture& vcc, dta::Cockpit& pnlt, dta::Texture& pnlc, double range, double speed)
       : vcCockpitData_(vct),
         vcControlData_(vcc),
         pnlCockpitData_(pnlt),
@@ -33,10 +32,15 @@ public:
 
     auto SetLevel(double level) -> void { level_ = level; }
 private:
-    Tvc         vcCockpitData_;
-    TvcCtrl     vcControlData_;
-    Tpnl        pnlCockpitData_;
-    TpnlCtrl    pnlControlData_;
+    //Tvc         vcCockpitData_;
+    //TvcCtrl     vcControlData_;
+    //Tpnl        pnlCockpitData_;
+    //TpnlCtrl    pnlControlData_;
+
+    dta::Cockpit    vcCockpitData_;
+    dta::Texture    vcControlData_;
+    dta::Cockpit    pnlCockpitData_;
+    dta::Texture    pnlControlData_;
 
     double      range_{ 0.0 };
     double      speed_{ 1.0 };
@@ -52,29 +56,30 @@ private:
 
 };
 
-inline void Gauge<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::Texture>::Register(bco::IVessel& vessel)
+//inline void Gauge<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::Texture>::Register(bco::IVessel& vessel)
+inline void Gauge::Register(bco::IVessel& vessel)
 {
-    auto vcMeshIndex = vessel.GetMeshIndex(vcCockpitData_.MeshName);
-    VECTOR3 axis = vcControlData_.LocationB - vcControlData_.LocationA;
-    normalise(axis);
+    //auto vcMeshIndex = vessel.GetMeshIndex(vcCockpitData_.MeshName);
+    //VECTOR3 axis = vcControlData_.LocationB - vcControlData_.LocationA;
+    //normalise(axis);
 
-    group_ = std::make_unique<MGROUP_ROTATE>(
-        vcMeshIndex,
-        &vcControlData_.MeshGroup,
-        1,
-        vcControlData_.LocationA,
-        axis,
-        range_);
+    //group_ = std::make_unique<MGROUP_ROTATE>(
+    //    vcMeshIndex,
+    //    &vcControlData_.MeshGroup,
+    //    1,
+    //    vcControlData_.LocationA,
+    //    axis,
+    //    range_);
 
-    animId_ = vessel.AddAnimation(vcMeshIndex, group_.get());
-    meshPanel_ = vessel.GetpanelMeshHandle(pnlCockpitData_.ID);
+    //animId_ = vessel.AddAnimation(vcMeshIndex, group_.get());
+    //meshPanel_ = vessel.GetpanelMeshHandle(pnlCockpitData_.ID);
 }
 
-inline void Gauge<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::Texture>::Step(bco::IVessel& vessel, double simdt)
+inline void Gauge::Step(bco::IVessel& vessel, double simdt)
 {
-    state_.target_state_ = level_;
-    animUpdate_.UpdateState(state_, simdt);
-    vessel.SetAnimationState(animId_, state_.state_);
+    //state_.target_state_ = level_;
+    //animUpdate_.UpdateState(state_, simdt);
+    //vessel.SetAnimationState(animId_, state_.state_);
 
 //    bco::RotateMesh(meshPanel_, pnlControlD
 }

@@ -21,19 +21,18 @@
 #include <vector>
 #include <functional>
 #include <memory>
-#include <concepts>
 
 namespace bc_orbiter
 {
-    template<typename T>
-    concept AnimationGroupContractRotate = requires(T t) {
-        { t.GroupList } -> std::convertible_to<std::initializer_list<UINT>>;
-        { t.LocationA } -> std::convertible_to<const VECTOR3&>;
-        { t.LocationB } -> std::convertible_to<const VECTOR3&>;
-        { t.Angle }     -> std::convertible_to<double>;
-        { t.Start }     -> std::convertible_to<double>;
-        { t.Stop }       -> std::convertible_to<double>;
-    };
+    //template<typename T>
+    //concept AnimationGroupContractRotate = requires(T t) {
+    //    { t.GroupList } -> std::convertible_to<std::initializer_list<UINT>>;
+    //    { t.LocationA } -> std::convertible_to<const VECTOR3&>;
+    //    { t.LocationB } -> std::convertible_to<const VECTOR3&>;
+    //    { t.Angle }     -> std::convertible_to<double>;
+    //    { t.Start }     -> std::convertible_to<double>;
+    //    { t.Stop }       -> std::convertible_to<double>;
+    //};
 
     struct AnimGroupDataRotate {
         std::initializer_list<UINT> GroupList;
@@ -44,14 +43,14 @@ namespace bc_orbiter
         double                      Stop;
     };
 
-    template<typename T>
-    concept AnimationGroupContractTranslate = requires(T t) {
-        { t.GroupList } -> std::convertible_to<std::initializer_list<UINT>>;
-        { t.Translate } -> std::convertible_to<const VECTOR3&>;
-        { t.Angle }     -> std::convertible_to<double>;
-        { t.Start }     -> std::convertible_to<double>;
-        { t.Stop }      -> std::convertible_to<double>;
-    };
+    //template<typename T>
+    //concept AnimationGroupContractTranslate = requires(T t) {
+    //    { t.GroupList } -> std::convertible_to<std::initializer_list<UINT>>;
+    //    { t.Translate } -> std::convertible_to<const VECTOR3&>;
+    //    { t.Angle }     -> std::convertible_to<double>;
+    //    { t.Start }     -> std::convertible_to<double>;
+    //    { t.Stop }      -> std::convertible_to<double>;
+    //};
 
     struct AnimGroupDataTranslate {
         std::initializer_list<UINT> GroupList;
@@ -68,11 +67,12 @@ namespace bc_orbiter
         virtual double Stop() = 0;
     };
 
-    template<AnimationGroupContractRotate T>
+//    template<AnimationGroupContractRotate T>
     class AnimationGroupRotate : public IAnimationGroup
     {
     public:
-        AnimationGroupRotate(const T& data)
+//        AnimationGroupRotate(const T& data)
+        AnimationGroupRotate(AnimGroupDataRotate& data)
           : data_(data),
             group_(data.GroupList)
         {
@@ -86,16 +86,16 @@ namespace bc_orbiter
         double Stop() override { return data_.Stop; }
     private:
 
-        T data_;
+        AnimGroupDataRotate& data_;
         std::vector<UINT>                   group_;
         std::unique_ptr<MGROUP_TRANSFORM>   transform_;
     };
 
-    template<AnimationGroupContractTranslate T>
+//    template<AnimationGroupContractTranslate T>
     class AnimationGroupTranslate : public IAnimationGroup
     {
     public:
-        AnimationGroupTranslate(const T& data) 
+        AnimationGroupTranslate(AnimGroupDataTranslate& data) 
           : data_(data),
             group_(data.GroupList)
         {
@@ -106,7 +106,7 @@ namespace bc_orbiter
         double Start() override { return data_.Start; }
         double Stop() override { return data_.Stop; }
     private:
-        T data_;
+        AnimGroupDataTranslate data_;
         std::vector<UINT>                   group_;
         std::unique_ptr<MGROUP_TRANSFORM>   transform_;
     };
@@ -373,5 +373,5 @@ namespace bc_orbiter
     // AnimationTarget with 'wrap' target update.
     using AnimationWrap = AnimationBase<StateUpdateWrap>;
 
-    using AnimGroupRotate = AnimationGroupRotate<AnimGroupDataRotate>;
+    using AnimGroupRotate = AnimationGroupRotate;
 }

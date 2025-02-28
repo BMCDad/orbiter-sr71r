@@ -74,7 +74,7 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <DisableSpecificWarnings>26812;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(OrbiterDir)\OrbiterSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/permissive %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -131,10 +131,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\bc_orbiter\IVessel.h" />
-    <ClInclude Include="..\bc_orbiter\PanelEvent.h" />
     <ClInclude Include="..\bc_orbiter\Types.h" />
     <ClInclude Include="..\bc_orbiter\VCEvent.h" />
-    <ClInclude Include="..\bc_orbiter\VesselEvent.h" />
     <ClInclude Include="..\bc_orbiter\VesselTextureElement.h" />
     <ClInclude Include="..\bc_orbiter\HandlerInterfaces.h" />
     <ClInclude Include="..\bc_orbiter\transform_display.h" />
