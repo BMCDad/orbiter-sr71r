@@ -3,8 +3,7 @@
 #include "Orbitersdk.h"
 
 #include "../bc_orbiter/GenericTank.h"
-#include "../bc_orbiter/OnOffInput.h"
-#include "../bc_orbiter/RotaryDisplay.h"
+//#include "../bc_orbiter/RotaryDisplay.h"
 #include "../bc_orbiter/TextureRoll.h"
 #include "../bc_orbiter/transform_display.h"
 #include "../bc_orbiter/Vessel.h"
@@ -12,7 +11,12 @@
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
+
 #include "Canopy.h"
+#include "FuelCell.h"
+#include "HydrogenTank.h"
+#include "OxygenTank.h"
+#include "PowerSystem.h"
 
 //#include "PropulsionController.h"
 //#include "HUD.h"
@@ -24,7 +28,6 @@
 //#include "CargoBayController.h"
 //#include "APU.h"
 //#include "LandingGear.h"
-//#include "FuelCell.h"
 //#include "AirBrake.h"
 //#include "Clock.h"
 //#include "Shutters.h"
@@ -36,11 +39,9 @@
 //#include "Altimeter.h"
 //#include "HSI.h"
 //#include "Airspeed.h"
-//#include "HydrogenTank.h"
-//#include "OxygenTank.h"
 //#include "SurfaceController.h"
 
-#include "Common.h"
+#include "SR71_Common.h"
 #include <vector>
 #include <map>
 
@@ -85,8 +86,13 @@ private:
     // DRAG
     double              bDrag{ 0.0 };
 
-    bco::RPowerProvider p;
-    Canopy              canopy_{ p, *this };
+    PowerSystem             powerSystem_    { *this };
+    
+    HydrogenTank            hydrogenTank_   { *this, powerSystem_};
+    OxygenTank	             oxygenTank_     { *this, powerSystem_ };
+    FuelCell                fuelCell_       { *this, powerSystem_, oxygenTank_,	hydrogenTank_ };
+    Canopy                  canopy_         { *this, powerSystem_ };
+
     //PowerSystem         powerSystem_{ *this, fuelCell_ };
     //APU                 apu_{ *this, powerSystem_, propulsion_ };
 
@@ -107,9 +113,6 @@ private:
     //CargoBayController  cargobay_{ powerSystem_, *this };
     //HoverEngines        hoverEngines_{ powerSystem_,	*this };
     //RetroEngines        retroEngines_{ powerSystem_,	*this };
-    //HydrogenTank        hydrogenTank_{ powerSystem_, *this };
-    //OxygenTank	         oxygenTank_{ powerSystem_, *this };
-    //FuelCell            fuelCell_{ powerSystem_, *this, oxygenTank_,	hydrogenTank_ };
     //HUD                 headsUpDisplay_{ powerSystem_, *this };
 
     //LeftMFD             mfdLeft_ { powerSystem_, this };
@@ -137,14 +140,14 @@ private:
     //};
 
     // Put status here that does not go anywhere else.
-    bco::VesselTextureElement       statusDock_ {
-        bm::vc::MsgLightDock_id,
-        bm::vc::MsgLightDock_vrt,
-        cmn::vc::main,
-        bm::pnl::pnlMsgLightDock_id,
-        bm::pnl::pnlMsgLightDock_vrt,
-        cmn::panel::main
-    };
+    //bco::VesselTextureElement       statusDock_ {
+    //    bm::vc::MsgLightDock_id,
+    //    bm::vc::MsgLightDock_vrt,
+    //    cmn::vc::main,
+    //    bm::pnl::pnlMsgLightDock_id,
+    //    bm::pnl::pnlMsgLightDock_vrt,
+    //    cmn::panel::main
+    //};
 
 };
 

@@ -6,49 +6,34 @@
 
 #include "..\bc_orbiter\IVessel.h"
 #include "..\bc_orbiter\Animation.h"
+#include "..\bc_orbiter\Tools.h"
+#include "..\bc_orbiter\Types.h"
 
 #include "Orbitersdk.h"
 
+
+
 namespace bco = bc_orbiter;
+namespace con = bc_orbiter::contracts;
+namespace dta = bc_orbiter::data_type;
 
-template <typename T>
-concept ToggleContract = requires(T t) {
-    { t.VCMeshName }        -> std::convertible_to<const char*>;
-    { t.PanelMeshName }     -> std::convertible_to<const char*>;
-    { t.VCMeshGroup }       -> std::convertible_to<UINT>;
-    { t.VCLocationA }       -> std::convertible_to<const VECTOR3&>;
-    { t.VCLocationB }       -> std::convertible_to<const VECTOR3&>;
-    { t.VCID }              -> std::convertible_to<int>;
-    { t.PanelID }           -> std::convertible_to<int>;
-    { t.PanelHitRC }        -> std::convertible_to<const RECT&>;
-    { t.PanelGroup }        -> std::convertible_to<UINT>;
-    { t.PanelVerts }        -> std::convertible_to<const NTVERTEX*>;
-};
-
-struct ToggleData {
-    const char*     VCMeshName;
-    const char*     PanelMeshName;
-    UINT            VCMeshGroup;
-    const VECTOR3&  VCLocationA;
-    const VECTOR3&  VCLocationB;
-    int             VCID;
-    int             PanelID;
-    const RECT&     PanelHitRC;
-    UINT            PanelGroup;
-    const NTVERTEX* PanelVerts;
-};
-
-template <ToggleContract T>
+template <con::Cockpit Tvc, con::RotateControl TvcCtrl, con::Cockpit Tpnl, con::StaticControl TpnlCtrl>
 class ToggleSwitch
 {
 public:
-    explicit ToggleSwitch(const T& data) : data_(data) {}
+    explicit ToggleSwitch(const Tvc& vct, const TvcCtrl& vcc, const Tpnl& pnlt, TpnlCtrl& pnlc) 
+//    explicit ToggleSwitch(dta::Cockpit& vct, dta::RotateControl& vcc, dta::Cockpit& pnlt, dta::StaticControl& pnlc)
+      : vcCockpitData_(vct),
+        vcControlData_(vcc),
+        pnlCockpitData_(pnlt),
+        pnlControlData_(pnlc)
+    { }
 
+    
     void Register(bco::IVessel& vessel);
-
     void Step(bco::IVessel& vessel, double simdt);
 
-    void RequestRedraw(bco::IVessel& vessel) { vessel.RequestPanelRedraw(data_.PanelID, panelRedrawId_); }
+    void RequestRedraw(bco::IVessel& vessel) { vessel.RequestPanelRedraw(pnlCockpitData_.ID, panelRedrawId_); }
 
     void SetState(bool state) { isOn_ = state; };
     bool IsOn() const { return isOn_; };
@@ -57,15 +42,25 @@ private:
 
     void onHitEvent(bco::IVessel& vessel) {
         isOn_ = !isOn_;
-        vessel.RequestPanelRedraw(data_.PanelID, panelRedrawId_);
+        vessel.RequestPanelRedraw(pnlCockpitData_.ID, panelRedrawId_);
     }
 
 
     void onPanelRedraw(bco::IVessel&) {
-        bco::DrawPanelOffset(meshPanel_, data_.PanelGroup, data_.PanelVerts, textureOffset_ * (isOn_ ? 1.0 : 0.0));
+        bco::DrawPanelOffset(meshPanel_, pnlControlData_.Group, pnlControlData_.Verts, textureOffset_ * (isOn_ ? 1.0 : 0.0));
     }
 
-    T data_;
+    Tvc         vcCockpitData_;
+    TvcCtrl     vcControlData_;
+    Tpnl        pnlCockpitData_;
+    TpnlCtrl    pnlControlData_;
+
+    //dta::Cockpit&       vcCockpitData_;
+    //dta::RotateControl& vcControlData_;
+    //dta::Cockpit&       pnlCockpitData_;
+    //dta::StaticControl& pnlControlData_;
+
+
     const double            HitRadius   = 0.01;
     const double            Angle       = 1.5708;
 
@@ -83,27 +78,48 @@ private:
     MESHHANDLE                      meshPanel_{ nullptr };
 };
 
-inline void ToggleSwitch<ToggleData>::Register(bco::IVessel& vessel) 
+inline void ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::StaticControl>::Register(bco::IVessel& vessel)
+//inline void ToggleSwitch::Register(bco::IVessel& vessel)
 {
-    auto vcMeshIndex = vessel.GetMeshIndex(data_.VCMeshName);
-    VECTOR3 axis = data_.VCLocationB - data_.VCLocationA;
+    auto vcMeshIndex = vessel.GetMeshIndex(vcCockpitData_.MeshName);
+    VECTOR3 axis = vcControlData_.LocationB - vcControlData_.LocationA;
     normalise(axis);
 
-    group_ = std::make_unique<MGROUP_ROTATE>(vcMeshIndex, &data_.VCMeshGroup, 1, data_.VCLocationA, axis, Angle);
+    //group_ = std::make_unique<MGROUP_ROTATE>(
+    //    vcMeshIndex, 
+    //    &vcControlData_.MeshGroup, 
+    //    1, 
+    //    vcControlData_.LocationA, 
+    //    axis, 
+    //    Angle);
+
     animId_ = vessel.AddAnimation(vcMeshIndex, group_.get());
 
-    auto vcEventId = vessel.RegisterForVCEvent(data_.VCID, data_.VCLocationA, HitRadius, [&](bco::IVessel& v) {onHitEvent(v); });
-    vessel.RegisterForPanelEvent(data_.PanelID, data_.PanelHitRC, [&](bco::IVessel& v) {onHitEvent(v); });
-    panelRedrawId_ = vessel.RegisterForPanelRedraw(data_.PanelID, [&](bco::IVessel& v) {onPanelRedraw(v); });
+    auto vcEventId = vessel.RegisterForVCEvent(
+        vcCockpitData_.ID, 
+        vcControlData_.LocationA, 
+        HitRadius, 
+        [&](bco::IVessel& v) {onHitEvent(v); });
+    
+    vessel.RegisterForPanelEvent(
+        pnlCockpitData_.ID, 
+        pnlControlData_.HitRC, 
+        [&](bco::IVessel& v) {onHitEvent(v); });
 
-    meshPanel_ = vessel.GetpanelMeshHandle(data_.PanelID);
-    textureOffset_ = bco::UVOffset(data_.PanelVerts);
+    panelRedrawId_ = vessel.RegisterForPanelRedraw(
+        pnlCockpitData_.ID, 
+        [&](bco::IVessel& v) {onPanelRedraw(v); });
+
+    meshPanel_ = vessel.GetpanelMeshHandle(pnlCockpitData_.ID);
+    textureOffset_ = bco::UVOffset(pnlControlData_.Verts);
 }
 
-inline void ToggleSwitch<ToggleData>::Step(bco::IVessel& vessel, double simdt) 
+inline void ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::StaticControl>::Step(bco::IVessel& vessel, double simdt)
+//inline void ToggleSwitch::Step(bco::IVessel& vessel, double simdt)
 {
     state_.target_state_ = isOn_ ? 1.0 : 0.0;
     animUpdate_.UpdateState(state_, simdt);
     vessel.SetAnimationState(animId_, state_.state_);
 }
 
+using Toggle = ToggleSwitch<dta::Cockpit, dta::RotateControl, dta::Cockpit, dta::StaticControl>;

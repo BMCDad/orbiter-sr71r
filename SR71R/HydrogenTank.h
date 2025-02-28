@@ -17,14 +17,10 @@
 #pragma once
 
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/OnOffInput.h"
-#include "../bc_orbiter/RotaryDisplay.h"
 #include "../bc_orbiter/Vessel.h"
-#include "../bc_orbiter/VesselEvent.h"
-#include "../bc_orbiter/VesselTextureElement.h"
 
+#include "SR71_Common.h"
 #include "SR71r_mesh.h"
-#include "Common.h"
 #include "ShipMets.h"
 
 namespace bco = bc_orbiter;
@@ -33,26 +29,26 @@ namespace cmn = sr71_common;
 class HydrogenTank : public bco::GenericTank
 {
 public:
-    HydrogenTank(bco::PowerProvider& pwr, bco::Vessel& vessel) 
+    HydrogenTank(bco::Vessel& vessel, bco::PowerProvider& pwr)
       : bco::GenericTank(pwr, HYDRO_SUPPLY, HYDROGEN_FILL_RATE),
         vessel_(vessel)
     {
-        vessel.AddControl(&gaugeLevel_);
-        vessel.AddControl(&lightAvailable_);
-        vessel.AddControl(&btnFill_);
-        vessel.AddControl(&btnLightFill_);
+        //vessel.AddControl(&gaugeLevel_);
+        //vessel.AddControl(&lightAvailable_);
+        //vessel.AddControl(&btnFill_);
+        //vessel.AddControl(&btnLightFill_);
 
-        btnFill_.Attach([&](VESSEL4&) { ToggleFilling(); });
+//        btnFill_.Attach([&](VESSEL4&) { ToggleFilling(); });
     }
 
-    void UpdateLevel(double l) override { gaugeLevel_.SetState(l); }
+    void UpdateLevel(double l) override { /*gaugeLevel_.SetState(l);*/ }
     
     void UpdateIsFilling(bool b) override { 
-        btnLightFill_.SetState(vessel_, b);
+//        btnLightFill_.SetState(vessel_, b);
     }
 
     void UpdateIsAvailable(bool b) override { 
-        lightAvailable_.SetState(vessel_, b);
+//        lightAvailable_.SetState(vessel_, b);
     }
 
     double AmpDraw() const override {
@@ -63,40 +59,40 @@ private:
 
     bco::Vessel& vessel_;
 
-    // ***  HYDROGEN SUPPLY  *** //
-    bco::RotaryDisplayTarget      gaugeLevel_{
-        { bm::vc::gaHydrogenLevel_id },
-        bm::vc::gaHydrogenLevel_loc, bm::vc::axisHydrogenLevel_loc,
-        bm::pnlright::pnlLH2Press_id,
-        bm::pnlright::pnlLH2Press_vrt,
-        (300 * RAD),
-        0.2,
-        1
-    };
+    //// ***  HYDROGEN SUPPLY  *** //
+    //bco::RotaryDisplayTarget      gaugeLevel_{
+    //    { bm::vc::gaHydrogenLevel_id },
+    //    bm::vc::gaHydrogenLevel_loc, bm::vc::axisHydrogenLevel_loc,
+    //    bm::pnlright::pnlLH2Press_id,
+    //    bm::pnlright::pnlLH2Press_vrt,
+    //    (300 * RAD),
+    //    0.2,
+    //    1
+    //};
 
-    bco::VesselTextureElement       lightAvailable_{
-        bm::vc::LH2SupplyOnLight_id,
-        bm::vc::LH2SupplyOnLight_vrt,
-        cmn::vc::main,
-        bm::pnlright::pnlLH2Avail_id,
-        bm::pnlright::pnlLH2Avail_vrt,
-        cmn::panel::right
-    };
+    //bco::VesselTextureElement       lightAvailable_{
+    //    bm::vc::LH2SupplyOnLight_id,
+    //    bm::vc::LH2SupplyOnLight_vrt,
+    //    cmn::vc::main,
+    //    bm::pnlright::pnlLH2Avail_id,
+    //    bm::pnlright::pnlLH2Avail_vrt,
+    //    cmn::panel::right
+    //};
 
-    bco::VesselEvent             btnFill_{
-        bm::vc::LH2ValveOpenSwitch_loc,
-        0.01,
-        cmn::vc::main,
-        bm::pnlright::pnlLH2Switch_RC,
-        cmn::panel::right
-    };
+    //bco::VesselEvent             btnFill_{
+    //    bm::vc::LH2ValveOpenSwitch_loc,
+    //    0.01,
+    //    cmn::vc::main,
+    //    bm::pnlright::pnlLH2Switch_RC,
+    //    cmn::panel::right
+    //};
 
-    bco::VesselTextureElement       btnLightFill_{
-        bm::vc::LH2ValveOpenSwitch_id,
-        bm::vc::LH2ValveOpenSwitch_vrt,
-        cmn::vc::main,
-        bm::pnlright::pnlLH2Switch_id,
-        bm::pnlright::pnlLH2Switch_vrt,
-        cmn::panel::right
-    };
+    //bco::VesselTextureElement       btnLightFill_{
+    //    bm::vc::LH2ValveOpenSwitch_id,
+    //    bm::vc::LH2ValveOpenSwitch_vrt,
+    //    cmn::vc::main,
+    //    bm::pnlright::pnlLH2Switch_id,
+    //    bm::pnlright::pnlLH2Switch_vrt,
+    //    cmn::panel::right
+    //};
 };

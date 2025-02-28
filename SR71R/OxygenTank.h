@@ -17,46 +17,70 @@
 #pragma once
 
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/OnOffInput.h"
-#include "../bc_orbiter/RotaryDisplay.h"
 #include "../bc_orbiter/Vessel.h"
-#include "../bc_orbiter/VesselEvent.h"
-#include "../bc_orbiter/VesselTextureElement.h"
+#include "../bc_orbiter/Types.h"
 
+#include "SR71_Common.h"
 #include "SR71r_mesh.h"
-#include "Common.h"
 #include "ShipMets.h"
+
+#include "StatusLight.h"
+
 
 namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
+namespace dta = bc_orbiter::data_type;
+
+
+inline dta::Texture lgtVCAvailableData = {
+    bm::vc::LOXSupplyOnLight_id,
+    bm::vc::LOXSupplyOnLight_vrt
+};
+
+inline dta::Texture lgtPNLAvailableData = {
+    bm::pnlright::pnlO2Avail_id,
+    bm::pnlright::pnlO2Avail_vrt
+};
+
+inline dta::Texture lgtVCButtonFillData = {
+    bm::vc::LOXValveOpenSwitch_id,
+    bm::vc::LOXValveOpenSwitch_vrt
+};
+
+inline dta::Texture lgtPNLButtonFillData = {
+    bm::pnlright::pnlO2Switch_id,
+    bm::pnlright::pnlO2Switch_vrt
+};
+
+
 
 class OxygenTank : public bco::GenericTank
 {
 public:
-    OxygenTank(bco::PowerProvider& pwr, bco::Vessel& vessel) 
+    OxygenTank(bco::Vessel& vessel, bco::PowerProvider& pwr)
       : bco::GenericTank(pwr, O2_SUPPLY, OXYGEN_FILL_RATE),
         vessel_(vessel)
     {
-        vessel.AddControl(&gaugeLevel_);
-        vessel.AddControl(&lightAvailable_);
-        vessel.AddControl(&btnFill_);
-        vessel.AddControl(&btnLightFill_);
+        //vessel.AddControl(&gaugeLevel_);
+        //vessel.AddControl(&lightAvailable_);
+        //vessel.AddControl(&btnFill_);
+        //vessel.AddControl(&btnLightFill_);
 
-        btnFill_.Attach([&](VESSEL4&) { ToggleFilling(); });
+//        btnFill_.Attach([&](VESSEL4&) { ToggleFilling(); });
 
         //LevelSignal().attach(		gaugeLevel_.Slot());
         //IsFillingSignal().attach(	btnLightFill_.Slot());
         //IsAvailableSignal().attach(	lightAvailable_.Slot());
     }
 
-    void UpdateLevel(double l) override { gaugeLevel_.SetState(l); }
+    void UpdateLevel(double l) override { /*gaugeLevel_.SetState(l);*/ }
 
     void UpdateIsFilling(bool b) override {
-        btnLightFill_.SetState(vessel_, b);
+//        btnLightFill_.SetState(vessel_, b);
     }
 
     void UpdateIsAvailable(bool b) override {
-        lightAvailable_.SetState(vessel_, b);
+//        lightAvailable_.SetState(vessel_, b);
     }
 
     double AmpDraw() const override {
@@ -67,40 +91,40 @@ private:
     bco::Vessel& vessel_;
 
     // ***  HYDROGEN SUPPLY  *** //
-    bco::RotaryDisplay<bco::AnimationTarget> gaugeLevel_{
-        { bm::vc::gaugeOxygenLevel_id },
-        bm::vc::gaugeOxygenLevel_loc, bm::vc::axisOxygenLevel_loc,
-        bm::pnlright::pnlLOXPress_id,
-        bm::pnlright::pnlLOXPress_vrt,
-        (300 * RAD),	// Clockwise
-        0.2,
-        1
-    };
+    //bco::RotaryDisplay<bco::AnimationTarget> gaugeLevel_{
+    //    { bm::vc::gaugeOxygenLevel_id },
+    //    bm::vc::gaugeOxygenLevel_loc, bm::vc::axisOxygenLevel_loc,
+    //    bm::pnlright::pnlLOXPress_id,
+    //    bm::pnlright::pnlLOXPress_vrt,
+    //    (300 * RAD),	// Clockwise
+    //    0.2,
+    //    1
+    //};
 
-    bco::VesselTextureElement       lightAvailable_ {
-        bm::vc::LOXSupplyOnLight_id,
-        bm::vc::LOXSupplyOnLight_vrt,
-        cmn::vc::main,
-        bm::pnlright::pnlO2Avail_id,
-        bm::pnlright::pnlO2Avail_vrt,
-        cmn::panel::right
-    };
+    //bco::VesselTextureElement       lightAvailable_ {
+    //    bm::vc::LOXSupplyOnLight_id,
+    //    bm::vc::LOXSupplyOnLight_vrt,
+    //    cmn::vc::main,
+    //    bm::pnlright::pnlO2Avail_id,
+    //    bm::pnlright::pnlO2Avail_vrt,
+    //    cmn::panel::right
+    //};
 
-    bco::VesselEvent btnFill_{
-        bm::vc::LOXValveOpenSwitch_loc,
-        0.01,
-        cmn::vc::main,
-        bm::pnlright::pnlO2Switch_RC,
-        cmn::panel::right
-    };
+    //bco::VesselEvent btnFill_{
+    //    bm::vc::LOXValveOpenSwitch_loc,
+    //    0.01,
+    //    cmn::vc::main,
+    //    bm::pnlright::pnlO2Switch_RC,
+    //    cmn::panel::right
+    //};
 
-    bco::VesselTextureElement       btnLightFill_ {
-        bm::vc::LOXValveOpenSwitch_id,
-        bm::vc::LOXValveOpenSwitch_vrt,
-        cmn::vc::main,
-        bm::pnlright::pnlO2Switch_id,
-        bm::pnlright::pnlO2Switch_vrt,
-        cmn::panel::right
-    };
+    //bco::VesselTextureElement       btnLightFill_ {
+    //    bm::vc::LOXValveOpenSwitch_id,
+    //    bm::vc::LOXValveOpenSwitch_vrt,
+    //    cmn::vc::main,
+    //    bm::pnlright::pnlO2Switch_id,
+    //    bm::pnlright::pnlO2Switch_vrt,
+    //    cmn::panel::right
+    //};
 };
 

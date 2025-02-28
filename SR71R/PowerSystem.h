@@ -16,24 +16,99 @@
 
 #pragma once
 
-#include "../bc_orbiter/OnOffInput.h"
-#include "../bc_orbiter/RotaryDisplay.h"
-#include "../bc_orbiter/VesselTextureElement.h"
+//#include "../bc_orbiter/RotaryDisplay.h"
+//#include "../bc_orbiter/VesselTextureElement.h"
+#include "../bc_orbiter/Types.h"
 
-#include "FuelCell.h"
-#include "Common.h"
+#include "IFuelCell.h"
 
+#include "SR71_Common.h"
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
 #include "SR71rPanel_mesh.h"
 #include "SR71rPanelRight_mesh.h"
 
+#include "ToggleSwitch.h"
+#include "StatusLight.h"
+
 #include <map>
 
 namespace bco = bc_orbiter;
 namespace cmn = sr71_common;
+namespace dta = bc_orbiter::data_type;
 
-class FuelCell;
+// Toggle switch power enabled.
+inline dta::RotateControl tVCEnabledData{
+    bm::vc::swMainPower_id,
+    bm::vc::swMainPower_loc, 
+    bm::vc::PowerTopRightAxis_loc
+};
+
+inline dta::StaticControl tPNLEnabledData{
+    bm::pnlright::pnlPwrMain_id,
+    bm::pnlright::pnlPwrMain_RC,
+    bm::pnlright::pnlPwrMain_vrt
+};
+
+
+// Toggle switch external connected
+inline dta::RotateControl tVCExternalConnectedData{
+    bm::vc::swConnectExternalPower_id,
+    bm::vc::swConnectExternalPower_loc,
+    bm::vc::PowerBottomRightAxis_loc
+};
+
+inline dta::StaticControl tPNLExternalConnectedData{
+    bm::pnlright::pnlPwrExtBus_id,
+    bm::pnlright::pnlPwrExtBus_RC,
+    bm::pnlright::pnlPwrExtBus_vrt
+};
+
+
+// Toggle switch fuel cell connected
+inline dta::RotateControl tVCFuelCellConnectedData{
+    bm::vc::swConnectFuelCell_id,
+    bm::vc::swConnectFuelCell_loc,
+    bm::vc::PowerBottomRightAxis_loc
+};
+
+inline dta::StaticControl tPNLFuelCellConnectedData{
+    bm::pnlright::pnlPwrFCBus_id,
+    bm::pnlright::pnlPwrFCBus_RC,
+    bm::pnlright::pnlPwrFCBus_vrt
+};
+
+
+inline dta::Texture lgtVCFuelCellConnectedData{
+    bm::vc::FuelCellConnectedLight_id,
+    bm::vc::FuelCellConnectedLight_vrt,
+};
+
+inline dta::Texture lgtPNLFuelCellConnectedData{
+    bm::pnlright::pnlLgtFCPwrOn_id,
+    bm::pnlright::pnlLgtFCPwrOn_vrt
+};
+
+inline dta::Texture lgtVCExternalAvailableData{
+    bm::vc::ExtAvailableLight_id,
+    bm::vc::ExtAvailableLight_vrt
+};
+
+inline dta::Texture lgtPNLExternalAvailableData{
+    bm::pnlright::pnlLgtExtPwrAvail_id,
+    bm::pnlright::pnlLgtExtPwrAvail_vrt
+};
+
+inline dta::Texture lgtVCExternalConnectedData{
+    bm::vc::ExtConnectedLight_id,
+    bm::vc::ExtConnectedLight_vrt
+};
+
+inline dta::Texture lgtPNLExternalConnectedData{
+    bm::pnlright::pnlLgtExtPwrOn_id,
+    bm::pnlright::pnlLgtExtPwrOn_vrt
+};
+
 
 /**	Power System
 	Manages the connections and distribution of the three main power sources:
@@ -50,112 +125,69 @@ class FuelCell;
 class PowerSystem : public bco::VesselComponent, public bco::PowerProvider
 {
 public:
-    PowerSystem(bco::Vessel& vessel, FuelCell& fuelCell);
+    PowerSystem(bco::Vessel& vessel);
+
+    // SetClassCaps
+    void HandleSetClassCaps(bco::IVessel& vessel) override;
 
     // PostStep
     void HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd) override;
 
     // ManageState
-    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
-    std::string HandleSaveState(bco::Vessel& vessel) override;
+    //bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    //std::string HandleSaveState(bco::Vessel& vessel) override;
 
     void AttachConsumer(bco::PowerConsumer* consumer) override { consumers_.push_back(consumer); }
 
     double VoltsAvailable() const override { return prevVolts_; }
     double AmpLoad() const override { return ampDraw_; }
 
+    void AttachFuelCell(IFuelCell* fc) { fuelCell_ = fc; }
+
 private:
+    
+    Toggle swEnabled_               { cmn::VCCockpit, tVCEnabledData,           cmn::PNLRightCockpit, tPNLEnabledData };
+    Toggle swExternalConnected_     { cmn::VCCockpit, tVCExternalConnectedData, cmn::PNLRightCockpit, tPNLExternalConnectedData };
+    Toggle swFuelCellConnected_     { cmn::VCCockpit, tVCFuelCellConnectedData, cmn::PNLRightCockpit, tPNLFuelCellConnectedData };
+    
+    Status lightFuelCellConnected_  { cmn::VCCockpit, lgtVCFuelCellConnectedData, cmn::PNLRightCockpit, lgtPNLFuelCellConnectedData };
+    Status lightExternalAvailable_  { cmn::VCCockpit, lgtVCExternalAvailableData, cmn::PNLRightCockpit, lgtPNLExternalAvailableData };
+    Status lightExternalConnected_  { cmn::VCCockpit, lgtVCExternalConnectedData, cmn::PNLRightCockpit, lgtPNLExternalConnectedData };
+
     void Update(bco::Vessel& vessel);
 
-    const double			FULL_POWER = 28.0;
-    const double			USEABLE_POWER = 24.0;
-    const double			AMP_OVERLOAD = 100.0;
+    const double    FULL_POWER      = 28.0;
+    const double    USEABLE_POWER   = 24.0;
+    const double    AMP_OVERLOAD   = 100.0;
 
     std::vector<bco::PowerConsumer*>  consumers_;
 
-    FuelCell&           fuelCell_;
+    IFuelCell*          fuelCell_{ nullptr };
     double              ampDraw_{ 0.0 };			// Collects the total amps drawn during a step.
     double              batteryLevel_;
     bool                isDrawingBattery_{ false };
     double              prevStep_{ 0.0 };
     double              prevVolts_{ -1.0 };
 
-    bco::OnOffInput       switchEnabled{
-        { bm::vc::swMainPower_id },
-        bm::vc::swMainPower_loc, bm::vc::PowerTopRightAxis_loc,
-        cmn::toggleOnOff,
-        bm::pnlright::pnlPwrMain_id,
-        bm::pnlright::pnlPwrMain_vrt,
-        bm::pnlright::pnlPwrMain_RC,
-        1
-    };
+    //bco::RotaryDisplayTarget  gaugePowerVolts_{
+    //    { bm::vc::gaugeVoltMeter_id },
+    //    bm::vc::gaugeVoltMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
+    //    bm::pnlright::pnlVoltMeter_id,
+    //    bm::pnlright::pnlVoltMeter_vrt,
+    //    -(120 * RAD),
+    //    0.2,
+    //    1
+    //};
 
-    bco::OnOffInput       switchConnectExternal_{
-        { bm::vc::swConnectExternalPower_id },
-        bm::vc::swConnectExternalPower_loc, bm::vc::PowerBottomRightAxis_loc,
-        cmn::toggleOnOff,
-        bm::pnlright::pnlPwrExtBus_id,
-        bm::pnlright::pnlPwrExtBus_vrt,
-        bm::pnlright::pnlPwrExtBus_RC,
-        1
-    };
-
-    bco::OnOffInput       switchConnectFuelCell_{
-        { bm::vc::swConnectFuelCell_id },
-        bm::vc::swConnectFuelCell_loc, bm::vc::PowerBottomRightAxis_loc,
-        cmn::toggleOnOff,
-        bm::pnlright::pnlPwrFCBus_id,
-        bm::pnlright::pnlPwrFCBus_vrt,
-        bm::pnlright::pnlPwrFCBus_RC,
-        1
-    };
-
-    bco::VesselTextureElement           lightFuelCellConnected_ {
-        bm::vc::FuelCellConnectedLight_id,
-        bm::vc::FuelCellConnectedLight_vrt,
-        cmn::vc::main,
-        bm::pnlright::pnlLgtFCPwrOn_id,
-        bm::pnlright::pnlLgtFCPwrOn_vrt,
-        cmn::panel::right
-    };
-
-    bco::VesselTextureElement           lightExternalAvail_ {
-        bm::vc::ExtAvailableLight_id,
-        bm::vc::ExtAvailableLight_vrt,
-        cmn::vc::main,
-        bm::pnlright::pnlLgtExtPwrAvail_id,
-        bm::pnlright::pnlLgtExtPwrAvail_vrt,
-        cmn::panel::right
-    };
-
-    bco::VesselTextureElement           lightExternalConnected_{
-        bm::vc::ExtConnectedLight_id,
-        bm::vc::ExtConnectedLight_vrt,
-        cmn::vc::main,
-        bm::pnlright::pnlLgtExtPwrOn_id,
-        bm::pnlright::pnlLgtExtPwrOn_vrt,
-        cmn::panel::right
-    };
-
-    bco::RotaryDisplayTarget  gaugePowerVolts_{
-        { bm::vc::gaugeVoltMeter_id },
-        bm::vc::gaugeVoltMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
-        bm::pnlright::pnlVoltMeter_id,
-        bm::pnlright::pnlVoltMeter_vrt,
-        -(120 * RAD),
-        0.2,
-        1
-    };
-
-    bco::RotaryDisplayTarget  gaugePowerAmps_{
-        { bm::vc::gaugeAmpMeter_id },
-        bm::vc::gaugeAmpMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
-        bm::pnlright::pnlAmpMeter_id,
-        bm::pnlright::pnlAmpMeter_vrt,
-        (120 * RAD),	// Clockwise
-        0.2,
-        1
-    };
+    //bco::RotaryDisplayTarget  gaugePowerAmps_{
+    //    { bm::vc::gaugeAmpMeter_id },
+    //    bm::vc::gaugeAmpMeter_loc, bm::vc::VoltMeterFrontAxis_loc,
+    //    bm::pnlright::pnlAmpMeter_id,
+    //    bm::pnlright::pnlAmpMeter_vrt,
+    //    (120 * RAD),	// Clockwise
+    //    0.2,
+    //    1
+    //};
 
     bco::VesselTextureElement           statusBattery_ {
         bm::vc::MsgLightBattery_id,
@@ -167,38 +199,39 @@ private:
     };
 };
 
-inline PowerSystem::PowerSystem(bco::Vessel& vessel, FuelCell& fuelCell) 
-  : batteryLevel_(1.0),     // Always available for now.
-    fuelCell_(fuelCell)
-    //, slotFuelCellAvailablePower_([&](double v) {})
+inline PowerSystem::PowerSystem(bco::Vessel& vessel) : batteryLevel_(1.0)     // Always available for now.
 {
-    vessel.AddControl(&switchEnabled);
-    vessel.AddControl(&switchConnectExternal_);
-    vessel.AddControl(&switchConnectFuelCell_);
-    vessel.AddControl(&lightFuelCellConnected_);
-    vessel.AddControl(&lightExternalAvail_);
-    vessel.AddControl(&lightExternalConnected_);
-    vessel.AddControl(&gaugePowerAmps_);
-    vessel.AddControl(&gaugePowerVolts_);
     vessel.AddControl(&statusBattery_);
 }
 
-inline bool PowerSystem::HandleLoadState(bco::Vessel& vessel, const std::string& line)
+inline void PowerSystem::HandleSetClassCaps(bco::IVessel& vessel)
 {
-    // sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
-    double volt, bl; // Not used, but we read them.
+    // Switches
+    swEnabled_.Register(vessel);
+    swExternalConnected_.Register(vessel);
+    swFuelCellConnected_.Register(vessel);
 
-    std::stringstream ss(line);
-    ss >> switchEnabled >> switchConnectExternal_ >> switchConnectFuelCell_ >> volt >> bl;
-    return true;
+    lightFuelCellConnected_.Register(vessel);
+    lightExternalAvailable_.Register(vessel);
+    lightExternalConnected_.Register(vessel);
 }
 
-inline std::string PowerSystem::HandleSaveState(bco::Vessel& vessel)
-{
-    std::stringstream ss;
-    ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_ << " 0.0 0.0";
-    return ss.str();
-}
+//inline bool PowerSystem::HandleLoadState(bco::Vessel& vessel, const std::string& line)
+//{
+//    // sscanf_s(configLine + 5, "%i%i%i%lf%lf", &main, &external, &fuelcell, &volt, &batLvl);
+//    double volt, bl; // Not used, but we read them.
+//
+//    std::stringstream ss(line);
+//    ss >> switchEnabled >> switchConnectExternal_ >> switchConnectFuelCell_ >> volt >> bl;
+//    return true;
+//}
+//
+//inline std::string PowerSystem::HandleSaveState(bco::Vessel& vessel)
+//{
+//    std::stringstream ss;
+//    ss << switchEnabled << " " << switchConnectExternal_ << " " << switchConnectFuelCell_ << " 0.0 0.0";
+//    return ss.str();
+//}
 
 //void PowerSystem::AddMainCircuitDevice(bco::PoweredComponent* device)
 //{
@@ -213,26 +246,27 @@ inline void PowerSystem::Update(bco::Vessel& vessel)
     *	Report the voltage available signal so components know what they have to work with.
     */
     auto externalConnected = vessel.IsStoppedOrDocked();
-    lightExternalAvail_.SetState(vessel, externalConnected);
+    lightExternalAvailable_.UpdateStatus(vessel, externalConnected);
 
     // handle connected power
     auto availExternal =
         externalConnected &&				// External power is available
-        switchConnectExternal_.IsOn() 		// External power is connected to the bus
+        swExternalConnected_.IsOn() 		// External power is connected to the bus
         ? FULL_POWER : 0.0;
 
-    lightExternalConnected_.SetState(vessel, availExternal > USEABLE_POWER);
+    lightExternalConnected_.UpdateStatus(vessel, availExternal > USEABLE_POWER);
 
     // handle fuelcell power
-    auto availFuelCell = switchConnectFuelCell_.IsOn() ? fuelCell_.AvailablePower() : 0.0;
-    lightFuelCellConnected_.SetState(vessel, availFuelCell > USEABLE_POWER);
+    auto hasFuelCell = (nullptr == fuelCell_) ? false : (fuelCell_->AvailablePower() > 20.0);
+    auto availFuelCell = swFuelCellConnected_.IsOn() ? hasFuelCell : 0.0;
+    lightFuelCellConnected_.UpdateStatus(vessel, availFuelCell > USEABLE_POWER);
 
     // handle battery power
     auto availBattery = batteryLevel_ * FULL_POWER;
     auto availPower = 0.0;
     isDrawingBattery_ = false;
 
-    if (switchEnabled.IsOn()) {
+    if (swEnabled_.IsOn()) {
         availPower = fmax(availExternal, availFuelCell);
         if (availPower < USEABLE_POWER) {
             isDrawingBattery_ = true;
@@ -248,13 +282,13 @@ inline void PowerSystem::Update(bco::Vessel& vessel)
         }
     }
 
-    gaugePowerVolts_.SetState(availPower / FULL_POWER);
+//    gaugePowerVolts_.SetState(availPower / FULL_POWER);
 
-    statusBattery_.SetState(vessel,
-        (switchEnabled.IsOn() && isDrawingBattery_)
-        ? cmn::status::warn
-        : cmn::status::off
-    );
+    //statusBattery_.SetState(vessel,
+    //    (switchEnabled.IsOn() && isDrawingBattery_)
+    //    ? cmn::status::warn
+    //    : cmn::status::off
+    //);
 }
 
 inline void PowerSystem::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
@@ -266,6 +300,11 @@ inline void PowerSystem::HandlePostStep(bco::Vessel& vessel, double simt, double
     }
 
     ampDraw_ = fmin(draw, AMP_OVERLOAD);
-    gaugePowerAmps_.SetState(ampDraw_ / AMP_OVERLOAD);
+//    gaugePowerAmps_.SetState(ampDraw_ / AMP_OVERLOAD);
+
+    swEnabled_.Step(vessel, simdt);
+    swExternalConnected_.Step(vessel, simdt);
+    swFuelCellConnected_.Step(vessel, simdt);
+
     Update(vessel);
 }

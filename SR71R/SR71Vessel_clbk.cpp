@@ -43,8 +43,9 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
     // You use these mesh handles to the AddMesh the meshes and set how they will be viewed.
     // If you ever need this handle again, call oapiLoadMeshGlobal with the same name and it
     // we be returned, the mesh will not be reloaded.
-    auto mainGlobalMesh = oapiLoadMeshGlobal(bm::main::MESH_NAME);
-    mainMeshIndex_ = AddMesh(mainGlobalMesh);
+    //auto mainGlobalMesh = oapiLoadMeshGlobal(bm::main::MESH_NAME);
+    //mainMeshIndex_ = AddMesh(mainGlobalMesh);
+    mainMeshIndex_ = vessel->AddVesselMesh(bm::main::MESH_NAME);
     SetMeshVisibilityMode(mainMeshIndex_, MESHVIS_EXTERNAL);
     SetMainMeshIndex(mainMeshIndex_);  // The index will be needed when adding animations to the mesh.
 
@@ -84,7 +85,7 @@ void SR71Vessel::clbkSetClassCaps(FILEHANDLE cfg)
     CreateRcsPropellant(MAX_RCS_FUEL);
 
     // Controls that live in Vessel : must come before the baseVessel call.
-    AddControl(&statusDock_);
+//    AddControl(&statusDock_);
 
     bco::Vessel::clbkSetClassCaps(cfg);
 
@@ -189,7 +190,7 @@ void SR71Vessel::clbkMFDMode(int mfd, int mode)
 void SR71Vessel::clbkPostStep(double simt, double simdt, double mjd)
 {
     Vessel::clbkPostStep(simt, simdt, mjd);
-    statusDock_.SetState(*this, DockingStatus(0) == 1 ? cmn::status::on : cmn::status::off);
+//    statusDock_.SetState(*this, DockingStatus(0) == 1 ? cmn::status::on : cmn::status::off);
 }
 
 void SR71Vessel::clbkPostCreation()

@@ -63,39 +63,6 @@
     <ClInclude Include="SR71r_mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FuelCell.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PropulsionController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="HUD.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="RCSSystem.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="NavModes.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PowerSystem.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="LeftMFD.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="RightMfd.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="CargoBayController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="APU.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="LandingGear.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="IConsumable.h">
       <Filter>Interfaces</Filter>
     </ClInclude>
@@ -108,55 +75,13 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AirBrake.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Clock.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Shutters.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="IAvionics.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="VesselControl.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="HoverEngines.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="RetroEngines.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Canopy.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Lights.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Avionics.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Altimeter.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="AvionBase.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="HSI.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Airspeed.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="HydrogenTank.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="OxygenTank.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="SurfaceController.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\Animation.h">
@@ -177,9 +102,6 @@
     <ClInclude Include="..\bc_orbiter\MFDBase.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
-    <ClInclude Include="..\bc_orbiter\OnOffInput.h">
-      <Filter>bc_orbiter</Filter>
-    </ClInclude>
     <ClInclude Include="..\bc_orbiter\PIDAltitude.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
@@ -194,9 +116,6 @@
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\vessel.h">
       <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\PanelTextureElement.h">
       <Filter>bc_orbiter</Filter>
@@ -223,6 +142,33 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StatusLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerSystem.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="FuelCell.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HydrogenTank.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="OxygenTank.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IFuelCell.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\Types.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="SR71_Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Gauge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

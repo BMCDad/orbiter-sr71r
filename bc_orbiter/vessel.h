@@ -100,10 +100,10 @@ namespace bc_orbiter
         virtual ~Vessel() {}
 
         // IVessel
-        auto AddAnimation(UINT meshIndex, AnimationGroup* group) -> UINT override;
+        auto AddAnimation(UINT meshIndex, IAnimationGroup& group) -> UINT override;
         auto AddAnimation(UINT meshIndex, MGROUP_TRANSFORM* transform) -> UINT override;
         auto AddVesselMesh(const char* name) -> UINT override;
-        auto AddVesselAnimationComponent(UINT animId, UINT meshIdx, AnimationGroup* transform, ANIMATIONCOMPONENT_HANDLE parent = nullptr) -> ANIMATIONCOMPONENT_HANDLE override;
+        auto AddVesselAnimationComponent(UINT animId, UINT meshIdx, IAnimationGroup& transform, ANIMATIONCOMPONENT_HANDLE parent = nullptr) -> ANIMATIONCOMPONENT_HANDLE override;
         auto CreateVesselAnimation(Animation& animation) -> UINT override;
         auto GetMeshHandle(const char* name) -> MESHHANDLE override;
         auto GetDeviceMesh(int id) -> DEVMESHHANDLE override;
@@ -297,18 +297,18 @@ namespace bc_orbiter
     {
         // Handle controls that need initialization.
         for (auto & vc : controls_) {
-            if (auto* c = dynamic_cast<VCAnimation*>(vc)) {
-                auto aid = VESSEL3::CreateAnimation(0);
-                auto trans = c->VCAnimationGroup();
-                trans->transform_->mesh = GetVCMeshIndex();
-                VESSEL3::AddAnimationComponent(
-                    aid,
-                    trans->start_,
-                    trans->stop_,
-                    trans->transform_.get());
+            //if (auto* c = dynamic_cast<VCAnimation*>(vc)) {
+            //    auto aid = VESSEL3::CreateAnimation(0);
+            //    auto trans = c->VCAnimationGroup();
+            //    trans->transform_->mesh = GetVCMeshIndex();
+            //    VESSEL3::AddAnimationComponent(
+            //        aid,
+            //        trans->start_,
+            //        trans->stop_,
+            //        trans->transform_.get());
 
-                map_vc_animations_[aid] = c;
-            }
+            //    map_vc_animations_[aid] = c;
+            //}
 
             if (auto* c = dynamic_cast<PanelAnimation*>(vc)) panel_animations_.push_back(c);
             if (auto* c = dynamic_cast<VCEventTarget*>(vc)) map_vc_targets_[vc->GetId()] = c;
@@ -515,15 +515,15 @@ namespace bc_orbiter
     }
 
     //  IVessel defs:
-    inline UINT Vessel::AddAnimation(UINT meshIndex, AnimationGroup* group)
+    inline UINT Vessel::AddAnimation(UINT meshIndex, IAnimationGroup& group)
     {
-        group->transform_->mesh = meshIndex;
+//        group.transform_->mesh = meshIndex;
         auto aid = VESSEL3::CreateAnimation(0);
         VESSEL3::AddAnimationComponent(
             aid,
-            group->start_,
-            group->stop_,
-            group->transform_.get());
+            group.Start(),
+            group.Stop(),
+            group.GetTransform());
 
         return aid;
     }
@@ -547,19 +547,20 @@ namespace bc_orbiter
     inline ANIMATIONCOMPONENT_HANDLE Vessel::AddVesselAnimationComponent(
         UINT animId,
         UINT meshIdx,
-        AnimationGroup* transform,
+        IAnimationGroup& transform,
         ANIMATIONCOMPONENT_HANDLE parent)
     {
         ANIMATIONCOMPONENT_HANDLE result = nullptr;
 
         //auto eh = animations_.find(animId);
-
-        transform->transform_->mesh = meshIdx;
+        auto trans = transform.GetTransform();
+        trans->mesh = meshIdx;
+//        transform->transform_->mesh = meshIdx;
         result = VESSEL3::AddAnimationComponent(
             animId,
-            transform->start_,
-            transform->stop_,
-            transform->transform_.get(),
+            transform.Start(),
+            transform.Stop(),
+            trans,
             parent);
 
         return result;

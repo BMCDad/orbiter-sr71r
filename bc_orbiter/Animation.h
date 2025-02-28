@@ -21,43 +21,94 @@
 #include <vector>
 #include <functional>
 #include <memory>
-
+#include <concepts>
 
 namespace bc_orbiter
 {
-    struct AnimationGroup
+    template<typename T>
+    concept AnimationGroupContractRotate = requires(T t) {
+        { t.GroupList } -> std::convertible_to<std::initializer_list<UINT>>;
+        { t.LocationA } -> std::convertible_to<const VECTOR3&>;
+        { t.LocationB } -> std::convertible_to<const VECTOR3&>;
+        { t.Angle }     -> std::convertible_to<double>;
+        { t.Start }     -> std::convertible_to<double>;
+        { t.Stop }       -> std::convertible_to<double>;
+    };
+
+    struct AnimGroupDataRotate {
+        std::initializer_list<UINT> GroupList;
+        const VECTOR3&              LocationA;
+        const VECTOR3&              LocationB;
+        double                      Angle;
+        double                      Start;
+        double                      Stop;
+    };
+
+    template<typename T>
+    concept AnimationGroupContractTranslate = requires(T t) {
+        { t.GroupList } -> std::convertible_to<std::initializer_list<UINT>>;
+        { t.Translate } -> std::convertible_to<const VECTOR3&>;
+        { t.Angle }     -> std::convertible_to<double>;
+        { t.Start }     -> std::convertible_to<double>;
+        { t.Stop }      -> std::convertible_to<double>;
+    };
+
+    struct AnimGroupDataTranslate {
+        std::initializer_list<UINT> GroupList;
+        const VECTOR3&              Translate;
+        double                      Angle;
+        double                      Start;
+        double                      Stop;
+    };
+
+    struct IAnimationGroup
     {
-        AnimationGroup(
-            std::initializer_list<UINT> const& grp,
-            const VECTOR3& locA, const VECTOR3& locB,
-            double angle,
-            double start, double stop) :
-            group_(grp),
-            start_(start),
-            stop_(stop),
-            location_(locA)
+        virtual MGROUP_TRANSFORM* GetTransform() = 0;
+        virtual double Start() = 0;
+        virtual double Stop() = 0;
+    };
+
+    template<AnimationGroupContractRotate T>
+    class AnimationGroupRotate : public IAnimationGroup
+    {
+    public:
+        AnimationGroupRotate(const T& data)
+          : data_(data),
+            group_(data.GroupList)
         {
-            VECTOR3 axis = locB - locA;
+            VECTOR3 axis = data_.LocationB - data_.LocationA;
             normalise(axis);
-            transform_ = std::make_unique<MGROUP_ROTATE>(0, group_.data(), group_.size(), locA, axis, (float)angle);
+            transform_ = std::make_unique<MGROUP_ROTATE>(0, group_.data(), group_.size(), data_.LocationA, axis, (float)data_.Angle);
         }
 
-        AnimationGroup(
-            std::initializer_list<UINT> const& grp,
-            const VECTOR3& translate,
-            double start, double stop) :
-            group_(grp),
-            start_(start),
-            stop_(stop)
-        {
-            transform_ = std::make_unique<MGROUP_TRANSLATE>(0, group_.data(), group_.size(), translate);
-        }
-        
+        MGROUP_TRANSFORM* GetTransform() override { return transform_.get(); }
+        double Start() override { return data_.Start; }
+        double Stop() override { return data_.Stop; }
+    private:
+
+        T data_;
         std::vector<UINT>                   group_;
-        VECTOR3                             location_{ 0.0, 0.0, 0.0 };
         std::unique_ptr<MGROUP_TRANSFORM>   transform_;
-        double start_;
-        double stop_;
+    };
+
+    template<AnimationGroupContractTranslate T>
+    class AnimationGroupTranslate : public IAnimationGroup
+    {
+    public:
+        AnimationGroupTranslate(const T& data) 
+          : data_(data),
+            group_(data.GroupList)
+        {
+            transform_ = std::make_unique<MGROUP_TRANSLATE>(0, group_.data(), group_.size(), data_.Translate);
+        }
+
+        MGROUP_TRANSFORM* GetTransform() override { return transform_.get(); }
+        double Start() override { return data_.Start; }
+        double Stop() override { return data_.Stop; }
+    private:
+        T data_;
+        std::vector<UINT>                   group_;
+        std::unique_ptr<MGROUP_TRANSFORM>   transform_;
     };
 
     /*	The State* classes below provide the state update algorithms for the
@@ -321,4 +372,6 @@ namespace bc_orbiter
 
     // AnimationTarget with 'wrap' target update.
     using AnimationWrap = AnimationBase<StateUpdateWrap>;
+
+    using AnimGroupRotate = AnimationGroupRotate<AnimGroupDataRotate>;
 }

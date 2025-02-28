@@ -33,12 +33,7 @@ namespace bc_orbiter {
 
 
     */
-    class GenericTank
-      : public VesselComponent,
-        public PostStep,
-        public PowerConsumer,
-        public ManageState,
-        public Consumable
+    class GenericTank : public VesselComponent, public PowerConsumer, public Consumable
     {
     public:
         GenericTank(PowerProvider& pwr, double capacity, double fillRate) 

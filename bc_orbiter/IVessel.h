@@ -91,7 +91,7 @@ namespace bc_orbiter {
         * \param group AnimationGroup to add
         * \return The id for the animation
         */
-        virtual auto AddAnimation(UINT meshIndex, AnimationGroup* group) -> UINT = 0;
+        virtual auto AddAnimation(UINT meshIndex, IAnimationGroup& group) -> UINT = 0;
 
         /* \brief Adds an animation group to the vessel.  This call is good for simple, single
         * mesh animations such as VC switches etc.  This version simplifies and allows passing
@@ -128,7 +128,7 @@ namespace bc_orbiter {
         * \param parent The parent group if any.
         * \return Returns the animation component handle.
         */
-        virtual auto AddVesselAnimationComponent(UINT animId, UINT meshIdx, AnimationGroup* transform, ANIMATIONCOMPONENT_HANDLE parent = nullptr) -> ANIMATIONCOMPONENT_HANDLE = 0;
+        virtual auto AddVesselAnimationComponent(UINT animId, UINT meshIdx, IAnimationGroup& transform, ANIMATIONCOMPONENT_HANDLE parent = nullptr) -> ANIMATIONCOMPONENT_HANDLE = 0;
 
         /* \brief Returns the mesh handle given the mesh name.
         * \param name The name of the mesh.

@@ -4,62 +4,58 @@
 
 #include "..\bc_orbiter\IVessel.h"
 #include "..\bc_orbiter\Tools.h"
+#include "..\bc_orbiter\Types.h"
 
 #include "OrbiterAPI.h"
 
+#include "SR71_Common.h"
+
 namespace bco = bc_orbiter;
+namespace cmn = sr71_common;
+namespace con = bc_orbiter::contracts;
+namespace dta = bc_orbiter::data_type;
 
-template <typename T>
-concept StatusContract = requires(T t) {
-    { t.VCMeshName }    -> std::convertible_to<const char*>;
-    { t.PanelMeshName } -> std::convertible_to<const char*>;
-    { t.VCGroupID }     -> std::convertible_to<UINT>;
-    { t.VCVerts }       -> std::convertible_to<const NTVERTEX*>;
-    { t.VCID }          -> std::convertible_to<int>;
-    { t.PanelGroupId }  -> std::convertible_to<UINT>;
-    { t.PanelVerts }    -> std::convertible_to<const NTVERTEX*>;
-    { t.PanelID }       -> std::convertible_to<int>;
-};
-
-struct StatusData {
-    const char*     VCMeshName;
-    const char*     PanelMeshName;
-    UINT            VCGroupID;
-    const NTVERTEX* VCVerts;
-    int             VCID;
-    UINT            PanelGroupId;
-    const NTVERTEX* PanelVerts;
-    int             PanelID;
-};
-
-template <StatusContract T>
+template <con::Cockpit TVCcp, con::Texture TVCtex, con::Cockpit TPNLcp, con::Texture TPNLtex >
 class StatusLight
 {
 public:
-    StatusLight(const T& data) : data_(data) {}
+    StatusLight(const TVCcp& tvccp, const TVCtex& tvctex, const TPNLcp& tpnlcp, const TPNLtex& tpnltex) 
+      : vcCockpit_(tvccp),
+        vcTexture_(tvctex),
+        pnlCockpit_(tpnlcp),
+        pnlTexture_(tpnltex)
+    {}
 
     auto Register(bco::IVessel& vessel) -> void;
 
     auto UpdateStatus(bco::IVessel& vessel, double status) -> void {
         if (state_ != status) {
             state_ = status;
-            vessel.RequestPanelRedraw(data_.PanelID, panelRedrawId_);
-            vessel.RequestVCRedraw(data_.VCID, vcRedrawId_);
+            vessel.RequestPanelRedraw(pnlCockpit_.ID, panelRedrawId_);
+            vessel.RequestVCRedraw(vcCockpit_.ID, vcRedrawId_);
         }
+    }
+
+    auto UpdateStatus(bco::IVessel& vessel, bool status) -> void {
+        UpdateStatus(vessel, status ? 1.0 : 0.0);
     }
 private:
 
     void onPanelRedraw(bco::IVessel& v) {
-        bco::DrawPanelOffset(meshPanel_, data_.PanelGroupId, data_.PanelVerts, textureOffset_ * state_);
+        bco::DrawPanelOffset(meshPanel_, pnlTexture_.GroupID, pnlTexture_.Verts, textureOffset_ * state_);
     }
 
     void onVCRedraw(bco::IVessel& v) {
         auto vcMesh = v.GetDeviceMesh(0);
-        bco::DrawVCOffset(vcMesh, data_.VCGroupID, data_.VCVerts, state_ * textureOffset_);
+        bco::DrawVCOffset(vcMesh, vcTexture_.GroupID, vcTexture_.Verts, state_ * textureOffset_);
     }
 
 
-    T data_;
+    TVCcp   vcCockpit_;
+    TVCtex  vcTexture_;
+    TPNLcp  pnlCockpit_;
+    TPNLtex pnlTexture_;
+
 
     UINT            panelRedrawId_{ (UINT)-1};
     UINT            vcRedrawId_{ (UINT)-1};
@@ -70,14 +66,15 @@ private:
 
 };
 
-inline void StatusLight<StatusData>::Register(bco::IVessel& vessel)
+inline void StatusLight<dta::Cockpit, dta::Texture, dta::Cockpit, dta::Texture>::Register(bco::IVessel& vessel)
 {
-    panelRedrawId_ = vessel.RegisterForPanelRedraw(data_.PanelID, [&](bco::IVessel& v) {onPanelRedraw(v); });
-    vcRedrawId_ = vessel.RegisterForVCRedraw(data_.VCID, [&](bco::IVessel& v) {onVCRedraw(v); });
+    panelRedrawId_ = vessel.RegisterForPanelRedraw(pnlCockpit_.ID, [&](bco::IVessel& v) {onPanelRedraw(v); });
+    vcRedrawId_ = vessel.RegisterForVCRedraw(vcCockpit_.ID, [&](bco::IVessel& v) {onVCRedraw(v); });
 
-    meshPanel_ = vessel.GetpanelMeshHandle(data_.PanelID);
+    meshPanel_ = vessel.GetpanelMeshHandle(pnlCockpit_.ID);
 //    meshVC_ = vessel.GetMeshHandle(data_.VCMeshName);
 
-    textureOffset_ = bco::UVOffset(data_.PanelVerts);
+    textureOffset_ = bco::UVOffset(pnlTexture_.Verts);
 }
 
+using Status = StatusLight<dta::Cockpit, dta::Texture, dta::Cockpit, dta::Texture>;

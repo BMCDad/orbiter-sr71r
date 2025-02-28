@@ -21,13 +21,13 @@
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/OnOffInput.h"
 #include "../bc_orbiter/VesselTextureElement.h"
 
 #include "IConsumable.h"
 #include "PowerSystem.h"
-#include "Common.h"
+#include "IFuelCell.h"
 
+#include "SR71_Common.h"
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
 #include "SR71rPanel_mesh.h"
@@ -63,14 +63,14 @@ namespace cmn = sr71_common;
 	a = 0/1 fuel cell power switch off/on.
 		
 */
-class FuelCell : public bco::VesselComponent, public bco::PowerConsumer
+class FuelCell : public bco::VesselComponent, public bco::PowerConsumer, public IFuelCell
 {
     const double MAX_VOLTS = 28.0;
     const double MIN_VOLTS = 20.0;
     const double AMP_DRAW =	  4.0;
 
 public:
-    FuelCell(bco::PowerProvider& pwr, bco::Vessel& vessel, bco::Consumable& lox, bco::Consumable& hydro);
+    FuelCell(bco::Vessel& vessel, bco::PowerProvider& pwr, bco::Consumable& lox, bco::Consumable& hydro);
 
     /**
         Draw down the oxygen and hydrogen levels based on the current amp load.
@@ -82,11 +82,11 @@ public:
     double AmpDraw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
 
     // ManageState
-    bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
-    std::string HandleSaveState(bco::Vessel& vessel) override;
+    //bool HandleLoadState(bco::Vessel& vessel, const std::string& line) override;
+    //std::string HandleSaveState(bco::Vessel& vessel) override;
 
-    // Outputs
-    double AvailablePower() const { return isFuelCellAvailable_ ? MAX_VOLTS : 0.0; }
+    // IFuelCell
+    double AvailablePower() const override { return isFuelCellAvailable_ ? MAX_VOLTS : 0.0; }
 
 private:
     bco::Vessel&            vessel_;
@@ -96,7 +96,7 @@ private:
 
     bool IsPowered() const {
         return
-            switchEnabled_.IsOn() &&
+//            switchEnabled_.IsOn() &&
             (power_.VoltsAvailable() > MIN_VOLTS);
     }
 
@@ -105,35 +105,35 @@ private:
     bool                isFuelCellAvailable_;
     double              ampDrawFactor_{ 0.0 };
 
-    bco::OnOffInput	switchEnabled_{ 
-        { bm::vc::swFuelCellPower_id },
-        bm::vc::swFuelCellPower_loc, bm::vc::PowerTopRightAxis_loc,
-        cmn::toggleOnOff,
-        bm::pnlright::pnlPwrFC_id,
-        bm::pnlright::pnlPwrFC_vrt,
-        bm::pnlright::pnlPwrFC_RC,
-        1
-    };
+    //bco::OnOffInput	switchEnabled_{ 
+    //    { bm::vc::swFuelCellPower_id },
+    //    bm::vc::swFuelCellPower_loc, bm::vc::PowerTopRightAxis_loc,
+    //    cmn::toggleOnOff,
+    //    bm::pnlright::pnlPwrFC_id,
+    //    bm::pnlright::pnlPwrFC_vrt,
+    //    bm::pnlright::pnlPwrFC_RC,
+    //    1
+    //};
 
-    bco::VesselTextureElement       lightAvailable_ {
-        bm::vc::FuelCellAvailableLight_id,
-        bm::vc::FuelCellAvailableLight_vrt,
-        cmn::vc::main,
-        bm::pnlright::pnlLgtFCPwrAvail_id,
-        bm::pnlright::pnlLgtFCPwrAvail_vrt,
-        cmn::panel::right
-    };
+    //bco::VesselTextureElement       lightAvailable_ {
+    //    bm::vc::FuelCellAvailableLight_id,
+    //    bm::vc::FuelCellAvailableLight_vrt,
+    //    cmn::vc::main,
+    //    bm::pnlright::pnlLgtFCPwrAvail_id,
+    //    bm::pnlright::pnlLgtFCPwrAvail_vrt,
+    //    cmn::panel::right
+    //};
 };
 
-inline FuelCell::FuelCell(bco::PowerProvider& pwr, bco::Vessel& vessel, bco::Consumable& lox, bco::Consumable& hydro) :
+inline FuelCell::FuelCell(bco::Vessel& vessel, bco::PowerProvider& pwr, bco::Consumable& lox, bco::Consumable& hydro) :
     power_(pwr),
     lox_(lox),
     hydro_(hydro),
     isFuelCellAvailable_(false),
     vessel_(vessel)
 {
-    vessel.AddControl(&switchEnabled_);
-    vessel.AddControl(&lightAvailable_);
+    //vessel.AddControl(&switchEnabled_);
+    //vessel.AddControl(&lightAvailable_);
 }
 
 inline void FuelCell::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
@@ -161,25 +161,25 @@ inline void FuelCell::HandlePostStep(bco::Vessel& vessel, double simt, double si
     }
 }
 
-inline bool FuelCell::HandleLoadState(bco::Vessel& vessel, const std::string& line)
-{
-    std::istringstream in(line);
-    in >> switchEnabled_;
-    return true;
-}
-
-inline std::string FuelCell::HandleSaveState(bco::Vessel& vessel)
-{
-    std::ostringstream os;
-    os << switchEnabled_;
-    return os.str();
-}
+//inline bool FuelCell::HandleLoadState(bco::Vessel& vessel, const std::string& line)
+//{
+//    std::istringstream in(line);
+//    in >> switchEnabled_;
+//    return true;
+//}
+//
+//inline std::string FuelCell::HandleSaveState(bco::Vessel& vessel)
+//{
+//    std::ostringstream os;
+//    os << switchEnabled_;
+//    return os.str();
+//}
 
 
 inline void FuelCell::SetIsFuelCellPowerAvailable(bool newValue)
 {
     if (newValue != isFuelCellAvailable_) {
         isFuelCellAvailable_ = newValue;
-        lightAvailable_.SetState(vessel_, isFuelCellAvailable_);
+//        lightAvailable_.SetState(vessel_, isFuelCellAvailable_);
     }
 }
