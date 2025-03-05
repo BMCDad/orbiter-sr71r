@@ -180,7 +180,56 @@ namespace bc_orbiter
         void set_aileron_level(double l) { this->SetControlSurfaceLevel(AIRCTRL_AILERON, l); }
         void set_elevator_level(double l) { this->SetControlSurfaceLevel(AIRCTRL_ELEVATORTRIM, l); }
 
+
+        // HERE is the new event handler code:::
+        int RegisterVCMouseEvent(const VECTOR3& hitLocation, double radius, funcVCMouseEvent func) {
+            auto id = GetControlId();
+            mapVCMouseEvents_[id] = std::make_unique<VCMouseEventData>(hitLocation, radius, func);
+            return id;
+        }
+
+
+        int RegisterPanelMouseEvent(const RECT& rect, funcPanelMouseEvent func) {
+            auto id = GetControlId();
+            mapPanelMouseEvents_[id] = std::make_unique<PanelMouseEventData>(rect, func);
+            return id;
+        }
+
+
+        int RegisterVCRedrawEvent(funcVCRedrawEvent func) {
+            return RegisterVCRedrawEvent(_R(0.0, 0.0, 0.0, 0.0), func);
+        }
+
+        int RegisterVCRedrawEvent(const RECT& rect, funcVCRedrawEvent func) {
+            auto id = GetControlId();
+            mapVCRedrawEvents_[id] = std::make_unique<VCRedrawEventData>(rect, func);
+            return id;
+        }
+
+
+        int RegisterPanelRedrawEvent(funcPanelRedrawEvent func) {
+            auto id = GetControlId();
+            mapPanelRedrawEvents_[id] = std::make_unique<PanelRedrawEventData>(func);
+            return id;
+        }
+
+
+        int RegisterVCMFDEvent(RECT rect, const VECTOR3& loc, double radius, DWORD txId, funcPanelMouseEvent mouse, funcPanelRedrawEvent redraw) {
+            auto id = GetControlId();
+            mapVCMFDEvents_[id] = std::make_unique<VCMFDEventData>(rect, loc, radius, txId, mouse, redraw);
+            return id;
+        }
+
+        // END
     private:
+        // HERE is the new event handlermaps:
+        std::map<int, std::unique_ptr<VCMouseEventData>>        mapVCMouseEvents_;
+        std::map<int, std::unique_ptr<VCRedrawEventData>>       mapVCRedrawEvents_;
+        std::map<int, std::unique_ptr<PanelMouseEventData>>     mapPanelMouseEvents_;
+        std::map<int, std::unique_ptr<PanelRedrawEventData>>    mapPanelRedrawEvents_;
+        std::map<int, std::unique_ptr<VCMFDEventData>>          mapVCMFDEvents_;
+        // END
+
 
         std::vector<Control*>							controls_;
         std::map<int, VCEventTarget*>					map_vc_targets_;
@@ -234,6 +283,32 @@ namespace bc_orbiter
 
     inline bool Vessel::clbkLoadVC(int id)
     {
+        // NEW HANDLER HERE
+        auto vcMeshHandle = GetVCMeshHandle0(); // Assuming one VC.
+
+        for(auto & h : mapVCMouseEvents_) {
+            oapiVCRegisterArea(h.first, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+            oapiVCSetAreaClickmode_Spherical(h.first, h.second->location_, h.second->radius_);
+        }
+
+        for (auto& h : mapVCRedrawEvents_) {
+            oapiVCRegisterArea(h.first, PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
+        }
+
+        for (auto& m : mapVCMFDEvents_) {
+            auto surfHandle = oapiGetTextureHandle(vcMeshHandle, m.second->texId_);
+            oapiVCRegisterArea(
+                m.first, 
+                m.second->rect_, 
+                PANEL_REDRAW_USER, 
+                PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY, 
+                PANEL_MAP_BACKGROUND, 
+                surfHandle);
+        }
+        // END
+        
+
+
         // Handle controls with load vc requirements.
         for (auto & vc : map_vc_targets_) {
             oapiVCRegisterArea(
@@ -285,6 +360,18 @@ namespace bc_orbiter
 
     inline bool Vessel::clbkVCMouseEvent(int id, int event, VECTOR3& p)
     {
+        // NEW HERE
+        auto vme = mapVCMouseEvents_.find(id);
+        if (vme != mapVCMouseEvents_.end()) {
+            vme->second->func_(*this, id, event, p);
+        }
+
+        auto vmf = mapVCMFDEvents_.find(id);
+        if (vmf != mapVCMFDEvents_.end()) {
+            vmf->second->funcMouse_(*this, id, event, 0, 0);
+        }
+
+        // END NEW
         // Old new mode...
         //auto c = idComponentMap_.find(id);
         //if (c != idComponentMap_.end()) {
@@ -303,6 +390,16 @@ namespace bc_orbiter
     inline bool Vessel::clbkVCRedrawEvent(int id, int event, SURFHANDLE surf)
     {
         if (nullptr == meshVirtualCockpit0_)	return false;
+
+        auto vcr = mapVCRedrawEvents_.find(id);
+        if (vcr != mapVCRedrawEvents_.end()) {
+            vcr->second->func_(*this, id, event, surf, meshVirtualCockpit0_);
+        }
+
+        auto vcm = mapVCMFDEvents_.find(id);
+        if (vcm != mapVCMFDEvents_.end()) {
+            vcm->second->funcRedraw_(*this, id, event, surf);
+        }
 
         //auto c = idComponentMap_.find(id);
         //if (c != idComponentMap_.end()) {
@@ -387,6 +484,17 @@ namespace bc_orbiter
 
     inline bool Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH)
     {
+        // NEW HANDLER HERE
+        for (auto& p : mapPanelMouseEvents_) {
+            RegisterPanelArea(hPanel, p.first, p.second->rect_, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
+        }
+
+        for (auto& p : mapPanelRedrawEvents_) {
+            RegisterPanelArea(hPanel, p.first, _R(0.0, 0.0, 0.0, 0.0), PANEL_REDRAW_USER, PANEL_MOUSE_IGNORE);
+        }
+        // NEW END
+
+
         for (auto & p : map_panel_targets_) {	// For panel, mouse and redraw happen in the same call.
             if (p.second->PanelId() != id) continue;
 
@@ -407,6 +515,14 @@ namespace bc_orbiter
 
     inline bool Vessel::clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context)
     {
+        // NEW HERE
+        auto pre = mapPanelRedrawEvents_.find(id);
+        if (pre != mapPanelRedrawEvents_.end()) {
+            pre->second->func_(*this, id, event, surf);
+            return true;
+        }
+        // NEW END
+
         // OLD New mode...
         //auto c = idComponentMap_.find(id);
         //if (c != idComponentMap_.end())
@@ -414,7 +530,7 @@ namespace bc_orbiter
         //    return c->second->OnPanelRedrawEvent(id, event, surf);
         //}
 
-        // NEW mode
+
         auto pe = map_panel_targets_.find(id);
         if (pe != map_panel_targets_.end()) {
             pe->second->OnPanelRedraw(GetpanelMeshHandle(pe->second->PanelId()));
@@ -431,6 +547,13 @@ namespace bc_orbiter
 
     inline bool Vessel::clbkPanelMouseEvent(int id, int event, int mx, int my)
     {
+        // NEW HANDLER HERE
+        auto pne = mapPanelMouseEvents_.find(id);
+        if (pne != mapPanelMouseEvents_.end()) {
+            pne->second->func_(*this, id, event, mx, my);
+        }
+        // NEW END
+
         // Old New mode...
         //auto c = idComponentMap_.find(id);
         //if (c != idComponentMap_.end())
@@ -438,7 +561,9 @@ namespace bc_orbiter
         //    return c->second->OnPanelMouseEvent(id, event);
         //}
 
-        // NEW mode
+
+
+        // 
         auto pe = map_panel_targets_.find(id);
         if (pe != map_panel_targets_.end()) {
             pe->second->OnMouseClick(*this, id, event);

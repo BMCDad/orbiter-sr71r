@@ -20,9 +20,11 @@
 
 #include "../bc_orbiter/Animation.h"
 #include "../bc_orbiter/control.h"
-#include "../bc_orbiter/OnOffInput.h"
 #include "../bc_orbiter/Vessel.h"
 #include "../bc_orbiter/VesselTextureElement.h"
+
+#include "Toggle.h"
+#include "IndicatorLight.h"
 
 #include "SR71r_mesh.h"
 #include "SR71rVC_mesh.h"
@@ -91,13 +93,13 @@ private:
     bool IsPowered() const { 
         return 
             (power_.VoltsAvailable() > MIN_VOLTS) &&
-            switchPower_.IsOn();
+            togPowerSwitch_.IsOn();
     }
     
     bool CanopyIsMoving() const { 
         return 
             IsPowered() && 
-            switchOpen_.IsOn() &&
+            togOpenCloseSwitch_.IsOn() &&
             (animCanopy_.GetState() > 0.0) && 
             (animCanopy_.GetState() < 1.0); 
     }
@@ -123,42 +125,29 @@ private:
         0, 1
     };
 
-    bco::OnOffInput       switchPower_ {
-        { bm::vc::SwCanopyPower_id },
+    sr71::Toggle togPowerSwitch_{
+        bm::vc::SwCanopyPower_id,
         bm::vc::SwCanopyPower_loc,
         bm::vc::PowerTopRightAxis_loc,
-        cmn::toggleOnOff,
         bm::pnlright::pnlPwrCanopy_id,
         bm::pnlright::pnlPwrCanopy_vrt,
         bm::pnlright::pnlPwrCanopy_RC,
-        1
+        cmn::panel::right
     };
 
-    //SR71Toggle       switchPower_ {
-    //    { bm::vc::SwCanopyPower_id },
-    //    bm::vc::SwCanopyPower_loc,
-    //    bm::vc::PowerTopRightAxis_loc,
-    //    bm::pnlright::pnlPwrCanopy_id,
-    //    bm::pnlright::pnlPwrCanopy_vrt,
-    //    bm::pnlright::pnlPwrCanopy_RC,
-    //    cmn::panel::right
-    //};
-
-    bco::OnOffInput       switchOpen_ {
-        { bm::vc::SwCanopyOpen_id },
+    sr71::Toggle togOpenCloseSwitch_{
+        bm::vc::SwCanopyOpen_id,
         bm::vc::SwCanopyOpen_loc,
         bm::vc::DoorsRightAxis_loc,
-        cmn::toggleOnOff,
         bm::pnlright::pnlDoorCanopy_id,
         bm::pnlright::pnlDoorCanopy_vrt,
         bm::pnlright::pnlDoorCanopy_RC,
-        1
+        cmn::panel::right
     };
 
-    bco::VesselTextureElement       status_ {
+    sr71::IndicatorLight       status_ {
         bm::vc::MsgLightCanopy_id,
         bm::vc::MsgLightCanopy_vrt,
-        cmn::vc::main,
         bm::pnl::pnlMsgLightCanopy_id,
         bm::pnl::pnlMsgLightCanopy_vrt,
         cmn::panel::main
@@ -169,16 +158,18 @@ inline Canopy::Canopy(bco::PowerProvider& pwr, bco::Vessel& vessel) :
     power_(pwr)
 {
     power_.AttachConsumer(this);
-    vessel.AddControl(&switchOpen_);
-    vessel.AddControl(&switchPower_);
-    vessel.AddControl(&status_);
+//    vessel.AddControl(&status_);
 }
 
 inline void Canopy::HandlePostStep(bco::Vessel& vessel, double simt, double simdt, double mjd)
 {
     if (IsPowered()) {
-        animCanopy_.Update(vessel, switchOpen_.IsOn() ? 1.0 : 0.0, simdt);
+        animCanopy_.Update(vessel, togOpenCloseSwitch_.IsOn() ? 1.0 : 0.0, simdt);
     }
+
+    togPowerSwitch_.Update(vessel, simdt);
+    togOpenCloseSwitch_.Update(vessel, simdt);
+
     /*
         off     - no power OR closed
         warn    - yes power AND is moving
@@ -196,25 +187,30 @@ inline void Canopy::HandlePostStep(bco::Vessel& vessel, double simt, double simd
         }
     }
 
-    status_.SetState(vessel, status);
+    status_.SetStatus(vessel, status);
 }
 
 inline bool Canopy::HandleLoadState(bco::Vessel& vessel, const std::string& line)
 {
+    int tpw = 0;
+    int toc = 0;
+
     std::istringstream in(line);
-    in >> switchPower_;
-    in >> switchOpen_;
+    in >> tpw;
+    in >> toc;
     in >> animCanopy_;
     vessel.SetAnimationState(animCanopy_);
 
-//    switchPower_.SetState(vessel, switchPower);
+    togPowerSwitch_.SetIsOn(vessel, (tpw == 0) ? false : true);
+    togOpenCloseSwitch_.SetIsOn(vessel, (toc == 0) ? false : true);
+
     return true;
 }
 
 inline std::string Canopy::HandleSaveState(bco::Vessel& vessel)
 {
     std::ostringstream os;
-    os << switchPower_.IsOn() << " " << switchOpen_ << " " << animCanopy_;
+    os << (togPowerSwitch_.IsOn() ? 1 : 0) << " " << (togOpenCloseSwitch_.IsOn() ? 1 : 0) << " " << animCanopy_;
     return os.str();
 }
 
@@ -222,6 +218,10 @@ inline void Canopy::HandleSetClassCaps(bco::Vessel& vessel)
 {
     auto vcIdx = vessel.GetVCMeshIndex();
     auto mIdx = vessel.GetMainMeshIndex();
+
+    togPowerSwitch_.Register(vessel);
+    togOpenCloseSwitch_.Register(vessel);
+    status_.Register(vessel);
 
     auto idAnim = vessel.CreateVesselAnimation(animCanopy_);
     animCanopy_.VesselId(idAnim);

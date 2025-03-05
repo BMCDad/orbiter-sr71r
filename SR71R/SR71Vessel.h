@@ -110,7 +110,7 @@ private:
     FuelCell            fuelCell_{ powerSystem_, *this, oxygenTank_,	hydrogenTank_ };
     HUD                 headsUpDisplay_{ powerSystem_, *this };
 
-    //	LeftMFD					mfdLeft_		{ powerSystem_, this };
+    LeftMFD					mfdLeft_		{ powerSystem_, this };
     //	RightMFD				mfdRight_		{ powerSystem_, this };
 
 

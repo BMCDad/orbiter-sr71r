@@ -61,4 +61,48 @@ Orbiter 2024: (February 10 2025)
 	 * MFD rewrite
 	 * Refactor Tools into namespaces.
 	 * Refactro transform_display, used in HSI
+	 - !! Simplify event handling to better handle different scenarios, like controls and MFDs.
+
+	 === Life cycle of a VC mouse event ===
+	 - clbkSetClassCaps
+		  . This is handled by the component which calls the Register function below.
+		  . The control must provide a VECTOR3 hit location, double radius, and func
+		  : RegisterVCMouseEvent( control ID, hit location, radius and function(event, location) with vessel.
+	 - clbkLoadVC(id of VC, 0 if only 1)
+		  : oapiVCRegisterArea ( id of control, redraw flag[ignore], mouse flag[ LB, PRess, Replay])
+		  : oapiVCSetAreaClickmode_Spherical ( id of control, VECTOR3 location, double radius)
+	 - clbkVCMouseEvent(int id, int event, VECTOR3& p)
+		  : lookup control by id, call func(id, event, VECTOR3&)
 	 
+	 === Life cycle of a VC redraw event ===
+	 - clbkSetClassCaps
+		  . This is handled by the component which calls the register function.
+		  . The control must provide the control id and callback func.
+		  : RegisterVCRedrawEvent( control ID, )
+	 - clbkLoadVC(id of VC)
+		  : oapiVCRegisterArea (id of control, redraw flag[user], mouse flag[ignore])
+	 - clbkVCRedrawEvent(id , event, surfhandle)
+		  : lookup control by id, call func(id, event, surfhandle)
+
+	 === Life cycle of a VC animation ===
+	 - clbkSetClassCaps
+		  . Handled in the component.  Uses an Animation member and AnimationGroup member defined in component.
+		  : CreateVesselAnimtion(Animation&)
+		  : AddVesselAnimationComponent(animId, meshIdx, AnimGroup, <parent>)
+	 - clbkPostStep
+		  : animation.Update(vessel, target, simdt) target is the state of whatever is being animated.  This is a component member.
+
+	 === Life cycle of a PANEL mouse event ===
+	 - clbkSetClassCaps
+		  . Handled in the component
+		  . The control must provide the panel hit RECT.
+		  : RegisterPanelMouseEvent( control ID, hit rect, function(event))
+
+	 === Life cycle of a PANEL redraw event ===
+	 - clbkSetClassCaps
+		  . Handled in the component
+		  . RegisterPanelRedrawEvent(control id, hit RECT, func)
+	 - clbkLoadPanel2d
+		  : RegisterPanelArea(handle, id, hit rectangle, PANEL User, MOUSE ignore )
+	 - clbkPanelRedrawEvet
+		  : lookup control by id, call func(vessel, id, event, surfhandle)

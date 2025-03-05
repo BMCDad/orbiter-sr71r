@@ -48,8 +48,10 @@ namespace bc_orbiter
 			if (!IsPowered()) { oapiOpenMFD(MFD_NONE, mfdId_); }
 		}
 
-		bool OnVCMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
-		bool OnPanelMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
+		//bool OnVCMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
+		bool HandleMouseVC(Vessel& vessel, int id, int event) { return OnMouseEvent(vessel, id, event); }
+		//bool OnPanelMouseEvent(int id, int event) { return OnMouseEvent(id, event); }
+		bool HandleMousePanel(Vessel& vessel, int id, int event) { return OnMouseEvent(vessel, id, event); }
 
 //		virtual void ChangePowerLevel(double newLevel) override;
 
@@ -66,7 +68,7 @@ namespace bc_orbiter
 		/**
 		Handles the mouse event.
 		*/
-		bool OnMouseEvent(int id, int event);
+		bool OnMouseEvent(Vessel& vessel, int id, int event);
 
 //		virtual double CurrentDraw() override;
 
@@ -124,7 +126,7 @@ namespace bc_orbiter
 		return label;
 	}
 
-	inline bool MFDBase::OnMouseEvent(int id, int event)
+	inline bool MFDBase::OnMouseEvent(Vessel& vessel, int id, int event)
 	{
 		bool result = false;
 

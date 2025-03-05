@@ -55,7 +55,6 @@ private:
 
     struct MFDData
     {
-        int id;
         int key;
         int row;
         int col;
@@ -65,18 +64,18 @@ private:
 
     std::vector<MFDData> data_
     {
-        //{ vessel_.GetIdForComponent(this), 0,  0, 0, bm::vc::MFCLeftL1_loc, bm::pnl::pnlLeftMFD1_RC },
-        //{ vessel_.GetIdForComponent(this), 1,  1, 0, bm::vc::MFCLeftL2_loc, bm::pnl::pnlLeftMFD2_RC },
-        //{ vessel_.GetIdForComponent(this), 2,  2, 0, bm::vc::MFCLeftL3_loc, bm::pnl::pnlLeftMFD3_RC },
-        //{ vessel_.GetIdForComponent(this), 3,  3, 0, bm::vc::MFCLeftL4_loc, bm::pnl::pnlLeftMFD4_RC },
-        //{ vessel_.GetIdForComponent(this), 4,  4, 0, bm::vc::MFCLeftL5_loc, bm::pnl::pnlLeftMFD5_RC },
-        //{ vessel_.GetIdForComponent(this), 5,  5, 0, bm::vc::MFCLeftL6_loc, bm::pnl::pnlLeftMFD6_RC },
-        //{ vessel_.GetIdForComponent(this), 6,  0, 1, bm::vc::MFCLeftR1_loc, bm::pnl::pnlLeftMFD7_RC },
-        //{ vessel_.GetIdForComponent(this), 7,  1, 1, bm::vc::MFCLeftR2_loc, bm::pnl::pnlLeftMFD8_RC },
-        //{ vessel_.GetIdForComponent(this), 8,  2, 1, bm::vc::MFCLeftR3_loc, bm::pnl::pnlLeftMFD9_RC },
-        //{ vessel_.GetIdForComponent(this), 9,  3, 1, bm::vc::MFCLeftR4_loc, bm::pnl::pnlLeftMFD10_RC },
-        //{ vessel_.GetIdForComponent(this), 10, 4, 1, bm::vc::MFCLeftR5_loc, bm::pnl::pnlLeftMFD11_RC },
-        //{ vessel_.GetIdForComponent(this), 11, 5, 1, bm::vc::MFCLeftR6_loc, bm::pnl::pnlLeftMFD12_RC }
+        { 0,  0, 0, bm::vc::MFCLeftL1_loc, bm::pnl::pnlLeftMFD1_RC },
+        { 1,  1, 0, bm::vc::MFCLeftL2_loc, bm::pnl::pnlLeftMFD2_RC },
+        { 2,  2, 0, bm::vc::MFCLeftL3_loc, bm::pnl::pnlLeftMFD3_RC },
+        { 3,  3, 0, bm::vc::MFCLeftL4_loc, bm::pnl::pnlLeftMFD4_RC },
+        { 4,  4, 0, bm::vc::MFCLeftL5_loc, bm::pnl::pnlLeftMFD5_RC },
+        { 5,  5, 0, bm::vc::MFCLeftL6_loc, bm::pnl::pnlLeftMFD6_RC },
+        { 6,  0, 1, bm::vc::MFCLeftR1_loc, bm::pnl::pnlLeftMFD7_RC },
+        { 7,  1, 1, bm::vc::MFCLeftR2_loc, bm::pnl::pnlLeftMFD8_RC },
+        { 8,  2, 1, bm::vc::MFCLeftR3_loc, bm::pnl::pnlLeftMFD9_RC },
+        { 9,  3, 1, bm::vc::MFCLeftR4_loc, bm::pnl::pnlLeftMFD10_RC },
+        { 10, 4, 1, bm::vc::MFCLeftR5_loc, bm::pnl::pnlLeftMFD11_RC },
+        { 11, 5, 1, bm::vc::MFCLeftR6_loc, bm::pnl::pnlLeftMFD12_RC }
     };
 };
 
@@ -86,13 +85,50 @@ inline LeftMFD::LeftMFD(bco::PowerProvider& pwr, bco::Vessel* vessel) :
 
 inline void LeftMFD::HandleSetClassCaps(bco::Vessel& vessel)
 {
+    //auto vcMeshHandle = vessel.GetVCMeshHandle0();
+    //assert(vcMeshHandle != nullptr);
+
+    //SURFHANDLE surfHandle = oapiGetTextureHandle(vcMeshHandle, bm::vc::TXIDX_SR71R_100_VC2_dds);
+
     for (auto& a : data_) {
-        AssignKey(a.id, a.key);
+        // These are texture metrics, not mesh, so they don't live in the mesh file.
+
+        int rc_left = MFDLLTEXL;                        // Left side of left buttons;
+        int rc_col2_offset = MFDLRTEXL - MFDLLTEXL;            // Diff between right col and left
+        int rc_top = MFD_B1TEX_TOP;                    // Top of row 1 buttons
+        int rc_row_offset = MFD_B2TEX_TOP - MFD_B1TEX_TOP;    // Difference in button y axis
+        int btn_height = MFD_B1TEX_BOT - MFD_B1TEX_TOP;    // Button height
+        int btn_width = MFDLLTEXR - MFDLLTEXL;            // Button width;
+
+        // This can be confusing:  oapiVCRegisterArea takes a RECT that is in TEXTURE space, not MESH space, this
+        // tells Orbiter where to redraw.  The area ID is then also associated with a mouse event.  HOWEVER the 
+        // mouse event area is defined in the oapiVCSetAreaClickmode_Spherical call below.  That takes a mesh location.
+        int rc_l = (a.col * rc_col2_offset) + rc_left;
+        int rc_t = (a.row * rc_row_offset) + rc_top;
+        int rc_r = rc_l + btn_width;
+        int rc_b = rc_t + btn_height;
+        //oapiVCRegisterArea(
+        //    a.id,
+        //    _R(rc_l, rc_t, rc_r, rc_b),
+        //    PANEL_REDRAW_USER,
+        //    PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
+        //    PANEL_MAP_BACKGROUND,
+        //    surfHandle);
+
+        //oapiVCSetAreaClickmode_Spherical(a.id, a.vcLoc, .01);
+
+        auto id = vessel.RegisterVCMFDEvent(_R(rc_l, rc_t, rc_r, rc_b), a.vcLoc, .01, bm::vc::TXIDX_SR71R_100_VC2_dds,
+            [&](bco::Vessel& vsl, int id, int event, int mx, int my) {OnMouseEvent(vsl, id, event); },
+            [&](bco::Vessel& vsl, int id, int event, SURFHANDLE surf) {OnVCRedrawEvent(id, event, surf); });
+
+        AssignKey(id, a.key);
     }
 
-    //AssignPwrKey(GetBaseVessel()->GetIdForComponent(this));
-    //AssignSelect(GetBaseVessel()->GetIdForComponent(this));
-    //AssignMenu(GetBaseVessel()->GetIdForComponent(this));
+    AssignPwrKey(vessel.GetControlId());
+    AssignSelect(vessel.GetControlId());
+    AssignMenu(vessel.GetControlId());
+
+//    vessel.RegisterVCComponent(this);
 }
 
 inline bool LeftMFD::HandleLoadVC(bco::Vessel& vessel, int vcid)
@@ -114,33 +150,41 @@ inline bool LeftMFD::HandleLoadVC(bco::Vessel& vessel, int vcid)
     static VCMFDSPEC mfds_left = { 1, bm::vc::VCMfdLeft_id };
     oapiVCRegisterMFD(MFD_LEFT, &mfds_left);   // left MFD
 
-    // These are texture metrics, not mesh, so they don't live in the mesh file.
+    //// These are texture metrics, not mesh, so they don't live in the mesh file.
 
-    int rc_left = MFDLLTEXL;                        // Left side of left buttons;
-    int rc_col2_offset = MFDLRTEXL - MFDLLTEXL;            // Diff between right col and left
-    int rc_top = MFD_B1TEX_TOP;                    // Top of row 1 buttons
-    int rc_row_offset = MFD_B2TEX_TOP - MFD_B1TEX_TOP;    // Difference in button y axis
-    int btn_height = MFD_B1TEX_BOT - MFD_B1TEX_TOP;    // Button height
-    int btn_width = MFDLLTEXR - MFDLLTEXL;            // Button width;
+    //int rc_left = MFDLLTEXL;                        // Left side of left buttons;
+    //int rc_col2_offset = MFDLRTEXL - MFDLLTEXL;            // Diff between right col and left
+    //int rc_top = MFD_B1TEX_TOP;                    // Top of row 1 buttons
+    //int rc_row_offset = MFD_B2TEX_TOP - MFD_B1TEX_TOP;    // Difference in button y axis
+    //int btn_height = MFD_B1TEX_BOT - MFD_B1TEX_TOP;    // Button height
+    //int btn_width = MFDLLTEXR - MFDLLTEXL;            // Button width;
 
-    // This can be confusing:  oapiVCRegisterArea takes a RECT that is in TEXTURE space, not MESH space, this
-    // tells Orbiter where to redraw.  The area ID is then also associated with a mouse event.  HOWEVER the 
-    // mouse event area is defined in the oapiVCSetAreaClickmode_Spherical call below.  That takes a mesh location.
-    for (auto& a : data_) {
-        int rc_l = (a.col * rc_col2_offset) + rc_left;
-        int rc_t = (a.row * rc_row_offset) + rc_top;
-        int rc_r = rc_l + btn_width;
-        int rc_b = rc_t + btn_height;
-        oapiVCRegisterArea(
-            a.id,
-            _R(rc_l, rc_t, rc_r, rc_b),
-            PANEL_REDRAW_USER,
-            PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
-            PANEL_MAP_BACKGROUND,
-            surfHandle);
+    //// This can be confusing:  oapiVCRegisterArea takes a RECT that is in TEXTURE space, not MESH space, this
+    //// tells Orbiter where to redraw.  The area ID is then also associated with a mouse event.  HOWEVER the 
+    //// mouse event area is defined in the oapiVCSetAreaClickmode_Spherical call below.  That takes a mesh location.
+    //for (auto& a : data_) {
+    //    int rc_l = (a.col * rc_col2_offset) + rc_left;
+    //    int rc_t = (a.row * rc_row_offset) + rc_top;
+    //    int rc_r = rc_l + btn_width;
+    //    int rc_b = rc_t + btn_height;
+    //    //oapiVCRegisterArea(
+    //    //    a.id,
+    //    //    _R(rc_l, rc_t, rc_r, rc_b),
+    //    //    PANEL_REDRAW_USER,
+    //    //    PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
+    //    //    PANEL_MAP_BACKGROUND,
+    //    //    surfHandle);
 
-        oapiVCSetAreaClickmode_Spherical(a.id, a.vcLoc, .01);
-    }
+    //    //oapiVCSetAreaClickmode_Spherical(a.id, a.vcLoc, .01);
+
+    //    vessel.RegisterVCMouseEvent(
+    //        a.vcLoc, .01, 
+    //        [&](bco::Vessel& vsl, int id, int event, VECTOR3& location) {OnMouseEvent(vsl, id, event); });
+    //    
+    //    vessel.RegisterVCRedrawEvent(
+    //        _R(rc_l, rc_t, rc_r, rc_b), 
+    //        [&](bco::Vessel& vsl, int id, int event, SURFHANDLE surf, DEVMESHHANDLE devMesh) {OnVCRedrawEvent(id, event, surf); });
+    //}
 
 
     // PWR
@@ -205,15 +249,15 @@ inline bool LeftMFD::HandleLoadPanel(bco::Vessel& vessel, int id, PANELHANDLE hP
     vcFont_.blankX = 1600;
     vcFont_.blankY = 2;
 
-    for (auto& a : data_) {
-        vessel.RegisterPanelArea(
-            hPanel,
-            a.id,
-            a.pnlRC,
-            PANEL_REDRAW_USER,
-            PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
-            surfHandle);
-    }
+    //for (auto& a : data_) {
+    //    vessel.RegisterPanelArea(
+    //        hPanel,
+    //        a.id,
+    //        a.pnlRC,
+    //        PANEL_REDRAW_USER,
+    //        PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
+    //        surfHandle);
+    //}
 
     vessel.RegisterPanelArea(
         hPanel,
@@ -243,17 +287,17 @@ inline bool LeftMFD::HandleLoadPanel(bco::Vessel& vessel, int id, PANELHANDLE hP
 
 inline bool LeftMFD::OnPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 {
-    auto m = std::find_if(data_.begin(), data_.end(), [&](const MFDData& o) { return o.id == id; });
-    if (m == data_.end()) return false;
+    //auto m = std::find_if(data_.begin(), data_.end(), [&](const MFDData& o) { return o.id == id; });
+    //if (m == data_.end()) return false;
 
-    const char* label = GetButtonLabel(id);
+    //const char* label = GetButtonLabel(id);
 
-    auto xPos = PnlColLeftX + (m->col * PnlColsDiff);
-    auto yPos = PnlRowsTop + (m->row * PnlRowsDiff);
-    bco::DrawBlankText(xPos - 20, yPos, surf, vcFont_);
+    //auto xPos = PnlColLeftX + (m->col * PnlColsDiff);
+    //auto yPos = PnlRowsTop + (m->row * PnlRowsDiff);
+    //bco::DrawBlankText(xPos - 20, yPos, surf, vcFont_);
 
-    if (NULL != label) {
-        bco::DrawSurfaceText(xPos, yPos, label, bco::DrawTextFormat::Center, surf, vcFont_);
-    }
+    //if (NULL != label) {
+    //    bco::DrawSurfaceText(xPos, yPos, label, bco::DrawTextFormat::Center, surf, vcFont_);
+    //}
     return true;
 }

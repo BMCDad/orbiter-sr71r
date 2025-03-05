@@ -45,7 +45,7 @@ SR71Vessel::SR71Vessel(OBJHANDLE hvessel, int flightmodel) :
 	AddComponent(&retroEngines_);
 	AddComponent(&lights_);
 
-//	AddComponent(&mfdLeft_);
+	AddComponent(&mfdLeft_);
 //	AddComponent(&mfdRight_);
 //	AddComponent(&computer_);
 	AddComponent(&surfaceCtrl_);

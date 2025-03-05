@@ -20,6 +20,7 @@
 // to handle specific messages.
 
 #include <OrbiterAPI.h>
+#include <functional>
 
 namespace bc_orbiter {
 
@@ -124,5 +125,55 @@ namespace bc_orbiter {
         virtual bool HandleRedrawPanel(Vessel& vessel, int id, int event, SURFHANDLE surf) { return false; }
         virtual bool HandleMousePanel(Vessel& vessel, int id, int event) { return false; }
         virtual ~LoadPanel() {};
+    };
+
+
+
+    // Func defs.
+
+    using funcVCMouseEvent = std::function<void(Vessel& vessel, int id, int event, VECTOR3& location)>;
+    using funcVCRedrawEvent = std::function<void(Vessel & vessel, int id, int event, SURFHANDLE surf, DEVMESHHANDLE devMesh)>;
+    using funcPanelMouseEvent = std::function<void(Vessel& vessel, int id, int event, int mx, int my)>;
+    using funcPanelRedrawEvent = std::function<void(Vessel& vessel, int id, int event, SURFHANDLE surf)>;
+
+    struct VCMouseEventData {
+        const VECTOR3&      location_;
+        const double        radius_;
+        funcVCMouseEvent    func_;
+
+        VCMouseEventData(const VECTOR3& loc, const double rad, funcVCMouseEvent func) : location_(loc), radius_(rad), func_(func){}
+    };
+
+    struct VCRedrawEventData {
+        const RECT&         rect_;
+        funcVCRedrawEvent   func_;
+
+        VCRedrawEventData(const RECT& rc, funcVCRedrawEvent func) : rect_(rc), func_(func) {}
+    };
+
+    struct PanelMouseEventData {
+        const RECT&         rect_;
+        funcPanelMouseEvent func_;
+
+        PanelMouseEventData(const RECT& rect, funcPanelMouseEvent func) : rect_(rect), func_(func) {}
+    };
+
+    struct PanelRedrawEventData {
+        funcPanelRedrawEvent    func_;
+
+        PanelRedrawEventData(funcPanelRedrawEvent func) : func_(func) {}
+    };
+
+    struct VCMFDEventData {
+        RECT                    rect_;
+        const VECTOR3&          location_;
+        double                  radius_;
+        DWORD                   texId_;
+
+        funcPanelMouseEvent     funcMouse_;
+        funcPanelRedrawEvent    funcRedraw_;
+
+        VCMFDEventData(const RECT& rect, const VECTOR3& loc, double r, DWORD txid, funcPanelMouseEvent fMouse, funcPanelRedrawEvent fRedraw) 
+            : rect_(rect), location_(loc), radius_(r), texId_(txid), funcMouse_(fMouse), funcRedraw_(fRedraw){}
     };
 };

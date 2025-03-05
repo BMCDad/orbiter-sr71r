@@ -164,6 +164,7 @@
     <ClInclude Include="IAvionics.h" />
     <ClInclude Include="FuelCell.h" />
     <ClInclude Include="IConsumable.h" />
+    <ClInclude Include="IndicatorLight.h" />
     <ClInclude Include="LandingGear.h" />
     <ClInclude Include="OxygenTank.h" />
     <ClInclude Include="resource.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="SurfaceController.h" />
+    <ClInclude Include="Toggle.h" />
     <ClInclude Include="VesselControl.h" />
   </ItemGroup>
   <ItemGroup>
