@@ -74,14 +74,10 @@ public:
         vessel.AddControl(&pnDspSwitch_);
         vessel.AddControl(&vcDspSwitch_);
 
-        vessel.AddControl(&pnlDisplayStatus_);
-        vessel.AddControl(&vcDisplayStatus_);
+        vessel.AddControl(&status_);
 
         bco::connect(sigSwitch_, pnDspSwitch_.Slot());
         bco::connect(sigSwitch_, vcDspSwitch_.Slot());
-
-        bco::connect(sigStatus_, pnlDisplayStatus_.Slot());
-        bco::connect(sigStatus_, vcDisplayStatus_.Slot());
 
         pnlPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
         vcPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
@@ -129,9 +125,10 @@ public:
 
         gaugeAPULevel_.set_state(level_);
 
-        sigStatus_.fire(IsPowered()
+        auto st = (IsPowered()
             ? (hasFuel ? bco::status_display::status::on : bco::status_display::status::warn)
             : bco::status_display::status::off);
+        status_.set_state(st);
     }
 
     bco::slot<double>&FuelLevelSlot() { return slotFuelLevel_; }
@@ -145,7 +142,6 @@ private:
     bco::power_provider & power_;
 
     bco::signal<bool> sigSwitch_;
-    bco::signal<bco::status_display::status> sigStatus_;
 
     bool IsPowered() const {
         return sigSwitch_.current() && (power_.volts_available() > 24.0);
@@ -183,14 +179,11 @@ private:
         1
     };
 
-    bco::PanelDisplay<bco::status_display::status> pnlDisplayStatus_{
+    bco::status_display status_ {
+        bm::vc::MsgLightAPU_id,
+        bm::vc::MsgLightAPU_vrt,
         bm::pnl::pnlMsgLightAPU_id,
         bm::pnl::pnlMsgLightAPU_vrt,
-        0
-    };
-
-    bco::VCDisplay<bco::status_display::status> vcDisplayStatus_{
-        bm::vc::MsgLightAPU_id,
-        bm::vc::MsgLightAPU_vrt
+        0.0361
     };
 };
