@@ -137,43 +137,47 @@ namespace bc_orbiter
 	*/
 	inline void GetDigits(double number, TensParts& out)
 	{
-        // fmod(num, den) returns the remainder of num/den rounded to 0.
-        // so 123, for example, is .3.
+#pragma warning(push)
+#pragma warning(disable : 6031)
+		 // fmod(num, den) returns the remainder of num/den rounded to 0.
+		 // so 123, for example, is .3.
 
-        // Start by multiplying by 100.  This moves hundreths into
-        // the whole number range.  So, for example, the incoming number
-        // is 234.56, that becomes 23456.
-		double numberIn = number * 100;	// Move hundreths into the whole number.
+		 // Start by multiplying by 100.  This moves hundreths into
+		 // the whole number range.  So, for example, the incoming number
+		 // is 234.56, that becomes 23456.
+		 double numberIn = number * 100;	// Move hundreths into the whole number.
 
-        // Now get fmod.  In our example, this is '6'.  23456 / 10 = 2345.[6]
-		//out.Hundredths = fmod(numberIn, 10.0);
-        modf(fmod(numberIn, 10.0), &out.Hundredths);
+		 // Now get fmod.  In our example, this is '6'.  23456 / 10 = 2345.[6]
+	  //out.Hundredths = fmod(numberIn, 10.0);
+		 modf(fmod(numberIn, 10.0), &out.Hundredths);
 
-        // Divide by 10 and keep going.
-		numberIn /= 10;
-		//out.Tenths = fmod(numberIn, 10.0);
-        modf(fmod(numberIn, 10.0), &out.Tenths);
+		 // Divide by 10 and keep going.
+		 numberIn /= 10;
+		 //out.Tenths = fmod(numberIn, 10.0);
+		 modf(fmod(numberIn, 10.0), &out.Tenths);
 
-		numberIn /= 10;
-		//out.Tens = fmod(numberIn, 10.0);
-        modf(fmod(numberIn, 10.0), &out.Tens);
-		
-        numberIn /= 10;
-		//out.Hundreds = fmod(numberIn, 10.0);
-        modf(fmod(numberIn, 10.0), &out.Hundreds);
+		 numberIn /= 10;
+		 //out.Tens = fmod(numberIn, 10.0);
+		 modf(fmod(numberIn, 10.0), &out.Tens);
 
-		numberIn /= 10;
-		//out.Thousands = fmod(numberIn, 10.0);
-        modf(fmod(numberIn, 10.0), &out.Thousands);
+		 numberIn /= 10;
+		 //out.Hundreds = fmod(numberIn, 10.0);
+		 modf(fmod(numberIn, 10.0), &out.Hundreds);
 
-		numberIn /= 10;
-		modf(fmod(numberIn, 10.0), &out.TenThousands);
+		 numberIn /= 10;
+		 //out.Thousands = fmod(numberIn, 10.0);
+		 modf(fmod(numberIn, 10.0), &out.Thousands);
 
-		numberIn /= 10;
-		modf(fmod(numberIn, 10.0), &out.HundredThousands);
-		
-        numberIn /= 10;
-		modf(fmod(numberIn, 10.0), &out.Millions);
+		 numberIn /= 10;
+		 modf(fmod(numberIn, 10.0), &out.TenThousands);
+
+		 numberIn /= 10;
+		 modf(fmod(numberIn, 10.0), &out.HundredThousands);
+
+		 numberIn /= 10;
+		 modf(fmod(numberIn, 10.0), &out.Millions);
+
+#pragma warning(pop)
 	}
 
 	inline VECTOR3 RotateVector(const VECTOR3 &input, double angle, const VECTOR3 &rotationaxis)

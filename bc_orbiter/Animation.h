@@ -49,13 +49,14 @@ namespace bc_orbiter
             double start, double stop) :
             group_(grp),
             start_(start),
-            stop_(stop)
+            stop_(stop),
+            location_(_V(0.0, 0.0, 0.0))
         {
             transform_ = std::make_unique<MGROUP_TRANSLATE>(0, group_.data(), group_.size(), translate);
         }
         
         std::vector<UINT>                   group_;
-        VECTOR3                             location_;
+        VECTOR3                             location_{ _V(0.0,0.0,0.0) };
         std::unique_ptr<MGROUP_TRANSFORM>   transform_;
         double start_;
         double stop_;
