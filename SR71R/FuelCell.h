@@ -105,7 +105,7 @@ private:
     bool                isFuelCellAvailable_;
     double              ampDrawFactor_{ 0.0 };
 
-    bco::on_off_input	switchEnabled_{ 
+    bco::on_off_input switchEnabled_{ 
         { bm::vc::swFuelCellPower_id },
         bm::vc::swFuelCellPower_loc, bm::vc::PowerTopRightAxis_loc,
         toggleOnOff,

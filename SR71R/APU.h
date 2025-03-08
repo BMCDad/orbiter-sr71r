@@ -19,11 +19,7 @@
 #include "../bc_orbiter/vessel.h"
 #include "../bc_orbiter/control.h"
 #include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/PanelEvent.h"
-#include "../bc_orbiter/VCEvent.h"
-#include "../bc_orbiter/PanelDisplay.h"
-#include "../bc_orbiter/VCAnimation.h"
-#include "../bc_orbiter/VCDisplay.h"
+#include "../bc_orbiter/on_off_input.h"
 #include "../bc_orbiter/status_display.h"
 
 #include "SR71r_mesh.h"
@@ -68,19 +64,10 @@ public:
         power_.attach_consumer(this);
 
         vessel.AddControl(&gaugeAPULevel_);
-//        vessel.AddControl(&status_);
-        vessel.AddControl(&pnlPowerSwitchEvent_);
-        vessel.AddControl(&vcPowerSwitchEvent_);
-        vessel.AddControl(&pnDspSwitch_);
-        vessel.AddControl(&vcDspSwitch_);
-
+        vessel.AddControl(&swPower_);
         vessel.AddControl(&status_);
 
-        bco::connect(sigSwitch_, pnDspSwitch_.Slot());
-        bco::connect(sigSwitch_, vcDspSwitch_.Slot());
-
-        pnlPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
-        vcPowerSwitchEvent_.attach([&]() { TogglePowerSwitch(); });
+        swPower_.attach([&]() {TogglePowerSwitch(); });
     }
 
     double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
@@ -150,23 +137,15 @@ private:
     double                  level_{ 0.0 };
     bco::slot<double>       slotFuelLevel_;
 
-    bco::PanelEvent         pnlPowerSwitchEvent_ { bm::pnlright::pnlAPUSwitch_RC, 1 };
-    bco::VCEvent            vcPowerSwitchEvent_  { bm::vc::SwAPUPower_loc, toggleOnOff.hitRadius };
-
-    std::vector<bco::control> ctrls = {
-
-    };
-
-    bco::PanelDisplay<bool>   pnDspSwitch_{
-        bm::pnlright::pnlAPUSwitch_id, 
-        bm::pnlright::pnlAPUSwitch_vrt, 
-        1 
-    };
-
-    bco::VCAnimation<bool>    vcDspSwitch_{
-        { bm::vc::SwAPUPower_id },
-        bm::vc::SwAPUPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
-        toggleOnOff.animRotation, toggleOnOff.animSpeed
+    bco::on_off_input       swPower_ {
+        {bm::vc::SwAPUPower_id},
+        bm::vc::SwAPUPower_loc,
+        bm::vc::LeftPanelTopRightAxis_loc,
+        toggleOnOff,
+        bm::pnlright::pnlAPUSwitch_id,
+        bm::pnlright::pnlAPUSwitch_vrt,
+        bm::pnlright::pnlAPUSwitch_RC,
+        1
     };
 
     bco::rotary_display_target  gaugeAPULevel_{
