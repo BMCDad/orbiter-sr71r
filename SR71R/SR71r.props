@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <OrbiterDir>D:\SR712024\Orbiter</OrbiterDir>
+    <OrbiterDir>D:\redo\Orbiter</OrbiterDir>
     <ModuleDir>$(OrbiterDir)\Modules</ModuleDir>
   </PropertyGroup>
   <PropertyGroup />

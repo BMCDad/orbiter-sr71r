@@ -1,5 +1,5 @@
-//	IAnimationState - bco Orbiter Library
-//	Copyright(C) 2015  Blake Christensen
+//	Types - SR-71r Orbiter Addon
+//	Copyright(C) 2025  Blake Christensen
 //
 //	This program is free software : you can redistribute it and / or modify
 //	it under the terms of the GNU General Public License as published by
@@ -13,24 +13,19 @@
 //
 //	You should have received a copy of the GNU General Public License
 //	along with this program.If not, see <http://www.gnu.org/licenses/>.
-
 #pragma once
+
+#include "OrbiterSDK.h"
+
+#include <functional>
 
 namespace bc_orbiter
 {
-	/**
-	Implemented by an object to indicate that it provides state to control
-	an animation.
-	*/
-	class IAnimationState
-	{
-	public:
-		/**
-		Implementation should provide a value between 0.0 and 1.0 which determines
-		the current state of the animation.
-		*/
-		virtual double GetState() const = 0;
+    using FuncEventHandler = std::function<void()>;
 
-		virtual ~IAnimationState(){}
-	};
+    struct VCEventTarget
+    {
+        VECTOR3     Location()  { return _V(0.0, 0.0, 0.0); }
+        double      Radius()    { return 0.0; }
+    };
 }

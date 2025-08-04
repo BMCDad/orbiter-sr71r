@@ -17,5 +17,8 @@
 #pragma once
 #include "Orbitersdk.h"
 
-void VLiftCoeff(VESSEL *v, double aoa, double M, double Re, void *context, double *cl, double *cm, double *cd);
-void HLiftCoeff(VESSEL *v, double beta, double M, double Re, void *context, double *cl, double *cm, double *cd);
+namespace SR71R
+{
+    void VLiftCoeff(VESSEL* v, double aoa, double M, double Re, void* context, double* cl, double* cm, double* cd);
+    void HLiftCoeff(VESSEL* v, double beta, double M, double Re, void* context, double* cl, double* cm, double* cd);
+}
