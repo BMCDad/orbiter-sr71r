@@ -105,6 +105,63 @@
     <ClInclude Include="..\bc_orbiter\MeshTools.h">
       <Filter>bc_orbiter</Filter>
     </ClInclude>
+    <ClInclude Include="Canopy.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IPowerProvider.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="LandingGear.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IHydraulicProvider.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="AirBrake.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Airspeed.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IAvionics.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Altimeter.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="APU.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IFuelSystem.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="CargoBay.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="FuelCell.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IHydrogenProvider.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ILiquidOxygenProvider.h">
+      <Filter>Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="HoverEngines.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HSI.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bc_orbiter\Tools.h">
+      <Filter>bc_orbiter</Filter>
+    </ClInclude>
+    <ClInclude Include="SR71MFDs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MFDs.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SR71Vessel.cpp">

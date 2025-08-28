@@ -21,11 +21,27 @@
 
 namespace bc_orbiter
 {
-    using FuncEventHandler = std::function<void()>;
+    using FuncEventHandler = std::function<bool(int id, int event)>;
 
     struct VCEventTarget
     {
         VECTOR3     Location()  { return _V(0.0, 0.0, 0.0); }
         double      Radius()    { return 0.0; }
+    };
+
+    using FuncRedrawEvent = std::function<void(int id, int event, SURFHANDLE surf)>;
+
+    /**
+    Contains information needed to draw a font onto a surface.
+    */
+    struct FontInfo
+    {
+        SURFHANDLE surfSource;  // SURFHANDLE to the texture that contains the font image.
+        int charWidth;          // Width of each character (fixed width).
+        int charHeight;         // Hight of each character.
+        int sourceX;            // Horizontal start of font image.
+        int sourceY;            // Vertical start of font image.
+        int blankX;             // Horizontal start of blank.
+        int blankY;             // Vertical start of blank.
     };
 }

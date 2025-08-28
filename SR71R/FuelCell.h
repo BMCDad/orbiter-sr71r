@@ -1,35 +1,33 @@
-//	FuelCell - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
-//
-//	This program is free software : you can redistribute it and / or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program.If not, see <http://www.gnu.org/licenses/>.
+/*
+FuelCell - SR-71r Orbiter Addon
+Copyright(C) 2025  Blake Christensen
+
+This program is free software : you can redistribute it and / or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #pragma once
 
-#include "Orbitersdk.h"
+#include "..\bc_orbiter\Vessel.h"
+#include "..\bc_orbiter\AnimatedValue.h"
+#include "..\bc_orbiter\MeshTools.h"
 
-#include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/control.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/on_off_display.h"
-
-#include "IConsumable.h"
-#include "PowerSystem.h"
 #include "SR71r_mesh.h"
-#include "SR71r_common.h"
+#include "ShipMets.h"
 
-class PowerSystem;
+#include "IPowerProvider.h"
+#include "IHydrogenProvider.h"
+#include "ILiquidOxygenProvider.h"
 
 const double OXYGEN_BURN_RATE_PER_SEC_100A = (0.2 / 3600) / 100;		// 2 lbs per hour per at 100 amps.
 const double HYDROGEN_BURN_RATE_PER_SEC_100A = (0.1 / 3600) / 100;			// 0.3 lbs per hour @ 100 amps.  
@@ -37,90 +35,122 @@ const double HYDROGEN_BURN_RATE_PER_SEC_100A = (0.1 / 3600) / 100;			// 0.3 lbs 
 namespace bco = bc_orbiter;
 
 /**	Fuel cell.
-	Models the plane's fuel cell.
+Models the plane's fuel cell.
 
-	The fuel cell uses oxygen and hydrogen to produce electricity.  The fuel cell does require a 28v source to run (start up)
-	so there must be battery or external connection to start the fuel cell.  When operating it provides 28 volts of power.  
-	Resource burn rate will be dependent on the current ships amp usage, which comes from the main power system.
+The fuel cell uses oxygen and hydrogen to produce electricity.  The fuel cell does require a 28v source to run (start up)
+so there must be battery or external connection to start the fuel cell.  When operating it provides 28 volts of power.  
+Resource burn rate will be dependent on the current ships amp usage, which comes from the main power system.
 
-	To Start:
-	- Connect external power to the main circuit.
-	- Turn on 'Main' power switch (up).
-	- Turn the fuel cell switch (right panel) on (up).
-	- When the 'AVAIL' light next to the FUEL CELL connect switch lights, turn the FUEL CELL connect switch on (up).
-	- The external power connect switch can now be turned OFF.
+To Start:
+- Connect external power to the main circuit.
+- Turn on 'Main' power switch (up).
+- Turn the fuel cell switch (right panel) on (up).
+- When the 'AVAIL' light next to the FUEL CELL connect switch lights, turn the FUEL CELL connect switch on (up).
+- The external power connect switch can now be turned OFF.
 
-	The fuel cell will continue to provide power until it is turned off, or runs out of fuel (hydrogen and oxygen
-	gauges on the left panel).
+The fuel cell will continue to provide power until it is turned off, or runs out of fuel (hydrogen and oxygen
+gauges on the left panel).
 
-	Configuration:
-	FUELCELL a
-	a = 0/1 fuel cell power switch off/on.
-		
+Configuration:
+FUELCELL a
+a = 0/1 fuel cell power switch off/on.
+	
 */
-class FuelCell : 
-    public bco::vessel_component,
-    public bco::post_step,
-    public bco::power_consumer,
-    public bco::manage_state
+class FuelCell 
 {
-    const double MAX_VOLTS = 28.0;
-    const double MIN_VOLTS = 20.0;
-    const double AMP_DRAW =	  4.0;
-
 public:
-    FuelCell(bco::power_provider& pwr, bco::vessel& vessel, bco::consumable& lox, bco::consumable& hydro);
+    FuelCell() = default;
+    ~FuelCell() = default;
 
-    /**
-        Draw down the oxygen and hydrogen levels based on the current amp load.
-    */
+    void Setup(bco::Vessel& vessel);
 
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IHydrogenProvider& hydrogen, ILiquidOxygenProvider& lox);
+    void UpdateVCUI(bco::Vessel& vessel);   // Called to update the VC UI when the VC is active.
+    void UpdateRightPanelUI(MESHHANDLE mesh);    // Called to update the 2D panel UI when the panel is active.
 
-    // power_consumer
-    double amp_draw() const override { return IsPowered() ? AMP_DRAW : 0.0; }
+    void LoadVC();       // Called when the VC is loaded to setup animations.
+    void LoadPanel(bco::Vessel& vessel, PANELHANDLE handle);    // Called when the 2D panel is loaded to setup animations.
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    void LoadState(const std::string& line);
+    std::string GetState() const;
 
-    // Outputs
-    bco::signal<double>&	AvailablePowerSignal()	{ return sigAvailPower_; }			// Volts available from fuel cell.
+    void TogglePowerSwitch() { isPowerSwitchOn_ = !isPowerSwitchOn_; }
+
+    double VoltsAvailable() const { return voltsAvailable_; }
 
 private:
-    bco::power_provider&    power_;
-    bco::consumable&        lox_;
-    bco::consumable&        hydro_;
+    const double MAX_VOLTS = 28.0;
+    const double MIN_VOLTS = 20.0;
+    const double AMP_DRAW = 4.0;
 
-    bool IsPowered() const {
-        return
-            switchEnabled_.is_on() &&
-            (power_.volts_available() > MIN_VOLTS);
-    }
+    bool isPowerSwitchOn_{ false };
 
-    void SetIsFuelCellPowerAvailable(bool newValue);
+    UINT aidVCPowerSwitch_{ 0 };
 
-    bco::signal<double>	sigAvailPower_;
+    int eventId_Power_{ -1 };
 
-    bool                isFuelCellAvailable_;
-    double              ampDrawFactor_{ 0.0 };
+    double voltsAvailable_{ 0.0 };
 
-    bco::on_off_input switchEnabled_{ 
+    bco::AnimatedValue<bco::StateUpdateTarget> animPowerSwitch_{ SR71R::ToggleAnimSpeed };
+};
+
+inline void FuelCell::Setup(bco::Vessel& vessel)
+{
+    eventId_Power_ = vessel.GetEventId();
+
+    vessel.RegisterEventHandler(eventId_Power_, [this](int, int) { TogglePowerSwitch(); return true; });
+
+    auto vcIndex = vessel.GetMeshIndex(bm::vc::MESH_NAME);
+    aidVCPowerSwitch_ = vessel.CreateVesselAnimation();
+    vessel.AddAnimationGroup(
+        aidVCPowerSwitch_,
+        vcIndex,
         { bm::vc::swFuelCellPower_id },
         bm::vc::swFuelCellPower_loc, bm::vc::PowerTopRightAxis_loc,
-        toggleOnOff,
-        bm::pnlright::pnlPwrFC_id,
-        bm::pnlright::pnlPwrFC_vrt,
-        bm::pnlright::pnlPwrFC_RC,
-        1
-    };
+        SR71R::ToggleAnimAngle,
+        0, 1);
+}
 
-    bco::on_off_display	lightAvailable_     {
-                                                bm::vc::FuelCellAvailableLight_id,
-                                                bm::vc::FuelCellAvailableLight_vrt,
-                                                bm::pnlright::pnlLgtFCPwrAvail_id,
-                                                bm::pnlright::pnlLgtFCPwrAvail_vrt,
-                                                0.0244,
-                                                1
-                                            };
-};
+inline void FuelCell::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IHydrogenProvider& hydrogen, ILiquidOxygenProvider& lox)
+{
+    auto hasPower = power.GetPowerLevel() > 0.0;
+    auto ampLoad = power.CurrentAmps();
+
+    // We are enable, have power.
+    auto reqHydrogen = ampLoad * HYDROGEN_BURN_RATE_PER_SEC_100A * simdt;
+    auto actHydrogen = hydrogen.Draw(reqHydrogen);
+    auto reqOxy = ampLoad * OXYGEN_BURN_RATE_PER_SEC_100A * simdt;
+    auto actOxy = lox.Draw(reqOxy);
+
+    if ((reqHydrogen > actHydrogen) || (reqOxy > actOxy)) {
+        voltsAvailable_ = 0.0;
+    }
+    else {
+        voltsAvailable_ = FuelCell::MIN_VOLTS;
+    }
+
+    animPowerSwitch_.Update(simdt, isPowerSwitchOn_ ? 1.0 : 0.0);
+}
+
+inline void FuelCell::UpdateVCUI(bco::Vessel& vessel)
+{
+    vessel.SetAnimation(aidVCPowerSwitch_, animPowerSwitch_.GetCurrent());
+}
+
+inline void FuelCell::UpdateRightPanelUI(MESHHANDLE mesh)
+{
+    bco::DrawPanelOnOff(mesh, bm::pnlright::pnlPwrFC_id, bm::pnlright::pnlPwrFCBus_vrt, isPowerSwitchOn_, SR71R::TogglePnlOffset);
+}
+
+inline void FuelCell::LoadState(const std::string& line) {}
+inline std::string FuelCell::GetState() const {}
+
+inline void FuelCell::LoadVC()
+{
+    bco::LoadVCSimpleEvent(eventId_Power_, bm::vc::swFuelCellPower_loc, SR71R::ToggleHitRadius);
+}
+
+inline void FuelCell::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
+{
+    bco::LoadPanelSimpleEvent(vessel, eventId_Power_, handle, bm::pnlright::pnlPwrFC_RC);
+}

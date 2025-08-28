@@ -83,7 +83,17 @@ auto SR71Vessel::SetClassCaps() -> void
     SetMaxWheelbrakeForce(4e5);
 
     // Setup components:
+    airBrake_.Setup(*this);
+    airspeed_.Setup(*this);
+    altimeter_.Setup(*this);
+    apu_.Setup(*this);
+    canopy_.Setup(*this);
+    cargoBay_.Setup(*this);
     clock_.Setup(*this);
+    fuelCell_.Setup(*this);
+    hoverEngines_.Setup(*this, mainPropellant_);
+    landingGear_.Setup(*this);
+    mfds_.Setup(*this);
 }
 
 bool SR71Vessel::LoadVC(int id)
@@ -93,6 +103,17 @@ bool SR71Vessel::LoadVC(int id)
         _V(-0.1, 0.0, 0.0), 0.0, 0.0,
         _V(0.1, 0.0, 0.0), 0.0, 0.0);
 
+    airBrake_.LoadVC();
+    apu_.LoadVC();
+    canopy_.LoadVC();
+    cargoBay_.LoadVC();
+    clock_.LoadVC();
+    fuelCell_.LoadVC();
+    hoverEngines_.LoadVC();
+    landingGear_.LoadVC();
+    mfds_.LoadVC(*this);
+
+    UIUpdateHandler_ = { [&]() { UpdateVCUI(); } };
     return true;
 }
 
@@ -138,6 +159,14 @@ bool SR71Vessel::LoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD view
 
         oapiSetPanelNeighbours(-1, 1, -1, -1);
 
+        UIUpdateHandler_ = { [&]() { UpdateMainPanelUI(); } };
+        panelGlobalMesh_ = meshHandle; // Store the mesh handle for later use.
+
+        // Call components in the panel that need loading.
+        airBrake_.LoadPanel(*this, hPanel);
+        clock_.LoadPanel(*this, hPanel);
+        landingGear_.LoadPanel(*this, hPanel);
+        mfds_.LoadPanel(*this, hPanel, meshHandle);
         break;
     }
     case 1:
@@ -157,6 +186,14 @@ bool SR71Vessel::LoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD view
         SetPanelScaling(hPanel, defscale, extscale);
         oapiSetPanelNeighbours(0, -1, -1, -1);
 
+        UIUpdateHandler_ = { [&]() { UpdateRightPanelUI(); } };
+        panelRightGlobalMesh_ = meshHandle; // Store the mesh handle for later use.
+
+        apu_.LoadPanel(*this, hPanel);
+        canopy_.LoadPanel(*this, hPanel);
+        cargoBay_.LoadPanel(*this, hPanel);
+        fuelCell_.LoadPanel(*this, hPanel);
+        hoverEngines_.LoadPanel(*this, hPanel);
         break;
     }
     }
@@ -167,7 +204,18 @@ bool SR71Vessel::LoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD view
 void SR71Vessel::Step(bco::Vessel& vessel, double simt, double simdt, double mjd)
 {
     // Call the components that need access to the simulation time.
-    clock_.Step(vessel, simt, simdt, mjd);
+    airBrake_.UpdateState(vessel, simdt, *this);
+    airspeed_.UpdateState(vessel, simdt, *this);
+    altimeter_.UpdateState(vessel, simdt, *this);
+    apu_.UpdateState(vessel, simdt, *this, *this);
+    canopy_.UpdateState(vessel, simdt, *this);
+    cargoBay_.UpdateState(vessel, simdt, *this);
+    clock_.UpdateState(simdt);
+    fuelCell_.UpdateState(vessel, simdt, *this, *this, *this);
+    hoverEngines_.UpdateState(vessel, simdt, *this);
+    landingGear_.UpdateState(vessel, simdt, *this);
+
+    UIUpdateHandler_();
 }
 
 void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
@@ -207,6 +255,11 @@ void SR71Vessel::clbkSaveState(FILEHANDLE scn)
     //}
 }
 
+void SR71Vessel::clbkMFDMode(int mfd, int mode)
+{
+    mfds_.ResetMFD(*this, mfd);
+}
+
 void SR71Vessel::SetupAerodynamics()
 {
     // Aerodynamics - see notes in ShipMets file.
@@ -227,4 +280,36 @@ void SR71Vessel::SetupAerodynamics()
         SR71R::HORZ_WING_CHORD,
         SR71R::HORZ_WING_AREA,
         SR71R::HORZ_WING_AR);
+}
+
+void SR71Vessel::UpdateVCUI() 
+{
+    airBrake_.UpdateVCUI(*this);
+    airspeed_.UpdateVCUI(*this, vcGlobalMesh_);
+    altimeter_.UpdateVCUI(*this, vcGlobalMesh_);
+    apu_.UpdateVCUI(*this);
+    canopy_.UpdateVCUI(*this);
+    cargoBay_.UpdateVCUI(*this);
+    clock_.UpdateVCUI(*this);
+    fuelCell_.UpdateVCUI(*this);
+    hoverEngines_.UpdateVCUI(*this);
+    landingGear_.UpdateVCUI(*this);
+}
+
+void SR71Vessel::UpdateMainPanelUI()
+{
+    airBrake_.UpdateMainPanelUI(panelGlobalMesh_);
+    airspeed_.UpdateMainPanelUI(panelGlobalMesh_);
+    altimeter_.UpdateMainPanelUI(panelGlobalMesh_);
+    clock_.UpdateMainPanelUI(panelGlobalMesh_);
+    landingGear_.UpdateMainPanelUI(panelGlobalMesh_);
+}
+
+void SR71Vessel::UpdateRightPanelUI()
+{
+    apu_.UpdateRightPanelUI(panelGlobalMesh_);
+    canopy_.UpdateRightPanelUI(panelGlobalMesh_);
+    cargoBay_.UpdateRightPanelUI(panelGlobalMesh_);
+    fuelCell_.UpdateRightPanelUI(panelGlobalMesh_);
+    hoverEngines_.UpdateRightPanelUI(panelGlobalMesh_);
 }

@@ -41,15 +41,13 @@ namespace bc_orbiter
 
         ~AnimatedValue() = default;
 
-        void SetTarget(double target, double speed = 1.0)
-        {
-            state_.TargetState = target;
-            state_.Speed = speed;
-        }
-
         double GetCurrent() const { return state_.CurrentState; }
 
-        bool Update(double simdt) { return T::UpdateState(state_, simdt); }
+        bool Update(double simdt, double target) 
+        {
+            state_.TargetState = target;
+            return T::UpdateState(state_, simdt); 
+        }
 
     private:
         AnimationState state_;

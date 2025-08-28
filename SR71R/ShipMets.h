@@ -51,15 +51,17 @@ namespace SR71R {
         // From NASA:
         // Wing span 56.60ft -> 17.25m
         // Mean chord 37.70ft -> 11.49m
-    const double VERT_WING_AREA         = 198.2;    // chord * span = 198.2
-    const double VERT_WING_AR           =   1.50;   // AR 17.25^2 / 198.2  (wingspan^2 / area)
-    const double VERT_WING_CHORD        =  11.49;   // area / span
-    const double VERT_WIND_EFFICIENCY   =   0.7;    // A guess.
+    const double VERT_WING_AREA         =   198.2;    // chord * span = 198.2
+    const double VERT_WING_AR           =     1.50;   // AR 17.25^2 / 198.2  (wingspan^2 / area)
+    const double VERT_WING_CHORD        =    11.49;   // area / span
+    const double VERT_WIND_EFFICIENCY   =     0.7;    // A guess.
 
-    const double HORZ_WING_AREA         =  12.0;    // Rudders * 2
-    const double HORZ_WING_AR           =   1.2;    // 3.8^2 (height of both rudders) / 12 (area) - treat two rudders as one big wing.
-    const double HORZ_WING_CHORD        =   3.15;   // area / span
-    const double HORZ_WING_EFFICIENCY   =   0.6;    // A guess.
+    const double HORZ_WING_AREA         =    12.0;    // Rudders * 2
+    const double HORZ_WING_AR           =     1.2;    // 3.8^2 (height of both rudders) / 12 (area) - treat two rudders as one big wing.
+    const double HORZ_WING_CHORD        =     3.15;   // area / span
+    const double HORZ_WING_EFFICIENCY   =     0.6;    // A guess.
+    const double MaxPress               = 60000.0;    // 30.0 * 1000 * 2 = 60000 --> a guess at the dynamic values of SR71r.
+    const double MAX_MACH               =    22.0;
 
     // Consumables:
 
@@ -90,6 +92,15 @@ namespace SR71R {
     const double HOVER_AMPS     = 10.0;   // Draw when hover doors open.
     const double RETRO_AMPS     = 18.0;   // Retro doors
 
+    // 2D panel consts
+    const int MainPanel_ID   = 0;
+    const int RightPanel_ID  = 1;
+
+    // SR71 Toggle switch consts
+    const double ToggleHitRadius =  0.1;    // Radius of the toggle switch hit area.
+    const double ToggleAnimSpeed = 10.0;    // Speed of the toggle switch animation.
+    const double ToggleAnimAngle = 1.5708;  // Angle of the toggle switch animation in radians.
+    const double TogglePnlOffset = 0.0148;  // Offset for the toggle switch texture.
 }
 /*  Some stats from the SR-71 manual
     Wing area 1605 sq feet.

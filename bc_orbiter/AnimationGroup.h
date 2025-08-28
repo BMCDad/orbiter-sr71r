@@ -91,7 +91,7 @@ namespace bc_orbiter
         * \param funcTarget The function that will be called to update the animation target.
         */
         AnimationGroup(
-            const char* meshName,
+            int meshIndex,
             std::initializer_list<UINT> const& grp,
             const VECTOR3& translate,
             double start, double stop) :
@@ -101,6 +101,7 @@ namespace bc_orbiter
             location_(_V(0.0, 0.0, 0.0))
         {
             transform_ = std::make_unique<MGROUP_TRANSLATE>(0, group_.data(), group_.size(), translate);
+            transform_->mesh = meshIndex; // Set the mesh index for the animation
         }
 
         double Start() const { return start_; }
