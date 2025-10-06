@@ -1,125 +1,155 @@
-//	HUD - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
-//
-//	This program is free software : you can redistribute it and / or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program.If not, see <http://www.gnu.org/licenses/>.
+/*
+HUD - SR-71r Orbiter Addon
+Copyright(C) 2025  Blake Christensen
+
+This program is free software : you can redistribute it and / or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #pragma once
 
 #include "Orbitersdk.h"
 
-#include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/control.h"
-#include "../bc_orbiter/on_off_display.h"
-#include "../bc_orbiter/simple_event.h"
+#include "../bc_orbiter/Vessel.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
+#include "SR71r2DMain_mesh.h"
+#include "SR71Button.h"
+#include "IPowerProvider.h"
 
 namespace bco = bc_orbiter;
 
 /**
-	Manage the heads up display (HUD).
+    Manage the heads up display (HUD).
 
-	The HUD requires power from the main circuit to operate (see Power System to enable
-	main power).  The HUD draw a constant amp level when powered on (one of the HUD modes
-	is selected and main power is available).
+    The HUD requires power from the main circuit to operate (see Power System to enable
+    main power).  The HUD draw a constant amp level when powered on (one of the HUD modes
+    is selected and main power is available).
 
-	Configuration:
-	The HUD mode is managed by Orbiter.
+    Configuration:
+    The HUD mode is managed by Orbiter.
 */
-class HUD :
-    public bco::vessel_component
-    , public bco::power_consumer
-    , public bco::load_vc
-    , public bco::draw_hud
+class HUD
 {
 public:
-    HUD(bco::power_provider& pwr, bco::vessel& vessel);
+    HUD(bco::Vessel& vessel);
+    ~HUD() = default;
 
-    bool handle_load_vc(bco::vessel& vessel, int vcid) override;
-
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
-
-    double amp_draw() const override { return IsPowered() ? 4.0 : 0.0; }
+    void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power);
 
     void OnHudMode(int mode);
+    void LoadVC();
+    void LoadState(const std::string& line);
+    std::string GetState() const;
 
-    //bco::slot<bool>&	DockModeSlot()		{ return slotDockMode_; }
-    //bco::slot<bool>&	OrbitModeSlot()		{ return slotOrbitMode_; }
-    //bco::slot<bool>&	SurfaceModeSlot()	{ return slotSurfaceMode_; }
-
-    //bco::signal<bool>&	DockModeSignal()	{ return sigDockMode_; }
-    //bco::signal<bool>&	OrbitModeSignal()	{ return sigOrbitMode_; }
-    //bco::signal<bool>&	SurfaceModeSignal()	{ return sigSurfaceMode_; }
 
 private:
-    bco::power_provider& power_;
 
-    bool IsPowered() const { return power_.volts_available() > 24.0; }
+    bool    hasPower_{ false };
 
     void OnChanged(int mode);
 
-    //bco::slot<bool> slotDockMode_;
-    //bco::slot<bool> slotOrbitMode_;
-    //bco::slot<bool> slotSurfaceMode_;
-
-    //bco::signal<bool> sigDockMode_;
-    //bco::signal<bool> sigOrbitMode_;
-    //bco::signal<bool> sigSurfaceMode_;
-
     // *** HUD *** 
-    bco::simple_event<>     btnDocking_{
-        bm::vc::vcHUDDock_loc,
-        0.01,
-        bm::pnl::pnlHUDDock_RC,
-        0
-    };
-
-    bco::on_off_display     btnLightDocking_{
+    SR71::Button btnDocking_{
         bm::vc::vcHUDDock_id,
+        bm::vc::vcHUDDock_loc,
         bm::vc::vcHUDDock_vrt,
         bm::pnl::pnlHUDDock_id,
         bm::pnl::pnlHUDDock_vrt,
-        0.0352
+        bm::pnl::pnlHUDDock_RC,
+        SR71R::MainPanel_ID,
+        [this](bool) {OnChanged(HUD_DOCKING); }
     };
 
-    bco::simple_event<>     btnOrbit_{
-        bm::vc::vcHUDOrbit_loc,
-        0.01,
-        bm::pnl::pnlHUDOrbit_RC,
-        0
-    };
-
-    bco::on_off_display     btnLightOrbit_{
+    SR71::Button btnOrbit_{
         bm::vc::vcHUDOrbit_id,
+        bm::vc::vcHUDOrbit_loc,
         bm::vc::vcHUDOrbit_vrt,
         bm::pnl::pnlHUDOrbit_id,
         bm::pnl::pnlHUDOrbit_vrt,
-        0.0352
+        bm::pnl::pnlHUDOrbit_RC,
+        SR71R::MainPanel_ID,
+        [this](bool) {OnChanged(HUD_ORBIT); }
     };
 
-    bco::simple_event<>     btnSurface_ {
+    SR71::Button btnSurface_{
+        bm::vc::vcHUDSURF_id,
         bm::vc::vcHUDSURF_loc,
-        0.01,
+        bm::vc::vcHUDSURF_vrt,
+        bm::pnl::pnlHUDSurf_id,
+        bm::pnl::pnlHUDSurf_vrt,
         bm::pnl::pnlHUDSurf_RC,
-        0
-    };
-
-    bco::on_off_display		btnLightSurface_{ bm::vc::vcHUDSURF_id,
-                                                bm::vc::vcHUDSURF_vrt,
-                                                bm::pnl::pnlHUDSurf_id,
-                                                bm::pnl::pnlHUDSurf_vrt,
-                                                0.0352
+        SR71R::MainPanel_ID,
+        [this](bool) {OnChanged(HUD_SURFACE); }
     };
 };
+
+inline HUD::HUD(bco::Vessel& vessel)
+{
+    vessel.RegisterUIControl(btnDocking_);
+    vessel.RegisterUIControl(btnOrbit_);
+    vessel.RegisterUIControl(btnSurface_);
+}
+
+inline void HUD::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power)
+{
+    hasPower_ = power.GetPowerLevel() > 20.0;
+
+    if (hasPower_) {
+        power.DrawPower(4.0);  // Guess at 4 amps for now
+    }
+    else {
+        // No power
+        OnChanged(HUD_NONE);
+    }
+}
+
+inline void HUD::LoadVC()
+{
+    // Register HUD
+    static VCHUDSPEC huds =
+    {
+       1,                   // Number of mesh groups
+       bm::vc::HUD_id,      // mesh group
+       { 0.0, 0.8, 15.25 }, // hud center (location)
+       0.12                 // hud size
+    };
+
+    oapiVCRegisterHUD(&huds);	// HUD parameters
+}
+
+inline void HUD::OnChanged(int mode)
+{
+    auto currentMode = oapiGetHUDMode();
+    if ((currentMode == HUD_NONE) && (mode == HUD_NONE)) return;
+
+    auto newMode = ((mode == currentMode) || !hasPower_) ? HUD_NONE : mode;
+    
+    if (!oapiSetHUDMode(newMode)) {
+        OnHudMode(newMode); // We may need to update the buttons ourselves.
+    }
+}
+
+inline void HUD::OnHudMode(int mode)
+{
+    btnDocking_.SetState(mode == HUD_DOCKING);
+    btnSurface_.SetState(mode == HUD_SURFACE);
+    btnOrbit_.SetState(mode == HUD_ORBIT);
+
+    // HUD mode is changing, if it is NOT changing to NONE, and we don't have power, turn it off.
+    if (!hasPower_)
+    {
+        oapiSetHUDMode(HUD_NONE);
+    }
+}

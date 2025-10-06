@@ -14,6 +14,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.If not, see <http://www.gnu.org/licenses/>.
+
+Hover persist state:
+- Hover door switch: 0/1
+- Hover door position: 0.0 - 1.0
+
 */
 #pragma once
 
@@ -23,70 +28,59 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
+#include "SR71Toggle.h"
 
 #include "IPowerProvider.h"
+#include "IFuelSystem.h"
 #include "IHydrogenProvider.h"
 #include "ILiquidOxygenProvider.h"
-
-//const double OXYGEN_BURN_RATE_PER_SEC_100A = (0.2 / 3600) / 100;		// 2 lbs per hour per at 100 amps.
-//+const double HYDROGEN_BURN_RATE_PER_SEC_100A = (0.1 / 3600) / 100;			// 0.3 lbs per hour @ 100 amps.  
 
 namespace bco = bc_orbiter;
 
 class HoverEngines 
 {
 public:
-    HoverEngines() = default;
+    HoverEngines(bco::Vessel& vessel);
     ~HoverEngines() = default;
 
-    void Setup(bco::Vessel& vessel, PROPELLANT_HANDLE mainPropellant);
+    void Setup(bco::Vessel& vessel, IFuelSystem& fuel);
 
     void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power);
-    void UpdateVCUI(bco::Vessel& vessel);   // Called to update the VC UI when the VC is active.
-    void UpdateRightPanelUI(MESHHANDLE mesh);    // Called to update the 2D panel UI when the panel is active.
-
-    void LoadVC();       // Called when the VC is loaded to setup animations.
-    void LoadPanel(bco::Vessel& vessel, PANELHANDLE handle);    // Called when the 2D panel is loaded to setup animations.
 
     void LoadState(const std::string& line);
     std::string GetState() const;
 
-    void ToggleDoorSwitch() { isDoorSwitchOpen_ = !isDoorSwitchOpen_; }
+    void ToggleDoorSwitch() { togPower_.ToggleState(); }
 
 private:
     const double MIN_VOLTS = 20.0;
 
-    bool isDoorSwitchOpen_{ false };
-
-    UINT aidVCDoorSwitch_{ 0 };
     UINT aidHoverDoors_{ 0 };
 
-    int eventId_Door_{ -1 };
-
-    bco::AnimatedValue<bco::StateUpdateTarget>  animVCDoorSwitch_;
     bco::AnimatedValue<bco::StateUpdateTarget>  animHoverDoors_;
-    
+ 
+    SR71::Toggle togPower_{
+        { bm::vc::swHoverDoor_id },
+        bm::vc::swHoverDoor_loc, bm::vc::DoorsRightAxis_loc,
+        bm::pnlright::pnlHoverDoor_id,
+        bm::pnlright::pnlHoverDoor_vrt,
+        bm::pnlright::pnlHoverDoor_RC,
+        SR71R::RightPanel_ID
+    };
+
     THRUSTER_HANDLE         hoverThrustHandles_[3];
 };
 
-inline void HoverEngines::Setup(bco::Vessel& vessel, PROPELLANT_HANDLE mainPropellant)
+inline HoverEngines::HoverEngines(bco::Vessel& vessel)
+: hoverThrustHandles_ { nullptr, nullptr, nullptr }
 {
-    eventId_Door_ = vessel.GetEventId();
+    vessel.RegisterUIControl(togPower_);
+}
 
-    vessel.RegisterEventHandler(eventId_Door_, [this](int, int) { ToggleDoorSwitch(); return true; });
-
+inline void HoverEngines::Setup(bco::Vessel& vessel, IFuelSystem& fuel)
+{
     // Animations:
-    auto vcIndex = vessel.GetMeshIndex(bm::vc::MESH_NAME);
     auto mainIndex = vessel.GetMeshIndex(bm::main::MESH_NAME);
-
-    aidVCDoorSwitch_ = vessel.CreateVesselAnimation();
-    vessel.AddAnimationGroup(
-        aidVCDoorSwitch_,
-        vcIndex,
-        { bm::vc::swHoverDoor_id },
-        bm::vc::swHoverDoor_loc, bm::vc::DoorsRightAxis_loc,
-        SR71R::ToggleAnimAngle,
-        0.0, 1.0);
 
     aidHoverDoors_ = vessel.CreateVesselAnimation();
     vessel.AddAnimationGroup(
@@ -126,21 +120,21 @@ inline void HoverEngines::Setup(bco::Vessel& vessel, PROPELLANT_HANDLE mainPrope
         _V(0.0, 0.0, 5.0),
         _V(0, 1, 0),
         SR71R::HOVER_THRUST,
-        mainPropellant,
+        fuel.GetMainProppelantHandle(),
         SR71R::THRUST_ISP);
 
     hoverThrustHandles_[1] = vessel.CreateThruster(
         _V(-3.0, 0.0, -5.0),
         _V(0, 1, 0),
         SR71R::HOVER_THRUST * 0.5,
-        mainPropellant,
+        fuel.GetMainProppelantHandle(),
         SR71R::THRUST_ISP);
 
     hoverThrustHandles_[2] = vessel.CreateThruster(
         _V(3.0, 0.0, -5.0),
         _V(0, 1, 0),
         SR71R::HOVER_THRUST * 0.5,
-        mainPropellant,
+        fuel.GetMainProppelantHandle(),
         SR71R::THRUST_ISP);
 
     vessel.CreateThrusterGroup(hoverThrustHandles_, 3, THGROUP_HOVER);
@@ -166,33 +160,30 @@ inline void HoverEngines::Setup(bco::Vessel& vessel, PROPELLANT_HANDLE mainPrope
 
 inline void HoverEngines::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power)
 {
-    animVCDoorSwitch_.Update(simdt, isDoorSwitchOpen_ ? 1.0 : 0.0);
-
-    if (power.GetPowerLevel() > 0.0) {
-        animHoverDoors_.Update(simdt, isDoorSwitchOpen_ ? 1.0 : 0.0);
+    bool areDoorsMoving = false;
+    if (power.GetPowerLevel() > 20.0) {
+        animHoverDoors_.Update(simdt, togPower_.IsOn() ? 1.0 : 0.0);
+        auto currentDoorPos = animHoverDoors_.GetCurrent();
+        areDoorsMoving = currentDoorPos > 0.01 && currentDoorPos < 0.99;
     }
+
+    power.DrawPower(areDoorsMoving ? SR71R::HOVER_AMPS : 0.0);
 }
 
-
-inline void HoverEngines::UpdateVCUI(bco::Vessel& vessel)
+inline void HoverEngines::LoadState(const std::string& line)
 {
-    vessel.SetAnimation(aidVCDoorSwitch_, animVCDoorSwitch_.GetCurrent());
+      std::istringstream is(line);
+   
+      int doorState;
+      double doorPos;
+      is >> doorState >> doorPos;
+      togPower_.SetState(doorState != 0);
+      animHoverDoors_.LoadState(doorPos, togPower_.IsOn() ? 1.0 : 0.0);
+
 }
-
-inline void HoverEngines::UpdateRightPanelUI(MESHHANDLE mesh)
+inline std::string HoverEngines::GetState() const 
 {
-    bco::DrawPanelOnOff(mesh, bm::pnlright::pnlHoverDoor_id, bm::pnlright::pnlHoverDoor_vrt, isDoorSwitchOpen_, SR71R::TogglePnlOffset);
-}
-
-inline void HoverEngines::LoadState(const std::string& line){}
-inline std::string HoverEngines::GetState() const {}
-
-inline void HoverEngines::LoadVC()
-{
-    bco::LoadVCSimpleEvent(eventId_Door_, bm::vc::swHoverDoor_loc, SR71R::ToggleHitRadius);
-}
-
-inline void HoverEngines::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
-{
-    bco::LoadPanelSimpleEvent(vessel, eventId_Door_, handle, bm::pnlright::pnlHoverDoor_RC);
+    std::ostringstream out;
+    out << (togPower_.IsOn() ? 1 : 0) << " " << animHoverDoors_.GetCurrent();
+    return out.str();
 }

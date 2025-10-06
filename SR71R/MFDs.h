@@ -171,34 +171,25 @@ inline void MFDs::Setup(bco::Vessel& vessel)
       // Register events:
       for (auto& a : left_data_)
       {
-         a.id = vessel.GetEventId();
-         vessel.RegisterEventHandler(a.id, [a](int id, int event) { return oapiProcessMFDButton(MFD_LEFT, a.key, event); });
-         vessel.RegisterVCRedrawEvent(a.id, [this, a](int id, int event, SURFHANDLE surf) { DrawVCButton(MFD_LEFT, a.key, surf); });
-         vessel.RegisterPanelRedrawEvent(a.id, [this, a](int id, int event, SURFHANDLE surf) { DrawPanelButton(MFD_LEFT, a.key, a.row, a.col, surf); });
+         a.id = vessel.RegisterEventHandler([a](int id, int event) { return oapiProcessMFDButton(MFD_LEFT, a.key, event); });
+         vessel.RegisterVCRedrawEvent(a.id, [this, a](int id, int event, SURFHANDLE surf, DEVMESHHANDLE) { DrawVCButton(MFD_LEFT, a.key, surf); });
+         vessel.AddPanelRedrawEvent(a.id, [this, a](int id, int event, SURFHANDLE surf) { DrawPanelButton(MFD_LEFT, a.key, a.row, a.col, surf); });
       }
 
-      eventId_LeftPwr_ = vessel.GetEventId();
-      eventId_LeftSel_ = vessel.GetEventId();
-      eventId_LeftMenu_ = vessel.GetEventId();
-
-      vessel.RegisterEventHandler(eventId_LeftPwr_,     [this](int id, int event) { oapiToggleMFD_on(MFD_LEFT); return true; });
-      vessel.RegisterEventHandler(eventId_LeftSel_,     [this](int id, int event) { oapiSendMFDKey(MFD_LEFT, OAPI_KEY_F1); return true; });
-      vessel.RegisterEventHandler(eventId_LeftMenu_,    [this](int id, int event) { oapiSendMFDKey(MFD_LEFT, OAPI_KEY_GRAVE); return true; });
+      eventId_LeftPwr_ = vessel.RegisterEventHandler([this](int id, int event) { oapiToggleMFD_on(MFD_LEFT); return true; });
+      eventId_LeftSel_ = vessel.RegisterEventHandler([this](int id, int event) { oapiSendMFDKey(MFD_LEFT, OAPI_KEY_F1); return true; });
+      eventId_LeftMenu_ = vessel.RegisterEventHandler([this](int id, int event) { oapiSendMFDKey(MFD_LEFT, OAPI_KEY_GRAVE); return true; });
 
       for (auto& a : right_data_)
       {
-         a.id = vessel.GetEventId();
-         vessel.RegisterEventHandler(a.id, [a](int id, int event) { return oapiProcessMFDButton(MFD_RIGHT, a.key, event); });
-         vessel.RegisterVCRedrawEvent(a.id, [this, a](int id, int event, SURFHANDLE surf) { DrawVCButton(MFD_RIGHT, a.key, surf); });
-         vessel.RegisterPanelRedrawEvent(a.id, [this, a](int id, int event, SURFHANDLE surf) { DrawPanelButton(MFD_RIGHT, a.key, a.row, a.col, surf); });
+         a.id = vessel.RegisterEventHandler([a](int id, int event) { return oapiProcessMFDButton(MFD_RIGHT, a.key, event); });
+         vessel.RegisterVCRedrawEvent(a.id, [this, a](int id, int event, SURFHANDLE surf, DEVMESHHANDLE) { DrawVCButton(MFD_RIGHT, a.key, surf); });
+         vessel.AddPanelRedrawEvent(a.id, [this, a](int id, int event, SURFHANDLE surf) { DrawPanelButton(MFD_RIGHT, a.key, a.row, a.col, surf); });
       }
-      eventId_RightPwr_ = vessel.GetEventId();
-      eventId_RightSel_ = vessel.GetEventId();
-      eventId_RightMenu_ = vessel.GetEventId();
 
-      vessel.RegisterEventHandler(eventId_RightPwr_,    [this](int id, int event) { oapiToggleMFD_on(MFD_RIGHT); return true; });
-      vessel.RegisterEventHandler(eventId_RightSel_,    [this](int id, int event) { oapiSendMFDKey(MFD_RIGHT, OAPI_KEY_F1); return true; });
-      vessel.RegisterEventHandler(eventId_RightMenu_,   [this](int id, int event) { oapiSendMFDKey(MFD_RIGHT, OAPI_KEY_GRAVE); return true; });
+      eventId_RightPwr_ = vessel.RegisterEventHandler([this](int id, int event) { oapiToggleMFD_on(MFD_RIGHT); return true; });
+      eventId_RightSel_ = vessel.RegisterEventHandler([this](int id, int event) { oapiSendMFDKey(MFD_RIGHT, OAPI_KEY_F1); return true; });
+      eventId_RightMenu_ = vessel.RegisterEventHandler([this](int id, int event) { oapiSendMFDKey(MFD_RIGHT, OAPI_KEY_GRAVE); return true; });
 }
 
 inline void MFDs::LoadVC(bco::Vessel& vessel)

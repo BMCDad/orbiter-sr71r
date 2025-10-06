@@ -26,6 +26,4 @@ public:
     virtual double GetSetHeading() const = 0;
     virtual double GetSetCourse() const = 0;
     virtual DWORD GetNavSource() const = 0;
-
-
 };

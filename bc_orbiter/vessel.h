@@ -19,6 +19,7 @@
 
 #include "Types.h"
 #include "AnimationGroup.h"
+#include "IUIControl.h"
 
 #include <map>
 
@@ -70,12 +71,12 @@ namespace bc_orbiter
         virtual void Step(Vessel& vessel, double simt, double simdt, double mjd) {};
 
         /**
-        \brief Registers a mesh with the vessel.
-        \param meshName - The name of the mesh to register.  Orbiter will load the mesh from the global mesh directory.
+        \brief Loads a mesh file and sets its visibility mode.
+        \param meshName - The name of the mesh to register.  This is the name of the mesh file in the global mesh directory, without the .msh extension.
         \param visibility - The visibility mode for the mesh (e.g., MESHVIS_EXTERNAL, MESHVIS_VC).
-        \return The index of the registered mesh.
+        \return The index of the registered mesh.  This is needed when animating or modifying mesh groups.
         */
-        UINT RegisterMesh(const char* meshName, WORD visibility);
+        UINT LoadMesh(const char* meshName, WORD visibility);
 
         /**
         \brief Returns the index of a mesh by its name.
@@ -101,38 +102,22 @@ namespace bc_orbiter
         // Manage events
 
         /**
-        \brief Gets a unique event ID for registering events.
-        */
-        int GetEventId() { return nextEventId_++; } 
-
-        /**
-        \brief Registers a custom event handler.
-        */
-        void RegisterEventHandler(int eventId, FuncEventHandler handler);
-
-        /**
-        \brief Registers a virtual cockpit mouse event handler.  The derived class should call this
-        method during vessel initialization (e.g., in SetClassCaps).
-        \param location - The location of the event in the virtual cockpit.
+        \brief Creates a unique event ID and registers an event handler for it.  During panel or VC loading,
+        the derived class will 'hook up' the mouse click event to the event ID.
         \param handler - The event handler to call when the event is triggered.
-        \param radius - The radius of the event in meters.
-        \param vcId - The virtual cockpit ID the event is associated with.  Default is 0.
         \return The ID of the registered event.
         */
-        int RegisterVCEvent(VECTOR3 location, double radius, FuncEventHandler handler, int vcId = 0);
+        int RegisterEventHandler(FuncEventHandler handler);
 
+        void RegisterVCRedrawEvent(int id, FuncRedrawVCEvent handler);
+        
         /**
-        \brief Registers a 2D panel mouse event handler.  The derived class should call this
-        method during vessel initialization (e.g., in SetClassCaps).
-        \param rc - The rectangle of the event in screen coordinates.
-        \param handler - The event handler to call when the event is triggered.
-        \param panelId - The panel ID the event is associated with.  Default is 0.
-        \return The ID of the registered event.
+        \brief Add a panel redraw event handler for a specific panel area.  When a redraw is requested for the panel area,
+        the handler will be called.
+        \param id - The ID of the panel area to add the redraw event for.
+        \param handler - The event handler to call when a redraw is requested for the panel area.
         */
-        int RegisterPanelEvent(const RECT& rc, FuncEventHandler handler, int panelId = 0);
-
-        void RegisterVCRedrawEvent(int id, FuncRedrawEvent handler);
-        void RegisterPanelRedrawEvent(int id, FuncRedrawEvent handler);
+        void AddPanelRedrawEvent(int id, FuncRedrawEvent handler);
 
         /**
         \brief Creates a vessel animation.  This method should be called during vessel initialization (e.g., in SetClassCaps).
@@ -194,10 +179,21 @@ namespace bc_orbiter
         void    clbkPostStep(double simt, double simdt, double mjd) override;
         bool    clbkVCRedrawEvent(int id, int event, SURFHANDLE surf) override;
         bool    clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context) override;
+        void    clbkVisualCreated(VISHANDLE visHandle, int refCount) override;
+        void    clbkVisualDestroyed(VISHANDLE vis, int refcount) override;
 
         // Speeds
         double GetKeas() const;
         double GetKias() const;
+        double GetGs() const;
+        double GetVerticalSpeedFPM() const;
+
+        bool IsStoppedOrDocked()
+        {
+            vesselStatus_.flag = 0;
+            GetStatusEx(&vesselStatus_);
+            return ((vesselStatus_.status == 1) || (DockingStatus(0) == 1));
+        }
 
         void WriterOrbiterLog(const std::string& message) const  
         {  
@@ -207,13 +203,29 @@ namespace bc_orbiter
             oapiWriteLog(logMessage);  
         }
 
+        // UI controls
+        void RegisterUIControl(IUIControl& control);
+
+        /**
+        * \brief Gets the visual handle for the vessel. NOTE: This handle is only valid after the visual has been created
+        * so check for nullptr.
+        */
+        DEVMESHHANDLE GetDeviceMesh(UINT meshIndex);
+
+        /**
+        \brief Gets a unique ID for registering vessel controls.
+        */
+        int GetControlId() { return nextControlId_++; }
+
     private:
+
+        VISHANDLE visualHandle_ { nullptr };
         // Mesh
         std::map<std::string, UINT> meshIndices_;
         std::map<int, MESHHANDLE> panelMeshes_;
 
         // Events
-        int nextEventId_{ 1 };
+        int nextControlId_{ 1 };
 
         //struct VCEventEntry
         //{
@@ -236,24 +248,49 @@ namespace bc_orbiter
 //        std::unordered_map<int, PanelEventEntry> panelMouseEvents_;
         std::unordered_map<int, FuncEventHandler> eventHandlers_;
 
-        std::unordered_map<int, FuncRedrawEvent> vcRedrawEvents_;
+        std::unordered_map<int, FuncRedrawVCEvent> vcRedrawEvents_;
         std::unordered_map<int, FuncRedrawEvent> panelRedrawEvents_;
 
         // Animation management
         std::vector<std::unique_ptr<AnimationGroup>> animations_;
+
+        // UI controls
+        std::vector<IUIControl*>    uiControls_;
+        std::vector<ITimeStepVC*>     uiVCControls_;
+        std::vector<ITimeStepPanel*>  uiPanelControls_;
+
+        int currentPanelId_{ -1 };
+
+        VESSELSTATUS2   vesselStatus_;
+
+        // There is support for only one VC mesh per vessel (ID = 0)
+        DEVMESHHANDLE   vcDevMesh_      { nullptr };
+        UINT            vcMeshIndex_    { UINT_MAX };
     };
 
     inline Vessel::Vessel(OBJHANDLE hvessel, int flightmodel) : VESSEL4(hvessel, flightmodel)
-    { }
+    { 
+        memset(&vesselStatus_, 0, sizeof(vesselStatus_));
+        vesselStatus_.version = 2;
+    }
 
     inline Vessel::~Vessel(){}
 
     inline void Vessel::clbkSetClassCaps(FILEHANDLE cfg) {
         SetClassCaps();
+
+        for (auto control : uiControls_) {
+            control->Setup(*this);
+        }
+
         VESSEL4::clbkSetClassCaps(cfg);
     }
 
     inline bool Vessel::clbkLoadVC(int vcId) {
+        for (auto& c : uiControls_) {
+            c->LoadVC(vcId, *this);
+        }
+
         return LoadVC(vcId);
     }
 
@@ -276,29 +313,54 @@ namespace bc_orbiter
     }
 
     inline bool Vessel::clbkLoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD viewH) {
-         return LoadPanel2D(id, hPanel, viewW, viewH);
+        currentPanelId_ = id;
+        for (auto& c : uiControls_) {
+            c->LoadPanel(id, *this, hPanel);
+        }
+        return LoadPanel2D(id, hPanel, viewW, viewH);
     }
 
     inline void Vessel::clbkPostStep(double simt, double simdt, double mjd)
     {
         Step(*this, simdt, simdt, mjd); // Call the Step method to update the vessel's state
 
+        for (auto& c : uiControls_) {
+            c->TimeStep(*this, simdt);
+        }
+
+        // Note: vcDevMesh_ can be nullptr if the visual hasn't been created yet.
+        if ((oapiCockpitMode() == COCKPIT_VIRTUAL) && vcDevMesh_) {
+            for (auto& c : uiVCControls_) {
+                c->TimeStepVC(*this, simdt, vcDevMesh_);
+            }
+        }
+
+        if ((oapiCockpitMode() == COCKPIT_PANELS)) {
+            MESHHANDLE panelMesh = GetPanelMeshHandle(currentPanelId_);
+            assert(panelMesh != nullptr); // Panel mesh not found, make sure to register it during initialization
+            for (auto& c : uiPanelControls_) {
+                c->TimeStepPanel(*this, simdt, currentPanelId_, panelMesh);
+            }
+        }
+
         VESSEL4::clbkPostStep(simt, simdt, mjd);
     }
 
     inline bool Vessel::clbkVCRedrawEvent(int id, int event, SURFHANDLE surf)
     {
+        if (nullptr == vcDevMesh_) return false;
+
         auto it = vcRedrawEvents_.find(id);
-         if (it != vcRedrawEvents_.end())
-         {
-               const auto& handler = it->second;
-               handler(id, event, surf);
-               return true;
-         }
-         return false;
+        if (it != vcRedrawEvents_.end())
+        {
+            const auto& handler = it->second;
+            handler(id, event, surf, vcDevMesh_);
+            return true;
+        }
+        return false;
     }
 
-    inline bool Vessel::clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf, void* context)
+    inline bool Vessel::clbkPanelRedrawEvent(int id /*panel area id*/, int event /*redraw type*/, SURFHANDLE surf, void* context)
     {
         auto it = panelRedrawEvents_.find(id);
          if (it != panelRedrawEvents_.end())
@@ -310,11 +372,33 @@ namespace bc_orbiter
          return false;
     }
 
-    inline UINT Vessel::RegisterMesh(const char* meshName, WORD visibility)
+    inline void Vessel::clbkVisualCreated(VISHANDLE visHandle, int refCount)
+    {
+        visualHandle_ = visHandle;
+        if (vcMeshIndex_ != UINT_MAX)
+        {
+            vcDevMesh_ = GetDevMesh(visualHandle_, vcMeshIndex_);
+        }
+    }
+
+    inline void Vessel::clbkVisualDestroyed(VISHANDLE vis, int refcount)
+    {
+        visualHandle_ = nullptr;
+        vcDevMesh_ = nullptr;
+    }
+
+    inline UINT Vessel::LoadMesh(const char* meshName, WORD visibility)
     {
         UINT meshIndex = AddMesh(oapiLoadMeshGlobal(meshName));
         SetMeshVisibilityMode(meshIndex, visibility);
         meshIndices_[meshName] = meshIndex;
+
+        // If this is the VC mesh, store its index and dev mesh handle
+         if (visibility & MESHVIS_VC)
+         {
+               vcMeshIndex_ = meshIndex;
+         }
+
         return meshIndex;
     }
 
@@ -327,6 +411,7 @@ namespace bc_orbiter
         }
 
         WriterOrbiterLog("GetMeshIndex: Mesh not found: " + std::string(meshName));
+        assert(false); // Mesh not found
         return 0; // Mesh not found
     }
 
@@ -354,34 +439,22 @@ namespace bc_orbiter
          return nullptr; // Panel mesh not found
     }
 
-    inline void Vessel::RegisterEventHandler(int eventId, FuncEventHandler handler)
+    inline int Vessel::RegisterEventHandler(FuncEventHandler handler)
     {
-         eventHandlers_[eventId] = handler;
+        auto id = GetControlId();
+        eventHandlers_[id] = handler;
+        return id;
     }
 
-    inline void Vessel::RegisterVCRedrawEvent(int id, FuncRedrawEvent handler)
+    inline void Vessel::RegisterVCRedrawEvent(int id, FuncRedrawVCEvent handler)
     {
         vcRedrawEvents_[id] = handler;
     }
 
-    inline void Vessel::RegisterPanelRedrawEvent(int id, FuncRedrawEvent handler)
+    inline void Vessel::AddPanelRedrawEvent(int id, FuncRedrawEvent handler)
     {
         panelRedrawEvents_[id] = handler;
     }
-
-    //inline int Vessel::RegisterVCEvent(VECTOR3 location, double radius, FuncEventHandler handler, int vcId)
-    //{
-    //    int id = nextEventId_++;
-    //    vcMouseEvent_.emplace(id, VCEventEntry{ id, location, radius, handler, vcId });
-    //    return id;
-    //}
-
-    //inline int Vessel::RegisterPanelEvent(const RECT& rc, FuncEventHandler handler, int panelId)
-    //{
-    //    int id = nextEventId_++;
-    //    panelMouseEvents_.emplace(id, PanelEventEntry{ id, rc, handler, panelId });
-    //    return id;
-    //}
 
     inline UINT Vessel::CreateVesselAnimation()
     {
@@ -464,5 +537,56 @@ namespace bc_orbiter
 
         result = ias * 1.94384; // To knots.
         return result;
+    }
+
+    inline double Vessel::GetGs() const
+    {
+        VECTOR3 vW, vF;
+        GetWeightVector(vW);
+        GetForceVector(vF);
+        auto m = GetMass();
+
+        auto vA = (vF - vW) / m;
+        return length(vA) / 9.81;
+    }
+
+    inline double Vessel::GetVerticalSpeedFPM() const
+    {
+        VECTOR3 V;
+        double vspdFPM = 0.0;
+        if (GetAirspeedVector(FRAME_HORIZON, V))
+        {
+            vspdFPM = (V.y * 3.28084) * 60; // his gives us feet per minute.
+        }
+
+        return vspdFPM;
+    }
+
+    inline void Vessel::RegisterUIControl(IUIControl& control)
+    {
+        uiControls_.push_back(&control);
+
+        // If the control implements IUpdateVC, add it to the VC update list
+        if (dynamic_cast<ITimeStepVC*>(&control))
+        {
+            uiVCControls_.push_back(dynamic_cast<ITimeStepVC*>(&control));
+        }
+
+        // If the control implements IUpdatePanel, add it to the panel update list
+        if (dynamic_cast<ITimeStepPanel*>(&control))
+        {
+            uiPanelControls_.push_back(dynamic_cast<ITimeStepPanel*>(&control));
+        }
+    }
+
+    inline DEVMESHHANDLE Vessel::GetDeviceMesh(UINT meshIndex)
+    {
+        DEVMESHHANDLE devMesh = nullptr;
+        if (nullptr != visualHandle_)
+        {
+            devMesh = GetDevMesh(visualHandle_, meshIndex);
+        }
+
+        return devMesh;
     }
 }

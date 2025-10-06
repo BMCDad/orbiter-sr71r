@@ -1,6 +1,6 @@
 /*
-Avionics - SR-71r Orbiter Addon
-Copyright(C) 2015  Blake Christensen
+IFuelCellSystem - SR-71r Orbiter Addon
+Copyright(C) 2025  Blake Christensen
 
 This program is free software : you can redistribute it and / or modify
 it under the terms of the GNU General Public License as published by
@@ -17,11 +17,9 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 */
 #pragma once
 
-// REFACTOR : Move into bco.
-
-class IFuelSystem
+class IFuelCellSystem
 {
 public:
-    virtual double GetMainFuelLevel() const = 0;
-    virtual PROPELLANT_HANDLE GetMainProppelantHandle() const = 0;
+    virtual double VoltsAvailable() const = 0;
 };
+

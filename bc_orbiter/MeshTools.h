@@ -236,7 +236,8 @@ namespace bc_orbiter
     * Translates the UV coordinates of a quad in a mesh group by the specified x and y offsets.
     * This method assumes the quad is defined by 4 vertices in the NTVERTEX array.
     */
-    inline void TranslateUVQuad(MESHHANDLE mesh, UINT group, const NTVERTEX* verts, double x, double y)
+    template<typename T>
+    inline void TranslateUVQuad(T mesh, UINT group, const NTVERTEX* verts, double x, double y)
     {
          if (NULL == mesh)
          {
@@ -413,5 +414,22 @@ namespace bc_orbiter
                 xCurrent += font.charWidth;
             }
         }
+    }
+
+    /**
+    /brief Calculates the UV offset for a quad defined by the NTVERTEX array.  
+    Returns the difference between the max and min U values.  This is used
+    to get the offet needed to draw on/off panels.
+    */
+    inline double UVOffset(const NTVERTEX* nv)
+    {
+        double maxv = nv->tu;
+        double minv = nv->tu;
+        for (int x = 1; x < 4; x++) {
+            maxv = max(maxv, nv[x].tu);
+            minv = min(minv, nv[x].tu);
+        }
+
+        return maxv - minv;
     }
 }

@@ -2,6 +2,19 @@
 ClockTimer - SR-71r Orbiter Addon
 Copyright(C) 2025  Blake Christensen
 
+This program is free software : you can redistribute it and / or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see <http://www.gnu.org/licenses/>.
+
 ClockTimer has a mission elapsed timer that uses hours and seconds.  It can
 be reset to 0, but is always running.  It also has a stop watch timer that
 uses minutes and seconds.  It can be started, stopped and reset.  It uses
@@ -23,21 +36,6 @@ Events:
     ResetTimer:  If timer is zero, it starts the timer.  If timer
         is running, it stops the timer.  If timer is stopped and
         not zero, the timer is reset to zero.
-
------
-
-This program is free software : you can redistribute it and / or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
@@ -50,20 +48,18 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 #include "..\bc_orbiter\Tools.h"
 
 #include "SR71r_mesh.h"
+#include "SR71WrapGauge.h"
 
 namespace bco = bc_orbiter;
 
 class ClockTimer
 {
 public:
-    ClockTimer() = default;
+    ClockTimer(bco::Vessel& vessel);
     ~ClockTimer() = default;
 
-    void Setup(bco::Vessel& vessel);            // Called from SetClassCaps.
-
+    void Setup(bco::Vessel& vessel);
     void UpdateState(double simdt);             // Called from Step() in the vessel to update clock state.
-    void UpdateVCUI(bco::Vessel& vessel);       // Called to update the VC UI when the VC is active.
-    void UpdateMainPanelUI(MESHHANDLE mesh);    // Called to update the 2D panel UI when the panel is active.
 
     void LoadVC();       // Called when the VC is loaded to setup animations.
     void LoadPanel(bco::Vessel& vessel, PANELHANDLE handle);    // Called when the 2D panel is loaded to setup animations.
@@ -95,7 +91,62 @@ private:
 
     int eventId_ResetElapsed_{ -1 };
     int eventId_ToggleTimer_{ -1 };
+
+    double secondValue_{ 0.0 };
+    double minuteValue_{ 0.0 };
+    double hourValue_{ 0.0 };
+    double timerMinuteValue_{ 0.0 };
+
+    SR71::WrapGauge secondHand_{
+        { bm::vc::ClockSecond_id },
+        bm::vc::ClockSecond_loc, bm::vc::ClockAxisFront_loc,
+        bm::pnl::pnlClockSecond_id,
+        bm::pnl::pnlClockSecond_vrt,
+        secondValue_,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::WrapGauge minuteHand_{
+        { bm::vc::ClockMinute_id },
+        bm::vc::ClockMinute_loc, bm::vc::ClockAxisFront_loc,
+        bm::pnl::pnlClockMinute_id,
+        bm::pnl::pnlClockMinute_vrt,
+        minuteValue_,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::WrapGauge hourHand_{
+        { bm::vc::ClockHour_id },
+        bm::vc::ClockHour_loc, bm::vc::ClockAxisFront_loc,
+        bm::pnl::pnlClockHour_id,
+        bm::pnl::pnlClockHour_vrt,
+        hourValue_,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::WrapGauge timerMinuteHand_{
+        { bm::vc::ClockTimerMinute_id },
+        bm::vc::ClockTimerMinute_loc, bm::vc::ClockAxisFront_loc,
+        bm::pnl::pnlClockTimerMinute_id,
+        bm::pnl::pnlClockTimerMinute_vrt,
+        timerMinuteValue_,
+        SR71R::MainPanel_ID
+    };
 };
+
+inline ClockTimer::ClockTimer(bco::Vessel& vessel)
+{
+    vessel.RegisterUIControl(secondHand_);
+    vessel.RegisterUIControl(minuteHand_);
+    vessel.RegisterUIControl(hourHand_);
+    vessel.RegisterUIControl(timerMinuteHand_);
+}
+
+inline void ClockTimer::Setup(bco::Vessel& vessel)
+{
+    eventId_ResetElapsed_ = vessel.RegisterEventHandler([this](int, int) { ResetElapsed(); return true; });
+    eventId_ToggleTimer_ = vessel.RegisterEventHandler([this](int, int) { ToggleTimer(); return true; });
+}
 
 inline void ClockTimer::UpdateState(double simdt)
 {
@@ -106,10 +157,10 @@ inline void ClockTimer::UpdateState(double simdt)
 
     elapsedMissionSeconds_ += simdt;
 
-    animClockHour_.Update(simdt,        fmod((elapsedMissionSeconds_ / 3600), 12) / 12);
-    animClockMinute_.Update(simdt,      fmod((elapsedMissionSeconds_ / 60), 60) / 60);
-    animClockSecond_.Update(simdt,      fmod(timerSeconds_, 60) / 60);
-    animClockTimerMinute_.Update(simdt, fmod(timerSeconds_ / 60, 60) / 60);
+    hourValue_ = fmod((elapsedMissionSeconds_ / 3600), 12) / 12;
+    minuteValue_ = fmod((elapsedMissionSeconds_ / 60), 60) / 60;
+    secondValue_ = fmod(timerSeconds_, 60) / 60;
+    timerMinuteValue_ = fmod(timerSeconds_ / 60, 60) / 60;
 }
 
 inline void ClockTimer::ToggleTimer()
@@ -159,66 +210,6 @@ inline std::string ClockTimer::GetState() const
     return out.str();
 }
 
-inline void ClockTimer::Setup(bco::Vessel& vessel)  
-{  
-    eventId_ResetElapsed_ = vessel.GetEventId();  
-    eventId_ToggleTimer_ = vessel.GetEventId();  
-
-    vessel.RegisterEventHandler(eventId_ResetElapsed_,  [this](int, int) { ResetElapsed(); return true; });
-    vessel.RegisterEventHandler(eventId_ToggleTimer_,   [this](int, int) { ToggleTimer(); return true; });  
-
-    //// VC Events:  
-    //vessel.RegisterVCEvent(bm::vc::ClockElapsedReset_loc, 0.01, [&]() { ResetElapsed(); }, 0);  
-    //vessel.RegisterVCEvent(bm::vc::ClockTimerReset_loc, 0.01, [&]() { ToggleTimer(); }, 0);  
-
-    //// Panel Events:  
-    //vessel.RegisterPanelEvent(bm::pnl::pnlClockElapsedReset_RC, [&]() { ResetElapsed(); }, 0);  
-    //vessel.RegisterPanelEvent(bm::pnl::pnlClockTimerReset_RC, [&]() { ToggleTimer(); }, 0);  
-
-    // VC Animations:  
-    auto vcIndex = vessel.GetMeshIndex(bm::vc::MESH_NAME);  
-
-    // VC Timer seconds hand  
-    aidVCClockSecond_ = vessel.CreateVesselAnimation();  
-    vessel.AddAnimationGroup(  
-        aidVCClockSecond_,  
-        vcIndex,  
-        { bm::vc::ClockSecond_id },  
-        bm::vc::ClockSecond_loc, bm::vc::ClockAxisFront_loc,  
-        (360.0 * RAD),  
-        0, 1);  
-
-    // VC Timer minutes hand  
-    aidVCClockTimerMinute_ = vessel.CreateVesselAnimation();  
-    vessel.AddAnimationGroup(  
-        aidVCClockTimerMinute_,  
-        vcIndex,  
-        { bm::vc::ClockTimerMinute_id },  
-        bm::vc::ClockTimerMinute_loc, bm::vc::ClockAxisFront_loc,  
-        (360.0 * RAD),  
-        0, 1);  
-
-    // VC Mission elapsed minutes hand  
-    aidVCClockMinute_ = vessel.CreateVesselAnimation();  
-    vessel.AddAnimationGroup(  
-        aidVCClockMinute_,  
-        vcIndex,  
-        { bm::vc::ClockMinute_id },  
-        bm::vc::ClockMinute_loc, bm::vc::ClockAxisFront_loc,  
-        (360.0 * RAD),  
-        0, 1);  
-
-    // VC Mission elapsed hours hand  
-    aidVCClockHour_ = vessel.CreateVesselAnimation();  
-    vessel.AddAnimationGroup(  
-        aidVCClockHour_,  
-        vcIndex,  
-        { bm::vc::ClockHour_id },  
-        bm::vc::ClockHour_loc, bm::vc::ClockAxisFront_loc,  
-        (360.0 * RAD),  
-        0, 1);  
-}
-
 inline void ClockTimer::LoadVC()
 {
     bco::LoadVCSimpleEvent(eventId_ResetElapsed_, bm::vc::ClockElapsedReset_loc, 0.01);
@@ -229,20 +220,4 @@ inline void ClockTimer::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
 {
     bco::LoadPanelSimpleEvent(vessel, eventId_ResetElapsed_, handle, bm::pnl::pnlClockElapsedReset_RC);
     bco::LoadPanelSimpleEvent(vessel, eventId_ToggleTimer_, handle, bm::pnl::pnlClockTimerReset_RC);
-}
-
-inline void ClockTimer::UpdateVCUI(bco::Vessel& vessel)
-{
-    vessel.SetAnimation(aidVCClockHour_,        animClockHour_.GetCurrent());
-    vessel.SetAnimation(aidVCClockMinute_,      animClockMinute_.GetCurrent());
-    vessel.SetAnimation(aidVCClockSecond_,      animClockSecond_.GetCurrent());
-    vessel.SetAnimation(aidVCClockTimerMinute_, animClockTimerMinute_.GetCurrent());
-}
-
-inline void ClockTimer::UpdateMainPanelUI(MESHHANDLE mesh)
-{
-    bco::RotateMesh(mesh, bm::pnl::pnlClockHour_id,         bm::pnl::pnlClockHour_vrt,          animClockHour_.GetCurrent() * -PI2);
-    bco::RotateMesh(mesh, bm::pnl::pnlClockMinute_id,       bm::pnl::pnlClockMinute_vrt,        animClockMinute_.GetCurrent() * -PI2);
-    bco::RotateMesh(mesh, bm::pnl::pnlClockSecond_id,       bm::pnl::pnlClockSecond_vrt,        animClockSecond_.GetCurrent() * -PI2);
-    bco::RotateMesh(mesh, bm::pnl::pnlClockTimerMinute_id,  bm::pnl::pnlClockTimerMinute_vrt,   animClockTimerMinute_.GetCurrent() * -PI2);
 }

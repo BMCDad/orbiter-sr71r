@@ -2,11 +2,6 @@
 Landing Gear - SR-71r Orbiter Addon
 Copyright(C) 2025  Blake Christensen
 
-Manages the landing gear of the SR-71r.  The landing gear is powered by hydraulic power
-via the apu.
-
------
-
 This program is free software : you can redistribute it and / or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -19,6 +14,15 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.If not, see <http://www.gnu.org/licenses/>.
+
+Manages the landing gear of the SR-71r.  The landing gear is powered by hydraulic power
+via the apu.
+
+Configuration:
+GEAR a b
+a = 0/1 up/down.
+b = 0.0 position
+
 */
 
 #pragma once
@@ -81,11 +85,9 @@ private:
 inline void LandingGear::Setup(bco::Vessel& vessel)
 {
     // Events
-    eventId_GearUp_ = vessel.GetEventId();
-    eventId_GearDown_ = vessel.GetEventId();
 
-    vessel.RegisterEventHandler(eventId_GearUp_,    [this](int, int) { RaiseLandingGear(); return true; });
-    vessel.RegisterEventHandler(eventId_GearDown_,  [this](int, int) { LowerLandingGear(); return true; });
+    eventId_GearUp_ = vessel.RegisterEventHandler([this](int, int) { RaiseLandingGear(); return true; });
+    eventId_GearDown_ = vessel.RegisterEventHandler([this](int, int) { LowerLandingGear(); return true; });
 
     aidVCLandingGearSwitch_ = vessel.CreateVesselAnimation();
     aidLandingGear_ = vessel.CreateVesselAnimation();
@@ -252,4 +254,23 @@ inline void LandingGear::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
 {
     bco::LoadPanelSimpleEvent(vessel, eventId_GearUp_, handle, bm::pnl::pnlLandingGearUp_RC);
     bco::LoadPanelSimpleEvent(vessel, eventId_GearDown_, handle, bm::pnl::pnlLandingGearDown_RC);
+}
+
+inline void LandingGear::LoadState(const std::string& line)
+{ 
+      std::istringstream is(line);
+   
+      int gearState;
+      double position;
+
+      is >> gearState >> position;
+      isLandingGearDeployed_ = (gearState != 0);
+      animLandingGear_.LoadState(position, isLandingGearChanged_ ? 1.0 : 0.0);
+}
+
+inline std::string LandingGear::GetState() const
+{
+    std::ostringstream out;
+    out << (isLandingGearDeployed_ ? 1 : 0) << " " << (animLandingGear_.GetCurrent());
+    return out.str();
 }

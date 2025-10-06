@@ -14,6 +14,26 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.If not, see <http://www.gnu.org/licenses/>.
+
+Airspeed
+
+KEAS - Knots Equivalent Air Speed
+        KEAS is shown on the TDI and is more accurate at higher speeds and altitudes.
+
+KIAS - Knots Indicated Air Speed
+        KIAS is shown on the dial and is more accurate at lower speeds and altitudes.
+
+MACH - Mach number, ratio of the speed of the aircraft to the speed of sound.
+        MACH is shown on the TDI and the dial.
+
+MAX MACH - Maximum safe MACH for the given altitude.  Shown as a red error bar on the dial.
+        The MAX MACH is calculated based on altitude and temperature.
+
+OFF FLAG - Shows when there is no power to the avionics system, or avionics is turned off.
+
+GND FLAG - When avionics is in EXO mode, the mach gauge shows raw speed (velocity).
+
+TODO:  Review the airspeed calculations and see if they can be improved.
 */
 
 #pragma once
@@ -25,7 +45,11 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 #include "..\bc_orbiter\MeshTools.h"
 
 #include "SR71r_mesh.h"
+#include "SR71rVC_mesh.h"
 #include "ShipMets.h"
+#include "SR71Gauge.h"
+#include "SR71Light.h"
+#include "SR71Barrel.h"
 
 #include "IAvionics.h"
 
@@ -34,13 +58,10 @@ namespace bco = bc_orbiter;
 class Airspeed
 {
 public:
-    Airspeed() = default;
+    Airspeed(bco::Vessel& vessel);
     ~Airspeed() = default;
-    void Setup(bco::Vessel& vessel);
     
     void UpdateState(bco::Vessel& vessel, double simdt, IAvionics& avionics);
-    void UpdateVCUI(bco::Vessel& vessel, MESHHANDLE mesh);   // Called to update the VC UI when the VC is active.
-    void UpdateMainPanelUI(MESHHANDLE mesh);    // Called to update the 2D panel UI when the panel is active.
     
     void LoadState(const std::string& line);
     std::string GetState() const;
@@ -53,55 +74,83 @@ private:
     const double RollOffset = 0.1084;		// flat_roll offset.
 
     const double ANGLE = -(300.0 * RAD); // 300 degrees in radians.
-    bco::AnimatedValue<bco::StateUpdateTarget>  animMachHand_       { 2.0 };
-    bco::AnimatedValue<bco::StateUpdateTarget>  animKiesHand_       { 2.0 };
     bco::AnimatedValue<bco::StateUpdateTarget>  animMaxMachHand_    { 2.0 };
 
-    bco::AnimatedValue<bco::StateUpdateWrap>    animTDIKeasOne_     { 1.0 };
-    bco::AnimatedValue<bco::StateUpdateWrap>    animTDIKeasTen_     { 1.0 };
-    bco::AnimatedValue<bco::StateUpdateWrap>    animTDIKeasHundred_ { 1.0 };
+    SR71::Barrel tdiKeasOne_{   bm::vc::vcTDIKeasOnes_id,   bm::vc::vcTDIKeasOnes_vrt,  bm::pnl::pnlTDIKEASOnes_id,     bm::pnl::pnlTDIKEASOnes_vrt,    SR71R::MainPanel_ID };
+    SR71::Barrel tdiKeasTen_{   bm::vc::vcTDIKeasTens_id,   bm::vc::vcTDIKeasTens_vrt,  bm::pnl::pnlTDIKEASTens_id,     bm::pnl::pnlTDIKEASTens_vrt,    SR71R::MainPanel_ID };
+    SR71::Barrel tdiKeasHund_{  bm::vc::vcTDIKeasHunds_id,  bm::vc::vcTDIKeasHunds_vrt, bm::pnl::pnlTDIKEASHunds_id,    bm::pnl::pnlTDIKEASHunds_vrt,   SR71R::MainPanel_ID };
 
-    bco::AnimatedValue<bco::StateUpdateWrap>    animMACHOne_        { 1.0 };
-    bco::AnimatedValue<bco::StateUpdateWrap>    animMACHTens_       { 1.0 };
-    bco::AnimatedValue<bco::StateUpdateWrap>    animMACHHundred_    { 1.0 };
+    SR71::Barrel tdiMachOne_{  bm::vc::vcTDIMachOne_id,    bm::vc::vcTDIMachOne_vrt,   bm::pnl::pnlTDIMACHOne_id,      bm::pnl::pnlTDIMACHOne_vrt,     SR71R::MainPanel_ID };
+    SR71::Barrel tdiMachTen_{  bm::vc::vcTDIMachTens_id,   bm::vc::vcTDIMachTens_vrt,  bm::pnl::pnlTDIMACHTens_id,     bm::pnl::pnlTDIMACHTens_vrt,    SR71R::MainPanel_ID };
+    SR71::Barrel tdiMachHund_{ bm::vc::vcTDIMachHunds_id,  bm::vc::vcTDIMachHunds_vrt, bm::pnl::pnlTDIMACHHunds_id,    bm::pnl::pnlTDIMACHHunds_vrt,   SR71R::MainPanel_ID };
 
-    UINT aidVCMachHand_     { 0 };
-    UINT aidVCKiesHand_     { 0 };
     UINT aidVCMaxMachHand_  { 0 };
+
+    double machLevel_ = 0.0;
+    double kiesLevel_ = 0.0;
+    double machMaxlevel_ = 0.0;
+
+    SR71::Gauge gaugeMACHHand_{
+        bm::vc::vcMachHand_id,
+        bm::vc::vcMachHand_loc, bm::vc::SpeedAxis_loc,
+        bm::pnl::pnlMachHand_id,
+        bm::pnl::pnlMachHand_vrt,
+        (300 * RAD),
+        machLevel_,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::Gauge gaugeKEISHand_{
+        bm::vc::vcKiesHand_id,
+        bm::vc::vcKiesHand_loc, bm::vc::SpeedAxis_loc,
+        bm::pnl::pnlKiesHand_id,
+        bm::pnl::pnlKiesHand_vrt,
+        (300 * RAD),
+        kiesLevel_,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::Gauge gaugeMaxMAcHHand_{
+        bm::vc::vcMachMaxHand_id,
+        bm::vc::vcMachMaxHand_loc, bm::vc::SpeedAxis_loc,
+        bm::pnl::pnlMachMaxHand_id,
+        bm::pnl::pnlMachMaxHand_vrt,
+        (300 * RAD),
+        machMaxlevel_,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::Light flagEnabled_{
+        bm::vc::SpeedFlagOff_id,
+        bm::vc::SpeedFlagOff_vrt,
+        bm::pnl::pnlSpeedFlagOff_id,
+        bm::pnl::pnlSpeedFlagOff_vrt,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::Light flagVelocity_ {
+        bm::vc::SpeedVelocityFlag_id,
+        bm::vc::SpeedVelocityFlag_vrt,
+        bm::pnl::pnlSpeedVelocityFlag_id,
+        bm::pnl::pnlSpeedVelocityFlag_vrt,
+        SR71R::MainPanel_ID
+    };
 };
 
-inline void Airspeed::Setup(bco::Vessel& vessel)
+inline Airspeed::Airspeed(bco::Vessel& vessel)
 {
-    // VC Animations:
-    auto vcIndex = vessel.GetMeshIndex(bm::vc::MESH_NAME);
+    vessel.RegisterUIControl(gaugeMACHHand_);
+    vessel.RegisterUIControl(gaugeKEISHand_);
+    vessel.RegisterUIControl(gaugeMaxMAcHHand_);
+    vessel.RegisterUIControl(flagEnabled_);
+    vessel.RegisterUIControl(flagVelocity_);
 
-    aidVCMachHand_ = vessel.CreateVesselAnimation();
-    aidVCKiesHand_ = vessel.CreateVesselAnimation();
-    aidVCMachHand_ = vessel.CreateVesselAnimation();
-
-    vessel.AddAnimationGroup(
-        aidVCMachHand_,
-        vcIndex,
-        { bm::vc::vcMachHand_id },
-        bm::vc::vcMachHand_loc, bm::vc::SpeedAxis_loc, 
-        (300 * RAD), 
-        0, 1);
-
-    vessel.AddAnimationGroup(
-        aidVCKiesHand_,
-        vcIndex,
-        { bm::vc::vcKiesHand_id },
-        bm::vc::vcKiesHand_loc, bm::vc::SpeedAxis_loc,
-        (300 * RAD),
-        0, 1);
-
-    vessel.AddAnimationGroup(
-        aidVCMaxMachHand_,
-        vcIndex,
-        { bm::vc::vcMachMaxHand_id },
-        bm::vc::vcMachMaxHand_loc, bm::vc::SpeedAxis_loc,
-        (300 * RAD),
-        0, 1);
+    vessel.RegisterUIControl(tdiKeasOne_);
+    vessel.RegisterUIControl(tdiKeasTen_);
+    vessel.RegisterUIControl(tdiKeasHund_);
+    vessel.RegisterUIControl(tdiMachOne_);
+    vessel.RegisterUIControl(tdiMachTen_);
+    vessel.RegisterUIControl(tdiMachHund_);
 }
 
 inline void Airspeed::UpdateState(bco::Vessel& vessel, double simdt, IAvionics& avionics)
@@ -110,12 +159,17 @@ inline void Airspeed::UpdateState(bco::Vessel& vessel, double simdt, IAvionics& 
     double  kias            = 0.0;  // indicated, shows as dial.
     double  mach            = 0.0;  // shows in TDI and as a dial
     double  maxMach         = 0.0;  // Error bar on dial
-    double  speedRatio      = 0.0;  // 
-    double  maxMachRatio    = 0.0;
     double  kiasSpeed       = 0.0;
     bool	isOverSpeed        = false;
 
+    machLevel_ = 0.0; // Reset mach level for gauge.
+    kiesLevel_ = 0.0; // Reset kies level for gauge.
+    machMaxlevel_ = 0.0; // Reset max mach level for gauge.
+
     if (avionics.IsAeroActive()) {
+        flagEnabled_.SetState(true);
+        flagVelocity_.SetState(avionics.IsAeroAtmoMode());
+
         keas = vessel.GetKeas();
         kias = vessel.GetKias();
         mach = vessel.GetMachNumber();
@@ -141,69 +195,30 @@ inline void Airspeed::UpdateState(bco::Vessel& vessel, double simdt, IAvionics& 
         // Calculate the max mach needle.
         if (maxMach > 22.0) maxMach = 22.0;		// Pin MAX to 22 and 1
         if (maxMach < 0.0) maxMach = 0.0;
-        maxMachRatio = (maxMach == 0.0)
+        machMaxlevel_ = (maxMach == 0.0)
             ? 0.0
             : ((log(maxMach + 1) / l22) * MAX_PIN_RAD) / MAX_PIN_RAD;	// Determine LOG based on speed then convert to 0-1 ration for the gauge.
 
         // Kies dial
-        speedRatio = ((log(machGauge + 1.0) / l22) * MAX_PIN_RAD) / MAX_PIN_RAD; // FIX << RATIO does not need MAX_PIN_RAD
+        machLevel_ = ((log(machGauge + 1.0) / l22) * MAX_PIN_RAD) / MAX_PIN_RAD; // FIX << RATIO does not need MAX_PIN_RAD
         auto kRatio = kias / 600; // 600 max kias speed
-        kiasSpeed = (avionics.IsAeroAtmoMode()) ? (speedRatio - kRatio) : speedRatio;	// If atmo, subtract the speedRatio to get correct rotation.
-    }
+        kiasSpeed = (avionics.IsAeroAtmoMode()) ? (machLevel_ - kRatio) : machLevel_;	// If atmo, subtract the speedRatio to get correct rotation.
 
-    animMachHand_.Update(simdt, speedRatio);
-    animKiesHand_.Update(simdt, speedRatio - (kias / 600));
-    animMaxMachHand_.Update(simdt, maxMachRatio);
+        kiesLevel_ = machLevel_ - (kias / 600); // Kies needle is mach - (kias/600)
+    }
+    else {
+        flagEnabled_.SetState(false);
+        flagVelocity_.SetState(true);
+    }
 
     bco::TensParts parts;
     bco::GetDigits(keas, parts);
-    animTDIKeasOne_.Update(simdt, parts.Tens);
-    animTDIKeasTen_.Update(simdt, parts.Hundreds);
-    animTDIKeasHundred_.Update(simdt, parts.Thousands);
-
-    animMaxMachHand_.Update(simdt, maxMachRatio);
-    animMachHand_.Update(simdt, speedRatio);
-    animKiesHand_.Update(simdt, speedRatio - (kias / 600));
+    tdiKeasOne_.SetState(parts.Tens);
+    tdiKeasTen_.SetState(parts.Hundreds);
+    tdiKeasHund_.SetState(parts.Thousands);
 
     bco::GetDigits(mach, parts);
-    animMACHOne_.Update(simdt, parts.Tenths);
-    animMACHTens_.Update(simdt, parts.Tens);
-    animMACHHundred_.Update(simdt, parts.Hundreds);
-
-    //status_.set_state(isOverSpeed ? bco::status_display::status::error : bco::status_display::status::off);
-    //enabledFlag_.set_state(avionics_.IsAeroActive());
-    //velocityFlag_.set_state(
-    //    avionics_.IsAeroActive()
-    //    ? avionics_.IsAeroAtmoMode()
-    //    : true);
-}
-
-inline void Airspeed::UpdateVCUI(bco::Vessel& vessel, MESHHANDLE mesh)
-{
-    vessel.SetAnimation(aidVCMachHand_, animMachHand_.GetCurrent());
-    vessel.SetAnimation(aidVCKiesHand_, animKiesHand_.GetCurrent());
-    vessel.SetAnimation(aidVCMaxMachHand_, animMaxMachHand_.GetCurrent());
-
-    bco::TranslateUVQuad(mesh, bm::vc::vcTDIKeasOnes_id,    bm::vc::vcTDIKeasOnes_vrt,  0.0, animTDIKeasOne_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::vc::vcTDIKeasTens_id,    bm::vc::vcTDIKeasTens_vrt,  0.0, animTDIKeasTen_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::vc::vcTDIKeasHunds_id,   bm::vc::vcTDIKeasHunds_vrt, 0.0, animTDIKeasHundred_.GetCurrent() * RollOffset);
-
-    bco::TranslateUVQuad(mesh, bm::vc::vcTDIMachOne_id,     bm::vc::vcTDIMachOne_vrt,   0.0, animMACHOne_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::vc::vcTDIMachTens_id,    bm::vc::vcTDIMachTens_vrt,  0.0, animMACHTens_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::vc::vcTDIMachHunds_id,   bm::vc::vcTDIMachHunds_vrt, 0.0, animMACHHundred_.GetCurrent() * RollOffset);
-}
-
-inline void Airspeed::UpdateMainPanelUI(MESHHANDLE mesh)
-{
-    bco::RotateMesh(mesh, bm::pnl::pnlMachHand_id, bm::pnl::pnlMachHand_vrt, animMachHand_.GetCurrent() * ANGLE);
-    bco::RotateMesh(mesh, bm::pnl::pnlKiesHand_id, bm::pnl::pnlKiesHand_vrt, animKiesHand_.GetCurrent() * ANGLE);
-    bco::RotateMesh(mesh, bm::pnl::pnlMachMaxHand_id, bm::pnl::pnlMachMaxHand_vrt, animMaxMachHand_.GetCurrent() * ANGLE);
-
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlTDIKEASOnes_id,  bm::pnl::pnlTDIKEASOnes_vrt,    0.0, animTDIKeasOne_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlTDIKEASTens_id,  bm::pnl::pnlTDIKEASTens_vrt,    0.0, animTDIKeasTen_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlTDIKEASHunds_id, bm::pnl::pnlTDIKEASHunds_vrt,   0.0, animTDIKeasHundred_.GetCurrent() * RollOffset);
-
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlTDIMACHOne_id,   bm::pnl::pnlTDIMACHOne_vrt, 0.0,    animMACHOne_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlTDIMACHTens_id,  bm::pnl::pnlTDIMACHTens_vrt, 0.0,   animMACHTens_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlTDIMACHHunds_id, bm::pnl::pnlTDIMACHHunds_vrt, 0.0,  animMACHHundred_.GetCurrent() * RollOffset);
+    tdiMachOne_.SetState(parts.Tenths);
+    tdiMachTen_.SetState(parts.Tens);
+    tdiMachHund_.SetState(parts.Hundreds);
 }

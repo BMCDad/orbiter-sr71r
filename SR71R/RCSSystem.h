@@ -1,83 +1,96 @@
-//	RCSSystem - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
-//
-//	This program is free software : you can redistribute it and / or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program.If not, see <http://www.gnu.org/licenses/>.
+/*
+RCSSystem - SR-71r Orbiter Addon
+Copyright(C) 2025  Blake Christensen
 
-#pragma once
+This program is free software : you can redistribute it and / or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-#include "../bc_orbiter/control.h"
-#include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/on_off_display.h"
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#pragma
+#include <vector>
+#include <map>
+
+#include "..\bc_orbiter\Vessel.h"
+#include "..\bc_orbiter\MeshTools.h"
+#include "..\bc_orbiter\IUIControl.h"
 
 #include "SR71r_mesh.h"
+#include "IPowerProvider.h"
+#include "SR71Button.h"
 
 namespace bco = bc_orbiter;
-
-class VESSEL3;
 
 /** RCSMode
 */
 
-class RCSSystem :
-    public bco::vessel_component
-    , public bco::power_consumer
+class RCSSystem
 {
 public:
-    RCSSystem(bco::vessel& vessel, bco::power_provider& pwr);
+    RCSSystem(bco::Vessel& vessel);
+    ~RCSSystem() = default;
 
     // Callback:
     void OnRCSMode(int mode);
 
-    double amp_draw() const override { return IsPowered() ? 2.0 : 0.0; }
-    void on_change(double v) override { }
-
 private:
-    bco::vessel& vessel_;
-    bco::power_provider& power_;
 
-    bool IsPowered() const { return power_.volts_available() > 24; }
+    bco::Vessel* vessel_{ nullptr };
 
-    void OnChanged(int mode);
-    void ActiveChanged(bool isActive);
-
-    bco::simple_event<>     btnLinear_{
-        bm::vc::vcRCSLin_loc,
-        0.01,
-        bm::pnl::pnlRCSLin_RC,
-        0
-    };
-
-    bco::on_off_display     lightLinear_{
+    SR71::Button btnLinear_{
         bm::vc::vcRCSLin_id,
-            bm::vc::vcRCSLin_vrt,
-            bm::pnl::pnlRCSLin_id,
-            bm::pnl::pnlRCSLin_vrt,
-            0.0352
+        bm::vc::vcRCSLin_loc,
+        bm::vc::vcRCSLin_vrt,
+        bm::pnl::pnlRCSLin_id,
+        bm::pnl::pnlRCSLin_vrt,
+        bm::pnl::pnlRCSLin_RC,
+        SR71R::MainPanel_ID,
+        [this](bool state) { vessel_->SetAttitudeMode(RCS_LIN); }
     };
 
-    bco::simple_event<>     btnRotate_{
-        bm::vc::vcRCSRot_loc,
-        0.01,
-        bm::pnl::pnlRCSRot_RC,
-        0
-    };
-
-    bco::on_off_display		lightRotate_{
+    SR71::Button btnRotate_{
         bm::vc::vcRCSRot_id,
-            bm::vc::vcRCSRot_vrt,
-            bm::pnl::pnlRCSRot_id,
-            bm::pnl::pnlRCSRot_vrt,
-            0.0352
+        bm::vc::vcRCSRot_loc,
+        bm::vc::vcRCSRot_vrt,
+        bm::pnl::pnlRCSRot_id,
+        bm::pnl::pnlRCSRot_vrt,
+        bm::pnl::pnlRCSRot_RC,
+        SR71R::MainPanel_ID,
+        [this](bool state) { vessel_->SetAttitudeMode(RCS_ROT); }
     };
 };
+
+inline RCSSystem::RCSSystem(bco::Vessel& vessel)
+{
+    vessel_ = &vessel;
+    vessel.RegisterUIControl(btnLinear_);
+    vessel.RegisterUIControl(btnRotate_);
+}
+
+inline void RCSSystem::OnRCSMode(int mode)
+{
+    switch (mode)
+    {
+    case RCS_LIN:
+        btnLinear_.SetState(true);
+        btnRotate_.SetState(false);
+        break;
+    case RCS_ROT:
+        btnLinear_.SetState(false);
+        btnRotate_.SetState(true);
+        break;
+    default:
+        btnLinear_.SetState(false);
+        btnRotate_.SetState(false);
+        break;
+    }
+}

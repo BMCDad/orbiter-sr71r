@@ -1,111 +1,83 @@
-//    Lights - SR-71r Orbiter Addon
-//    Copyright(C) 2023  Blake Christensen
-//
-//    This program is free software : you can redistribute it and / or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program.If not, see <http://www.gnu.org/licenses/>.
+/*
+Lights - SR-71r Orbiter Addon
+Copyright(C) 2023  Blake Christensen
 
+This program is free software : you can redistribute it and / or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see <http://www.gnu.org/licenses/>.
+*/
 #pragma once
+#include <string>
+#include <sstream>
 
-#include "..\bc_orbiter\control.h"
-#include "..\bc_orbiter\handler_interfaces.h"
-#include "..\bc_orbiter\vessel.h"
+#include "..\bc_orbiter\Vessel.h"
+#include "..\bc_orbiter\AnimatedValue.h"
+#include "..\bc_orbiter\MeshTools.h"
+#include "..\bc_orbiter\Tools.h"
 
 #include "SR71r_mesh.h"
-#include "SR71r_common.h"
+#include "SR71rVC_mesh.h"
+#include "SR71r2DRight_mesh.h"
 
-#include <map>
+#include "ShipMets.h"
+#include "IPowerProvider.h"
+#include "SR71Toggle.h"
 
 namespace bco = bc_orbiter;
 
-class Lights :
-    public bco::vessel_component,
-    public bco::power_consumer,
-    public bco::set_class_caps ,
-    public bco::manage_state
+class Lights
 {
-
 public:
-    Lights(bco::vessel& vessel, bco::power_provider& pwr) : power_(pwr) {
-        switchStrobeLights_.attach_on_change([&]() { update(); });
-        switchBeaconLights_.attach_on_change([&]() { update(); });
-        switchNavigationLights_.attach_on_change([&]() { update(); });
+    Lights(bco::Vessel& vessel);
+    ~Lights() = default;
 
-        power_.attach_consumer(this);
-        
-        vessel.AddControl(&switchStrobeLights_);
-        vessel.AddControl(&switchBeaconLights_);
-        vessel.AddControl(&switchNavigationLights_);
-    }
+    void Setup(bco::Vessel& vessel);
+    void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power);
 
-    // power_consumer
-    void on_change(double v) override { update(); }
-    double amp_draw() const override { 
-        auto total = 0.0;
-        total += switchStrobeLights_.is_on() ? 4.0 : 0.0;
-        total += switchBeaconLights_.is_on() ? 4.0 : 0.0;
-        total += switchNavigationLights_.is_on() ? 4.0 : 0.0;
-        return total;
-    }
+    void ToggleStrobe() { togStrobe_.ToggleState(); }
+    void ToggleBeacon() { togBeacon_.ToggleState(); }
+    void ToggleNavigation() { togNav_.ToggleState(); }
 
-    // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) {
-        vessel.AddBeacon(&specStrobeLeft_);
-        vessel.AddBeacon(&specStrobeRight_);
-        
-        vessel.AddBeacon(&specBeaconTop_);
-        vessel.AddBeacon(&specBeaconBottom_);
-        
-        vessel.AddBeacon(&specNavLeft_);
-        vessel.AddBeacon(&specNavRear_);
-        vessel.AddBeacon(&specNavRight_);
-    }
-
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override {
-        // sscanf_s(configLine + 6, "%i%i%i%i", &nav, &beacon, &strobe, &dock);
-        double dock; // not used.
-        std::istringstream in(line);
-        in >> switchNavigationLights_ >> switchBeaconLights_ >> switchStrobeLights_ >> dock;
-        return true;
-    }
-
-    std::string handle_save_state(bco::vessel& vessel) override {
-        std::ostringstream os;
-        os << switchNavigationLights_ << " " << switchBeaconLights_ << " " << switchStrobeLights_ << 0;
-        return os.str();
-    }
+    void LoadState(const std::string& line);
+    std::string GetState() const;
 
 private:
 
-    bco::power_provider& power_;
+    SR71::Toggle togStrobe_{
+        bm::vc::SwitchStrobeLights_id,
+        bm::vc::SwitchStrobeLights_loc, bm::vc::LightsRightAxis_loc,
+        bm::pnlright::pnlLightStrobe_id,
+        bm::pnlright::pnlLightStrobe_vrt,
+        bm::pnlright::pnlLightStrobe_RC,
+        SR71R::RightPanel_ID
+    };
 
-    void update() {
-        auto power = (power_.volts_available() > 25.0);
+    SR71::Toggle togBeacon_{
+        { bm::vc::SwitchBeaconLights_id },
+        bm::vc::SwitchBeaconLights_loc, bm::vc::LightsRightAxis_loc,
+        bm::pnlright::pnlLightBeacon_id,
+        bm::pnlright::pnlLightBeacon_vrt,
+        bm::pnlright::pnlLightBeacon_RC,
+        SR71R::RightPanel_ID
+    };
 
-        auto strob = switchStrobeLights_.is_on() && power;
-        auto beacon = switchBeaconLights_.is_on() && power;
-        auto nav = switchNavigationLights_.is_on() && power;
-
-        specStrobeLeft_.active = strob;
-        specStrobeRight_.active = strob;
-
-        specBeaconTop_.active = beacon;
-        specBeaconBottom_.active = beacon;
-
-        specNavLeft_.active = nav;
-        specNavRear_.active = nav;
-        specNavRight_.active = nav;
-    }
+    SR71::Toggle togNav_{
+        { bm::vc::SwitchNavLights_id },
+        bm::vc::SwitchNavLights_loc, bm::vc::LightsRightAxis_loc,
+        bm::pnlright::pnlLightNav_id,
+        bm::pnlright::pnlLightNav_vrt,
+        bm::pnlright::pnlLightNav_RC,
+        SR71R::RightPanel_ID
+    };
 
     // Set light specs:
     VECTOR3 colRed{ 1.0, 0.5, 0.5 };
@@ -195,37 +167,62 @@ private:
         0.2,            // tofs
         false,            // active
     };
-
-    bco::on_off_input       switchStrobeLights_{        // On off switch for external strobe lights.
-        { bm::vc::SwitchStrobeLights_id },
-        bm::vc::SwitchStrobeLights_loc, bm::vc::LightsRightAxis_loc,
-        toggleOnOff,
-        bm::pnlright::pnlLightStrobe_id,
-        bm::pnlright::pnlLightStrobe_vrt,
-        bm::pnlright::pnlLightStrobe_RC,
-        1
-    };
-
-    bco::on_off_input       switchBeaconLights_{        // On off switch for external beacon lights.
-        { bm::vc::SwitchBeaconLights_id },
-        bm::vc::SwitchBeaconLights_loc, 
-        bm::vc::LightsRightAxis_loc,
-        toggleOnOff,
-        bm::pnlright::pnlLightBeacon_id,
-        bm::pnlright::pnlLightBeacon_vrt,
-        bm::pnlright::pnlLightBeacon_RC,
-        1
-    };
-
-    bco::on_off_input       switchNavigationLights_ {   // On off switch for external navigation lights.
-        { bm::vc::SwitchNavLights_id },
-        bm::vc::SwitchNavLights_loc, bm::vc::LightsRightAxis_loc,
-        toggleOnOff,
-        bm::pnlright::pnlLightNav_id,
-        bm::pnlright::pnlLightNav_vrt,
-        bm::pnlright::pnlLightNav_RC,
-        1
-    };
 };
 
+inline Lights::Lights(bco::Vessel& vessel)
+{
+    vessel.RegisterUIControl(togStrobe_);
+    vessel.RegisterUIControl(togBeacon_);
+    vessel.RegisterUIControl(togNav_);
+}
 
+inline void Lights::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power)
+{
+    auto hasPower = (power.GetPowerLevel() > 25.0);
+
+    bool strob = togStrobe_.IsOn() && hasPower;
+    bool beacon = togBeacon_.IsOn() && hasPower;
+    bool nav = togNav_.IsOn() && hasPower;
+
+    specStrobeLeft_.active = strob;
+    specStrobeRight_.active = strob;
+
+    specBeaconTop_.active = beacon;
+    specBeaconBottom_.active = beacon;
+
+    specNavLeft_.active = nav;
+    specNavRear_.active = nav;
+    specNavRight_.active = nav;
+
+}
+
+inline void Lights::Setup(bco::Vessel& vessel)
+{
+    vessel.AddBeacon(&specStrobeLeft_);
+    vessel.AddBeacon(&specStrobeRight_);
+
+    vessel.AddBeacon(&specBeaconTop_);
+    vessel.AddBeacon(&specBeaconBottom_);
+
+    vessel.AddBeacon(&specNavLeft_);
+    vessel.AddBeacon(&specNavRear_);
+    vessel.AddBeacon(&specNavRight_);
+}
+
+inline void Lights::LoadState(const std::string& line)
+{
+    int nav, beacon, strobe, dock;
+    std::istringstream in(line);
+    in >> nav >> beacon >> strobe >> dock;
+
+    togNav_.SetState(nav != 0);
+    togBeacon_.SetState(beacon != 0);
+    togStrobe_.SetState(strobe != 0);
+}
+
+inline std::string Lights::GetState() const
+{
+    std::ostringstream out;
+    out << (togNav_.IsOn() ? 1 : 0) << " " << (togBeacon_.IsOn() ? 1 : 0) << " " << (togStrobe_.IsOn() ? 1 : 0) << " 0";
+    return out.str();
+}

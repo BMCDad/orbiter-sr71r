@@ -2,20 +2,6 @@
 Canopy - SR-71r Orbiter Addon
 Copyright(C) 2025  Blake Christensen
 
-Manages the canopy of the SR-71r.  It can be opened and closed provided there is
-electrical power.
-
-VC: Inside and outside window mesh groups.
-
-External:
-    Windows and main canopy mesh groups.
-
-Events:
-    Canopy Power Toggle:  Toggles the power to the canopy.  If power is on, the canopy can be opened or closed.
-    Canopy Open:  Opens the canopy.
-
------
-
 This program is free software : you can redistribute it and / or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -28,6 +14,19 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.If not, see <http://www.gnu.org/licenses/>.
+
+Canopy
+Manages the canopy of the SR-71r.  It can be opened and closed provided there is
+electrical power.
+
+VC: Inside and outside window mesh groups.
+
+External:
+    Windows and main canopy mesh groups.
+
+Events:
+    Canopy Power Toggle:  Toggles the power to the canopy.  If power is on, the canopy can be opened or closed.
+    Canopy Open:  Opens the canopy.
 */
 
 #pragma once
@@ -37,61 +36,49 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 #include "..\bc_orbiter\Vessel.h"
 #include "..\bc_orbiter\AnimatedValue.h"
 #include "..\bc_orbiter\MeshTools.h"
+#include "..\bc_orbiter\IUIControl.h"
 
 #include "SR71r_mesh.h"
+#include "SR71r2DRight_mesh.h"
+
 #include "ShipMets.h"
 #include "IPowerProvider.h"
+#include "SR71Toggle.h"
 
 namespace bco = bc_orbiter;
 
 class Canopy
 {
-    public:
-    Canopy() = default;
+public:
+    Canopy(bco::Vessel& vessel);
     ~Canopy() = default;
 
     void Setup(bco::Vessel& vessel);
 
     void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power);
     void UpdateVCUI(bco::Vessel& vessel);   // Called to update the VC UI when the VC is active.
-    void UpdateRightPanelUI(MESHHANDLE mesh);    // Called to update the 2D panel UI when the panel is active.
-
-    void LoadVC();       // Called when the VC is loaded to setup animations.
-    void LoadPanel(bco::Vessel& vessel, PANELHANDLE handle);    // Called when the 2D panel is loaded to setup animations.
 
     /**
      * \brief Opens the canopy.
      * \param vessel The vessel to operate on.
      */
-    void ToggleOpenClose() { 
-        isOpenSwitchOn_ = !isOpenSwitchOn_; 
-        isOpenSwitchChanged_ = true; // Mark that the open/close switch has changed state.
-    };
+    void ToggleOpenClose() { togDoor_.ToggleState(); };
 
     /**
      * \brief Toggles the canopy power.
      * \param vessel The vessel to operate on.
      */
-    void TogglePower() { 
-        isPowerSwitchOn_ = !isPowerSwitchOn_; 
-        isPowerSwitchChanged_ = true; // Mark that the power switch has changed state.
-    };
+    void TogglePower() { togPower_.ToggleState(); };
 
     /**
     * \brief Opens the canopy.
     */
-    void OpenCanopy() {
-        isOpenSwitchOn_ = true; 
-        isOpenSwitchChanged_ = true; // Mark that the open/close switch has changed state.
-    };
+    void OpenCanopy() { togDoor_.SetState(true); };
 
     /**
     * \brief Closes the canopy.
     */
-    void CloseCanopy() {
-         isOpenSwitchOn_ = false; 
-         isOpenSwitchChanged_ = true; // Mark that the open/close switch has changed state.
-    };
+    void CloseCanopy() { togDoor_.SetState(false); };
 
     /**
      * \brief Loads the state of the canopy from a string.
@@ -105,56 +92,41 @@ class Canopy
     std::string GetState() const;
 
 private:
-    bco::AnimatedValue<bco::StateUpdateTarget> animVCPowerSwitch_   { SR71R::ToggleAnimSpeed };
-    bco::AnimatedValue<bco::StateUpdateTarget> animVCDoorSwitch_    { SR71R::ToggleAnimSpeed };
     bco::AnimatedValue<bco::StateUpdateTarget> animCanopy_          { 0.2 };
 
-    UINT aidVCPowerSwitch_  { 0 };  // Animation ID for the power switch.
-    UINT aidVCDoorSwitch_   { 0 };  // Animation ID for the door switch.
     UINT aidMainCanopy_     { 0 };  // Animation ID for the canopy.
     UINT aidVCCanopy_       { 0 };  // Animation ID for the VC canopy.
 
-    int eventId_Power_{ -1 };
-    int eventId_Open_{ -1 };
+    SR71::Toggle togPower_{
+        { bm::vc::SwCanopyPower_id },
+        bm::vc::SwCanopyPower_loc, bm::vc::PowerTopRightAxis_loc,
+        bm::pnlright::pnlPwrCanopy_id,
+        bm::pnlright::pnlPwrCanopy_vrt,
+        bm::pnlright::pnlPwrCanopy_RC,
+        SR71R::RightPanel_ID
+    };
 
-    bool isPowerSwitchOn_       { false };
-    bool isPowerSwitchChanged_  { false }; // Indicates if the power switch has changed state.
-
-    bool isOpenSwitchOn_        { false };
-    bool isOpenSwitchChanged_   { false }; // Indicates if the open/close switch has changed state.
+    SR71::Toggle togDoor_{
+        { bm::vc::SwCanopyOpen_id },
+        bm::vc::SwCanopyOpen_loc, bm::vc::DoorsRightAxis_loc,
+        bm::pnlright::pnlDoorCanopy_id,
+        bm::pnlright::pnlDoorCanopy_vrt,
+        bm::pnlright::pnlDoorCanopy_RC,
+        SR71R::RightPanel_ID
+    };
 };
+
+inline Canopy::Canopy(bco::Vessel& vessel)
+{
+    vessel.RegisterUIControl(togPower_);
+    vessel.RegisterUIControl(togDoor_);
+}
 
 inline void Canopy::Setup(bco::Vessel& vessel)
 {
-    eventId_Open_ = vessel.GetEventId();
-    eventId_Open_ = vessel.GetEventId();
-
-    vessel.RegisterEventHandler(eventId_Power_, [this](int, int) { TogglePower(); return true; });
-    vessel.RegisterEventHandler(eventId_Open_,  [this](int, int) { ToggleOpenClose(); return true; });
-
     // Animations:
     auto vcIndex = vessel.GetMeshIndex(bm::vc::MESH_NAME);
     auto mainIndex = vessel.GetMeshIndex(bm::main::MESH_NAME);
-
-    // VC Power switch
-    aidVCPowerSwitch_ = vessel.CreateVesselAnimation();
-    vessel.AddAnimationGroup(
-        aidVCPowerSwitch_,
-        vcIndex,
-        { bm::vc::SwCanopyPower_id },
-        bm::vc::SwCanopyPower_loc, bm::vc::PowerTopRightAxis_loc,
-        SR71R::ToggleAnimAngle,
-        0.0, 1.0);
-
-    // VC Door switch
-    aidVCDoorSwitch_ = vessel.CreateVesselAnimation();
-    vessel.AddAnimationGroup(
-        aidVCDoorSwitch_,
-        vcIndex,
-        { bm::vc::SwCanopyOpen_id },
-        bm::vc::SwCanopyOpen_loc, bm::vc::DoorsRightAxis_loc,
-        SR71R::ToggleAnimAngle,
-        0.0, 1.0);
 
     // Main Canopy animation
     aidMainCanopy_ = vessel.CreateVesselAnimation();
@@ -184,51 +156,36 @@ inline void Canopy::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvide
 {
     auto isCanopyMoving = false;
 
-    // Switches always get a time step.
-    animVCDoorSwitch_.Update(simdt,   isOpenSwitchOn_ ? 1.0 : 0.0);
-    animVCPowerSwitch_.Update(simdt,  isPowerSwitchOn_ ? 1.0 : 0.0);
-
-    if (isPowerSwitchOn_ && power.GetPowerLevel() > 0.0) {
-        isCanopyMoving = animCanopy_.Update(simdt, isOpenSwitchOn_ ? 1.0 : 0.0);
+    if (togPower_.IsOn() && power.GetPowerLevel() > 20.0) {
+        isCanopyMoving = animCanopy_.Update(simdt, togDoor_.IsOn() ? 1.0 : 0.0);
     }
+
+    power.DrawPower(isCanopyMoving ? SR71R::CANOPY_AMPS : 0.0); // Draw 20 amps if the canopy is moving.
 
     vessel.SetAnimation(aidMainCanopy_, animCanopy_.GetCurrent()); // Always step the main canopy animation.
-
-    if (oapiCockpitMode() == COCKPIT_PANELS) {
-        auto mesh = vessel.GetPanelMeshHandle(SR71R::RightPanel_ID);
-        if (isPowerSwitchChanged_) {
-            isPowerSwitchChanged_ = false; // Reset the change flag after processing.
-            bco::DrawPanelOnOff(mesh, bm::pnlright::pnlPwrCanopy_id, bm::pnlright::pnlPwrCanopy_vrt, isPowerSwitchOn_, SR71R::TogglePnlOffset);
-        }
-
-        if (isOpenSwitchChanged_) {
-            isOpenSwitchChanged_ = false; // Reset the change flag after processing.
-            bco::DrawPanelOnOff(mesh, bm::pnlright::pnlDoorCanopy_id, bm::pnlright::pnlDoorCanopy_vrt, isOpenSwitchOn_, SR71R::TogglePnlOffset);
-        }
-    }
 }
 
 inline void Canopy::UpdateVCUI(bco::Vessel& vessel)
 {
     vessel.SetAnimation(aidVCCanopy_,       animCanopy_.GetCurrent());
-    vessel.SetAnimation(aidVCDoorSwitch_,   animVCDoorSwitch_.GetCurrent());
-    vessel.SetAnimation(aidVCPowerSwitch_,  animVCPowerSwitch_.GetCurrent());
 }
 
-inline void Canopy::UpdateRightPanelUI(MESHHANDLE mesh)
+inline void Canopy::LoadState(const std::string& line)
 {
-    bco::DrawPanelOnOff(mesh, bm::pnlright::pnlPwrCanopy_id,    bm::pnlright::pnlPwrCanopy_vrt,     isPowerSwitchOn_,   SR71R::TogglePnlOffset);
-    bco::DrawPanelOnOff(mesh, bm::pnlright::pnlDoorCanopy_id,   bm::pnlright::pnlDoorCanopy_vrt,    isOpenSwitchOn_,    SR71R::TogglePnlOffset);
+    std::istringstream is(line);
+    int power, door;
+    double position;
+    is >> power >> door >> position;
+    togPower_.SetState(power != 0);
+    togDoor_.SetState(door != 0);
+    animCanopy_.LoadState(position, togDoor_.IsOn() ? 1.0 : 0.0);
 }
 
-inline void Canopy::LoadVC()
+inline std::string Canopy::GetState() const
 {
-    bco::LoadVCSimpleEvent(eventId_Power_, bm::vc::SwCanopyPower_loc, SR71R::ToggleHitRadius);
-    bco::LoadVCSimpleEvent(eventId_Open_, bm::vc::SwCanopyOpen_loc, SR71R::ToggleHitRadius);
-}
-
-inline void Canopy::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
-{
-    bco::LoadPanelSimpleEvent(vessel, eventId_Power_, handle, bm::pnlright::pnlPwrCanopy_RC);
-    bco::LoadPanelSimpleEvent(vessel, eventId_Open_, handle, bm::pnlright::pnlDoorCanopy_RC);
+    std::ostringstream os;
+    os << (togPower_.IsOn() ? 1 : 0)
+        << (togDoor_.IsOn() ? 1 : 0)
+        << animCanopy_.GetCurrent();
+    return os.str();
 }

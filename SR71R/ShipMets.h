@@ -97,10 +97,18 @@ namespace SR71R {
     const int RightPanel_ID  = 1;
 
     // SR71 Toggle switch consts
-    const double ToggleHitRadius =  0.1;    // Radius of the toggle switch hit area.
+    const double ToggleHitRadius =  0.01;   // Radius of the toggle switch hit area.
     const double ToggleAnimSpeed = 10.0;    // Speed of the toggle switch animation.
-    const double ToggleAnimAngle = 1.5708;  // Angle of the toggle switch animation in radians.
-    const double TogglePnlOffset = 0.0148;  // Offset for the toggle switch texture.
+    const double ToggleAnimAngle =  1.5708; // Angle of the toggle switch animation in radians.
+    const double TogglePnlOffset =  0.0148; // Offset for the toggle switch texture.
+
+    // Status panel consts
+    const int PNL_ON    = 0;
+    const int PNL_OFF   = 1;
+    const int PNL_ERROR = 2;
+    const int PNL_WARN  = 3;
+
+
 }
 /*  Some stats from the SR-71 manual
     Wing area 1605 sq feet.

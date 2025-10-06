@@ -84,7 +84,7 @@ namespace bc_orbiter
         vessel.RegisterPanelArea(handle, eventId, loc, PANEL_REDRAW_NEVER, PANEL_MOUSE_LBDOWN);
     }
 
-    inline void LoadPanelRedrawEvent(VESSEL3& vessel, int eventId, PANELHANDLE handle, const RECT& rc, SURFHANDLE surface)
+    inline void LoadPanelRedrawEvent(VESSEL3& vessel, int eventId, PANELHANDLE handle, const RECT& rc, SURFHANDLE surface = nullptr)
     {
         vessel.RegisterPanelArea(
             handle,

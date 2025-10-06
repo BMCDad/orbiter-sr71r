@@ -50,6 +50,7 @@ The Course and Heading are set as part of the Avionics component.  The HSI itelf
 
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
+#include "SR71WrapGauge.h"
 
 #include "IAvionics.h"
 #include "IPowerProvider.h"
@@ -59,10 +60,8 @@ namespace bco = bc_orbiter;
 class HSI
 {
 public:
-    HSI() = default;
+    HSI(bco::Vessel& vessel);
     ~HSI() = default;
-
-    void Setup(bco::Vessel& vessel);
 
     void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IAvionics& avionics);
     void UpdateVCUI(bco::Vessel& vessel, MESHHANDLE mesh);   // Called to update the VC UI when the VC is active.
@@ -75,16 +74,7 @@ private:
 
     const double RollOffset = 0.1084;		// flat_roll offset.
 
-    bco::AnimatedValue<bco::StateUpdateWrap>    animRoseCompass_;
-    bco::AnimatedValue<bco::StateUpdateWrap>    animHeadingBug_;
-    bco::AnimatedValue<bco::StateUpdateWrap>    animCourse_;
     bco::AnimatedValue<bco::StateUpdateWrap>    animCourseError_;
-    bco::AnimatedValue<bco::StateUpdateWrap>    animBearing_;
-
-    UINT aidVCRoseCompass_{ 0 };
-    UINT aidVCHeadingBug_{ 0 };
-    UINT aidVCCourse_{ 0 };
-    UINT aidVCBearing_{ 0 };
 
     bco::AnimatedValue<bco::StateUpdateWrap>    animCourseOnes_{ 0.0 };
     bco::AnimatedValue<bco::StateUpdateWrap>    animCourseTens_{ 0.0 };
@@ -97,6 +87,49 @@ private:
     bool isComActive_{ false };
 
     bool CalcNavMetrics(bco::Vessel& vessel, NAVHANDLE handle, double setCourse, double& bearing, double& glideSlope, double& navError, double& milesBeacon);
+
+    double roseValue_{ 0.0 };
+    double headingValue_{ 0.0 };
+    double courseValue_{ 0.0 };
+    double bearingValue_{ 0.0 };
+
+    SR71::WrapGauge roseCompass_{
+        { bm::vc::RoseCompass_id },
+        bm::vc::RoseCompass_loc, bm::vc::HSIAxis_loc,
+        bm::pnl::pnlRoseCompass_id,
+        bm::pnl::pnlRoseCompass_vrt,
+        roseValue_,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::WrapGauge headingBug_{
+        { bm::vc::HSICompassHeading_id },
+        bm::vc::HSICompassHeading_loc, bm::vc::HSIAxis_loc,
+        bm::pnl::pnlHSICompassHeading_id,
+        bm::pnl::pnlHSICompassHeading_vrt,
+        headingValue_,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::WrapGauge course_{
+        { bm::vc::HSICourse_id },
+        bm::vc::HSICourse_loc, bm::vc::HSIAxis_loc,
+        bm::pnl::pnlHSICourse_id,
+        bm::pnl::pnlHSICourse_vrt,
+        courseValue_,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::WrapGauge bearing_{
+        { bm::vc::HSIBearingArrow_id },
+        bm::vc::HSIBearingArrow_loc, bm::vc::HSIAxis_loc,
+        bm::pnl::pnlHSIBearingArrow_id,
+        bm::pnl::pnlHSIBearingArrow_vrt,
+        bearingValue_,
+        SR71R::MainPanel_ID
+    };
+
+
     //bco::on_off_display		hsiOffFlag_{
     //   bm::vc::HSIOffFlag_id,
     //      bm::vc::HSIOffFlag_vrt,
@@ -122,42 +155,12 @@ private:
     //};
 };
 
-inline void HSI::Setup(bco::Vessel& vessel)
+inline HSI::HSI(bco::Vessel& vessel)
 {
-    auto vcMeshIndex = vessel.GetMeshIndex(bm::vc::MESH_NAME);
-
-    aidVCRoseCompass_ = vessel.CreateVesselAnimation();
-    aidVCHeadingBug_ = vessel.CreateVesselAnimation();
-    aidVCCourse_ = vessel.CreateVesselAnimation();
-    aidVCBearing_ = vessel.CreateVesselAnimation();
-
-    vessel.AddAnimationGroup(
-        aidVCRoseCompass_,
-        vcMeshIndex,
-        { bm::vc::RoseCompass_id },
-        bm::vc::RoseCompass_loc, bm::vc::HSIAxis_loc,
-        (360 * RAD), 0, 1);
-
-    vessel.AddAnimationGroup(
-        aidVCHeadingBug_,
-        vcMeshIndex,
-        { bm::vc::HSICompassHeading_id },
-        bm::vc::HSICompassHeading_loc, bm::vc::HSIAxis_loc,
-        (360 * RAD), 0, 1);
-
-    vessel.AddAnimationGroup(
-        aidVCCourse_,
-        vcMeshIndex,
-        { bm::vc::HSICourse_id },
-        bm::vc::HSICourse_loc, bm::vc::HSIAxis_loc,
-        (360 * RAD), 0, 1);
-
-    vessel.AddAnimationGroup(
-        aidVCBearing_,
-        vcMeshIndex,
-        { bm::vc::HSIBearingArrow_id },
-        bm::vc::HSIBearingArrow_loc, bm::vc::HSIAxis_loc,
-        (360 * RAD), 0, 1);
+    vessel.RegisterUIControl(roseCompass_);
+    vessel.RegisterUIControl(headingBug_);
+    vessel.RegisterUIControl(course_);
+    vessel.RegisterUIControl(bearing_);
 }
 
 inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IAvionics& avionics) 
@@ -185,11 +188,12 @@ inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& 
         }
     }
 
-    animRoseCompass_.Update(simdt, yaw / PI2);
-    animHeadingBug_.Update(simdt, rotHdg / PI2);
-    animCourse_.Update(simdt, rotCrs / PI2);
+    roseValue_      = yaw / PI2;
+    headingValue_   = rotHdg / PI2;
+    courseValue_    = rotCrs / PI2;
+    bearingValue_   = bearing / PI2;
+
     animCourseError_.Update(simdt, navError);
-    animBearing_.Update(simdt, bearing / PI2);
 
     // Set course barrels
     auto deg = avionics.GetSetCourse();
@@ -223,11 +227,6 @@ inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& 
 
 inline void HSI::UpdateVCUI(bco::Vessel& vessel, MESHHANDLE mesh)
 {
-    vessel.SetAnimation(aidVCRoseCompass_, -animRoseCompass_.GetCurrent());
-    vessel.SetAnimation(aidVCHeadingBug_, -animHeadingBug_.GetCurrent());
-    vessel.SetAnimation(aidVCCourse_, -animCourse_.GetCurrent());
-    vessel.SetAnimation(aidVCBearing_, -animBearing_.GetCurrent());
-
     bco::TranslateUVQuad(mesh, bm::vc::vcCrsOnes_id, bm::vc::vcCrsOnes_vrt, 0.0, animCourseOnes_.GetCurrent() * RollOffset);
     bco::TranslateUVQuad(mesh, bm::vc::vcCrsTens_id, bm::vc::vcCrsTens_vrt, 0.0, animCourseTens_.GetCurrent() * RollOffset);
     bco::TranslateUVQuad(mesh, bm::vc::vcCrsHunds_id, bm::vc::vcCrsHunds_vrt, 0.0, animCourseHunds_.GetCurrent() * RollOffset);
@@ -239,11 +238,6 @@ inline void HSI::UpdateVCUI(bco::Vessel& vessel, MESHHANDLE mesh)
 
 inline void HSI::UpdateMainPanelUI(MESHHANDLE mesh)
 {
-    bco::RotateMesh(mesh, bm::pnl::pnlRoseCompass_id,       bm::pnl::pnlRoseCompass_vrt,        animRoseCompass_.GetCurrent() * -PI2);
-    bco::RotateMesh(mesh, bm::pnl::pnlHSICompassHeading_id, bm::pnl::pnlHSICompassHeading_vrt,  animHeadingBug_.GetCurrent() * -PI2);
-    bco::RotateMesh(mesh, bm::pnl::pnlHSICourse_id,         bm::pnl::pnlHSICourse_vrt,          animCourse_.GetCurrent() * -PI2);
-    bco::RotateMesh(mesh, bm::pnl::pnlHSIBearingArrow_id,   bm::pnl::pnlHSIBearingArrow_vrt,    animBearing_.GetCurrent() * -PI2);
-
     bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSOnes_id,    bm::pnl::pnlHSICRSOnes_vrt,    0.0, animCourseOnes_.GetCurrent() * RollOffset);
     bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSTens_id,    bm::pnl::pnlHSICRSTens_vrt,    0.0, animCourseTens_.GetCurrent() * RollOffset);
     bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSOnes_id,    bm::pnl::pnlHSICRSOnes_vrt,    0.0, animCourseHunds_.GetCurrent() * RollOffset);

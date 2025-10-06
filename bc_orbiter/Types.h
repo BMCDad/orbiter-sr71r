@@ -16,7 +16,6 @@
 #pragma once
 
 #include "OrbiterSDK.h"
-
 #include <functional>
 
 namespace bc_orbiter
@@ -30,6 +29,9 @@ namespace bc_orbiter
     };
 
     using FuncRedrawEvent = std::function<void(int id, int event, SURFHANDLE surf)>;
+    using FuncRedrawVCEvent = std::function<void(int id, int event, SURFHANDLE surf, DEVMESHHANDLE mesh)>;
+
+    using FuncOnChanged = std::function<void()>;
 
     /**
     Contains information needed to draw a font onto a surface.

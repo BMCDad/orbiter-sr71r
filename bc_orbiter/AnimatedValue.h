@@ -17,10 +17,13 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 */
 #pragma once
 
+#include <limits>
 #include "AnimationUpdate.h"
 
 namespace bc_orbiter
 {
+    const UINT ANIM_ID_MAX = (std::numeric_limits<UINT>::max)();
+
     /**
      * \brief A class to manage animated values for Orbiter vessels.
      * This class provides a way to animate values over time, such as
@@ -47,6 +50,17 @@ namespace bc_orbiter
         {
             state_.TargetState = target;
             return T::UpdateState(state_, simdt); 
+        }
+
+        /**
+        * \brief Loads the current and target state of the animated value.
+        * \param currentState - The current state of the animation.
+        * \param targetState - The target state of the animation.
+        */
+        void LoadState(double currentState, double targetState)
+        {
+            state_.CurrentState = currentState;
+            state_.TargetState = targetState;
         }
 
     private:

@@ -14,21 +14,41 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.If not, see <http://www.gnu.org/licenses/>.
+
+APU
+
+Auxiliary Power Unit.  The APU provide power to the hydraulic system of the aircraft
+which in turn powers the flight control surfaces and landing gear. The APU draws fuel
+from the main fuel supply.
+
+When running, the 'APU' light will be illuminated on the status board.
+
+Hydraulic level is currently all or nothing. All = 1.0, Nothing = 0.0;
+
+The APU requires electrical power to function.
+
+Configuration:
+APU = 0/1
 */
 
 #pragma once
 
 #include <cmath>
+#include <string>
+#include <sstream>
 
 #include "..\bc_orbiter\Vessel.h"
 #include "..\bc_orbiter\AnimatedValue.h"
 #include "..\bc_orbiter\MeshTools.h"
 
 #include "SR71r_mesh.h"
+#include "SR71r2DRight_mesh.h"
+
 #include "ShipMets.h"
 #include "IPowerProvider.h"
 #include "IFuelSystem.h"
-
+#include "SR71Toggle.h"
+#include "SR71Gauge.h"
 #include "IAvionics.h"
 
 namespace bco = bc_orbiter;
@@ -38,121 +58,75 @@ namespace bco = bc_orbiter;
 const double APU_BURN_RATE = 0.05;   // kg per second - 180 kg per hour (180 / 60) / 60.
 const double APU_MIN_VOLT = 20.0;
 
-/**	APU
-	Auxiliary Power Unit.  The APU provide power to the hydraulic system of the aircraft
-	which in turn powers the flight control surfaces and landing gear.	The APU draws 
-    from the same fuel source as the RCS system.
-	
-    When running, the 'APU' light will be illuminated on the status board.
-
-	Hydraulic level is currently all or nothing. All = 1.0, Nothing = 0.0;
-
-	The APU requires electrical power to function.
-	
-	Configuration:
-	APU = 0/1
-
-	Short cuts:
-	None.
-*/
 class APU
 {
 public:
-    APU() = default;
+    APU(bco::Vessel& vessel);
     ~APU() = default;
 
-    void Setup(bco::Vessel& vessel);
-
     void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IFuelSystem& fuel);
-    void UpdateVCUI(bco::Vessel& vessel);   // Called to update the VC UI when the VC is active.
-    void UpdateRightPanelUI(MESHHANDLE mesh);    // Called to update the 2D panel UI when the panel is active.
-
-    void LoadVC();       // Called when the VC is loaded to setup animations.
-    void LoadPanel(bco::Vessel& vessel, PANELHANDLE handle);    // Called when the 2D panel is loaded to setup animations.
 
     void LoadState(const std::string& line);
     std::string GetState() const;
 
     void TogglePowerSwitch()
     {
-        isPowerSwitchOn_ = !isPowerSwitchOn_;
+        togPower_.ToggleState();
     }
 
 private:
+    const double    MIN_VOLTS = 20.0;   // Minimum voltage required to run the APU.
+    double          level_{ 0.0 };
 
-    const double GaugeAngle = (RAD * 300);
+    SR71::Toggle togPower_{
+        { bm::vc::SwAPUPower_id },
+        bm::vc::SwAPUPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
+        bm::pnlright::pnlAPUSwitch_id,
+        bm::pnlright::pnlAPUSwitch_vrt,
+        bm::pnlright::pnlAPUSwitch_RC,
+        SR71R::RightPanel_ID
+    };
 
-    bco::AnimatedValue<bco::StateUpdateTarget> animPowerSwitch_{ SR71R::ToggleAnimSpeed };
-    bco::AnimatedValue<bco::StateUpdateTarget> animAPULevel_{ 0.2 };
-
-    UINT aidVCPowerSwitch_{ 0 };  // Animation ID for the power switch.
-    UINT aidVCAPULevel_{ 0 };        // Animation ID for the APU level gauge.
-
-    int eventId_Power_{ -1 };
-
-    bool isPowerSwitchOn_{ false }; // Is the APU power switch on?
-
-    double                  level_{ 0.0 };
+    SR71::Gauge gaugeAPULevel_{
+         bm::vc::gaHydPress_id,
+         bm::vc::gaHydPress_loc, bm::vc::axisHydPress_loc,
+         bm::pnlright::pnlHydPress_id,
+         bm::pnlright::pnlHydPress_vrt,
+         (300 * RAD),
+         level_,
+         SR71R::RightPanel_ID
+    };
 };
 
-inline void APU::Setup(bco::Vessel& vessel)
+inline APU::APU(bco::Vessel& vessel)
 {
-    eventId_Power_ = vessel.GetEventId();
-
-    vessel.RegisterEventHandler(eventId_Power_, [this](int, int) { TogglePowerSwitch(); return true; });
-
-    // Animations:
-    auto vcIndex = vessel.GetMeshIndex(bm::vc::MESH_NAME);
-    auto mainIndex = vessel.GetMeshIndex(bm::main::MESH_NAME);
-
-    // VC Power switch
-    aidVCPowerSwitch_ = vessel.CreateVesselAnimation();
-    vessel.AddAnimationGroup(
-        aidVCPowerSwitch_,
-        vcIndex,
-        { bm::vc::SwAPUPower_id },
-        bm::vc::SwCanopyPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
-        SR71R::ToggleAnimAngle,
-        0.0, 1.0);
+    vessel.RegisterUIControl(togPower_);
+    vessel.RegisterUIControl(gaugeAPULevel_);
 }
 
 inline void APU::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IFuelSystem& fuel)
 { 
     bool hasFuel = fuel.GetMainFuelLevel() > 0.0; // Check if the fuel system has fuel.
-    bool hasPower = power.GetPowerLevel() > 0.0;
+    bool hasPower = power.GetPowerLevel() > MIN_VOLTS;
+    bool isRunning = hasFuel && hasPower && togPower_.IsOn();
 
-    level_ = (hasFuel && hasPower) ? 1.0 : 0.0; // Set level to 1.0 if both fuel and power are available, otherwise 0.0.    
-
-    animAPULevel_.Update(simdt, level_); // Update the APU level animation.
-    animPowerSwitch_.Update(simdt, isPowerSwitchOn_ ? 1.0 : 0.0); // Update the power switch animation.
-
-    //auto st = (IsPowered()
-    //    ? (hasFuel ? bco::status_display::status::on : bco::status_display::status::warn)
-    //    : bco::status_display::status::off);
-    //status_.set_state(st);
+    level_ = isRunning ? 1.0 : 0.0; // Set level to 1.0 if both fuel and power are available, otherwise 0.0.
+    power.DrawPower(isRunning ? SR71R::APU_AMPS : 0.0); // Draw power if running.
 }
 
-inline void APU::UpdateVCUI(bco::Vessel& vessel)
+inline void APU::LoadState(const std::string& line)
 {
-    vessel.SetAnimation(aidVCPowerSwitch_, animAPULevel_.GetCurrent());
-    vessel.SetAnimation(aidVCAPULevel_, animAPULevel_.GetCurrent());
+      if (line.empty()) return;
+   
+      std::istringstream is(line);
+      int powerState;
+      is >> powerState;
+      togPower_.SetState(powerState != 0);
 }
 
-inline void APU::UpdateRightPanelUI(MESHHANDLE mesh)
-{ 
-    bco::DrawPanelOnOff(mesh, bm::pnlright::pnlAPUSwitch_id, bm::pnlright::pnlAPUSwitch_vrt, isPowerSwitchOn_, SR71R::TogglePnlOffset);
-    bco::RotateMesh(mesh, bm::pnlright::pnlHydPress_id, bm::pnlright::pnlHydPress_vrt, GaugeAngle);
-}
-
-inline void APU::LoadState(const std::string& line) {}
-inline std::string APU::GetState() const {}
-
-inline void APU::LoadVC()
+inline std::string APU::GetState() const 
 {
-    bco::LoadVCSimpleEvent(eventId_Power_, bm::vc::SwAPUPower_loc, SR71R::ToggleHitRadius);
-}
-
-inline void APU::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
-{
-    bco::LoadPanelSimpleEvent(vessel, eventId_Power_, handle, bm::pnlright::pnlAPUSwitch_RC);
+    std::ostringstream os;
+    os << togPower_.IsOn() ? 1 : 0;
+    return os.str();
 }

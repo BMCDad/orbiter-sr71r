@@ -63,3 +63,17 @@ VNext: (April 2 2024)
 	* 5/5/2024 - Abandoning normals for now.  Getting Blender to bake those correctly is rather complicated, especially since we want to use 
 					a gray scale texture.  It may be easier to have a high-poly model, but not now.
 	* 5/16/2024 - Top body texturing done.  Bottom should go quicker.
+
+Redo: (Aug, 2025)
+: Panel issues (10/5/2025):
+    * RCS level will be removed
+    * A/P ** All AP will be differed **
+    * Shutter will be removed
+    * Dock light will be removed
+    * 10/5/2025 - HUD buttons working. VC hud working.
+    - ACC gauge
+    - Attitude indicator
+    - Fuel Flow gauge
+    - Clock buttons not working
+    - Retro doors switch not working
+    - Status display for all components

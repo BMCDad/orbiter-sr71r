@@ -54,8 +54,8 @@ SR71Vessel::~SR71Vessel()
 auto SR71Vessel::SetClassCaps() -> void
 {
     // Load main meshes.
-    RegisterMesh(bm::main::MESH_NAME, MESHVIS_EXTERNAL);
-    auto vcIndex = RegisterMesh(bm::vc::MESH_NAME, MESHVIS_VC);
+    LoadMesh(bm::main::MESH_NAME, MESHVIS_EXTERNAL);
+    LoadMesh(bm::vc::MESH_NAME, MESHVIS_VC);
 
     // Load 2D Panel meshes.
     RegisterPanelMesh(bm::pnl::MESH_NAME, 0);
@@ -76,24 +76,18 @@ auto SR71Vessel::SetClassCaps() -> void
     SetupAerodynamics();
     SetCameraOffset(bm::main::PilotPOV_loc);
 
-    // Propellent, move to setup method:
-    mainPropellant_ = CreatePropellantResource(SR71R::MAX_FUEL);
-    rcsPropellant_ = CreatePropellantResource(SR71R::MAX_RCS_FUEL);
-
     SetMaxWheelbrakeForce(4e5);
 
     // Setup components:
+    propulsion_.Setup(*this);
     airBrake_.Setup(*this);
-    airspeed_.Setup(*this);
-    altimeter_.Setup(*this);
-    apu_.Setup(*this);
     canopy_.Setup(*this);
     cargoBay_.Setup(*this);
-    clock_.Setup(*this);
-    fuelCell_.Setup(*this);
-    hoverEngines_.Setup(*this, mainPropellant_);
+    hoverEngines_.Setup(*this, propulsion_); // Must come after propulsion setup.
+    retroEngines_.Setup(*this, propulsion_); // Must come after propulsion setup.
     landingGear_.Setup(*this);
     mfds_.Setup(*this);
+    surfaceCtrl_.Setup(*this);
 }
 
 bool SR71Vessel::LoadVC(int id)
@@ -104,14 +98,10 @@ bool SR71Vessel::LoadVC(int id)
         _V(0.1, 0.0, 0.0), 0.0, 0.0);
 
     airBrake_.LoadVC();
-    apu_.LoadVC();
-    canopy_.LoadVC();
-    cargoBay_.LoadVC();
     clock_.LoadVC();
-    fuelCell_.LoadVC();
-    hoverEngines_.LoadVC();
     landingGear_.LoadVC();
     mfds_.LoadVC(*this);
+    hud_.LoadVC();
 
     UIUpdateHandler_ = { [&]() { UpdateVCUI(); } };
     return true;
@@ -186,14 +176,8 @@ bool SR71Vessel::LoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD view
         SetPanelScaling(hPanel, defscale, extscale);
         oapiSetPanelNeighbours(0, -1, -1, -1);
 
-        UIUpdateHandler_ = { [&]() { UpdateRightPanelUI(); } };
+        UIUpdateHandler_ = { [&]() { } };
         panelRightGlobalMesh_ = meshHandle; // Store the mesh handle for later use.
-
-        apu_.LoadPanel(*this, hPanel);
-        canopy_.LoadPanel(*this, hPanel);
-        cargoBay_.LoadPanel(*this, hPanel);
-        fuelCell_.LoadPanel(*this, hPanel);
-        hoverEngines_.LoadPanel(*this, hPanel);
         break;
     }
     }
@@ -204,16 +188,30 @@ bool SR71Vessel::LoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD view
 void SR71Vessel::Step(bco::Vessel& vessel, double simt, double simdt, double mjd)
 {
     // Call the components that need access to the simulation time.
+    powerSystem_.UpdateStatePreStep(vessel, simdt);
+
     airBrake_.UpdateState(vessel, simdt, *this);
-    airspeed_.UpdateState(vessel, simdt, *this);
-    altimeter_.UpdateState(vessel, simdt, *this);
-    apu_.UpdateState(vessel, simdt, *this, *this);
-    canopy_.UpdateState(vessel, simdt, *this);
-    cargoBay_.UpdateState(vessel, simdt, *this);
+    airspeed_.UpdateState(vessel, simdt, avionics_);
+    altimeter_.UpdateState(vessel, simdt, avionics_);
+    apu_.UpdateState(vessel, simdt, powerSystem_, propulsion_);
+    avionics_.UpdateState(vessel, simdt, powerSystem_);
+    canopy_.UpdateState(vessel, simdt, powerSystem_);
+    cargoBay_.UpdateState(vessel, simdt, powerSystem_);
     clock_.UpdateState(simdt);
-    fuelCell_.UpdateState(vessel, simdt, *this, *this, *this);
-    hoverEngines_.UpdateState(vessel, simdt, *this);
+    hoverEngines_.UpdateState(vessel, simdt, powerSystem_);
+    hud_.UpdateState(vessel, simdt, powerSystem_);
+    hydrogenTank_.UpdateState(vessel, simt, simdt, powerSystem_);
     landingGear_.UpdateState(vessel, simdt, *this);
+    lights_.UpdateState(vessel, simdt, powerSystem_);
+    navModes_.UpdateState(vessel, simdt, avionics_);
+    oxygenTank_.UpdateState(vessel, simt, simdt, powerSystem_);
+    propulsion_.UpdateState(vessel, simdt, powerSystem_);
+    retroEngines_.UpdateState(vessel, simdt, powerSystem_);
+    surfaceCtrl_.UpdateState(vessel, simdt, *this);
+
+    fuelCell_.UpdateState(vessel, simdt, powerSystem_, hydrogenTank_, oxygenTank_);
+    // This should be last, after all power draws are done.
+    powerSystem_.UpdateStatePostStep(vessel, simdt, fuelCell_);
 
     UIUpdateHandler_();
 }
@@ -237,6 +235,79 @@ void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
         //    handled = true;
         //}
 
+        if (key == "APU") {
+            apu_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "HOVER") {
+            hoverEngines_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "RETRO") {
+            retroEngines_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "CARGOBAY") {
+            cargoBay_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "CANOPY") {
+            canopy_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "AIRBRAKE") {
+            airBrake_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "GEAR") {
+            landingGear_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "FUELCELL") {
+            fuelCell_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "AVIONICS") {
+            avionics_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "POWER") {
+            powerSystem_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "HYDROGEN") {
+            hydrogenTank_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "GEAR") {
+            landingGear_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "OXYGEN") {
+            oxygenTank_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "PROPULSION") {
+            propulsion_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "LIGHTS") {
+            lights_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "CLOCK") {
+            clock_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "HOVER") {
+            hoverEngines_.LoadState(configLine);
+            handled = true;
+        }
+        else if (key == "RETRO") {
+            retroEngines_.LoadState(configLine);
+            handled = true;
+        }
+
         if (!handled) {
             ParseScenarioLineEx(line, vs);
         }
@@ -258,6 +329,21 @@ void SR71Vessel::clbkSaveState(FILEHANDLE scn)
 void SR71Vessel::clbkMFDMode(int mfd, int mode)
 {
     mfds_.ResetMFD(*this, mfd);
+}
+
+void SR71Vessel::clbkNavMode(int mode, bool active)
+{
+    navModes_.OnNavMode(mode, active);
+}
+
+void SR71Vessel::clbkRCSMode(int mode)
+{
+    rcsSystem_.OnRCSMode(mode);
+}
+
+void SR71Vessel::clbkHUDMode(int mode)
+{
+    hud_.OnHudMode(mode);
 }
 
 void SR71Vessel::SetupAerodynamics()
@@ -285,31 +371,12 @@ void SR71Vessel::SetupAerodynamics()
 void SR71Vessel::UpdateVCUI() 
 {
     airBrake_.UpdateVCUI(*this);
-    airspeed_.UpdateVCUI(*this, vcGlobalMesh_);
-    altimeter_.UpdateVCUI(*this, vcGlobalMesh_);
-    apu_.UpdateVCUI(*this);
     canopy_.UpdateVCUI(*this);
-    cargoBay_.UpdateVCUI(*this);
-    clock_.UpdateVCUI(*this);
-    fuelCell_.UpdateVCUI(*this);
-    hoverEngines_.UpdateVCUI(*this);
     landingGear_.UpdateVCUI(*this);
 }
 
 void SR71Vessel::UpdateMainPanelUI()
 {
     airBrake_.UpdateMainPanelUI(panelGlobalMesh_);
-    airspeed_.UpdateMainPanelUI(panelGlobalMesh_);
-    altimeter_.UpdateMainPanelUI(panelGlobalMesh_);
-    clock_.UpdateMainPanelUI(panelGlobalMesh_);
     landingGear_.UpdateMainPanelUI(panelGlobalMesh_);
-}
-
-void SR71Vessel::UpdateRightPanelUI()
-{
-    apu_.UpdateRightPanelUI(panelGlobalMesh_);
-    canopy_.UpdateRightPanelUI(panelGlobalMesh_);
-    cargoBay_.UpdateRightPanelUI(panelGlobalMesh_);
-    fuelCell_.UpdateRightPanelUI(panelGlobalMesh_);
-    hoverEngines_.UpdateRightPanelUI(panelGlobalMesh_);
 }
