@@ -63,3 +63,21 @@ VNext: (April 2 2024)
 	* 5/5/2024 - Abandoning normals for now.  Getting Blender to bake those correctly is rather complicated, especially since we want to use 
 					a gray scale texture.  It may be easier to have a high-poly model, but not now.
 	* 5/16/2024 - Top body texturing done.  Bottom should go quicker.
+
+Redo: (Aug, 2025)
+: Panel issues (10/5/2025):
+    * RCS level will be removed
+    * A/P ** All AP will be differed **
+    * Shutter will be removed
+    * Dock light will be removed
+    * 10/5/2025 - HUD buttons working. VC hud working.
+    * 10/6/2025 - ACC gauge working.
+    * 10/6/2025 - Attitude indicator
+    * 10/6/2025 - Fuel Flow gauge
+    * 10/6/2025 - Clock buttons not working
+    * 10/7/2025 - Retro doors switch not working (Blender origin issue for panels)
+    * 10/7/2025 - Fix fuel cell panel switches
+    * 10/7/2025 - Implement Save State
+    * 10/8/2025 - Fuel load switch not working
+    * 10/8/2025 - Status display for all components
+    * 10/8/2025 - Clean up wrap gauge time step

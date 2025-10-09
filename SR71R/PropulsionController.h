@@ -1,40 +1,37 @@
-//	PropulsionController - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
-//
-//	This program is free software : you can redistribute it and / or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program.If not, see <http://www.gnu.org/licenses/>.
+/*
+PropulsionController - SR-71r Orbiter Addon
+Copyright(C) 2025  Blake Christensen
+
+This program is free software : you can redistribute it and / or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #pragma once
 
 #include "Orbitersdk.h"
 
-#include <string>
-
-#include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/on_off_display.h"
-#include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/status_display.h"
+#include "..\bc_orbiter\Vessel.h"
 
 #include "SR71r_mesh.h"
-#include "SR71r_common.h"
 #include "ShipMets.h"
+#include "IFuelSystem.h"
+#include "IPowerProvider.h"
+#include "SR71Toggle.h"
+#include "SR71Gauge.h"
+#include "SR71Light.h"
+#include "SR71Button.h"
 
 namespace bco = bc_orbiter;
-
-class VESSEL3;
 
 /**
 Manages propulsion and propellents for the vessel including thrust limiter and fuel
@@ -74,200 +71,343 @@ must be ON for the retro doors to operate.
 Configuration:
 PROPULSION a b c d e
 a = 0/1 Thrust limit AB/Full.
-b = 0/1 Transfer mode: RCS/Main.
-c = 0/1 Fill valve is open.
-e = 0/1 Transfer pump is active.
-e = 0/1 Dump pump is active.
+b = 0/1 Fill valve is open.
 */
 
-class PropulsionController : 
-	  public bco::vessel_component
-	, public bco::set_class_caps
-	, public bco::power_consumer
-	, public bco::post_step
-	, public bco::manage_state
-	, public bco::draw_hud
+class PropulsionController : public IFuelSystem
 {
 public:
-	PropulsionController(bco::power_provider& pwr, bco::vessel& vessel);
+    PropulsionController(bco::Vessel& vessel);
+    ~PropulsionController() = default;
 
-	// post_step
-	void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void Setup(bco::Vessel& vessel);
 
-	// power_consumer
-	double amp_draw() const { return (isFilling_ ? 4.0 : 0.0) + (isRCSFilling_ ? 4.0 : 0.0); }
+    void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power);
 
-	// set_class_caps
-	void handle_set_class_caps(bco::vessel& vessel) override;
+    double GetMainFuelLevel() const override { return mainFuelRangeValue_; }
+    PROPELLANT_HANDLE GetMainProppelantHandle() const { return mainPropellant_; }
 
-	// manage_state
-	bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-	std::string handle_save_state(bco::vessel& vessel) override;
+    // draw_hud
+//    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
 
-	// draw_hud
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void SetVesselMainThrustLevel(double level);
 
-	double GetVesselMainThrustLevel();
-	void SetVesselMainThrustLevel(double level);
-    void SetAttitudeRotLevel(bco::Axis axis, double level);
-	double CurrentMaxThrust() { return maxThrustLevel_; }
+    void ToggleThrustLimit() { switchThrustLimit_.ToggleState(); }
 
-	bco::signal<double>&	MainFuelLevelSignal() { return signalMainFuelLevel_; }
-
-	void ToggleThrustLimit() { switchThrustLimit_.toggle_state(); }
+    void LoadState(const std::string& line);
+    std::string GetState() const;
 
 private:
-	bco::vessel&		vessel_;
-	bco::power_provider&	power_;
+    bco::Vessel& vessel_;
 
-	bool IsPowered() { return power_.volts_available() > 24.0; }
+    double FillMainFuel(bco::Vessel& vessel, double amount);
 
-	bco::signal<double>		signalMainFuelLevel_;
+    void ToggleFill() { isFilling_ = !isFilling_; };
+    void SetThrustLevel(double newLevel);
+    void Update(double deltaUpdate);
 
-	double DrawMainFuel(double amount);
-	double FillMainFuel(double amount);
+    THRUSTER_HANDLE mainThrustHandles_[2];
+    THRUSTER_HANDLE retroThrustHandles_[2];
 
-	double DrawRCSFuel(double amount);
-	double FillRCSFuel(double amount);
+    double      maxMainFlow_        { 0.0 };       	// MAXTHRUST / ISP.
+    const char* ConfigKey =         "PROPULSION";
+    double      rcsFuelLevel_       { 0.0 };
+    double      maxThrustLevel_     { 0.0 };
+    int         areaId_             { 0 };
+    double      prevTime_           { 0.0 };
+    bool        isFilling_          { false };
+    bool        isExternAvail_      { false };
 
-	void SetThrustLevel(double newLevel);
-	void Update(double deltaUpdate);
+    bool        isRCSFilling_       { false };
 
-	void ToggleFill();
-	void ToggleRCSFill();
+    double      fuelFlowRangeValue_ { 0.0 };  // Value to drive the fuel flow gauge.
+    double      mainFuelRangeValue_ { 0.0 };    // Value to drive the main fuel gauge.
+    double      rcsFuelRangeValue_  { 0.0 };     // Value to drive the RCS fuel gauge. 
 
-	void HandleTransfer(double deltaUpdate);
+    PROPELLANT_HANDLE   mainPropellant_{ nullptr };
 
-	THRUSTER_HANDLE		mainThrustHandles_[2];
-    THRUSTER_HANDLE     retroThrustHandles_[2];
 
-	double				maxMainFlow_;			// MAXTHRUST / ISP.
-
-	const char*	ConfigKey = "PROPULSION";
-	double		mainFuelLevel_;
-	double		rcsFuelLevel_;
-	double		maxThrustLevel_;
-	int			areaId_;
-	double		prevTime_;
-	bool		isFilling_			{ false };
-	bool		isExternAvail_		{ false };
-
-	bool		isRCSFilling_		{ false };
-
-	// Switches
-    bco::on_off_input		switchThrustLimit_{		// Thrust Limit
-        { bm::vc::swThrottleLimit_id },
+    // Switches
+    SR71::Toggle   switchThrustLimit_{		// Thrust Limit
+        bm::vc::swThrottleLimit_id,
         bm::vc::swThrottleLimit_loc, bm::vc::navPanelAxis_loc,
-        toggleOnOff,
         bm::pnl::pnlThrottleLimit_id,
         bm::pnl::pnlThrottleLimit_vrt,
-        bm::pnl::pnlThrottleLimit_RC
+        bm::pnl::pnlThrottleLimit_RC,
+        SR71R::MainPanel_ID
     };
 
-    bco::on_off_input       switchFuelDump_{        // Fuel dump
-        { bm::vc::swDumpFuel_id },
-        bm::vc::swDumpFuel_loc, bm::vc::FuelTransferRightAxis_loc,
-        toggleOnOff,
-        bm::pnlright::pnlFuelDump_id,
-        bm::pnlright::pnlFuelDump_vrt,
-        bm::pnlright::pnlFuelDump_RC,
-        1
-    };
-
-	// Gauges
-    bco::rotary_display<bco::animation_target>		gaugeFuelFlow_{
-        { bm::vc::gaFuelFlow_id },
+    // Gauges
+    SR71::Gauge gaugeFuelFlow_{
+        bm::vc::gaFuelFlow_id,
         bm::vc::gaFuelFlow_loc, bm::vc::FuelFlowAxisFront_loc,
         bm::pnl::pnlGaFuelFlow_id,
         bm::pnl::pnlGaFuelFlow_vrt,
         (270 * RAD),	// Clockwise
-        1.0
+        fuelFlowRangeValue_,
+        SR71R::MainPanel_ID
     };
 
-    bco::rotary_display<bco::animation_target>		gaugeFuelMain_{
-        { bm::vc::gaMainFuel_id },
+    SR71::Gauge gaugeFuelMain_{
+        bm::vc::gaMainFuel_id,
         bm::vc::gaMainFuel_loc, bm::vc::FuelLevelAxisFront_loc,
         bm::pnl::pnlGaFuelMain_id,
         bm::pnl::pnlGaFuelMain_vrt,
         (256 * RAD),	// Clockwise
-        1.0
+        mainFuelRangeValue_,
+        SR71R::MainPanel_ID
     };
 
-    bco::rotary_display<bco::animation_target>		gaugeFuelRCS_{
-        { bm::vc::gaRCSFuel_id },
+    SR71::Gauge gaugeFuelRCS_{
+        bm::vc::gaRCSFuel_id,
         bm::vc::gaRCSFuel_loc, bm::vc::RCSLevelAxisFront_loc,
         bm::pnl::pnlGaFuelRCS_id,
         bm::pnl::pnlGaFuelRCS_vrt,
         (264 * RAD),	// Clockwise
-        1.0
+        rcsFuelRangeValue_,
+        SR71R::MainPanel_ID
     };
 
-	// Displays
-    bco::on_off_display		lightFuelAvail_{
+    // Displays
+
+    SR71::Light lightFuelAvail_{
         bm::vc::FuelSupplyOnLight_id,
         bm::vc::FuelSupplyOnLight_vrt,
         bm::pnlright::pnlFuelAvail_id,
         bm::pnlright::pnlFuelAvail_vrt,
-        0.0244,
-        1
+        SR71R::RightPanel_ID
     };
 
-    bco::on_off_display		lightRCSAvail_{
+    SR71::Light lightRCSAvail_{
         bm::vc::RCSSupplyOnLight_id,
         bm::vc::RCSSupplyOnLight_vrt,
         bm::pnlright::pnlRCSAvail_id,
         bm::pnlright::pnlRCSAvail_vrt,
-        0.0244,
-        1
+        SR71R::RightPanel_ID
     };
 
-	// Load FUEL pump
-    bco::simple_event<>     btnFuelValveOpen_{
-        bm::vc::FuelValveOpenSwitch_loc,
-        0.01,
-        bm::pnlright::pnlFuelValveSwitch_RC,
-        1
-    };
-
-    bco::on_off_display     lightFuelValveOpen_{
+    SR71::Button btnFuelValveOpen_{
         bm::vc::FuelValveOpenSwitch_id,
+        bm::vc::FuelValveOpenSwitch_loc,
         bm::vc::FuelValveOpenSwitch_vrt,
         bm::pnlright::pnlFuelValveSwitch_id,
         bm::pnlright::pnlFuelValveSwitch_vrt,
-        0.0352,
-        1
+        bm::pnlright::pnlFuelValveSwitch_RC,
+        SR71R::RightPanel_ID,
+        [this](bool) { ToggleFill(); }
     };
 
-	// Load RCS pump
-    bco::simple_event<>     btnRCSValveOpen_{
-        bm::vc::RCSValveOpenSwitch_loc,
-        0.01,
-        bm::pnlright::pnlRCSValveSwitch_RC,
-        1
-    };
-
-    bco::on_off_display     lightRCSValveOpen_{
-        bm::vc::RCSValveOpenSwitch_id,
-        bm::vc::RCSValveOpenSwitch_vrt,
-        bm::pnlright::pnlRCSValveSwitch_id,
-        bm::pnlright::pnlRCSValveSwitch_vrt,
-        0.0352,
-        1
-    };
-
-    bco::status_display     statusFuel_{
+    SR71::Light     statusFuel_{
         bm::vc::MsgLightFuelWarn_id,
         bm::vc::MsgLightFuelWarn_vrt,
         bm::pnl::pnlMsgLightFuelWarn_id,
         bm::pnl::pnlMsgLightFuelWarn_vrt,
-        0.0361
+        SR71R::MainPanel_ID
     };
 
-    bco::status_display     statusLimiter_{
+    SR71::Light     statusLimiter_{
         bm::vc::MsgLightThrustLimit_id,
         bm::vc::MsgLightThrustLimit_vrt,
         bm::pnl::pnlMsgLightThrustLimit_id,
         bm::pnl::pnlMsgLightThrustLimit_vrt,
-        0.0361
+        SR71R::MainPanel_ID
     };
+
 };
+
+inline PropulsionController::PropulsionController(bco::Vessel& vessel) :
+    vessel_(vessel),
+    mainThrustHandles_{nullptr, nullptr},
+    retroThrustHandles_{ nullptr, nullptr }
+{
+    maxMainFlow_ = (SR71R::ENGINE_THRUST / SR71R::THRUST_ISP) * 2;
+
+    vessel.RegisterUIControl(switchThrustLimit_);
+    vessel.RegisterUIControl(gaugeFuelFlow_);
+    vessel.RegisterUIControl(gaugeFuelMain_);
+    vessel.RegisterUIControl(gaugeFuelRCS_);
+    vessel.RegisterUIControl(lightFuelAvail_);
+    vessel.RegisterUIControl(lightRCSAvail_);
+    vessel.RegisterUIControl(btnFuelValveOpen_);
+
+    vessel.RegisterUIControl(statusFuel_);
+    vessel.RegisterUIControl(statusLimiter_);
+}
+
+inline void PropulsionController::Setup(bco::Vessel& vessel)
+{
+    mainPropellant_ = vessel.CreatePropellantResource(SR71R::MAX_FUEL);
+
+    //	Start with max thrust (ENGINE_THRUST) this will change base on the max thrust selector.
+    mainThrustHandles_[0] = vessel.CreateThruster(
+        bm::main::ThrusterP_loc,
+        _V(0, 0, 1),
+        SR71R::ENGINE_THRUST,
+        mainPropellant_,
+        SR71R::THRUST_ISP);
+
+    mainThrustHandles_[1] = vessel.CreateThruster(
+        bm::main::ThrusterS_loc,
+        _V(0, 0, 1),
+        SR71R::ENGINE_THRUST,
+        mainPropellant_,
+        SR71R::THRUST_ISP);
+
+    vessel.CreateThrusterGroup(mainThrustHandles_, 2, THGROUP_MAIN);
+
+    EXHAUSTSPEC es_main[2] =
+    {
+       { mainThrustHandles_[0], NULL, NULL, NULL, 12, 1, 0, 0.1, NULL },
+       { mainThrustHandles_[1], NULL, NULL, NULL, 12, 1, 0, 0.1, NULL }
+    };
+
+    PARTICLESTREAMSPEC exhaust_main = {
+       0, 2.0, 13, 150, 0.1, 0.2, 16, 1.0, PARTICLESTREAMSPEC::EMISSIVE,
+       PARTICLESTREAMSPEC::LVL_SQRT, 0, 1,
+       PARTICLESTREAMSPEC::ATM_PLOG, 1e-5, 0.1
+    };
+
+    for (auto i = 0; i < 2; i++) vessel.AddExhaust(es_main + i);
+    vessel.AddExhaustStream(mainThrustHandles_[0], _V(-4.6230, 0, -11), &exhaust_main);
+    vessel.AddExhaustStream(mainThrustHandles_[1], _V(4.6230, 0, -11), &exhaust_main);
+
+    THRUSTER_HANDLE th_att_rot[4], th_att_lin[4];
+
+    // Pitch up/down attack points are simplified 8 meters forward and aft.
+    th_att_rot[0] = th_att_lin[0] = vessel.CreateThruster(_V(0, 0,  8), _V(0,  1, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+    th_att_rot[1] = th_att_lin[3] = vessel.CreateThruster(_V(0, 0, -8), _V(0, -1, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+    th_att_rot[2] = th_att_lin[2] = vessel.CreateThruster(_V(0, 0,  8), _V(0, -1, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+    th_att_rot[3] = th_att_lin[1] = vessel.CreateThruster(_V(0, 0, -8), _V(0, 1, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+
+    vessel.CreateThrusterGroup(th_att_rot, 2, THGROUP_ATT_PITCHUP);
+    vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_PITCHDOWN);
+    vessel.CreateThrusterGroup(th_att_lin, 2, THGROUP_ATT_UP);
+    vessel.CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_DOWN);
+
+    // Exhaust visuals
+    vessel.AddExhaust(th_att_rot[0], 0.6, 0.078, bm::main::RCS_FL_DOWN_loc, _V(0, -1, 0));
+    vessel.AddExhaust(th_att_rot[0], 0.6, 0.078, bm::main::RCS_FR_DOWN_loc, _V(0, -1, 0));
+    vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RL_UP_loc, _V(0, 1, 0));
+    vessel.AddExhaust(th_att_rot[1], 0.79, 0.103, bm::main::RCS_RR_UP_loc, _V(0, 1, 0));
+    vessel.AddExhaust(th_att_rot[2], 0.6, 0.078, bm::main::RCS_FL_UP_loc, _V(0, 1, 0));
+    vessel.AddExhaust(th_att_rot[2], 0.6, 0.078, bm::main::RCS_FR_UP_loc, _V(0, 1, 0));
+    vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RL_DOWN_loc, _V(0, -1, 0));
+    vessel.AddExhaust(th_att_rot[3], 0.79, 0.103, bm::main::RCS_RR_DOWN_loc, _V(0, -1, 0));
+
+
+    // Yaw left and right simplified at 10 meters.
+    th_att_rot[0] = th_att_lin[0] = vessel.CreateThruster(_V(0, 0,  10), _V(-1, 0, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+    th_att_rot[1] = th_att_lin[3] = vessel.CreateThruster(_V(0, 0, -10), _V( 1, 0, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+    th_att_rot[2] = th_att_lin[2] = vessel.CreateThruster(_V(0, 0,  10), _V( 1, 0, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+    th_att_rot[3] = th_att_lin[1] = vessel.CreateThruster(_V(0, 0, -10), _V(-1, 0, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+
+    vessel.CreateThrusterGroup(th_att_rot, 2, THGROUP_ATT_YAWLEFT);
+    vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_YAWRIGHT);
+    vessel.CreateThrusterGroup(th_att_lin, 2, THGROUP_ATT_LEFT);
+    vessel.CreateThrusterGroup(th_att_lin + 2, 2, THGROUP_ATT_RIGHT);
+
+    vessel.AddExhaust(th_att_rot[0], 0.6, 0.078, bm::main::RCS_FR_RIGHT_loc, _V(1, 0, 0));
+    vessel.AddExhaust(th_att_rot[1], 0.94, 0.122, bm::main::RCS_RL_LEFT_loc, _V(-1, 0, 0));
+    vessel.AddExhaust(th_att_rot[2], 0.6, 0.078, bm::main::RCS_FL_LEFT_loc, _V(-1, 0, 0));
+    vessel.AddExhaust(th_att_rot[3], 0.94, 0.122, bm::main::RCS_RR_RIGHT_loc, _V(1, 0, 0));
+
+    // Bank left and right.
+
+    th_att_rot[0] = vessel.CreateThruster(_V( 5, 0, 0), _V(0,  1, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+    th_att_rot[1] = vessel.CreateThruster(_V(-5, 0, 0), _V(0, -1, 0), SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+    th_att_rot[2] = vessel.CreateThruster(_V(-5, 0, 0), _V(0, 1, 0), SR71R::RCS_THRUST,  mainPropellant_, SR71R::THRUST_ISP);
+    th_att_rot[3] = vessel.CreateThruster(_V(5, 0, 0), _V(0, -1, 0), SR71R::RCS_THRUST,  mainPropellant_, SR71R::THRUST_ISP);
+
+    vessel.CreateThrusterGroup(th_att_rot, 2, THGROUP_ATT_BANKLEFT);
+    vessel.CreateThrusterGroup(th_att_rot + 2, 2, THGROUP_ATT_BANKRIGHT);
+
+    vessel.AddExhaust(th_att_rot[0], 1.03, 0.134, bm::main::RCS_L_TOP_loc, _V(0, 1, 0));
+    vessel.AddExhaust(th_att_rot[1], 1.03, 0.134, bm::main::RCS_R_BOTTOM_loc, _V(0, -1, 0));
+    vessel.AddExhaust(th_att_rot[2], 1.03, 0.134, bm::main::RCS_R_TOP_loc, _V(0, 1, 0));
+    vessel.AddExhaust(th_att_rot[3], 1.03, 0.134, bm::main::RCS_L_BOTTOM_loc, _V(0, -1, 0));
+
+
+    // Forward and back
+    th_att_lin[0] = vessel.CreateThruster(_V(0, 0, -7), _V(0, 0, 1), 2 * SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+    th_att_lin[1] = vessel.CreateThruster(_V(0, 0, 7), _V(0, 0, -1), 2 * SR71R::RCS_THRUST, mainPropellant_, SR71R::THRUST_ISP);
+
+    vessel.CreateThrusterGroup(th_att_lin, 1, THGROUP_ATT_FORWARD);
+    vessel.CreateThrusterGroup(th_att_lin + 1, 1, THGROUP_ATT_BACK);
+
+    vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RL_LEFT_loc, _V(0, 0, -1));
+    vessel.AddExhaust(th_att_lin[0], 0.6, 0.078, bm::main::RCS_RR_RIGHT_loc, _V(0, 0, -1));
+    vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_L_FORWARD_loc, _V(0, 0, 1));
+    vessel.AddExhaust(th_att_lin[1], 0.6, 0.078, bm::main::RCS_R_FORWARD_loc, _V(0, 0, 1));
+}
+
+inline void PropulsionController::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power)
+{
+    auto isPowered = power.GetPowerLevel() > 20.0;
+
+    isExternAvail_ = (isPowered && vessel_.IsStoppedOrDocked());
+    lightFuelAvail_.SetState(isExternAvail_);
+
+    if (!isExternAvail_ || !isPowered) { isFilling_ = false; }
+
+    btnFuelValveOpen_.SetState(isFilling_);
+
+    // Determine fuel levels:
+    mainFuelRangeValue_ = vessel_.GetPropellantMass(mainPropellant_) / vessel_.GetPropellantMaxMass(mainPropellant_);
+
+    // Main flow
+    auto flow = vessel_.GetPropellantFlowrate(mainPropellant_);
+    //    auto trFlow = (flow / maxMainFlow_) * (PI2 * 0.75);	// 90.718 = 200lbs per hour : 270 deg.
+
+    fuelFlowRangeValue_ = flow / maxMainFlow_;
+
+    if (isFilling_) // cannot be enabled if external fuel is unavailable.
+    {
+        // Add to main.
+        auto actualFill = FillMainFuel(vessel, SR71R::FUEL_FILL_RATE * simdt);
+        if (actualFill <= 0.0)
+        {
+            isFilling_ = false;
+        }
+    }
+
+    statusLimiter_.SetState(
+        (!isPowered || switchThrustLimit_.IsOn())
+        ? SR71::StatusOff
+        : SR71::StatusOn
+    );
+
+    statusFuel_.SetState(
+        (mainFuelRangeValue_ > 0.2) || !isPowered
+        ? SR71::StatusOff
+        : mainFuelRangeValue_ == 0.0
+        ? SR71::StatusError
+        : SR71::StatusWarn);
+}
+
+inline void PropulsionController::LoadState(const std::string& line)
+{
+    std::istringstream in(line);
+    int power, fillbtn;
+
+    in >> power >> fillbtn;
+
+    switchThrustLimit_.SetState(power != 0);
+    btnFuelValveOpen_.SetState(fillbtn != 0);
+}
+
+inline std::string PropulsionController::GetState() const
+{
+    std::ostringstream out;
+    out << (switchThrustLimit_.IsOn() ? 1 : 0) << " " << (btnFuelValveOpen_.IsOn() ? 1 : 0);
+    return out.str();
+}
+
+inline double PropulsionController::FillMainFuel(bco::Vessel& vessel, double amount)
+{
+    auto current = vessel_.GetPropellantMass(mainPropellant_);
+    auto topOff = SR71R::MAX_FUEL - current;
+
+    auto result = min(amount, topOff);
+    vessel_.SetPropellantMass(mainPropellant_, (current + result));
+    return result;
+}

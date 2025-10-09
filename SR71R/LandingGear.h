@@ -1,184 +1,276 @@
-//	LandingGear - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
-//
-//	This program is free software : you can redistribute it and / or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program.If not, see <http://www.gnu.org/licenses/>.
+/*
+Landing Gear - SR-71r Orbiter Addon
+Copyright(C) 2025  Blake Christensen
+
+This program is free software : you can redistribute it and / or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see <http://www.gnu.org/licenses/>.
+
+Manages the landing gear of the SR-71r.  The landing gear is powered by hydraulic power
+via the apu.
+
+Configuration:
+GEAR a b
+a = 0/1 up/down.
+b = 0.0 position
+
+*/
 
 #pragma once
 
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/Component.h"
-#include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/simple_event.h"
-#include "../bc_orbiter/panel_display.h"
+#include "..\bc_orbiter\Vessel.h"
+#include "..\bc_orbiter\AnimatedValue.h"
+#include "..\bc_orbiter\MeshTools.h"
 
 #include "SR71r_mesh.h"
+#include "ShipMets.h"
+
+#include "IHydraulicProvider.h"
 
 namespace bco = bc_orbiter;
 
-class VESSEL;
-
-/**
-	Model the landing gear and its controls.
-
-	The landing gear requires hydraulic pressure to function which comes from the APU.  See
-	the APU instructions on how to start the APU.
-
-	Configuration:
-	GEAR a b
-	a = 0/1 up/down.
-	b = 0.0 position
-*/
-class LandingGear : 
-    public bco::vessel_component
-    , public bco::set_class_caps
-    , public bco::post_step
-    , public bco::manage_state
-    , public bco::draw_hud
+class LandingGear
 {
 public:
-	LandingGear(bco::vessel& vessel, bco::hydraulic_provider& apu);
+    LandingGear() = default;
+    ~LandingGear() = default;
 
-    // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) override;
+    void Setup(bco::Vessel& vessel);
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void UpdateState(bco::Vessel& vessel, double simdt, IHydraulicProvider& hydro);
+    void UpdateVCUI(bco::Vessel& vessel);   // Called to update the VC UI when the VC is active.
+    void UpdateMainPanelUI(MESHHANDLE mesh);    // Called to update the 2D panel UI when the panel is active.
 
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    void LoadVC();       // Called when the VC is loaded to setup animations.
+    void LoadPanel(bco::Vessel& vessel, PANELHANDLE handle);    // Called when the 2D panel is loaded to setup animations.
 
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
+    void RaiseLandingGear() {
+        isLandingGearDeployed_ = false;
+        isLandingGearChanged_ = true;
+    }
 
-    void Toggle() { position_ = (position_ == 0.0) ? 1.0 : 0.0; }
+    void LowerLandingGear() {
+        isLandingGearDeployed_ = true;
+        isLandingGearChanged_ = true;
+    }
+
+    void LoadState(const std::string& line);
+    std::string GetState() const;
 private:
 
-    bco::hydraulic_provider& apu_;
+    bco::AnimatedValue<bco::StateUpdateTarget> animVCLandingGearSwitch_{ SR71R::ToggleAnimSpeed };
+    bco::AnimatedValue<bco::StateUpdateTarget> animLandingGear_{ SR71R::ToggleAnimSpeed };
 
-    double                  position_{ 0.0 };
+    UINT aidVCLandingGearSwitch_{ 0 };
+    UINT aidLandingGear_{ 0 };
 
-                                                /*  animLandingGear_ has no visual.  We use it
-                                                    as a target provider for the main landing gear
-                                                    animation.  By doing this we can control the
-                                                    animation of the gear based on available APU
-                                                    power.  See the Step method in the cpp file. 
-                                                */
-    bco::animation_target          animLandingSwitch_  { 2.0 };
-    bco::animation_target			animLandingGear_    { 0.15 };
-    UINT                    idAnim_             { 0 };
+    int eventId_GearUp_{ -1 };
+    int eventId_GearDown_{ -1 };
 
-    // VC Animations
-    bco::animation_group     lgHandle_           {   {bm::vc::LGHandle_id },
-                                                    bm::vc::LGHandle_loc, bm::vc::LGHandleAxis_loc, 
-                                                    (40 * RAD),
-                                                    0.0, 1.0
-                                                };
+    bool isLandingGearDeployed_{ false }; // True if the landing gear is deployed, false if retracted.
+    bool isLandingGearChanged_{ false }; // True if the landing gear has changed state since the last step.
 
-    // External:
-    bco::animation_group     gpRightFrontDoor_   {   { bm::main::LGDoorSF_id },
-                                                    bm::main::LGFRBackPivot_loc, bm::main::LGFRFrontPivot_loc,
-                                                    (90 * RAD),
-                                                    0.0, 0.3 
-                                                };
-
-    bco::animation_group     gpLeftFrontDoor_    {   { bm::main::LGDoorPF_id },
-                                                    bm::main::LGFLFrontPivot_loc, bm::main::LGFLBackPivot_loc, 		
-                                                    (90 * RAD),
-                                                    0.0, 0.3 
-                                                };
-
-    bco::animation_group     gpFrontGear_        {   { bm::main::LGFrontArm_id,
-                                                      bm::main::LGFrontAxel_id,
-                                                      bm::main::LGCrossF_id,
-                                                      bm::main::LGFrontLeftWheel_id,
-                                                      bm::main::LGFrontRightWheel_id },
-                                                    bm::main::LGFrontRightPivot_loc, bm::main::LGFrontLeftPivot_loc, 
-                                                    (90 * RAD),
-                                                    0.2, 1.0 
-                                                };
-
-    bco::animation_group     gpLeftOuterDoor_    {   { bm::main::LGDoorPO_id },
-                                                    bm::main::LGDoorAxisPOA_loc, bm::main::LGDoorAxisPOF_loc,
-                                                    (-100 * RAD),
-                                                    0.1, 1.0
-                                                };
-
-    bco::animation_group     gpLeftInnerDoor_    {   { bm::main::LGDoorPI_id },
-                                                    bm::main::LGDoorAxisPIA_loc, bm::main::LGDoorAxisPIF_loc,
-                                                    (100 * RAD),
-                                                    0.0, 0.3
-                                                };
-
-    bco::animation_group     gpLeftGearUpper_    {   { bm::main::LGLArm_id },
-                                                    bm::main::LGCrossAxisPA_loc, bm::main::LGCrossAxisPF_loc,
-                                                    (-90 * RAD),
-                                                    0.2, 1.0
-                                                };
-
-    bco::animation_group     gpLeftGearLower_    {   { bm::main::LGLFork_id,
-                                                      bm::main::LGLWheel1_id,
-                                                      bm::main::LGLWheel2_id,
-                                                      bm::main::LGLWheel3_id },
-                                                    _V(-0.39, 0, 0),
-                                                    0.5, 0.8
-                                                };
-
-    bco::animation_group     gpRightOuterDoor_   {   { bm::main::LGDoorSO_id },
-                                                    bm::main::LGDoorAxisSOA_loc, bm::main::LGDoorAxisSOF_loc,
-                                                    (100 * RAD),
-                                                    0.2, 1.0
-                                                };
-
-    bco::animation_group     gpRightInnerDoor_   {   { bm::main::LGDoorSI_id },
-                                                    bm::main::LGDoorAxisSIA_loc, bm::main::LGDoorAxisSIF_loc,
-                                                    (-100 * RAD),
-                                                    0.0, 0.3
-                                                };
-
-    bco::animation_group     gpRightGearUpper_   {   { bm::main::LGRArm_id },
-                                                    bm::main::LGCrossAxisSA_loc, bm::main::LGCrossAxisSF_loc,
-                                                    (90 * RAD),
-                                                    0.2, 1.0
-                                                };
-
-    bco::animation_group     gpRightGearLower_   {   { bm::main::LGRFork_id, 
-                                                      bm::main::LGRWheel1_id, 
-                                                      bm::main::LGRWheel2_id, 
-                                                      bm::main::LGRWheel3_id },
-                                                    _V(0.39, 0, 0),
-                                                    0.5, 0.8
-                                                };
-
-    const VECTOR3 sTrans{ bm::pnl::pnlLandingGearKnobDown_loc - bm::pnl::pnlLandingGearKnobUp_loc };
-
-    // *** LANDING GEAR *** //
-    bco::simple_event<>     btnRaiseGear_ {
-        bm::vc::GearLeverUpTarget_loc,
-        0.01,
-        bm::pnl::pnlLandingGearUp_RC,
-        0
-    };
-
-    bco::simple_event<>     btnLowerGear_ {
-        bm::vc::GearLeverDownTarget_loc,
-        0.01,
-        bm::pnl::pnlLandingGearDown_RC,
-        0
-    };
-
-    bco::panel_display      pnlHudGear_         {   bm::pnl::pnlHUDGear_id,     /* 0-DOWN, 1-UP, 2-Transition*/
-                                                    bm::pnl::pnlHUDGear_vrt, 
-                                                    0.0305
-                                                };
+    const VECTOR3 pnlSwitchTrans{ bm::pnl::pnlLandingGearKnobDown_loc - bm::pnl::pnlLandingGearKnobUp_loc };
 };
+
+inline void LandingGear::Setup(bco::Vessel& vessel)
+{
+    // Events
+
+    eventId_GearUp_ = vessel.RegisterEventHandler([this](int, int) { RaiseLandingGear(); return true; });
+    eventId_GearDown_ = vessel.RegisterEventHandler([this](int, int) { LowerLandingGear(); return true; });
+
+    aidVCLandingGearSwitch_ = vessel.CreateVesselAnimation();
+    aidLandingGear_ = vessel.CreateVesselAnimation();
+
+    auto vcIndex = vessel.GetMeshIndex(bm::vc::MESH_NAME);
+    auto mainIndex = vessel.GetMeshIndex(bm::main::MESH_NAME);
+
+    // VC
+    vessel.AddAnimationGroup(
+        aidVCLandingGearSwitch_,
+        vcIndex,
+        { bm::vc::LGHandle_id },
+        bm::vc::LGHandle_loc, bm::vc::LGHandleAxis_loc,
+        (40 * RAD), 
+        0.0, 1.0);
+
+    // External Landing Gear sequence
+    // *** Front gear
+    // Right front door.
+    vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGDoorSF_id },
+        bm::main::LGFRBackPivot_loc, bm::main::LGFRFrontPivot_loc,
+        (90 * RAD),
+        0.0, 0.3);
+
+    // Left front door.
+    vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGDoorPF_id },
+        bm::main::LGFLFrontPivot_loc, bm::main::LGFLBackPivot_loc,
+        (90 * RAD),
+        0.0, 0.3);
+
+    // Front gear.
+    vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGFrontArm_id,
+            bm::main::LGFrontAxel_id,
+            bm::main::LGCrossF_id,
+            bm::main::LGFrontLeftWheel_id,
+            bm::main::LGFrontRightWheel_id },
+        bm::main::LGFrontRightPivot_loc, bm::main::LGFrontLeftPivot_loc,
+        (90 * RAD),
+        0.2, 1.0);
+
+    // ***Left gear
+    // Left outer door
+    vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGDoorPO_id },
+        bm::main::LGDoorAxisPOA_loc, bm::main::LGDoorAxisPOF_loc,
+        (-100 * RAD),
+        0.1, 1.0);
+
+    // Left inner door
+    vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGDoorPI_id },
+        bm::main::LGDoorAxisPIA_loc, bm::main::LGDoorAxisPIF_loc,
+        (100 * RAD),
+        0.0, 0.3);
+
+    // Left gear upper
+    auto parent = vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGLArm_id },
+        bm::main::LGCrossAxisPA_loc, bm::main::LGCrossAxisPF_loc,
+        (-90 * RAD),
+        0.2, 1.0);
+
+    // Left gear lower
+    vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGLFork_id,
+            bm::main::LGLWheel1_id,
+            bm::main::LGLWheel2_id,
+            bm::main::LGLWheel3_id },
+        _V(-0.39, 0, 0),
+        0.5, 0.8,
+        parent);
+
+    // ***Right gear
+    // Right outer door
+    vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGDoorSO_id },
+        bm::main::LGDoorAxisSOA_loc, bm::main::LGDoorAxisSOF_loc,
+        (100 * RAD),
+        0.2, 1.0);
+
+    // Right inner door
+    vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGDoorSI_id },
+        bm::main::LGDoorAxisSIA_loc, bm::main::LGDoorAxisSIF_loc,
+        (-100 * RAD),
+        0.0, 0.3);
+
+    // Right gear upper
+    parent = vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGRArm_id },
+        bm::main::LGCrossAxisSA_loc, bm::main::LGCrossAxisSF_loc,
+        (90 * RAD),
+        0.2, 1.0);
+
+    // Right gear lower
+    vessel.AddAnimationGroup(
+        aidLandingGear_,
+        mainIndex,
+        { bm::main::LGRFork_id,
+            bm::main::LGRWheel1_id,
+            bm::main::LGRWheel2_id,
+            bm::main::LGRWheel3_id },
+        _V(0.39, 0, 0),
+        0.5, 0.8,
+        parent);
+}
+
+inline void LandingGear::UpdateState(bco::Vessel& vessel, double simdt, IHydraulicProvider& hydro)
+{
+    auto isLandingGearMoving = false;
+    animVCLandingGearSwitch_.Update(simdt, isLandingGearDeployed_ ? 1.0 : 0.0); // Always updates.
+
+    if (hydro.Level() > 0.0) {
+         isLandingGearMoving = animLandingGear_.Update(simdt, isLandingGearDeployed_ ? 1.0 : 0.0);
+    }
+
+    vessel.SetAnimation(aidLandingGear_, animLandingGear_.GetCurrent());
+}
+
+inline void LandingGear::UpdateVCUI(bco::Vessel& vessel)
+{
+    vessel.SetAnimation(aidVCLandingGearSwitch_, animVCLandingGearSwitch_.GetCurrent());
+}
+
+inline void LandingGear::UpdateMainPanelUI(MESHHANDLE mesh)
+{
+    bco::TranslateMesh(
+        mesh,
+        bm::pnl::pnlLandingGear_id,
+        bm::pnl::pnlLandingGear_vrt,
+        pnlSwitchTrans * animVCLandingGearSwitch_.GetCurrent());
+}
+
+inline void LandingGear::LoadVC()
+{
+    bco::LoadVCSimpleEvent(eventId_GearUp_, bm::vc::GearLeverUpTarget_loc, 0.01);
+    bco::LoadVCSimpleEvent(eventId_GearDown_, bm::vc::GearLeverDownTarget_loc, 0.01);
+}
+
+inline void LandingGear::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
+{
+    bco::LoadPanelSimpleEvent(vessel, eventId_GearUp_, handle, bm::pnl::pnlLandingGearUp_RC);
+    bco::LoadPanelSimpleEvent(vessel, eventId_GearDown_, handle, bm::pnl::pnlLandingGearDown_RC);
+}
+
+inline void LandingGear::LoadState(const std::string& line)
+{ 
+      std::istringstream is(line);
+   
+      int gearState;
+      double position;
+
+      is >> gearState >> position;
+      isLandingGearDeployed_ = (gearState != 0);
+      animLandingGear_.LoadState(position, isLandingGearChanged_ ? 1.0 : 0.0);
+}
+
+inline std::string LandingGear::GetState() const
+{
+    std::ostringstream out;
+    out << (isLandingGearDeployed_ ? 1 : 0) << " " << bco::FormatDouble(animLandingGear_.GetCurrent());
+    return out.str();
+}

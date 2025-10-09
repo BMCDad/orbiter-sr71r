@@ -1,127 +1,219 @@
-//	HoverEngines - SR-71r Orbiter Addon
-//	Copyright(C) 2017  Blake Christensen
-//
-//	This program is free software : you can redistribute it and / or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program.If not, see <http://www.gnu.org/licenses/>.
+/*
+HoverEngines - SR-71r Orbiter Addon
+Copyright(C) 2025  Blake Christensen
 
+LICENSE:
+This program is free software : you can redistribute it and / or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see <http://www.gnu.org/licenses/>.
+
+HOVERENGINES:
+Hover doors use electrical power directly off the DC bus.  If the bus
+is powered, the doors can be opened and closed, there is no separate
+power switch like there is for the canopy or cargo bay doors.  It is safe
+to open the hover doors during atmospheric flight, but NOT during reentry.
+
+Hover persist state:
+- Hover door switch: 0/1
+- Hover door position: 0.0 - 1.0
+
+*/
 #pragma once
 
-#include "Orbitersdk.h"
-#include "../bc_orbiter/Animation.h"
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/status_display.h"
+#include "..\bc_orbiter\Vessel.h"
+#include "..\bc_orbiter\AnimatedValue.h"
+#include "..\bc_orbiter\MeshTools.h"
 
-#include "PropulsionController.h"
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
-#include "SR71r_common.h"
+#include "SR71Toggle.h"
+#include "SR71Light.h"
+
+#include "IPowerProvider.h"
+#include "IFuelSystem.h"
+#include "IHydrogenProvider.h"
+#include "ILiquidOxygenProvider.h"
 
 namespace bco = bc_orbiter;
 
-class HoverEngines : 
-    public bco::vessel_component,
-    public bco::power_consumer,
-    public bco::post_step,
-    public bco::set_class_caps,
-    public bco::draw_hud,
-    public bco::manage_state
+class HoverEngines 
 {
 public:
-    HoverEngines(bco::power_provider& pwr, bco::vessel& vessel);
+    HoverEngines(bco::Vessel& vessel);
+    ~HoverEngines() = default;
 
-    // set_class_caps
-    void handle_set_class_caps(bco::vessel& vessel) override;
+    void Setup(bco::Vessel& vessel, IFuelSystem& fuel);
 
-    // power_consumer
-    double amp_draw() const override { return IsMoving() ? 4.0 : 0.0; }
+    void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power);
 
-    // post_step
-    void handle_post_step(bco::vessel& vessel, double simt, double simdt, double mjd) override;
+    void LoadState(const std::string& line);
+    std::string GetState() const;
 
-    void handle_draw_hud(bco::vessel& vessel, int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;
-
-    // manage_state
-    bool handle_load_state(bco::vessel& vessel, const std::string& line) override;
-    std::string handle_save_state(bco::vessel& vessel) override;
+    void ToggleDoorSwitch() { togPower_.ToggleState(); }
 
 private:
     const double MIN_VOLTS = 20.0;
 
-    bco::power_provider& power_;
-    bco::vessel& vessel_;
+    UINT aidHoverDoors_{ 0 };
 
-    bool IsPowered() const { 
-        return 
-            power_.volts_available() > MIN_VOLTS; 
-    }
-    
-    bool IsMoving() const { 
-        return 
-            IsPowered() &&
-            (animHoverDoors_.GetState() > 0.0) && 
-            (animHoverDoors_.GetState() < 1.0); 
-    }
-
-    void EnableHover(bool isEnabled);
-
-    THRUSTER_HANDLE         hoverThrustHandles_[3];
-
-    bco::animation_target   animHoverDoors_{ 0.2 };
-
-    bco::animation_group    gpFrontLeft_{
-        { bm::main::HoverDoorPF_id },
-        bm::main::HoverDoorAxisPFF_loc, bm::main::HoverDoorAxisPFA_loc,
-        (140 * RAD),
-        0, 1
-    };
-        
-    bco::animation_group    gpFrontRight_{
-        { bm::main::HoverDoorSF_id },
-        bm::main::HoverDoorAxisSFA_loc, bm::main::HoverDoorAxisSFF_loc,
-        (140 * RAD),
-        0, 1
-    };
-
-    bco::animation_group    gpLeft_{
-        { bm::main::HoverDoorPA_id } ,
-        bm::main::HoverDoorAxisPF_loc, bm::main::HoverDoorAxisPA_loc,
-        (100 * RAD),
-        0, 1
-    };
-
-    bco::animation_group    gpRight_{ 
-        { bm::main::HoverDoorSA_id } ,
-        bm::main::HoverDoorAxisSA_loc, bm::main::HoverDoorAxisSF_loc,
-        (100 * RAD),
-        0, 1
-    };
-
-    bco::on_off_input       switchOpen_{
-        { bm::vc::swHoverDoor_id },
+    bco::AnimatedValue<bco::StateUpdateTarget>  animHoverDoors_{ 0.2 };
+ 
+    SR71::Toggle togPower_{
+        bm::vc::swHoverDoor_id,
         bm::vc::swHoverDoor_loc, bm::vc::DoorsRightAxis_loc,
-        toggleOnOff,
         bm::pnlright::pnlHoverDoor_id,
         bm::pnlright::pnlHoverDoor_vrt,
         bm::pnlright::pnlHoverDoor_RC,
-        1
+        SR71R::RightPanel_ID
     };
 
-    bco::status_display     status_{ 
+    SR71::Light status_{
         bm::vc::MsgLightHover_id,
         bm::vc::MsgLightHover_vrt,
         bm::pnl::pnlMsgLightHover_id,
         bm::pnl::pnlMsgLightHover_vrt,
-        0.0361
+        SR71R::MainPanel_ID
     };
+
+    THRUSTER_HANDLE         hoverThrustHandles_[3];
 };
+
+inline HoverEngines::HoverEngines(bco::Vessel& vessel)
+: hoverThrustHandles_ { nullptr, nullptr, nullptr }
+{
+    vessel.RegisterUIControl(togPower_);
+    vessel.RegisterUIControl(status_);
+}
+
+inline void HoverEngines::Setup(bco::Vessel& vessel, IFuelSystem& fuel)
+{
+    // Animations:
+    auto mainIndex = vessel.GetMeshIndex(bm::main::MESH_NAME);
+
+    aidHoverDoors_ = vessel.CreateVesselAnimation();
+    vessel.AddAnimationGroup(
+        aidHoverDoors_,
+        mainIndex,
+        { bm::main::HoverDoorPF_id },
+        bm::main::HoverDoorAxisPFF_loc, bm::main::HoverDoorAxisPFA_loc,
+        (140 * RAD),
+        0, 1);
+
+    vessel.AddAnimationGroup(
+        aidHoverDoors_,
+        mainIndex,
+        { bm::main::HoverDoorSF_id },
+        bm::main::HoverDoorAxisSFA_loc, bm::main::HoverDoorAxisSFF_loc,
+        (140 * RAD),
+        0, 1);
+
+    vessel.AddAnimationGroup(
+        aidHoverDoors_,
+        mainIndex,
+        { bm::main::HoverDoorPA_id },
+        bm::main::HoverDoorAxisPF_loc, bm::main::HoverDoorAxisPA_loc,
+        (140 * RAD),
+        0, 1);
+
+    vessel.AddAnimationGroup(
+        aidHoverDoors_,
+        mainIndex,
+        { bm::main::HoverDoorSA_id },
+        bm::main::HoverDoorAxisSA_loc, bm::main::HoverDoorAxisSF_loc,
+        (140 * RAD),
+        0, 1);
+
+    //  Hover engines : positions are simplified.
+    hoverThrustHandles_[0] = vessel.CreateThruster(
+        _V(0.0, 0.0, 5.0),
+        _V(0, 1, 0),
+        SR71R::HOVER_THRUST,
+        fuel.GetMainProppelantHandle(),
+        SR71R::THRUST_ISP);
+
+    hoverThrustHandles_[1] = vessel.CreateThruster(
+        _V(-3.0, 0.0, -5.0),
+        _V(0, 1, 0),
+        SR71R::HOVER_THRUST * 0.5,
+        fuel.GetMainProppelantHandle(),
+        SR71R::THRUST_ISP);
+
+    hoverThrustHandles_[2] = vessel.CreateThruster(
+        _V(3.0, 0.0, -5.0),
+        _V(0, 1, 0),
+        SR71R::HOVER_THRUST * 0.5,
+        fuel.GetMainProppelantHandle(),
+        SR71R::THRUST_ISP);
+
+    vessel.CreateThrusterGroup(hoverThrustHandles_, 3, THGROUP_HOVER);
+
+    EXHAUSTSPEC es_hover[3] =
+    {
+        { hoverThrustHandles_[0], NULL, NULL, NULL, 4, .25, 0, 0.1, NULL },
+        { hoverThrustHandles_[1], NULL, NULL, NULL, 4, .25, 0, 0.1, NULL },
+        { hoverThrustHandles_[2], NULL, NULL, NULL, 4, .25, 0, 0.1, NULL }
+    };
+
+    PARTICLESTREAMSPEC exhaust_hover = {
+        0, 2.0, 13, 150, 0.1, 0.2, 16, 1.0, PARTICLESTREAMSPEC::EMISSIVE,
+        PARTICLESTREAMSPEC::LVL_SQRT, 0, 1,
+        PARTICLESTREAMSPEC::ATM_PLOG, 1e-5, 0.1
+    };
+
+    for (auto i = 0; i < 3; i++) vessel.AddExhaust(es_hover + i);
+    vessel.AddExhaustStream(hoverThrustHandles_[0], bm::main::ThrustHoverF_loc, &exhaust_hover);
+    vessel.AddExhaustStream(hoverThrustHandles_[1], bm::main::ThrustHoverP_loc, &exhaust_hover);
+    vessel.AddExhaustStream(hoverThrustHandles_[2], bm::main::ThrustHoverS_loc, &exhaust_hover);
+}
+
+inline void HoverEngines::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power)
+{
+    bool areDoorsMoving = false;
+    auto status = SR71::StatusOff;
+
+    if (power.GetPowerLevel() > 20.0) {
+        animHoverDoors_.Update(simdt, togPower_.IsOn() ? 1.0 : 0.0);
+        auto currentDoorPos = animHoverDoors_.GetCurrent();
+        areDoorsMoving = currentDoorPos > 0.01 && currentDoorPos < 0.99;
+
+        if (areDoorsMoving) {
+            status = SR71::StatusWarn;
+        }
+        else {
+            if (currentDoorPos == 1.0) {
+                status = SR71::StatusOn;
+            }
+        }
+    }
+
+    power.DrawPower(areDoorsMoving ? SR71R::HOVER_AMPS : 0.0);
+    status_.SetState(status);
+    vessel.SetAnimation(aidHoverDoors_, animHoverDoors_.GetCurrent());
+}
+
+inline void HoverEngines::LoadState(const std::string& line)
+{
+      std::istringstream is(line);
+   
+      int doorState;
+      double doorPos;
+      is >> doorState >> doorPos;
+      togPower_.SetState(doorState != 0);
+      animHoverDoors_.LoadState(doorPos, togPower_.IsOn() ? 1.0 : 0.0);
+
+}
+inline std::string HoverEngines::GetState() const 
+{
+    std::ostringstream out;
+    out << (togPower_.IsOn() ? 1 : 0) << " " << bco::FormatDouble(animHoverDoors_.GetCurrent());
+    return out.str();
+}

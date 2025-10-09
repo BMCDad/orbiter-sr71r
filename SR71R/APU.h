@@ -1,29 +1,56 @@
-//	APU - SR-71r Orbiter Addon
-//	Copyright(C) 2015  Blake Christensen
-//
-//	This program is free software : you can redistribute it and / or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-//
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-//	GNU General Public License for more details.
-//
-//	You should have received a copy of the GNU General Public License
-//	along with this program.If not, see <http://www.gnu.org/licenses/>.
+/*
+APU - SR-71r Orbiter Addon
+Copyright(C) 2025  Blake Christensen
+
+This program is free software : you can redistribute it and / or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see <http://www.gnu.org/licenses/>.
+
+APU
+
+Auxiliary Power Unit.  The APU provide power to the hydraulic system of the aircraft
+which in turn powers the flight control surfaces and landing gear. The APU draws fuel
+from the main fuel supply.
+
+When running, the 'APU' light will be illuminated on the status board.
+
+Hydraulic level is currently all or nothing. All = 1.0, Nothing = 0.0;
+
+The APU requires electrical power to function.
+
+Configuration:
+APU = 0/1
+*/
 
 #pragma once
 
-#include "../bc_orbiter/vessel.h"
-#include "../bc_orbiter/control.h"
-#include "../bc_orbiter/rotary_display.h"
-#include "../bc_orbiter/on_off_input.h"
-#include "../bc_orbiter/status_display.h"
+#include <cmath>
+#include <string>
+#include <sstream>
+
+#include "..\bc_orbiter\Vessel.h"
+#include "..\bc_orbiter\AnimatedValue.h"
+#include "..\bc_orbiter\MeshTools.h"
 
 #include "SR71r_mesh.h"
-#include "SR71r_common.h"
+#include "SR71r2DRight_mesh.h"
+#include "SR71Light.h"
+
+#include "ShipMets.h"
+#include "IPowerProvider.h"
+#include "IFuelSystem.h"
+#include "SR71Toggle.h"
+#include "SR71Gauge.h"
+#include "IAvionics.h"
 
 namespace bco = bc_orbiter;
 
@@ -31,138 +58,89 @@ namespace bco = bc_orbiter;
 
 const double APU_BURN_RATE = 0.05;   // kg per second - 180 kg per hour (180 / 60) / 60.
 const double APU_MIN_VOLT = 20.0;
-class VESSEL3;
 
-/**	APU
-	Auxiliary Power Unit.  The APU provide power to the hydraulic system of the aircraft
-	which in turn powers the flight control surfaces and landing gear.	The APU draws 
-    from the same fuel source as the RCS system.
-	
-    When running, the 'APU' light will be illuminated on the status board.
-
-	Hydraulic level is currently all or nothing. All = 1.0, Nothing = 0.0;
-
-	The APU requires electrical power to function.
-	
-	Configuration:
-	APU = 0/1
-
-	Short cuts:
-	None.
-*/
-class APU :
-    public bco::vessel_component,
-    public bco::post_step,
-    public bco::power_consumer,
-    public bco::manage_state,
-    public bco::hydraulic_provider
+class APU
 {
 public:
-    APU(bco::vessel & vessel, bco::power_provider & pwr) :
-        power_(pwr)
-    {
-        power_.attach_consumer(this);
+    APU(bco::Vessel& vessel);
+    ~APU() = default;
 
-        vessel.AddControl(&gaugeAPULevel_);
-        vessel.AddControl(&swPower_);
-        vessel.AddControl(&status_);
+    void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IFuelSystem& fuel);
 
-        swPower_.attach([&]() {TogglePowerSwitch(); });
-    }
-
-    double amp_draw() const override { return IsPowered() ? 5.0 : 0.0; }
-
-    // manage_state
-    bool handle_load_state(bco::vessel & vessel, const std::string & line) override {
-        std::stringstream in(line);
-        int v;
-        in >> v;
-        sigSwitch_.fire((v != 0) ? true : false);
-        return true;
-    }
-
-    std::string handle_save_state(bco::vessel & vessel) override
-    {
-        std::ostringstream os;
-        os << sigSwitch_.current() ? 1 : 0;
-        return os.str();
-    }
-
-    // haudralic_provider
-    double level() const override { return level_; }
-
-    // post_step
-    void handle_post_step(bco::vessel & vessel, double simt, double simdt, double mjd) override {
-        bool hasFuel = false;
-
-        if (!IsPowered()) {
-            level_ = 0.0;
-        }
-        else {
-            hasFuel = slotFuelLevel_.value() > 0.0;
-
-            if (hasFuel) {
-                // Note:  We don't actually draw fuel, but when its gone the APU will shutdown.
-                level_ = 1.0;
-            }
-            else {
-                level_ = 0.0;
-            }
-        }
-
-        gaugeAPULevel_.set_state(level_);
-
-        auto st = (IsPowered()
-            ? (hasFuel ? bco::status_display::status::on : bco::status_display::status::warn)
-            : bco::status_display::status::off);
-        status_.set_state(st);
-    }
-
-    bco::slot<double>&FuelLevelSlot() { return slotFuelLevel_; }
+    void LoadState(const std::string& line);
+    std::string GetState() const;
 
     void TogglePowerSwitch()
     {
-        sigSwitch_.fire(!sigSwitch_.current());
+        togPower_.ToggleState();
     }
 
 private:
-    bco::power_provider & power_;
+    const double    MIN_VOLTS = 20.0;   // Minimum voltage required to run the APU.
+    double          level_{ 0.0 };
 
-    bco::signal<bool> sigSwitch_;
-
-    bool IsPowered() const {
-        return sigSwitch_.current() && (power_.volts_available() > 24.0);
-    }
-
-    double                  level_{ 0.0 };
-    bco::slot<double>       slotFuelLevel_;
-
-    bco::on_off_input       swPower_ {
-        {bm::vc::SwAPUPower_id},
-        bm::vc::SwAPUPower_loc,
-        bm::vc::LeftPanelTopRightAxis_loc,
-        toggleOnOff,
+    SR71::Toggle togPower_{
+        { bm::vc::SwAPUPower_id },
+        bm::vc::SwAPUPower_loc, bm::vc::LeftPanelTopRightAxis_loc,
         bm::pnlright::pnlAPUSwitch_id,
         bm::pnlright::pnlAPUSwitch_vrt,
         bm::pnlright::pnlAPUSwitch_RC,
-        1
+        SR71R::RightPanel_ID
     };
 
-    bco::rotary_display_target  gaugeAPULevel_{
-        { bm::vc::gaHydPress_id },
-        bm::vc::gaHydPress_loc, bm::vc::axisHydPress_loc,
-        bm::pnlright::pnlHydPress_id,
-        bm::pnlright::pnlHydPress_vrt,
-        (300 * RAD),	// Clockwise
-        0.2,
-        1
+    SR71::Gauge gaugeAPULevel_{
+         bm::vc::gaHydPress_id,
+         bm::vc::gaHydPress_loc, bm::vc::axisHydPress_loc,
+         bm::pnlright::pnlHydPress_id,
+         bm::pnlright::pnlHydPress_vrt,
+         (300 * RAD),
+         level_,
+         SR71R::RightPanel_ID
     };
 
-    bco::status_display status_ {
+    SR71::Light status_{
         bm::vc::MsgLightAPU_id,
         bm::vc::MsgLightAPU_vrt,
         bm::pnl::pnlMsgLightAPU_id,
         bm::pnl::pnlMsgLightAPU_vrt,
-        0.0361
+        SR71R::MainPanel_ID
     };
 };
+
+inline APU::APU(bco::Vessel& vessel)
+{
+    vessel.RegisterUIControl(togPower_);
+    vessel.RegisterUIControl(gaugeAPULevel_);
+    vessel.RegisterUIControl(status_);
+}
+
+inline void APU::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IFuelSystem& fuel)
+{ 
+    bool hasFuel = fuel.GetMainFuelLevel() > 0.0; // Check if the fuel system has fuel.
+    bool hasPower = power.GetPowerLevel() > MIN_VOLTS;
+    bool isRunning = hasFuel && hasPower && togPower_.IsOn();
+
+    level_ = isRunning ? 1.0 : 0.0; // Set level to 1.0 if both fuel and power are available, otherwise 0.0.
+    power.DrawPower(isRunning ? SR71R::APU_AMPS : 0.0); // Draw power if running.
+
+    status_.SetState(hasPower && togPower_.IsOn()
+        ? (hasFuel ? SR71::StatusOn : SR71::StatusWarn)
+        : SR71::StatusOff);
+}
+
+inline void APU::LoadState(const std::string& line)
+{
+      if (line.empty()) return;
+   
+      std::istringstream is(line);
+      int powerState;
+      is >> powerState;
+      togPower_.SetState(powerState != 0);
+}
+
+inline std::string APU::GetState() const 
+{
+    std::ostringstream os;
+    os << togPower_.IsOn() ? 1 : 0;
+    return os.str();
+}
