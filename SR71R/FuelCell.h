@@ -93,8 +93,8 @@ private:
         { bm::vc::swFuelCellPower_id },
         bm::vc::swFuelCellPower_loc, bm::vc::PowerTopRightAxis_loc,
         bm::pnlright::pnlPwrFC_id,
-        bm::pnlright::pnlPwrFCBus_vrt,
-        bm::pnlright::pnlPwrFCBus_RC,
+        bm::pnlright::pnlPwrFC_vrt,
+        bm::pnlright::pnlPwrFC_RC,
         SR71R::RightPanel_ID
     };
 };

@@ -35,7 +35,10 @@ namespace bco = bc_orbiter;
 
 namespace SR71
 {
-    class Transform : public bco::IUIControl
+    class Transform : 
+        public bco::IUIControl,
+        public bco::ITimeStepVC,
+        public bco::ITimeStepPanel
     {
     public:
         Transform(
@@ -46,13 +49,14 @@ namespace SR71
             const int pnlId
         );
 
+        void TimeStepVC(bco::Vessel& vessel, double simdt, DEVMESHHANDLE hMesh) override;
+        void TimeStepPanel(bco::Vessel& vessel, double simdt, int panelId, MESHHANDLE hMesh) override;
+
         // IUIControl interface
-        void UpdateState(Vessel& vessel, double simdt);
-        void LoadVC(int vcId, bco::Vessel& vessel) override;
-        void LoadPanel(int panelId, bco::Vessel& vessel, PANELHANDLE handle);
 
         void SetAngle(double angle) { currentAngle_ = angle; }
         void SetTranslate(double x, double y) { translation_.x = x; translation_.y = y; }
+
     private:
         bco::Vessel* vessel_{ nullptr };
 
@@ -67,12 +71,6 @@ namespace SR71
 
         double          currentAngle_{ 0.0 };
         VECTOR3         translation_{ 0.0, 0.0, 0.0 };
-
-        MESHHANDLE meshPanel_{ nullptr };
-        DEVMESHHANDLE vcMesh_{ nullptr };
-
-        void OnRedrawPanelEvent();
-        void OnRedrawVCAreaEvent();
     };
 
     inline Transform::Transform(
@@ -91,27 +89,14 @@ namespace SR71
         texOffset_ = bco::UVOffset(pnlVerts);
     }
 
-    inline void Transform::UpdateState(Vessel& vessel, double simdt)
+    inline void Transform::TimeStepVC(bco::Vessel& vessel, double simdt, DEVMESHHANDLE hMesh)
     {
-        if (vcMesh_ != nullptr) {
-            bco::TransformUV<DEVMESHHANDLE>(vcMesh_, vcGroupId_, vcVerts_, currentAngle_, translation_);
-        }
-
-        if (meshPanel_ != nullptr) {
-            bco::TransformUV<MESHHANDLE>(meshPanel_, pnlGroup_, pnlVerts_, currentAngle_, translation_);
-        }
+        bco::TransformUV<DEVMESHHANDLE>(hMesh, vcGroupId_, vcVerts_, currentAngle_, translation_);
     }
 
-    inline void Transform::LoadVC(int vcId, bco::Vessel& vessel)
+    inline void Transform::TimeStepPanel(bco::Vessel& vessel, double simdt, int panelId, MESHHANDLE hMesh)
     {
-        vcMesh_ = vessel.GetDeviceMesh(vessel.GetMeshIndex(bm::vc::MESH_NAME));
-        meshPanel_ = nullptr;
-    }
-
-    inline void Transform::LoadPanel(int panelId, bco::Vessel& vessel, PANELHANDLE handle)
-    {
-        meshPanel_ = vessel.GetPanelMeshHandle(panelId);
-        vcMesh_ = nullptr;
+        bco::TransformUV<MESHHANDLE>(hMesh, pnlGroup_, pnlVerts_, currentAngle_, translation_);
     }
 }
 

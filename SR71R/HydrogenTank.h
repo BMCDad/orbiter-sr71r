@@ -152,6 +152,6 @@ inline void HydrogenTank::LoadState(const std::string& line)
 inline std::string HydrogenTank::GetState() const
 {
     std::ostringstream out;
-    out << (currentLevel_ / SR71R::HYDRO_SUPPLY) << " " << (btnFill_.IsOn() ? 1 : 0);
+    out << bco::FormatDouble(currentLevel_ / SR71R::HYDRO_SUPPLY) << " " << (btnFill_.IsOn() ? 1 : 0);
     return out.str();
 }

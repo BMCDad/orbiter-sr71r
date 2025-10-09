@@ -84,7 +84,7 @@ public:
 
     void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power);
 
-    double GetMainFuelLevel() const override { return mainFuelLevel_; }
+    double GetMainFuelLevel() const override { return mainFuelRangeValue_; }
     PROPELLANT_HANDLE GetMainProppelantHandle() const { return mainPropellant_; }
 
     // draw_hud
@@ -102,17 +102,15 @@ private:
 
     double FillMainFuel(bco::Vessel& vessel, double amount);
 
+    void ToggleFill() { isFilling_ = !isFilling_; };
     void SetThrustLevel(double newLevel);
     void Update(double deltaUpdate);
-
-    void ToggleFill() {}
 
     THRUSTER_HANDLE mainThrustHandles_[2];
     THRUSTER_HANDLE retroThrustHandles_[2];
 
     double      maxMainFlow_        { 0.0 };       	// MAXTHRUST / ISP.
     const char* ConfigKey =         "PROPULSION";
-    double      mainFuelLevel_      { 0.0 };
     double      rcsFuelLevel_       { 0.0 };
     double      maxThrustLevel_     { 0.0 };
     int         areaId_             { 0 };
@@ -198,6 +196,23 @@ private:
         SR71R::RightPanel_ID,
         [this](bool) { ToggleFill(); }
     };
+
+    SR71::Light     statusFuel_{
+        bm::vc::MsgLightFuelWarn_id,
+        bm::vc::MsgLightFuelWarn_vrt,
+        bm::pnl::pnlMsgLightFuelWarn_id,
+        bm::pnl::pnlMsgLightFuelWarn_vrt,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::Light     statusLimiter_{
+        bm::vc::MsgLightThrustLimit_id,
+        bm::vc::MsgLightThrustLimit_vrt,
+        bm::pnl::pnlMsgLightThrustLimit_id,
+        bm::pnl::pnlMsgLightThrustLimit_vrt,
+        SR71R::MainPanel_ID
+    };
+
 };
 
 inline PropulsionController::PropulsionController(bco::Vessel& vessel) :
@@ -205,6 +220,8 @@ inline PropulsionController::PropulsionController(bco::Vessel& vessel) :
     mainThrustHandles_{nullptr, nullptr},
     retroThrustHandles_{ nullptr, nullptr }
 {
+    maxMainFlow_ = (SR71R::ENGINE_THRUST / SR71R::THRUST_ISP) * 2;
+
     vessel.RegisterUIControl(switchThrustLimit_);
     vessel.RegisterUIControl(gaugeFuelFlow_);
     vessel.RegisterUIControl(gaugeFuelMain_);
@@ -212,6 +229,9 @@ inline PropulsionController::PropulsionController(bco::Vessel& vessel) :
     vessel.RegisterUIControl(lightFuelAvail_);
     vessel.RegisterUIControl(lightRCSAvail_);
     vessel.RegisterUIControl(btnFuelValveOpen_);
+
+    vessel.RegisterUIControl(statusFuel_);
+    vessel.RegisterUIControl(statusLimiter_);
 }
 
 inline void PropulsionController::Setup(bco::Vessel& vessel)
@@ -327,10 +347,7 @@ inline void PropulsionController::UpdateState(bco::Vessel& vessel, double simdt,
     isExternAvail_ = (isPowered && vessel_.IsStoppedOrDocked());
     lightFuelAvail_.SetState(isExternAvail_);
 
-    if (!isExternAvail_)
-    {
-        isFilling_ = false;
-    }
+    if (!isExternAvail_ || !isPowered) { isFilling_ = false; }
 
     btnFuelValveOpen_.SetState(isFilling_);
 
@@ -353,13 +370,18 @@ inline void PropulsionController::UpdateState(bco::Vessel& vessel, double simdt,
         }
     }
 
-    //statusLimiter_.set_state(
-    //    (!IsPowered() || switchThrustLimit_.is_on())
-    //    ? bco::status_display::status::off
-    //    : bco::status_display::status::on
-    //);
+    statusLimiter_.SetState(
+        (!isPowered || switchThrustLimit_.IsOn())
+        ? SR71::StatusOff
+        : SR71::StatusOn
+    );
 
-
+    statusFuel_.SetState(
+        (mainFuelRangeValue_ > 0.2) || !isPowered
+        ? SR71::StatusOff
+        : mainFuelRangeValue_ == 0.0
+        ? SR71::StatusError
+        : SR71::StatusWarn);
 }
 
 inline void PropulsionController::LoadState(const std::string& line)

@@ -46,6 +46,11 @@ namespace bco = bc_orbiter;
 
 namespace SR71
 {
+    const int StatusOn      = 0;
+    const int StatusOff     = 1;
+    const int StatusError   = 2;
+    const int StatusWarn    = 3;
+
     /**
     * \brief Light UI component for the SR-71r.
     * \brief Member declaration layout:
@@ -125,6 +130,7 @@ namespace SR71
 
     inline void Light::SetState(int state)
     {
+        assert(vessel_);
         if (vessel_) {
             bco::PanelTextureTranslate::SetState(*vessel_, state);
             bco::VCTextureTranslate::SetState(*vessel_, state);

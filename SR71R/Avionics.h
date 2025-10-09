@@ -213,6 +213,7 @@ inline Avionics::Avionics(bco::Vessel& vessel)
     vessel.RegisterUIControl(dialSetHeadingDecrement_);
     vessel.RegisterUIControl(vsiHand_);
     vessel.RegisterUIControl(vsiActiveFlag_);
+    vessel.RegisterUIControl(attitudeDisplay_);
     vessel.RegisterUIControl(attitudeFlag_);
     vessel.RegisterUIControl(aoaHand_);
     vessel.RegisterUIControl(accelHand_);
@@ -319,9 +320,9 @@ inline std::string Avionics::GetState() const
 {
     std::ostringstream os;
     os << (switchAvionPower_.IsOn() ? 1 : 0)
-        << setHeading_
-        << setCourse_
-        << (switchNavMode_.IsOn() ? 1 : 0)
-        << (switchAvionMode_.IsOn() ? 1 : 0);
+        << " " << bco::FormatDouble(setHeading_)
+        << " " << bco::FormatDouble(setCourse_)
+        << " " << (switchNavMode_.IsOn() ? 1 : 0)
+        << " " << (switchAvionMode_.IsOn() ? 1 : 0);
     return os.str();
 }

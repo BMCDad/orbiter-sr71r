@@ -1,5 +1,5 @@
 // Auto generated code file.  Blender: 4.3.2  Blender Tools: (2, 2, 0)
-// Date: Sat Sep 20 08:36:57 2025
+// Date: Tue Oct  7 07:09:55 2025
 
 
 #include "orbitersdk.h"
@@ -264,7 +264,7 @@ namespace bm
     constexpr RECT pnlLightDock_RC = {775, 651, 808, 739};
     constexpr RECT pnlDoorCanopy_RC = {213, 651, 246, 739};
     constexpr RECT pnlDoorCargo_RC = {294, 652, 326, 740};
-    constexpr RECT pnlDoorRetro_RC = {-16, -43, 16, 43};
+    constexpr RECT pnlDoorRetro_RC = {454, 650, 486, 738};
     constexpr RECT pnlHoverDoor_RC = {374, 652, 407, 740};
 
   }

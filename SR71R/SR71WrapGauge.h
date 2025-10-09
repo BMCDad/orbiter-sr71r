@@ -62,7 +62,9 @@ namespace bco = bc_orbiter;
 
 namespace SR71
 {
-    class WrapGauge : public bco::IUIControl
+    class WrapGauge : 
+        public bco::IUIControl,
+        public bco::ITimeStepPanel
     {
     public:
         WrapGauge(
@@ -79,8 +81,8 @@ namespace SR71
         // IUIControl interface
         void Setup(bco::Vessel& vessel) override;
         void TimeStep(bco::Vessel& vessel, double simdt) override;
-        void LoadVC(int vcId, bco::Vessel& vessel) override;
-        void LoadPanel(int panelId, bco::Vessel& vessel, PANELHANDLE handle) override;
+
+        void TimeStepPanel(bco::Vessel& vessel, double simdt, int panelId, MESHHANDLE hMesh) override;
 
     private:
 
@@ -92,7 +94,6 @@ namespace SR71
         const NTVERTEX* pnlVerts_{ nullptr };
         int             pnlId_{ -1 };
         double&         value_;
-        MESHHANDLE      panelMesh_{ nullptr };
         double          speed_{ 0.4 };
 
         std::unique_ptr<bco::AnimationGroup> vcAnimGroup_{ nullptr };
@@ -142,21 +143,11 @@ namespace SR71
         animGauge_.Update(simdt, value_);
         assert(animId_ != bco::ANIM_ID_MAX);
         vessel.SetAnimation(animId_, animGauge_.GetCurrent());
-
-        // Handle panel.
-        if (panelMesh_ == nullptr) return; // No panel mesh to update.
-        bco::RotateMesh(panelMesh_, pnlGroup_, pnlVerts_, (animGauge_.GetCurrent() * -PI2));
     }
 
-    inline void WrapGauge::LoadVC(int vcId, bco::Vessel& vessel)
+    inline void WrapGauge::TimeStepPanel(bco::Vessel& vessel, double simdt, int panelId, MESHHANDLE hMesh)
     {
-        panelMesh_ = nullptr; // No panel mesh for VC
-    }
-
-    inline void WrapGauge::LoadPanel(int panelId, bco::Vessel& vessel, PANELHANDLE handle)
-    {
-        panelMesh_ = nullptr;
-        if (panelId != pnlId_) return; // Not the panel we are interested in.
-        panelMesh_ = vessel.GetPanelMeshHandle(panelId);
+        if (panelId != pnlId_) return;
+        bco::RotateMesh(hMesh, pnlGroup_, pnlVerts_, (animGauge_.GetCurrent() * -PI2));
     }
 }

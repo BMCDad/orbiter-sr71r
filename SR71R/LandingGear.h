@@ -271,6 +271,6 @@ inline void LandingGear::LoadState(const std::string& line)
 inline std::string LandingGear::GetState() const
 {
     std::ostringstream out;
-    out << (isLandingGearDeployed_ ? 1 : 0) << " " << (animLandingGear_.GetCurrent());
+    out << (isLandingGearDeployed_ ? 1 : 0) << " " << bco::FormatDouble(animLandingGear_.GetCurrent());
     return out.str();
 }

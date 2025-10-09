@@ -98,7 +98,6 @@ bool SR71Vessel::LoadVC(int id)
         _V(0.1, 0.0, 0.0), 0.0, 0.0);
 
     airBrake_.LoadVC();
-    clock_.LoadVC();
     landingGear_.LoadVC();
     mfds_.LoadVC(*this);
     hud_.LoadVC();
@@ -154,7 +153,6 @@ bool SR71Vessel::LoadPanel2D(int id, PANELHANDLE hPanel, DWORD viewW, DWORD view
 
         // Call components in the panel that need loading.
         airBrake_.LoadPanel(*this, hPanel);
-        clock_.LoadPanel(*this, hPanel);
         landingGear_.LoadPanel(*this, hPanel);
         mfds_.LoadPanel(*this, hPanel, meshHandle);
         break;
@@ -279,10 +277,6 @@ void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
             hydrogenTank_.LoadState(configLine);
             handled = true;
         }
-        else if (key == "GEAR") {
-            landingGear_.LoadState(configLine);
-            handled = true;
-        }
         else if (key == "OXYGEN") {
             oxygenTank_.LoadState(configLine);
             handled = true;
@@ -317,6 +311,21 @@ void SR71Vessel::clbkLoadStateEx(FILEHANDLE scn, void* vs)
 void SR71Vessel::clbkSaveState(FILEHANDLE scn)
 {
     VESSEL3::clbkSaveState(scn);	// Save default state.
+
+    oapiWriteScenario_string(scn, "APU",        (char*)apu_.GetState().c_str());
+    oapiWriteScenario_string(scn, "HOVER",      (char*)hoverEngines_.GetState().c_str());
+    oapiWriteScenario_string(scn, "RETRO",      (char*)retroEngines_.GetState().c_str());
+    oapiWriteScenario_string(scn, "CARGOBAY",   (char*)cargoBay_.GetState().c_str());
+    oapiWriteScenario_string(scn, "CANOPY",     (char*)canopy_.GetState().c_str());
+    oapiWriteScenario_string(scn, "AIRBRAKE",   (char*)airBrake_.GetState().c_str());
+    oapiWriteScenario_string(scn, "FUELCELL",   (char*)fuelCell_.GetState().c_str());
+    oapiWriteScenario_string(scn, "AVIONICS",   (char*)avionics_.GetState().c_str());
+    oapiWriteScenario_string(scn, "POWER",      (char*)powerSystem_.GetState().c_str());
+    oapiWriteScenario_string(scn, "HYDROGEN",   (char*)hydrogenTank_.GetState().c_str());
+    oapiWriteScenario_string(scn, "GEAR",       (char*)landingGear_.GetState().c_str());
+    oapiWriteScenario_string(scn, "OXYGEN",     (char*)oxygenTank_.GetState().c_str());
+    oapiWriteScenario_string(scn, "LIGHTS",     (char*)lights_.GetState().c_str());
+    oapiWriteScenario_string(scn, "CLOCK",      (char*)clock_.GetState().c_str());
 
     //for (auto& p : mapStateManagement_) {
     //	oapiWriteScenario_string(

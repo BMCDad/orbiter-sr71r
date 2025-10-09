@@ -17,6 +17,8 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 */
 #pragma once
 
+#include <iomanip>
+
 #include "Orbitersdk.h"
 
 namespace bc_orbiter
@@ -93,6 +95,13 @@ namespace bc_orbiter
             PANEL_REDRAW_USER,
             PANEL_MOUSE_LBDOWN | PANEL_MOUSE_LBPRESSED | PANEL_MOUSE_ONREPLAY,
             surface);
+    }
+
+    inline std::string FormatDouble(double value, int prec = 4)
+    {
+        std::ostringstream os;
+        os << std::fixed << std::setprecision(prec) << value;
+        return os.str();
     }
 }
 

@@ -33,12 +33,12 @@ namespace bc_orbiter
     {
         /**
         /brief Called during the simulation step to update the VC UI when the VC is active.
+        Note that currently we only support virtual cockpit 0.
         /param vessel The vessel the UI control is part of.
         /param simdt The time step of the simulation.
-        /param VCID The ID of the VC that is active.
         /param hMesh The mesh handle for the VC mesh.
         */
-        virtual void TimeStepVC(Vessel& vessel, double simdt, DEVMESHHANDLE hMesh) { return; }
+        virtual void TimeStepVC(Vessel& vessel, double simdt, DEVMESHHANDLE hMesh) = 0;
     };
 
     struct ITimeStepPanel
@@ -50,7 +50,7 @@ namespace bc_orbiter
         /param panelId The ID of the panel that is active.
         /param hMesh The mesh handle for the panel mesh.
         */
-        virtual void TimeStepPanel(Vessel& vessel, double simdt, int panelId, MESHHANDLE hMesh) { return; }
+        virtual void TimeStepPanel(Vessel& vessel, double simdt, int panelId, MESHHANDLE hMesh) = 0;
     };
 
     class IUIControl

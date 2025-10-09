@@ -43,6 +43,7 @@ APU = 0/1
 
 #include "SR71r_mesh.h"
 #include "SR71r2DRight_mesh.h"
+#include "SR71Light.h"
 
 #include "ShipMets.h"
 #include "IPowerProvider.h"
@@ -96,12 +97,21 @@ private:
          level_,
          SR71R::RightPanel_ID
     };
+
+    SR71::Light status_{
+        bm::vc::MsgLightAPU_id,
+        bm::vc::MsgLightAPU_vrt,
+        bm::pnl::pnlMsgLightAPU_id,
+        bm::pnl::pnlMsgLightAPU_vrt,
+        SR71R::MainPanel_ID
+    };
 };
 
 inline APU::APU(bco::Vessel& vessel)
 {
     vessel.RegisterUIControl(togPower_);
     vessel.RegisterUIControl(gaugeAPULevel_);
+    vessel.RegisterUIControl(status_);
 }
 
 inline void APU::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IFuelSystem& fuel)
@@ -112,6 +122,10 @@ inline void APU::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& 
 
     level_ = isRunning ? 1.0 : 0.0; // Set level to 1.0 if both fuel and power are available, otherwise 0.0.
     power.DrawPower(isRunning ? SR71R::APU_AMPS : 0.0); // Draw power if running.
+
+    status_.SetState(hasPower && togPower_.IsOn()
+        ? (hasFuel ? SR71::StatusOn : SR71::StatusWarn)
+        : SR71::StatusOff);
 }
 
 inline void APU::LoadState(const std::string& line)

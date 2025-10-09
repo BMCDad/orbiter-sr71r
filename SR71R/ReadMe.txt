@@ -71,9 +71,13 @@ Redo: (Aug, 2025)
     * Shutter will be removed
     * Dock light will be removed
     * 10/5/2025 - HUD buttons working. VC hud working.
-    - ACC gauge
-    - Attitude indicator
-    - Fuel Flow gauge
-    - Clock buttons not working
-    - Retro doors switch not working
-    - Status display for all components
+    * 10/6/2025 - ACC gauge working.
+    * 10/6/2025 - Attitude indicator
+    * 10/6/2025 - Fuel Flow gauge
+    * 10/6/2025 - Clock buttons not working
+    * 10/7/2025 - Retro doors switch not working (Blender origin issue for panels)
+    * 10/7/2025 - Fix fuel cell panel switches
+    * 10/7/2025 - Implement Save State
+    * 10/8/2025 - Fuel load switch not working
+    * 10/8/2025 - Status display for all components
+    * 10/8/2025 - Clean up wrap gauge time step

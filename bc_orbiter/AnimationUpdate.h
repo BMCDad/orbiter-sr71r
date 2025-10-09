@@ -137,29 +137,6 @@ namespace bc_orbiter
             if (state.CurrentState > 1.0) state.CurrentState -= 1.0;
             if (state.CurrentState < 0.0) state.CurrentState += 1.0;
 
-            // tgt = .9,  state = 0  : Df = .9  assume da = .01
-            //if (Df > 0.0)   // Just checking sign here, Df = 0 checked above
-            //{
-            //    if (Df <= 0.5)
-            //        state.state_ += min(da, Df);
-            //    else
-            //    {
-            //        // Get here:
-            //        state.state_ -= max(-da, 1 - Df);       // This would set the state - (max( -.01, 1 - .9)
-            //        if (state.state_ < 0.0) state.state_ += 1;
-            //    }
-            //}
-            //else
-            //{
-            //    if (Df > -0.5)
-            //        state.state_ += max(-da, Df);
-            //    else
-            //    {
-            //        state.state_ += min(da, 1 + Df);
-            //        if (state.state_ > 1) state.state_ -= 1;
-            //    }
-            //}
-
             return true;
         }
     };

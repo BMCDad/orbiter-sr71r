@@ -162,13 +162,13 @@ private:
         SR71R::RightPanel_ID
     };
 
-    //bco::status_display         statusBattery_{
-    //    bm::vc::MsgLightBattery_id,
-    //    bm::vc::MsgLightBattery_vrt,
-    //    bm::pnl::pnlMsgLightBattery_id,
-    //    bm::pnl::pnlMsgLightBattery_vrt,
-    //    0.0361
-    //};
+    SR71::Light  statusBattery_{
+        bm::vc::MsgLightBattery_id,
+        bm::vc::MsgLightBattery_vrt,
+        bm::pnl::pnlMsgLightBattery_id,
+        bm::pnl::pnlMsgLightBattery_vrt,
+        SR71R::MainPanel_ID
+    };
 };
 
 inline PowerSystem::PowerSystem(bco::Vessel& vessel)
@@ -182,6 +182,7 @@ inline PowerSystem::PowerSystem(bco::Vessel& vessel)
     vessel.RegisterUIControl(lightExternalConnected_);
     vessel.RegisterUIControl(gaugePowerVolts_);
     vessel.RegisterUIControl(gaugePowerAmps_);
+    vessel.RegisterUIControl(statusBattery_);
 }
 inline void PowerSystem::DrawPower(double amps)
 {
@@ -246,11 +247,11 @@ inline void PowerSystem::UpdateStatePostStep(bco::Vessel& vessel, double simdt, 
 
     voltLevelValue_ = availVolts_ / FULL_POWER;
 
-    //statusBattery_.set_state(
-    //    (switchEnabled.is_on() && isDrawingBattery_)
-    //    ? bco::status_display::status::warn
-    //    : bco::status_display::status::off
-    //);
+    statusBattery_.SetState(
+        (togEnabled.IsOn() && isDrawingBattery_)
+        ? SR71::StatusWarn
+        : SR71::StatusOff
+    );
 }
 
 inline void PowerSystem::LoadState(const std::string& line)

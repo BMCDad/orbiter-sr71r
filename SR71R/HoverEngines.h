@@ -2,6 +2,7 @@
 HoverEngines - SR-71r Orbiter Addon
 Copyright(C) 2025  Blake Christensen
 
+LICENSE:
 This program is free software : you can redistribute it and / or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -14,6 +15,12 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.If not, see <http://www.gnu.org/licenses/>.
+
+HOVERENGINES:
+Hover doors use electrical power directly off the DC bus.  If the bus
+is powered, the doors can be opened and closed, there is no separate
+power switch like there is for the canopy or cargo bay doors.  It is safe
+to open the hover doors during atmospheric flight, but NOT during reentry.
 
 Hover persist state:
 - Hover door switch: 0/1
@@ -29,6 +36,7 @@ Hover persist state:
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
 #include "SR71Toggle.h"
+#include "SR71Light.h"
 
 #include "IPowerProvider.h"
 #include "IFuelSystem.h"
@@ -57,15 +65,23 @@ private:
 
     UINT aidHoverDoors_{ 0 };
 
-    bco::AnimatedValue<bco::StateUpdateTarget>  animHoverDoors_;
+    bco::AnimatedValue<bco::StateUpdateTarget>  animHoverDoors_{ 0.2 };
  
     SR71::Toggle togPower_{
-        { bm::vc::swHoverDoor_id },
+        bm::vc::swHoverDoor_id,
         bm::vc::swHoverDoor_loc, bm::vc::DoorsRightAxis_loc,
         bm::pnlright::pnlHoverDoor_id,
         bm::pnlright::pnlHoverDoor_vrt,
         bm::pnlright::pnlHoverDoor_RC,
         SR71R::RightPanel_ID
+    };
+
+    SR71::Light status_{
+        bm::vc::MsgLightHover_id,
+        bm::vc::MsgLightHover_vrt,
+        bm::pnl::pnlMsgLightHover_id,
+        bm::pnl::pnlMsgLightHover_vrt,
+        SR71R::MainPanel_ID
     };
 
     THRUSTER_HANDLE         hoverThrustHandles_[3];
@@ -75,6 +91,7 @@ inline HoverEngines::HoverEngines(bco::Vessel& vessel)
 : hoverThrustHandles_ { nullptr, nullptr, nullptr }
 {
     vessel.RegisterUIControl(togPower_);
+    vessel.RegisterUIControl(status_);
 }
 
 inline void HoverEngines::Setup(bco::Vessel& vessel, IFuelSystem& fuel)
@@ -161,13 +178,26 @@ inline void HoverEngines::Setup(bco::Vessel& vessel, IFuelSystem& fuel)
 inline void HoverEngines::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power)
 {
     bool areDoorsMoving = false;
+    auto status = SR71::StatusOff;
+
     if (power.GetPowerLevel() > 20.0) {
         animHoverDoors_.Update(simdt, togPower_.IsOn() ? 1.0 : 0.0);
         auto currentDoorPos = animHoverDoors_.GetCurrent();
         areDoorsMoving = currentDoorPos > 0.01 && currentDoorPos < 0.99;
+
+        if (areDoorsMoving) {
+            status = SR71::StatusWarn;
+        }
+        else {
+            if (currentDoorPos == 1.0) {
+                status = SR71::StatusOn;
+            }
+        }
     }
 
     power.DrawPower(areDoorsMoving ? SR71R::HOVER_AMPS : 0.0);
+    status_.SetState(status);
+    vessel.SetAnimation(aidHoverDoors_, animHoverDoors_.GetCurrent());
 }
 
 inline void HoverEngines::LoadState(const std::string& line)
@@ -184,6 +214,6 @@ inline void HoverEngines::LoadState(const std::string& line)
 inline std::string HoverEngines::GetState() const 
 {
     std::ostringstream out;
-    out << (togPower_.IsOn() ? 1 : 0) << " " << animHoverDoors_.GetCurrent();
+    out << (togPower_.IsOn() ? 1 : 0) << " " << bco::FormatDouble(animHoverDoors_.GetCurrent());
     return out.str();
 }

@@ -40,6 +40,7 @@ Events:
 
 #include "SR71r_mesh.h"
 #include "SR71r2DRight_mesh.h"
+#include "SR71Light.h"
 
 #include "ShipMets.h"
 #include "IPowerProvider.h"
@@ -114,12 +115,21 @@ private:
         bm::pnlright::pnlDoorCanopy_RC,
         SR71R::RightPanel_ID
     };
+
+    SR71::Light status_{
+        bm::vc::MsgLightCanopy_id,
+        bm::vc::MsgLightCanopy_vrt,
+        bm::pnl::pnlMsgLightCanopy_id,
+        bm::pnl::pnlMsgLightCanopy_vrt,
+        SR71R::MainPanel_ID
+    };
 };
 
 inline Canopy::Canopy(bco::Vessel& vessel)
 {
     vessel.RegisterUIControl(togPower_);
     vessel.RegisterUIControl(togDoor_);
+    vessel.RegisterUIControl(status_);
 }
 
 inline void Canopy::Setup(bco::Vessel& vessel)
@@ -155,13 +165,21 @@ inline void Canopy::Setup(bco::Vessel& vessel)
 inline void Canopy::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power)
 {
     auto isCanopyMoving = false;
+    auto status = SR71::StatusOff;
 
     if (togPower_.IsOn() && power.GetPowerLevel() > 20.0) {
         isCanopyMoving = animCanopy_.Update(simdt, togDoor_.IsOn() ? 1.0 : 0.0);
+
+        if (isCanopyMoving) {
+            status = SR71::StatusWarn;
+        }
+        else {
+            status = animCanopy_.GetCurrent() == 1.0 ? SR71::StatusOn : SR71::StatusOff;
+        }
     }
 
+    status_.SetState(status);
     power.DrawPower(isCanopyMoving ? SR71R::CANOPY_AMPS : 0.0); // Draw 20 amps if the canopy is moving.
-
     vessel.SetAnimation(aidMainCanopy_, animCanopy_.GetCurrent()); // Always step the main canopy animation.
 }
 
@@ -185,7 +203,7 @@ inline std::string Canopy::GetState() const
 {
     std::ostringstream os;
     os << (togPower_.IsOn() ? 1 : 0)
-        << (togDoor_.IsOn() ? 1 : 0)
-        << animCanopy_.GetCurrent();
+        << " " << (togDoor_.IsOn() ? 1 : 0)
+        << " " << bco::FormatDouble(animCanopy_.GetCurrent());
     return os.str();
 }

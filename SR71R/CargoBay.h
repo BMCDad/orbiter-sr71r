@@ -47,6 +47,7 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 #include "SR71r_mesh.h"
 #include "SR71r2DRight_mesh.h"
+#include "SR71Light.h"
 
 #include "ShipMets.h"
 #include "IPowerProvider.h"
@@ -124,12 +125,31 @@ private:
         bm::pnlright::pnlDoorCargo_RC,
         SR71R::RightPanel_ID
     };
+
+    SR71::Light status_{
+        bm::vc::MsgLightBay_id,
+        bm::vc::MsgLightBay_vrt,
+        bm::pnl::pnlMsgLightBay_id,
+        bm::pnl::pnlMsgLightBay_vrt,
+        SR71R::MainPanel_ID
+    };
+
+    SR71::Light statusDock_{
+        bm::vc::MsgLightDock_id,
+        bm::vc::MsgLightDock_vrt,
+        bm::pnl::pnlMsgLightDock_id,
+        bm::pnl::pnlMsgLightDock_vrt,
+        SR71R::MainPanel_ID
+    };
+
 };
 
 inline CargoBay::CargoBay(bco::Vessel& vessel)
 {
-      vessel.RegisterUIControl(togDoor_);
-      vessel.RegisterUIControl(togPower_);
+    vessel.RegisterUIControl(togDoor_);
+    vessel.RegisterUIControl(togPower_);
+    vessel.RegisterUIControl(status_);
+    vessel.RegisterUIControl(statusDock_);
 }
 
 inline void CargoBay::Setup(bco::Vessel& vessel)
@@ -175,10 +195,21 @@ inline void CargoBay::Setup(bco::Vessel& vessel)
 
 inline void CargoBay::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power)
 {
+    auto status = SR71::StatusOff;
+
     if (togPower_.IsOn() && power.GetPowerLevel() > 20.0) {
         auto isMoving = animCargoBay_.Update(simdt, togDoor_.IsOn() ? 1.0 : 0.0);
-        if (isMoving) power.DrawPower(SR71R::CARGO_AMPS);
+        if (isMoving) {
+            power.DrawPower(SR71R::CARGO_AMPS);
+            status = SR71::StatusWarn;
+        }
+        else {
+            status = animCargoBay_.GetCurrent() == 1.0 ? SR71::StatusOn : SR71::StatusOff;
+        }
     }
+
+    status_.SetState(status);
+    statusDock_.SetState(vessel.DockingStatus(0) == 1 ? SR71::StatusOn : SR71::StatusOff);
 
     vessel.SetAnimation(aidMainCargoBay_, animCargoBay_.GetCurrent());
 }
@@ -198,7 +229,7 @@ inline std::string CargoBay::GetState() const
 {
     std::ostringstream os;
     os << (togPower_.IsOn() ? 1 : 0)
-        << (togDoor_.IsOn() ? 1 : 0)
-        << animCargoBay_.GetCurrent();
+        << " " << (togDoor_.IsOn() ? 1 : 0)
+        << " " << bco::FormatDouble(animCargoBay_.GetCurrent());
     return os.str();
 }

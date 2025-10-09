@@ -73,8 +73,8 @@ public:
     std::string GetState() const;
 
 private:
-    bco::AnimatedValue<bco::StateUpdateTarget> airBrakeAnim_;
-    bco::AnimatedValue<bco::StateUpdateTarget> animAirBrakeSwitch_{ SR71R::ToggleAnimSpeed };
+    bco::AnimatedValue<bco::StateUpdateTarget> airBrakeAnim_{ 2.0 };
+    bco::AnimatedValue<bco::StateUpdateTarget> animAirBrakeSwitch_{ 2.0 };
 
     UINT aidAirBrake_{ 0 };
     UINT aidAirBrakeSwitch_{ 0 };
@@ -168,7 +168,7 @@ inline void AirBrake::UpdateState(bco::Vessel& vessel, double simdt, IHydraulicP
       }
    
       vessel.SetAnimation(aidAirBrake_, airBrakeAnim_.GetCurrent());
-      auto status = airBrakeAnim_.GetCurrent() > 0.01 ? SR71R::PNL_WARN : SR71R::PNL_OFF;
+      auto status = airBrakeAnim_.GetCurrent() > 0.01 ? SR71::StatusWarn : SR71::StatusOff;
       status_.SetState(status);
 }
 
@@ -201,7 +201,7 @@ inline void AirBrake::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
 inline void AirBrake::LoadState(const std::string& line)
 {
     std::istringstream iss(line);
-    double animation;
+    double animation = 0.0;
     iss >> switchPosition_ >> animation;
     airBrakeAnim_.LoadState(animation, switchPosition_);
 }
@@ -209,6 +209,6 @@ inline void AirBrake::LoadState(const std::string& line)
 inline std::string AirBrake::GetState() const
 {
     std::ostringstream os;
-    os << switchPosition_ << " " << airBrakeAnim_.GetCurrent();
+    os << bco::FormatDouble(switchPosition_) << " " << bco::FormatDouble(airBrakeAnim_.GetCurrent());
     return os.str();
 }

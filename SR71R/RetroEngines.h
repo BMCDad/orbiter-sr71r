@@ -22,8 +22,11 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 #include "Orbitersdk.h"
 #include "SR71r_mesh.h"
+#include "SR71r2DRight_mesh.h"
+
 #include "ShipMets.h"
 #include "SR71Toggle.h"
+#include "SR71Light.h"
 
 #include "IFuelSystem.h"
 #include "IPowerProvider.h"
@@ -54,7 +57,7 @@ private:
     THRUSTER_HANDLE         retroThrustHandles_[2];
 
     UINT aidRetroDoors_{ 0 };
-    bco::AnimatedValue<bco::StateUpdateTarget>  animRetroDoors_;
+    bco::AnimatedValue<bco::StateUpdateTarget>  animRetroDoors_{ 0.2 };
 
     SR71::Toggle togDoors_{
         bm::vc::swRetroDoors_id,
@@ -65,19 +68,20 @@ private:
         SR71R::RightPanel_ID
     };
 
-    //bco::status_display     status_ {
-    //    bm::vc::MsgLightRetro_id,
-    //    bm::vc::MsgLightRetro_vrt,
-    //    bm::pnl::pnlMsgLightRetro_id,
-    //    bm::pnl::pnlMsgLightRetro_vrt,
-    //    0.0361
-    //};
+    SR71::Light status_ {
+        bm::vc::MsgLightRetro_id,
+        bm::vc::MsgLightRetro_vrt,
+        bm::pnl::pnlMsgLightRetro_id,
+        bm::pnl::pnlMsgLightRetro_vrt,
+        SR71R::MainPanel_ID
+    };
 };
 
 inline RetroEngines::RetroEngines(bco::Vessel& vessel) :
     retroThrustHandles_{ nullptr, nullptr }
 {
     vessel.RegisterUIControl(togDoors_);
+    vessel.RegisterUIControl(status_);
 }
 
 inline void RetroEngines::Setup(bco::Vessel& vessel, IFuelSystem& fuel)
@@ -130,20 +134,22 @@ inline void RetroEngines::UpdateState(bco::Vessel& vessel, double simdt, IPowerP
 {
     auto isMoving = false;
 
+    auto status = SR71::StatusOff;
     if (power.GetPowerLevel() > 20.0) {
         isMoving = animRetroDoors_.Update(simdt, togDoors_.IsOn() ? 1.0 : 0.0);
+
+        if ((animRetroDoors_.GetCurrent() > 0.0) && (animRetroDoors_.GetCurrent() < 1.0)) {
+            status = SR71::StatusWarn;
+        }
+        else {
+            if (animRetroDoors_.GetCurrent() == 1.0) {
+                status = SR71::StatusOn;
+            }
+        }
     }
-    //auto status = bco::status_display::status::off;
-    //if (power_.volts_available() > MIN_VOLTS) {
-    //    if ((animRetroDoors_.GetState() > 0.0) && (animRetroDoors_.GetState() < 1.0)) {
-    //        status = bco::status_display::status::warn;
-    //    }
-    //    else {
-    //        if (animRetroDoors_.GetState() == 1.0) {
-    //            status = bco::status_display::status::on;
-    //        }
-    //    }
-    //}
+
+    status_.SetState(status);
+    vessel.SetAnimation(aidRetroDoors_, animRetroDoors_.GetCurrent());
 }
 
 inline void RetroEngines::LoadState(const std::string& line)
@@ -159,6 +165,6 @@ inline void RetroEngines::LoadState(const std::string& line)
 inline std::string RetroEngines::GetState() const
 {
     std::ostringstream out;
-    out << (togDoors_.IsOn() ? 1 : 0) << " " << animRetroDoors_.GetCurrent();
+    out << (togDoors_.IsOn() ? 1 : 0) << " " << bco::FormatDouble(animRetroDoors_.GetCurrent());
     return out.str();
 }

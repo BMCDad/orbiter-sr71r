@@ -22,46 +22,19 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 namespace bc_orbiter
 {
-    using UpdateTargetFunction = std::function<double()>;
-
     class AnimationGroup
     {
     public:
         /**
         * \brief Constructor to create a rotating animation.
-        * \param meshName The name of the mesh where the animation group is located.  This should be the same name
-        * used when loading the mesh.
+        * \param meshIndex The vessel index for the mesh containing the animated group.
         * \param grp A list of mesh group ids that will be part of the animation.
         * \param locA The location of the 'root' of the animation axis.
         * \param locB The location that along with locA defines the rotation axis vector.
         * \param angle The angle of rotation.
         * \param start The point in an animation sequence where this animation starts.  0 to 1.
         * \param stop The point in an animation sequence where this animation stop.  0 to 1.
-        * \param speed The speed of the animation.
-        * \param funcTarget The function that will be called to update the animation target.
         */
-        //AnimationGroup(
-        //    const char* meshName,
-        //    std::initializer_list<UINT> const& grp,
-        //    const VECTOR3& locA, const VECTOR3& locB,
-        //    double angle,
-        //    double start, double stop,
-        //    double speed,
-        //    UpdateTargetFunction funcTarget) :
-        //    group_(grp),
-        //    start_(start),
-        //    stop_(stop),
-        //    location_(locA),
-        //    speed_(speed),
-        //    targetFunc_(funcTarget),
-        //    meshName_(meshName)
-        //{
-        //    VECTOR3 axis = locB - locA;
-        //    normalise(axis);
-        //    transform_ = std::make_unique<MGROUP_ROTATE>(0, group_.data(), group_.size(), locA, axis, (float)angle);
-        //    state_.Speed = speed_;
-        //}
-
         AnimationGroup(
             UINT meshIndex,
             std::initializer_list<UINT> const& grp,
@@ -81,14 +54,11 @@ namespace bc_orbiter
 
         /**
         * \brief Constructor to create a linear animation.
-        * \param meshName The name of the mesh where the animation group is located.  This should be the same name
-        * used when loading the mesh.
+        * \param meshIndex The vessel index for the mesh containing the animated group.
         * \param grp A list of mesh group ids that will be part of the animation.
         * \param translate The 3D vector that defines the animation 'route'.
         * \param start The point in an animation sequence where this animation starts.  0 to 1.
         * \param stop The point in an animation sequence where this animation stop.  0 to 1.
-        * \param speed The speed of the animation.
-        * \param funcTarget The function that will be called to update the animation target.
         */
         AnimationGroup(
             UINT meshIndex,

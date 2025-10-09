@@ -49,6 +49,7 @@ Events:
 
 #include "SR71r_mesh.h"
 #include "SR71WrapGauge.h"
+#include "SR71MouseClick.h"
 
 namespace bco = bc_orbiter;
 
@@ -61,8 +62,8 @@ public:
     void Setup(bco::Vessel& vessel);
     void UpdateState(double simdt);             // Called from Step() in the vessel to update clock state.
 
-    void LoadVC();       // Called when the VC is loaded to setup animations.
-    void LoadPanel(bco::Vessel& vessel, PANELHANDLE handle);    // Called when the 2D panel is loaded to setup animations.
+    //void LoadVC();       // Called when the VC is loaded to setup animations.
+    //void LoadPanel(bco::Vessel& vessel, PANELHANDLE handle);    // Called when the 2D panel is loaded to setup animations.
 
     void ToggleTimer();
     void ResetElapsed() { elapsedMissionSeconds_ = 0.0; }
@@ -78,16 +79,6 @@ private:
     // Animated values for the clock hands.  These anim values are part of the componet state
     // and are updated each step of the simulation.
     const double HandSpeed = 0.4;
-    bco::AnimatedValue<bco::StateUpdateWrap> animClockSecond_       { HandSpeed };
-    bco::AnimatedValue<bco::StateUpdateWrap> animClockMinute_       { HandSpeed };
-    bco::AnimatedValue<bco::StateUpdateWrap> animClockHour_         { HandSpeed };
-    bco::AnimatedValue<bco::StateUpdateWrap> animClockTimerMinute_  { HandSpeed };
-
-    // Animation IDs for the VC clock hands.
-    UINT aidVCClockSecond_{ 0 };
-    UINT aidVCClockMinute_{ 0 };
-    UINT aidVCClockHour_{ 0 };
-    UINT aidVCClockTimerMinute_{ 0 };
 
     int eventId_ResetElapsed_{ -1 };
     int eventId_ToggleTimer_{ -1 };
@@ -132,6 +123,22 @@ private:
         timerMinuteValue_,
         SR71R::MainPanel_ID
     };
+
+    SR71::MouseClick btnResetElapsed_{
+        bm::vc::ClockElapsedReset_loc,
+        SR71R::ToggleHitRadius,
+        bm::pnl::pnlClockElapsedReset_RC,
+        SR71R::MainPanel_ID,
+        [this]() {ResetElapsed(); }
+    };
+
+    SR71::MouseClick btnToggleTimer_{
+        bm::vc::ClockTimerReset_loc,
+        SR71R::ToggleHitRadius,
+        bm::pnl::pnlClockTimerReset_RC,
+        SR71R::MainPanel_ID,
+        [this]() {ToggleTimer(); }
+    };
 };
 
 inline ClockTimer::ClockTimer(bco::Vessel& vessel)
@@ -140,12 +147,14 @@ inline ClockTimer::ClockTimer(bco::Vessel& vessel)
     vessel.RegisterUIControl(minuteHand_);
     vessel.RegisterUIControl(hourHand_);
     vessel.RegisterUIControl(timerMinuteHand_);
+    vessel.RegisterUIControl(btnResetElapsed_);
+    vessel.RegisterUIControl(btnToggleTimer_);
 }
 
 inline void ClockTimer::Setup(bco::Vessel& vessel)
 {
-    eventId_ResetElapsed_ = vessel.RegisterEventHandler([this](int, int) { ResetElapsed(); return true; });
-    eventId_ToggleTimer_ = vessel.RegisterEventHandler([this](int, int) { ToggleTimer(); return true; });
+    //eventId_ResetElapsed_ = vessel.RegisterEventHandler([this](int, int) { ResetElapsed(); return true; });
+    //eventId_ToggleTimer_ = vessel.RegisterEventHandler([this](int, int) { ToggleTimer(); return true; });
 }
 
 inline void ClockTimer::UpdateState(double simdt)
@@ -210,14 +219,14 @@ inline std::string ClockTimer::GetState() const
     return out.str();
 }
 
-inline void ClockTimer::LoadVC()
-{
-    bco::LoadVCSimpleEvent(eventId_ResetElapsed_, bm::vc::ClockElapsedReset_loc, 0.01);
-    bco::LoadVCSimpleEvent(eventId_ToggleTimer_, bm::vc::ClockTimerReset_loc, 0.01);
-}
-
-inline void ClockTimer::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
-{
-    bco::LoadPanelSimpleEvent(vessel, eventId_ResetElapsed_, handle, bm::pnl::pnlClockElapsedReset_RC);
-    bco::LoadPanelSimpleEvent(vessel, eventId_ToggleTimer_, handle, bm::pnl::pnlClockTimerReset_RC);
-}
+//inline void ClockTimer::LoadVC()
+//{
+//    bco::LoadVCSimpleEvent(eventId_ResetElapsed_, bm::vc::ClockElapsedReset_loc, 0.01);
+//    bco::LoadVCSimpleEvent(eventId_ToggleTimer_, bm::vc::ClockTimerReset_loc, 0.01);
+//}
+//
+//inline void ClockTimer::LoadPanel(bco::Vessel& vessel, PANELHANDLE handle)
+//{
+//    bco::LoadPanelSimpleEvent(vessel, eventId_ResetElapsed_, handle, bm::pnl::pnlClockElapsedReset_RC);
+//    bco::LoadPanelSimpleEvent(vessel, eventId_ToggleTimer_, handle, bm::pnl::pnlClockTimerReset_RC);
+//}

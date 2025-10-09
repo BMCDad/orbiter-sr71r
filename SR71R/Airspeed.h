@@ -135,6 +135,15 @@ private:
         bm::pnl::pnlSpeedVelocityFlag_vrt,
         SR71R::MainPanel_ID
     };
+
+    SR71::Light status_{
+        bm::vc::MsgLightKeasWarn_id,
+        bm::vc::MsgLightKeasWarn_vrt,
+        bm::pnl::pnlMsgLightKeasWarn_id,
+        bm::pnl::pnlMsgLightKeasWarn_vrt,
+        SR71R::MainPanel_ID
+    };
+
 };
 
 inline Airspeed::Airspeed(bco::Vessel& vessel)
@@ -151,6 +160,8 @@ inline Airspeed::Airspeed(bco::Vessel& vessel)
     vessel.RegisterUIControl(tdiMachOne_);
     vessel.RegisterUIControl(tdiMachTen_);
     vessel.RegisterUIControl(tdiMachHund_);
+
+    vessel.RegisterUIControl(status_);
 }
 
 inline void Airspeed::UpdateState(bco::Vessel& vessel, double simdt, IAvionics& avionics)
@@ -221,4 +232,6 @@ inline void Airspeed::UpdateState(bco::Vessel& vessel, double simdt, IAvionics& 
     tdiMachOne_.SetState(parts.Tenths);
     tdiMachTen_.SetState(parts.Tens);
     tdiMachHund_.SetState(parts.Hundreds);
+
+    status_.SetState(isOverSpeed ? SR71::StatusError : SR71::StatusOff);
 }

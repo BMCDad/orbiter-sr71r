@@ -153,6 +153,6 @@ namespace SR71
     inline void Gauge::TimeStepPanel(bco::Vessel& vessel, double simdt, int panelId, MESHHANDLE hMesh)
     {
         if (panelId != pnlId_) return;
-        bco::RotateMesh(hMesh, pnlGroup_, pnlVerts_, (animGauge_.GetCurrent() * -angle_));
+        bco::RotateMesh(hMesh, pnlGroup_, pnlVerts_, animGauge_.GetCurrent() * -angle_);
     }
 }
