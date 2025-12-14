@@ -74,7 +74,7 @@ auto SR71Vessel::SetClassCaps() -> void
 
     // Setups:
     SetupAerodynamics();
-    SetCameraOffset(bm::main::PilotPOV_loc);
+    SetCameraOffset(bm::vc::PilotPOV_loc);
 
     SetMaxWheelbrakeForce(4e5);
 

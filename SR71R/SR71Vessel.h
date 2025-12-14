@@ -4,7 +4,6 @@
 
 #include "ShipMets.h"
 #include "SR71r_mesh.h"
-#include "SR71r_common.h"
 
 #include "..\bc_orbiter\Vessel.h"
 #include "..\bc_orbiter\AnimationGroup.h"

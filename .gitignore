@@ -13,3 +13,4 @@
 
 # Visual Studio likes to plop this here for some reason
 .vs
+*.blend1

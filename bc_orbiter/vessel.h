@@ -296,11 +296,11 @@ namespace bc_orbiter
 
     inline bool Vessel::clbkVCMouseEvent(int id, int event, VECTOR3& p) {
         auto it = eventHandlers_.find(id);
-         if (it != eventHandlers_.end()) {
-               const auto& handler = it->second;
-               return handler(id, event);
-         }
-         return false; // Event not handled
+        if (it != eventHandlers_.end()) {
+            const auto& handler = it->second;
+            return handler(id, event);
+        }
+        return false; // Event not handled
     }
 
     inline bool Vessel::clbkPanelMouseEvent(int id, int event, int mx, int my, void* context) {

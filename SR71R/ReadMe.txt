@@ -41,43 +41,7 @@ Blender:
 Gimp:
 -	Texture base gimp files are in the Art folder.  You will need the DDS plugin to output DDS files.
 
-VNext: (April 2 2024)
--	Mesh enhancement.  We will end up with a higher poly count, and better looking model.
-: P-Port (left hand), S-Starboard (right hand), I-Inner, O-Outer, T-Top, B-Bottom, F-Forward, A-Aft
-: [P/S | F/A | I/O | T/B]
-	* Mesh start 380kb.
-	* 4/2/2024 - nacelle, outer wings.  Main mesh 512kb.
-	* 4/3/2024 - nacelle clean up : 493kb.
-	* 4/4/2024 - Nozell redo : 507kb.
-	* 4/4/2024 - Bay doors : 528kb
-	* 4/4/2024 - More bay doors, canopy 567kb
-	* 4/5/2024 - Cleaned up interior  564kb
-	* 4/5/2024 - Outer mesh mostly done.  Compiles and animations work.  Texturing not done, and some parts are not showing, that is coming.
-	* 4/17/2024 - Everything on the body should be UV unwrapped at this point.  Need to combine into like textures, Exhaust, Skin, Lining.
-	* 4/20/2024 - More mesh clean up and organizing in collections.  582kb
-	* 4/21/2024 - Lining up UVs for outer skin, doors, etc.
-	* 4/22/2024 - More UV body layout.
-	* 4/25/2024 - Start body texturing.
-	* 4/28/2024 - Body/wings lines, ribs etc.  NOTE: Overlay and UVs will not match, so line up each section as needed (scale, skew).
-	* 4/28/2024 - Body texture paths.
-	* 5/5/2024 - Abandoning normals for now.  Getting Blender to bake those correctly is rather complicated, especially since we want to use 
-					a gray scale texture.  It may be easier to have a high-poly model, but not now.
-	* 5/16/2024 - Top body texturing done.  Bottom should go quicker.
+Redo-next step: VC and Panel texture redo.
 
-Redo: (Aug, 2025)
-: Panel issues (10/5/2025):
-    * RCS level will be removed
-    * A/P ** All AP will be differed **
-    * Shutter will be removed
-    * Dock light will be removed
-    * 10/5/2025 - HUD buttons working. VC hud working.
-    * 10/6/2025 - ACC gauge working.
-    * 10/6/2025 - Attitude indicator
-    * 10/6/2025 - Fuel Flow gauge
-    * 10/6/2025 - Clock buttons not working
-    * 10/7/2025 - Retro doors switch not working (Blender origin issue for panels)
-    * 10/7/2025 - Fix fuel cell panel switches
-    * 10/7/2025 - Implement Save State
-    * 10/8/2025 - Fuel load switch not working
-    * 10/8/2025 - Status display for all components
-    * 10/8/2025 - Clean up wrap gauge time step
+    - Bring in assets.
+    - Attitude Indicator - adjust VC mesh.

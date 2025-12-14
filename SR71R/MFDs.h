@@ -206,7 +206,7 @@ inline void MFDs::LoadVC(bco::Vessel& vessel)
     vcFont_.blankX = 1600;
     vcFont_.blankY = 2021;
 
-    static VCMFDSPEC mfds_left = { 1, bm::vc::VCMfdLeft_id };
+    static VCMFDSPEC mfds_left = { 1, bm::vc::MfdLeft_id };
     oapiVCRegisterMFD(MFD_LEFT, &mfds_left);   // left MFD
 
     // These are texture metrics, not mesh, so they don't live in the mesh file.
@@ -234,7 +234,7 @@ inline void MFDs::LoadVC(bco::Vessel& vessel)
     bco::LoadVCSimpleEvent(eventId_LeftSel_, bm::vc::MFCLeftSEL_loc, MFDBRAD);
     bco::LoadVCSimpleEvent(eventId_LeftMenu_, bm::vc::MFCLeftMNU_loc, MFDBRAD);
 
-    static VCMFDSPEC mfds = { 1, bm::vc::VCMfdRight_id };
+    static VCMFDSPEC mfds = { 1, bm::vc::MfdRight_id };
     oapiVCRegisterMFD(MFD_RIGHT, &mfds);   // left MFD
 
     rc_ = MFDRLTEXL;        // Left side of left buttons;

@@ -24,13 +24,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -175,12 +175,10 @@
     <ClInclude Include="SR71Button.h" />
     <ClInclude Include="SR71Gauge.h" />
     <ClInclude Include="SR71Light.h" />
-    <ClInclude Include="SR71MFDs.h" />
     <ClInclude Include="SR71MouseClick.h" />
     <ClInclude Include="SR71r2DMain_mesh.h" />
     <ClInclude Include="SR71r2DRight_mesh.h" />
     <ClInclude Include="SR71rVC_mesh.h" />
-    <ClInclude Include="SR71r_common.h" />
     <ClInclude Include="MfdMets.h" />
     <ClInclude Include="LiftCoeff.h" />
     <ClInclude Include="ShipMets.h" />
@@ -284,7 +282,7 @@
     <Image Include="..\Orbiter\Textures\SR71R_100_VC2.dds">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Image>
-    <Image Include="..\Orbiter\Textures\SR71_VCCockPit.dds">
+    <Image Include="..\Orbiter\Textures\sr71_c_pnl_1.dds">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Image>
   </ItemGroup>

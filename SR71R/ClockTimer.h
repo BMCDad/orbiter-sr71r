@@ -89,8 +89,8 @@ private:
     double timerMinuteValue_{ 0.0 };
 
     SR71::WrapGauge secondHand_{
-        { bm::vc::ClockSecond_id },
-        bm::vc::ClockSecond_loc, bm::vc::ClockAxisFront_loc,
+        { bm::vc::ClockTimerSecond_id },
+        bm::vc::ClockTimerSecond_loc, bm::vc::ClockAxisFront_loc,
         bm::pnl::pnlClockSecond_id,
         bm::pnl::pnlClockSecond_vrt,
         secondValue_,

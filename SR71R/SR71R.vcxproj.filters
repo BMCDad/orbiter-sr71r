@@ -13,14 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Textures">
-      <UniqueIdentifier>{e3c9c030-863e-413f-8791-470054f70e3a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Art">
       <UniqueIdentifier>{a5c4b344-9baa-4f81-bcc2-7d11892d37dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Meshes">
-      <UniqueIdentifier>{8ce2aff6-0d13-4a15-9011-b9d83d924d15}</UniqueIdentifier>
     </Filter>
     <Filter Include="Components">
       <UniqueIdentifier>{52629fbc-aa6f-4a67-96eb-3169d7341fb6}</UniqueIdentifier>
@@ -37,20 +31,29 @@
     <Filter Include="Docs">
       <UniqueIdentifier>{939075d8-bbcc-4d90-9c9b-c55b108a0893}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scenarios">
-      <UniqueIdentifier>{a9e6c9aa-edc2-44a3-b754-b113fb3bb38c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Components\Computer">
       <UniqueIdentifier>{78fad8f5-d9fb-4a9a-8a35-78cc5e2235b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scenarios\Moon">
-      <UniqueIdentifier>{9cdc8e44-f856-410f-8113-88f50a437720}</UniqueIdentifier>
     </Filter>
     <Filter Include="bc_orbiter">
       <UniqueIdentifier>{66bd06c1-4866-4ab8-a68d-51f715d93c84}</UniqueIdentifier>
     </Filter>
     <Filter Include="Blender">
       <UniqueIdentifier>{4a87d556-8c9c-4885-a5f0-df8818c7be54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Orbiter">
+      <UniqueIdentifier>{9389beea-32b0-4fb9-9293-4c25f9a4bda6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Orbiter\Meshes">
+      <UniqueIdentifier>{8ce2aff6-0d13-4a15-9011-b9d83d924d15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Orbiter\Scenarios">
+      <UniqueIdentifier>{a9e6c9aa-edc2-44a3-b754-b113fb3bb38c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Orbiter\Scenarios\Moon">
+      <UniqueIdentifier>{9cdc8e44-f856-410f-8113-88f50a437720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Orbiter\Textures">
+      <UniqueIdentifier>{e3c9c030-863e-413f-8791-470054f70e3a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -79,9 +82,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SR71r_common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\Types.h">
@@ -155,9 +155,6 @@
     </ClInclude>
     <ClInclude Include="..\bc_orbiter\Tools.h">
       <Filter>bc_orbiter</Filter>
-    </ClInclude>
-    <ClInclude Include="SR71MFDs.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MFDs.h">
       <Filter>Components</Filter>
@@ -267,43 +264,43 @@
     </None>
     <None Include="$(OrbiterDir)\Config\Vessels\SR71r.cfg" />
     <None Include="..\Orbiter\Scenarios\SR71r\0 Cold Start.scn">
-      <Filter>Scenarios</Filter>
+      <Filter>Orbiter\Scenarios</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\1 Power Up.scn">
-      <Filter>Scenarios</Filter>
+      <Filter>Orbiter\Scenarios</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\2 Setup Flight.scn">
-      <Filter>Scenarios</Filter>
+      <Filter>Orbiter\Scenarios</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\3 Ready for Takeoff.scn">
-      <Filter>Scenarios</Filter>
+      <Filter>Orbiter\Scenarios</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\4 Chasing Down ISS.scn">
-      <Filter>Scenarios</Filter>
+      <Filter>Orbiter\Scenarios</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\5 Rendezvous with ISS.scn">
-      <Filter>Scenarios</Filter>
+      <Filter>Orbiter\Scenarios</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\6 Docked at the ISS.scn">
-      <Filter>Scenarios</Filter>
+      <Filter>Orbiter\Scenarios</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\7 Lined up for Re-entry.scn">
-      <Filter>Scenarios</Filter>
+      <Filter>Orbiter\Scenarios</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\8 Landing Approach.scn">
-      <Filter>Scenarios</Filter>
+      <Filter>Orbiter\Scenarios</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\Moon\1 Ascent to Earth orbit.scn">
-      <Filter>Scenarios\Moon</Filter>
+      <Filter>Orbiter\Scenarios\Moon</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\Moon\2 In Earth orbit.scn">
-      <Filter>Scenarios\Moon</Filter>
+      <Filter>Orbiter\Scenarios\Moon</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\Moon\3 Arrival - Moon orbit.scn">
-      <Filter>Scenarios\Moon</Filter>
+      <Filter>Orbiter\Scenarios\Moon</Filter>
     </None>
     <None Include="..\Orbiter\Scenarios\SR71r\Moon\4 Landed - Brighton Beach.scn">
-      <Filter>Scenarios\Moon</Filter>
+      <Filter>Orbiter\Scenarios\Moon</Filter>
     </None>
     <None Include="..\Docs\SR71r Manual.docx">
       <Filter>Docs</Filter>
@@ -366,13 +363,13 @@
       <Filter>Deployment</Filter>
     </None>
     <None Include="..\Orbiter\Meshes\SR71r.msh">
-      <Filter>Meshes</Filter>
+      <Filter>Orbiter\Meshes</Filter>
     </None>
     <None Include="..\Orbiter\Meshes\SR71r2D.msh">
-      <Filter>Meshes</Filter>
+      <Filter>Orbiter\Meshes</Filter>
     </None>
     <None Include="..\Orbiter\Meshes\SR71rVC.msh">
-      <Filter>Meshes</Filter>
+      <Filter>Orbiter\Meshes</Filter>
     </None>
     <None Include="..\Art\SR71R_200_Body.xcf">
       <Filter>Art</Filter>
@@ -394,20 +391,20 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Orbiter\Textures\SR71_VCCockPit.dds">
-      <Filter>Textures</Filter>
-    </Image>
     <Image Include="..\Orbiter\Textures\SR71R_100_2DPanel.dds">
-      <Filter>Textures</Filter>
+      <Filter>Orbiter\Textures</Filter>
     </Image>
     <Image Include="..\Orbiter\Textures\SR71R_100_VC1.dds">
-      <Filter>Textures</Filter>
+      <Filter>Orbiter\Textures</Filter>
     </Image>
     <Image Include="..\Orbiter\Textures\SR71R_100_VC2.dds">
-      <Filter>Textures</Filter>
+      <Filter>Orbiter\Textures</Filter>
     </Image>
     <Image Include="..\Orbiter\Textures\SR71rBody.dds">
-      <Filter>Textures</Filter>
+      <Filter>Orbiter\Textures</Filter>
+    </Image>
+    <Image Include="..\Orbiter\Textures\sr71_c_pnl_1.dds">
+      <Filter>Orbiter\Textures</Filter>
     </Image>
   </ItemGroup>
 </Project>
