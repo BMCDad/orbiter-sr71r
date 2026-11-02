@@ -13,3 +13,8 @@
 
 # Visual Studio likes to plop this here for some reason
 .vs
+
+# CMake build output and per-machine presets
+/build/
+/out/
+CMakeUserPresets.json

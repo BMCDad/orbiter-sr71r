@@ -1,0 +1,17 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 26, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "x86",
+      "hidden": true,
+      "description": "Base for 32-bit Orbiter module builds. Inherit it from CMakeUserPresets.json and set ORBITER_DIR there.",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "architecture": { "value": "Win32", "strategy": "set" },
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
+      },
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    }
+  ]
+}
