@@ -8,11 +8,20 @@ if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
   message(FATAL_ERROR "Orbiter modules are 32-bit: configure with -A Win32 (or use the presets)")
 endif()
 
+# The Orbiter install to build against is per checkout: local.cmake (not committed) sets ORBITER_DIR.
+# -DORBITER_DIR=... on the command line works too when there is no local.cmake.
 set(ORBITER_DIR "" CACHE PATH "Orbiter install root (contains Orbitersdk/ and Modules/)")
+include("${CMAKE_SOURCE_DIR}/local.cmake" OPTIONAL)
+file(TO_CMAKE_PATH "${ORBITER_DIR}" ORBITER_DIR)
 if(NOT EXISTS "${ORBITER_DIR}/Orbitersdk/include/OrbiterAPI.h")
-  message(FATAL_ERROR "ORBITER_DIR ('${ORBITER_DIR}') is not an Orbiter install with the SDK. "
-                      "Set it in a CMakeUserPresets.json configure preset that inherits 'x86' (see README.md).")
+  message(FATAL_ERROR "ORBITER_DIR ('${ORBITER_DIR}') is not an Orbiter install with the SDK.\n"
+                      "Create local.cmake in the repo root containing a line like:\n"
+                      "  set(ORBITER_DIR \"C:/Orbiter\")\n"
+                      "pointing at your Orbiter folder (the one that contains Orbitersdk/). See README.md.")
 endif()
+
+# VS Code's launch.json can't read local.cmake, so generate it (not committed) from the template.
+configure_file("${CMAKE_SOURCE_DIR}/.vscode/launch.json.in" "${CMAKE_SOURCE_DIR}/.vscode/launch.json" @ONLY)
 
 option(SR71R_DEPLOY "Copy the module and the Orbiter/ data folder into ORBITER_DIR after building" ON)
 
@@ -110,13 +119,6 @@ add_library(SR71R SHARED
   ${SR71R_HEADERS} ${SR71R_COMPONENTS} ${SR71R_INTERFACES} ${BC_ORBITER_HEADERS}
 )
 
-# IDE folders, matching the old SR71R.vcxproj.filters.
-source_group("Source Files" FILES ${SR71R_SOURCES})
-source_group("Resource Files" FILES ${SR71R_RESOURCES})
-source_group("Header Files" FILES ${SR71R_HEADERS})
-source_group("Components" FILES ${SR71R_COMPONENTS})
-source_group("Interfaces" FILES ${SR71R_INTERFACES})
-source_group("bc_orbiter" FILES ${BC_ORBITER_HEADERS})
 
 target_compile_features(SR71R PRIVATE cxx_std_20)
 # No _DEBUG in Debug: the Orbiter SDK libs are built against the release CRT (/MD), and _DEBUG

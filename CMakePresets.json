@@ -3,15 +3,20 @@
   "cmakeMinimumRequired": { "major": 3, "minor": 26, "patch": 0 },
   "configurePresets": [
     {
-      "name": "x86",
-      "hidden": true,
-      "description": "Base for 32-bit Orbiter module builds. Inherit it from CMakeUserPresets.json and set ORBITER_DIR there.",
-      "binaryDir": "${sourceDir}/build/${presetName}",
+      "name": "orbiter",
+      "displayName": "Orbiter (32-bit MSVC)",
+      "description": "Builds SR71R.dll against the Orbiter install set in local.cmake.",
+      "generator": "Visual Studio 18 2026",
       "architecture": { "value": "Win32", "strategy": "set" },
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_CONFIGURATION_TYPES": "Debug;Release"
       },
       "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
     }
+  ],
+  "buildPresets": [
+    { "name": "debug", "displayName": "Debug", "configurePreset": "orbiter", "configuration": "Debug" },
+    { "name": "release", "displayName": "Release", "configurePreset": "orbiter", "configuration": "Release" }
   ]
 }
