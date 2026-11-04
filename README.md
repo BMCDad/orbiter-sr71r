@@ -50,9 +50,9 @@ set(ORBITER_DIR "C:/Orbiter")
 ```
 
 `local.cmake` is not committed, so each clone of the repo can point at a different Orbiter install.
-When CMake configures, it also generates `.vscode/launch.json` (not committed) from
-`.vscode/launch.json.in` with that path filled in. To change the debug settings, edit the template,
-not the generated file.
+When CMake configures, it also generates `.vscode/launch.json` and `.vscode/c_cpp_properties.json` (not
+committed) from their `.in` templates, with your paths filled in. To change the debug or fallback
+IntelliSense settings, edit the templates, not the generated files.
 
 ### 2. Build
 
