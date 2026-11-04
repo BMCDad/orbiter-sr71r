@@ -7,9 +7,10 @@
 # CMake build output
 /build/
 
-# Per-checkout Orbiter path, and the launch.json generated from it
+# Per-checkout Orbiter path, and the VS Code files generated from it
 /local.cmake
 /.vscode/launch.json
+/.vscode/c_cpp_properties.json
 
 # Visual Studio cache
 /.vs/

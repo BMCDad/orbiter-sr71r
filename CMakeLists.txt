@@ -22,6 +22,8 @@ endif()
 
 # VS Code's launch.json can't read local.cmake, so generate it (not committed) from the template.
 configure_file("${CMAKE_SOURCE_DIR}/.vscode/launch.json.in" "${CMAKE_SOURCE_DIR}/.vscode/launch.json" @ONLY)
+# IntelliSense falls back to these settings for headers that CMake Tools doesn't supply settings for.
+configure_file("${CMAKE_SOURCE_DIR}/.vscode/c_cpp_properties.json.in" "${CMAKE_SOURCE_DIR}/.vscode/c_cpp_properties.json" @ONLY)
 
 option(SR71R_DEPLOY "Copy the module and the Orbiter/ data folder into ORBITER_DIR after building" ON)
 

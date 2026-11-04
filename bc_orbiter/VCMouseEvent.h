@@ -18,7 +18,7 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "OrbiterAPI.h"
-#include "Vessel.h"
+#include "vessel.h"
 
 #include "Types.h"
 
