@@ -36,6 +36,10 @@ You need:
 - An Orbiter 2024 install that includes `Orbitersdk/`. Make sure Orbiter runs correctly from that
   folder before you start.
 
+Suggested addons:
+- Compressed Texture Viewer - provides a preview of DDS texture files.
+- Open in External App - provides the ability to open asset files in Blender and Gimp
+
 ### 1. Tell the build where Orbiter is
 
 Create a file named `local.cmake` in the repo root with the path to your Orbiter folder (the one that
