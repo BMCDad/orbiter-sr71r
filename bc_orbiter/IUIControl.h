@@ -17,7 +17,7 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 */
 #pragma once
 
-#include "Vessel.h"
+#include "vessel.h"
 #include "MeshTools.h"
 
 #include <vector>
