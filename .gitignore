@@ -10,3 +10,6 @@
 # Per-checkout Orbiter path, and the launch.json generated from it
 /local.cmake
 /.vscode/launch.json
+
+# Visual Studio cache
+/.vs/
