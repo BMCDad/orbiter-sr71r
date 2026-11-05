@@ -63,12 +63,17 @@ public:
         isLandingGearChanged_ = true;
     }
 
+    void ToggleSwitch() {
+        isLandingGearDeployed_ = !isLandingGearDeployed_;
+        isLandingGearChanged_ = true;
+    }
+
     void LoadState(const std::string& line);
     std::string GetState() const;
 private:
 
     bco::AnimatedValue<bco::StateUpdateTarget> animVCLandingGearSwitch_{ SR71R::ToggleAnimSpeed };
-    bco::AnimatedValue<bco::StateUpdateTarget> animLandingGear_{ SR71R::ToggleAnimSpeed };
+    bco::AnimatedValue<bco::StateUpdateTarget> animLandingGear_{ 0.2 };
 
     UINT aidVCLandingGearSwitch_{ 0 };
     UINT aidLandingGear_{ 0 };

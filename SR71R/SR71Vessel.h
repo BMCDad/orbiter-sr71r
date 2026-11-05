@@ -61,6 +61,7 @@ public:
     void clbkNavMode(int mode, bool active) override;
     void clbkRCSMode(int mode) override;
     void clbkHUDMode(int mode) override;
+    int clbkConsumeBufferedKey(DWORD key, bool down, char* kstate) override;
 
 private:
     void UpdateVCUI();
@@ -93,6 +94,7 @@ private:
     ClockTimer              clock_{ *this };
     FuelCell                fuelCell_{ *this };
     HoverEngines            hoverEngines_{ *this };
+    HSI                     hsi_{ *this };
     HUD                     hud_{ *this };
     HydrogenTank            hydrogenTank_{ *this };
     LandingGear             landingGear_;
