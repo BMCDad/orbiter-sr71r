@@ -51,6 +51,7 @@ The Course and Heading are set as part of the Avionics component.  The HSI itelf
 #include "SR71r_mesh.h"
 #include "ShipMets.h"
 #include "controls/SR71WrapGauge.h"
+#include "controls/SR71Barrel.h"
 
 #include "interfaces/IAvionics.h"
 #include "interfaces/IPowerProvider.h"
@@ -67,22 +68,23 @@ public:
     void UpdateVCUI(bco::Vessel& vessel, MESHHANDLE mesh);   // Called to update the VC UI when the VC is active.
     void UpdateMainPanelUI(MESHHANDLE mesh);    // Called to update the 2D panel UI when the panel is active.
 
-    void LoadState(const std::string& line);
-    std::string GetState() const;
-
 private:
 
     const double RollOffset = 0.1084;		// flat_roll offset.
 
     bco::AnimatedValue<bco::StateUpdateWrap>    animCourseError_;
 
-    bco::AnimatedValue<bco::StateUpdateWrap>    animCourseOnes_{ 0.0 };
-    bco::AnimatedValue<bco::StateUpdateWrap>    animCourseTens_{ 0.0 };
-    bco::AnimatedValue<bco::StateUpdateWrap>    animCourseHunds_{ 0.0 };
+    SR71::Barrel courseBarrelOnes_  { bm::vc::vcCrsOnes_id,     bm::vc::vcCrsOnes_vrt,  bm::pnl::pnlHSICRSOnes_id,  bm::pnl::pnlHSICRSOnes_vrt,     SR71R::MainPanel_ID };
+    SR71::Barrel courseBarrelTens_  { bm::vc::vcCrsTens_id,     bm::vc::vcCrsTens_vrt,  bm::pnl::pnlHSICRSTens_id,  bm::pnl::pnlHSICRSTens_vrt,     SR71R::MainPanel_ID };
+    SR71::Barrel courseBarrelHunds_ { bm::vc::vcCrsHunds_id,    bm::vc::vcCrsHunds_vrt, bm::pnl::pnlHSICRSHunds_id, bm::pnl::pnlHSICRSHunds_vrt,    SR71R::MainPanel_ID };
 
-    bco::AnimatedValue<bco::StateUpdateWrap>    animMilesOnes_{ 0.0 };
-    bco::AnimatedValue<bco::StateUpdateWrap>    animMilesTens_{ 0.0 };
-    bco::AnimatedValue<bco::StateUpdateWrap>    animMilesHunds_{ 0.0 };
+    // bco::AnimatedValue<bco::StateUpdateWrap>    animMilesOnes_{ 0.0 };
+    // bco::AnimatedValue<bco::StateUpdateWrap>    animMilesTens_{ 0.0 };
+    // bco::AnimatedValue<bco::StateUpdateWrap>    animMilesHunds_{ 0.0 };
+
+    SR71::Barrel milesBarrelOnes_  { bm::vc::vcMilesOnes_id,     bm::vc::vcMilesOnes_vrt,  bm::pnl::pnlHSIMilesOnes_id,  bm::pnl::pnlHSIMilesOnes_vrt,     SR71R::MainPanel_ID };
+    SR71::Barrel milesBarrelTens_  { bm::vc::vcMilesTens_id,     bm::vc::vcMilesTens_vrt,  bm::pnl::pnlHSIMilesTens_id,  bm::pnl::pnlHSIMilesTens_vrt,     SR71R::MainPanel_ID };
+    SR71::Barrel milesBarrelHunds_ { bm::vc::vcMilesHunds_id,    bm::vc::vcMilesHunds_vrt, bm::pnl::pnlHSIMilesHunds_id, bm::pnl::pnlHSIMilesHunds_vrt,    SR71R::MainPanel_ID };
 
     bool isComActive_{ false };
 
@@ -161,6 +163,14 @@ inline HSI::HSI(bco::Vessel& vessel)
     vessel.RegisterUIControl(headingBug_);
     vessel.RegisterUIControl(course_);
     vessel.RegisterUIControl(bearing_);
+
+    vessel.RegisterUIControl(courseBarrelOnes_);
+    vessel.RegisterUIControl(courseBarrelTens_);
+    vessel.RegisterUIControl(courseBarrelHunds_);
+    
+    vessel.RegisterUIControl(milesBarrelOnes_);
+    vessel.RegisterUIControl(milesBarrelTens_);
+    vessel.RegisterUIControl(milesBarrelHunds_);
 }
 
 inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IAvionics& avionics) 
@@ -178,8 +188,8 @@ inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& 
 
     if (avionics.IsAeroActive()) {
         yaw = vessel.GetYaw();
-        rotHdg = yaw - avionics.GetSetHeading();
-        rotCrs = yaw - avionics.GetSetCourse();
+        rotHdg = yaw + avionics.GetSetHeading();
+        rotCrs = yaw + avionics.GetSetCourse();
 
         navHandle = vessel.GetNavSource(avionics.GetNavSource());
 
@@ -195,16 +205,21 @@ inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& 
 
     animCourseError_.Update(simdt, navError);
 
-    // Set course barrels
-    auto deg = avionics.GetSetCourse();
+    // Set course barrels * this is the raw value, courseValue_ is adjusted for the vessel yaw
+    auto setCourse = avionics.GetSetCourse();
     bco::TensParts parts;
-    bco::GetDigits(deg * DEG, parts);
+    bco::GetDigits(setCourse * DEG, parts);
 
-    animCourseOnes_.Update(simdt, parts.Tens / 10.0);
-    animCourseTens_.Update(simdt, parts.Hundreds / 10.0);
-    animCourseHunds_.Update(simdt, parts.Thousands / 10.0);
+    courseBarrelOnes_.SetState(parts.Tens);
+    courseBarrelTens_.SetState(parts.Hundreds);
+    courseBarrelHunds_.SetState(parts.Thousands);
+   
 
-    // TODO Handle glice slope animation
+    // animCourseOnes_.Update(simdt, parts.Tens / 10.0);
+    // animCourseTens_.Update(simdt, parts.Hundreds / 10.0);
+    // animCourseHunds_.Update(simdt, parts.Thousands / 10.0);
+
+    // TODO Handle glide slope animation
     // signalGlideScope_.fire(glideSlope);
 
     //hsiCourseError_.SetAngle(-rotCrs);
@@ -214,9 +229,13 @@ inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& 
 
     // Miles barrels
     bco::GetDigits(milesBeacon, parts);
-    animMilesOnes_.Update(simdt, parts.Tens);
-    animMilesTens_.Update(simdt, parts.Hundreds);
-    animMilesHunds_.Update(simdt, parts.Thousands);
+    // animMilesOnes_.Update(simdt, parts.Tens);
+    // animMilesTens_.Update(simdt, parts.Hundreds);
+    // animMilesHunds_.Update(simdt, parts.Thousands);
+
+    milesBarrelOnes_.SetState(parts.Tens);
+    milesBarrelTens_.SetState(parts.Hundreds);
+    milesBarrelHunds_.SetState(parts.Thousands);
 
     //hsiOffFlag_.set_state(avionics_.IsAeroActive());
     //hsiExoFlag_.set_state(
@@ -227,27 +246,24 @@ inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& 
 
 inline void HSI::UpdateVCUI(bco::Vessel& vessel, MESHHANDLE mesh)
 {
-    bco::TranslateUVQuad(mesh, bm::vc::vcCrsOnes_id, bm::vc::vcCrsOnes_vrt, 0.0, animCourseOnes_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::vc::vcCrsTens_id, bm::vc::vcCrsTens_vrt, 0.0, animCourseTens_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::vc::vcCrsHunds_id, bm::vc::vcCrsHunds_vrt, 0.0, animCourseHunds_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::vc::vcCrsOnes_id, bm::vc::vcCrsOnes_vrt, 0.0, animCourseOnes_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::vc::vcCrsTens_id, bm::vc::vcCrsTens_vrt, 0.0, animCourseTens_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::vc::vcCrsHunds_id, bm::vc::vcCrsHunds_vrt, 0.0, animCourseHunds_.GetCurrent() * RollOffset);
 
-    bco::TranslateUVQuad(mesh, bm::vc::vcMilesOnes_id, bm::vc::vcMilesHunds_vrt, 0.0, animMilesOnes_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::vc::vcMilesTens_id, bm::vc::vcMilesTens_vrt, 0.0, animMilesTens_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::vc::vcMilesHunds_id, bm::vc::vcMilesHunds_vrt, 0.0, animMilesHunds_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::vc::vcMilesOnes_id, bm::vc::vcMilesHunds_vrt, 0.0, animMilesOnes_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::vc::vcMilesTens_id, bm::vc::vcMilesTens_vrt, 0.0, animMilesTens_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::vc::vcMilesHunds_id, bm::vc::vcMilesHunds_vrt, 0.0, animMilesHunds_.GetCurrent() * RollOffset);
 }
 
 inline void HSI::UpdateMainPanelUI(MESHHANDLE mesh)
 {
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSOnes_id,    bm::pnl::pnlHSICRSOnes_vrt,    0.0, animCourseOnes_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSTens_id,    bm::pnl::pnlHSICRSTens_vrt,    0.0, animCourseTens_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSOnes_id,    bm::pnl::pnlHSICRSOnes_vrt,    0.0, animCourseHunds_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlHSIMilesOnes_id,  bm::pnl::pnlHSIMilesOnes_vrt,   0.0, animMilesOnes_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlHSIMilesTens_id,  bm::pnl::pnlHSIMilesTens_vrt,  0.0, animMilesTens_.GetCurrent() * RollOffset);
-    bco::TranslateUVQuad(mesh, bm::pnl::pnlHSIMilesHunds_id, bm::pnl::pnlHSIMilesHunds_vrt, 0.0, animMilesHunds_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSOnes_id,    bm::pnl::pnlHSICRSOnes_vrt,    0.0, animCourseOnes_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSTens_id,    bm::pnl::pnlHSICRSTens_vrt,    0.0, animCourseTens_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSOnes_id,    bm::pnl::pnlHSICRSOnes_vrt,    0.0, animCourseHunds_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSIMilesOnes_id,  bm::pnl::pnlHSIMilesOnes_vrt,   0.0, animMilesOnes_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSIMilesTens_id,  bm::pnl::pnlHSIMilesTens_vrt,  0.0, animMilesTens_.GetCurrent() * RollOffset);
+    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSIMilesHunds_id, bm::pnl::pnlHSIMilesHunds_vrt, 0.0, animMilesHunds_.GetCurrent() * RollOffset);
 }
-
-inline void HSI::LoadState(const std::string& line){}
-inline std::string HSI::GetState() const {}
 
 inline bool HSI::CalcNavMetrics(
     bco::Vessel& vessel, 

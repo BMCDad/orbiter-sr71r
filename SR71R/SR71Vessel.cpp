@@ -198,6 +198,7 @@ void SR71Vessel::Step(bco::Vessel& vessel, double simt, double simdt, double mjd
     clock_.UpdateState(simdt);
     hoverEngines_.UpdateState(vessel, simdt, powerSystem_);
     hud_.UpdateState(vessel, simdt, powerSystem_);
+    hsi_.UpdateState(vessel, simdt, powerSystem_, avionics_);
     hydrogenTank_.UpdateState(vessel, simt, simdt, powerSystem_);
     landingGear_.UpdateState(vessel, simdt, *this);
     lights_.UpdateState(vessel, simdt, powerSystem_);
@@ -355,6 +356,69 @@ void SR71Vessel::clbkHUDMode(int mode)
     hud_.OnHudMode(mode);
 }
 
+int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char* kstate)
+{
+    if (!down) return 0; // only process keydown events
+    if (Playback()) return 0; // don't allow manual user input during a playback
+
+    if (KEYMOD_SHIFT(kstate)) {
+    }
+    else if (KEYMOD_ALT(kstate)) {
+        switch (key)
+        {
+        case OAPI_KEY_B:
+//            airBrake_.DecreaseDrag();
+            return 1;
+        }
+    }
+    else if (KEYMOD_CONTROL(kstate)) {
+        switch (key) {
+        case OAPI_KEY_SPACE: // open Control dialog
+            return 1;
+
+        case OAPI_KEY_B:
+//            airBrake_.IncreaseDrag();
+            return 1;
+
+        case OAPI_KEY_1:
+//            propulsion_.ToggleThrustLimit(*this);
+            return 1;
+        }
+    }
+    else {
+        switch (key) {
+        case OAPI_KEY_G:  // "operate landing gear"
+            landingGear_.ToggleSwitch();
+            return 1;
+
+        case OAPI_KEY_1:	// Main auto pilot toggle.
+            //			computer_.ToggleProgram(FCProgFlags::AtmoActive);
+            return 1;
+
+        case OAPI_KEY_2:	// ToggleSwitch hold heading
+            //			computer_.ToggleProgram(FCProgFlags::HoldHeading);
+            return 1;
+
+        case OAPI_KEY_3:
+            //			computer_.ToggleProgram(FCProgFlags::HoldAttitude);
+            return 1;
+
+        case OAPI_KEY_4:
+            //			computer_.ToggleProgram(FCProgFlags::HoldKEAS);
+            return 1;
+
+        case OAPI_KEY_5:
+            //			computer_.ToggleProgram(FCProgFlags::HoldMACH);
+            return 1;
+
+            //case OAPI_KEY_6:
+            //	autoPilot_.HoldAttitudeSwitch().ToggleSwitch();
+            //	return 1;
+        }
+    }
+    return 0;
+}
+
 void SR71Vessel::SetupAerodynamics()
 {
     // Aerodynamics - see notes in ShipMets file.
@@ -382,10 +446,12 @@ void SR71Vessel::UpdateVCUI()
     airBrake_.UpdateVCUI(*this);
     canopy_.UpdateVCUI(*this);
     landingGear_.UpdateVCUI(*this);
+    hsi_.UpdateVCUI(*this, vcGlobalMesh_);
 }
 
 void SR71Vessel::UpdateMainPanelUI()
 {
     airBrake_.UpdateMainPanelUI(panelGlobalMesh_);
     landingGear_.UpdateMainPanelUI(panelGlobalMesh_);
+    hsi_.UpdateMainPanelUI(panelGlobalMesh_);
 }

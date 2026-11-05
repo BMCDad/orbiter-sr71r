@@ -97,7 +97,7 @@ namespace bc_orbiter
         {
             NTVERTEX* delta = new NTVERTEX[4];
 
-            float offset = texOffset_ * state_;
+            double offset = texOffset_ * state_;
             TransformUV2d(vertices_, delta, 4, _V(offset, 0.0, 0.0), 0.0);
 
             GROUPEDITSPEC change{};
