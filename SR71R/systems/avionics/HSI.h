@@ -52,6 +52,7 @@ The Course and Heading are set as part of the Avionics component.  The HSI itelf
 #include "ShipMets.h"
 #include "controls/SR71WrapGauge.h"
 #include "controls/SR71Barrel.h"
+#include "controls/SR71Transform.h"
 
 #include "interfaces/IAvionics.h"
 #include "interfaces/IPowerProvider.h"
@@ -65,22 +66,16 @@ public:
     ~HSI() = default;
 
     void UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IAvionics& avionics);
-    void UpdateVCUI(bco::Vessel& vessel, MESHHANDLE mesh);   // Called to update the VC UI when the VC is active.
-    void UpdateMainPanelUI(MESHHANDLE mesh);    // Called to update the 2D panel UI when the panel is active.
 
 private:
 
     const double RollOffset = 0.1084;		// flat_roll offset.
 
-    bco::AnimatedValue<bco::StateUpdateWrap>    animCourseError_;
+    bco::AnimatedValue<bco::StateUpdateWrap>    animCourseError_ { 12.0 };  // Course error needle animation.
 
     SR71::Barrel courseBarrelOnes_  { bm::vc::vcCrsOnes_id,     bm::vc::vcCrsOnes_vrt,  bm::pnl::pnlHSICRSOnes_id,  bm::pnl::pnlHSICRSOnes_vrt,     SR71R::MainPanel_ID };
     SR71::Barrel courseBarrelTens_  { bm::vc::vcCrsTens_id,     bm::vc::vcCrsTens_vrt,  bm::pnl::pnlHSICRSTens_id,  bm::pnl::pnlHSICRSTens_vrt,     SR71R::MainPanel_ID };
     SR71::Barrel courseBarrelHunds_ { bm::vc::vcCrsHunds_id,    bm::vc::vcCrsHunds_vrt, bm::pnl::pnlHSICRSHunds_id, bm::pnl::pnlHSICRSHunds_vrt,    SR71R::MainPanel_ID };
-
-    // bco::AnimatedValue<bco::StateUpdateWrap>    animMilesOnes_{ 0.0 };
-    // bco::AnimatedValue<bco::StateUpdateWrap>    animMilesTens_{ 0.0 };
-    // bco::AnimatedValue<bco::StateUpdateWrap>    animMilesHunds_{ 0.0 };
 
     SR71::Barrel milesBarrelOnes_  { bm::vc::vcMilesOnes_id,     bm::vc::vcMilesOnes_vrt,  bm::pnl::pnlHSIMilesOnes_id,  bm::pnl::pnlHSIMilesOnes_vrt,     SR71R::MainPanel_ID };
     SR71::Barrel milesBarrelTens_  { bm::vc::vcMilesTens_id,     bm::vc::vcMilesTens_vrt,  bm::pnl::pnlHSIMilesTens_id,  bm::pnl::pnlHSIMilesTens_vrt,     SR71R::MainPanel_ID };
@@ -88,6 +83,17 @@ private:
 
     bool isComActive_{ false };
 
+    /// <summary>
+    /// Calculate the NAV metrics based on the current vessel state and the selected NAV source.
+    /// </summary>
+    /// <param name="vessel">The current vessel.</param>
+    /// <param name="handle">The NAV handle from GetNavSource.</param>
+    /// <param name="setCourse">The course set on the HSI by the user.</param>
+    /// <param name="bearing">The calculated bearing in radians.</param>
+    /// <param name="glideSlope">The calculated glide slope.</param>
+    /// <param name="navError">The calculated navigation error.</param>
+    /// <param name="milesBeacon">The calculated miles to beacon.</param>
+    /// <returns>True if the metrics were calculated successfully; otherwise, false.</returns>
     bool CalcNavMetrics(bco::Vessel& vessel, NAVHANDLE handle, double setCourse, double& bearing, double& glideSlope, double& navError, double& milesBeacon);
 
     double roseValue_{ 0.0 };
@@ -122,6 +128,14 @@ private:
         SR71R::MainPanel_ID
     };
 
+    SR71::Transform courseErrorNeedle_{
+         bm::vc::HSICourseNeedle_id,
+         bm::vc::HSICourseNeedle_vrt,
+         bm::pnl::pnlHSICourseNeedle_id,
+         bm::pnl::pnlHSICourseNeedle_vrt,
+         SR71R::MainPanel_ID
+    };
+
     SR71::WrapGauge bearing_{
         { bm::vc::HSIBearingArrow_id },
         bm::vc::HSIBearingArrow_loc, bm::vc::HSIAxis_loc,
@@ -132,29 +146,21 @@ private:
     };
 
 
-    //bco::on_off_display		hsiOffFlag_{
-    //   bm::vc::HSIOffFlag_id,
-    //      bm::vc::HSIOffFlag_vrt,
-    //      bm::pnl::pnlHSIOffFlag_id,
-    //      bm::pnl::pnlHSIOffFlag_vrt,
-    //      0.0244
-    //};
+    SR71::Light hsiOffFlag_{
+        bm::vc::HSIOffFlag_id,
+        bm::vc::HSIOffFlag_vrt,
+        bm::pnl::pnlHSIOffFlag_id,
+        bm::pnl::pnlHSIOffFlag_vrt,
+        SR71R::MainPanel_ID
+    };
 
-    //bco::on_off_display		hsiExoFlag_{
-    //   bm::vc::HSIExoFlag_id,
-    //      bm::vc::HSIExoFlag_vrt,
-    //      bm::pnl::pnlHSIExoFlag_id,
-    //      bm::pnl::pnlHSIExoFlag_vrt,
-    //      0.0244
-    //};
-
-    //bco::on_off_display		comStatusFlag_{
-    //   bm::vc::COMStatusPanel_id,
-    //      bm::vc::COMStatusPanel_vrt,
-    //      bm::pnl::pnlCOMStatusPanel_id,
-    //      bm::pnl::pnlCOMStatusPanel_vrt,
-    //      0.0244
-    //};
+    SR71::Light comStatusFlag_{
+        bm::vc::COMStatusPanel_id,
+        bm::vc::COMStatusPanel_vrt,
+        bm::pnl::pnlCOMStatusPanel_id,
+        bm::pnl::pnlCOMStatusPanel_vrt,
+        SR71R::MainPanel_ID
+    };
 };
 
 inline HSI::HSI(bco::Vessel& vessel)
@@ -163,6 +169,9 @@ inline HSI::HSI(bco::Vessel& vessel)
     vessel.RegisterUIControl(headingBug_);
     vessel.RegisterUIControl(course_);
     vessel.RegisterUIControl(bearing_);
+    vessel.RegisterUIControl(hsiOffFlag_);
+    vessel.RegisterUIControl(comStatusFlag_);
+    vessel.RegisterUIControl(courseErrorNeedle_);
 
     vessel.RegisterUIControl(courseBarrelOnes_);
     vessel.RegisterUIControl(courseBarrelTens_);
@@ -175,10 +184,19 @@ inline HSI::HSI(bco::Vessel& vessel)
 
 inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& power, IAvionics& avionics) 
 {
-    double      yaw = 0.0;
-    double      rotHdg = 0.0;
-    double      rotCrs = 0.0;
-    NAVHANDLE   navHandle = nullptr;
+    double      vesselHeadingRadians    = vessel.GetYaw();          // From vessel, the direction the nose of the vessel is pointing.
+    double      setCourseRadians        = avionics.GetSetCourse();  // From HSI Course knob, used to line up nav aids and calculate course error.
+    double      setHeadingRadians       = avionics.GetSetHeading(); // From HSI Heading knob, the heading for the autopilot to follow.
+
+    double      rotCourseRadians        = vesselHeadingRadians - setCourseRadians;; // Adjust course bug relative to the rose compass.
+    double      rotHeadingRadians       = vesselHeadingRadians - setHeadingRadians; // Adjust heading bug relative to the rose compass.
+
+    // Adjust the values to be in the range of 0.0 to 1.0 for the gauge animations.
+    roseValue_      = -vesselHeadingRadians / PI2;
+    headingValue_   = -rotHeadingRadians / PI2;
+    courseValue_    = -rotCourseRadians / PI2;
+
+    // Calculate the NAV metrics if the avionics is active and a NAV source is selected.
     double      bearing = 0.0;		// from CalcNavMetrics
     double      glideSlope = 0.0;		// from CalcNavMetrics
     double      navError = 0.0;		// from CalcNavMetrics
@@ -187,82 +205,40 @@ inline void HSI::UpdateState(bco::Vessel& vessel, double simdt, IPowerProvider& 
     isComActive_ = false;
 
     if (avionics.IsAeroActive()) {
-        yaw = vessel.GetYaw();
-        rotHdg = yaw + avionics.GetSetHeading();
-        rotCrs = yaw + avionics.GetSetCourse();
-
-        navHandle = vessel.GetNavSource(avionics.GetNavSource());
+        hsiOffFlag_.SetState(true);
+        NAVHANDLE navHandle = vessel.GetNavSource(avionics.GetNavSource());
 
         if (navHandle != nullptr) {
-            isComActive_ = CalcNavMetrics(vessel, navHandle, avionics.GetSetCourse(), bearing, glideSlope, navError, milesBeacon);
+            isComActive_ = CalcNavMetrics(vessel, navHandle, setCourseRadians, bearing, glideSlope, navError, milesBeacon);
         }
     }
+    else {
+        hsiOffFlag_.SetState(false);
+    }
 
-    roseValue_      = yaw / PI2;
-    headingValue_   = rotHdg / PI2;
-    courseValue_    = rotCrs / PI2;
-    bearingValue_   = bearing / PI2;
+    comStatusFlag_.SetState(isComActive_);
+    bearingValue_   = -bearing / PI2; // Adjust value to be in the range of 0.0 to 1.0 for the gauge animations.
 
     animCourseError_.Update(simdt, navError);
+    courseErrorNeedle_.SetAngle(-rotCourseRadians); // Set the course error needle to the current course heading, adjusted for the rose compass.
+    courseErrorNeedle_.SetTranslate(animCourseError_.GetCurrent(), 0.0);
 
-    // Set course barrels * this is the raw value, courseValue_ is adjusted for the vessel yaw
-    auto setCourse = avionics.GetSetCourse();
+    // Set course barrels * this is the raw value, not the one adjusted for the rose compass.  The barrels are set to the user selected course.
     bco::TensParts parts;
-    bco::GetDigits(setCourse * DEG, parts);
+    bco::GetDigits(setCourseRadians * DEG, parts);
 
     courseBarrelOnes_.SetState(parts.Tens);
     courseBarrelTens_.SetState(parts.Hundreds);
     courseBarrelHunds_.SetState(parts.Thousands);
-   
-
-    // animCourseOnes_.Update(simdt, parts.Tens / 10.0);
-    // animCourseTens_.Update(simdt, parts.Hundreds / 10.0);
-    // animCourseHunds_.Update(simdt, parts.Thousands / 10.0);
 
     // TODO Handle glide slope animation
     // signalGlideScope_.fire(glideSlope);
 
-    //hsiCourseError_.SetAngle(-rotCrs);
-    //hsiCourseError_.SetTransform(navError, 0.0);
-
-    //comStatusFlag_.set_state(comStatus);
-
     // Miles barrels
     bco::GetDigits(milesBeacon, parts);
-    // animMilesOnes_.Update(simdt, parts.Tens);
-    // animMilesTens_.Update(simdt, parts.Hundreds);
-    // animMilesHunds_.Update(simdt, parts.Thousands);
-
     milesBarrelOnes_.SetState(parts.Tens);
     milesBarrelTens_.SetState(parts.Hundreds);
     milesBarrelHunds_.SetState(parts.Thousands);
-
-    //hsiOffFlag_.set_state(avionics_.IsAeroActive());
-    //hsiExoFlag_.set_state(
-    //    !avionics_.IsAeroActive()
-    //    ? true
-    //    : avionics_.IsAeroAtmoMode());
-}
-
-inline void HSI::UpdateVCUI(bco::Vessel& vessel, MESHHANDLE mesh)
-{
-    // bco::TranslateUVQuad(mesh, bm::vc::vcCrsOnes_id, bm::vc::vcCrsOnes_vrt, 0.0, animCourseOnes_.GetCurrent() * RollOffset);
-    // bco::TranslateUVQuad(mesh, bm::vc::vcCrsTens_id, bm::vc::vcCrsTens_vrt, 0.0, animCourseTens_.GetCurrent() * RollOffset);
-    // bco::TranslateUVQuad(mesh, bm::vc::vcCrsHunds_id, bm::vc::vcCrsHunds_vrt, 0.0, animCourseHunds_.GetCurrent() * RollOffset);
-
-    // bco::TranslateUVQuad(mesh, bm::vc::vcMilesOnes_id, bm::vc::vcMilesHunds_vrt, 0.0, animMilesOnes_.GetCurrent() * RollOffset);
-    // bco::TranslateUVQuad(mesh, bm::vc::vcMilesTens_id, bm::vc::vcMilesTens_vrt, 0.0, animMilesTens_.GetCurrent() * RollOffset);
-    // bco::TranslateUVQuad(mesh, bm::vc::vcMilesHunds_id, bm::vc::vcMilesHunds_vrt, 0.0, animMilesHunds_.GetCurrent() * RollOffset);
-}
-
-inline void HSI::UpdateMainPanelUI(MESHHANDLE mesh)
-{
-    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSOnes_id,    bm::pnl::pnlHSICRSOnes_vrt,    0.0, animCourseOnes_.GetCurrent() * RollOffset);
-    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSTens_id,    bm::pnl::pnlHSICRSTens_vrt,    0.0, animCourseTens_.GetCurrent() * RollOffset);
-    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSICRSOnes_id,    bm::pnl::pnlHSICRSOnes_vrt,    0.0, animCourseHunds_.GetCurrent() * RollOffset);
-    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSIMilesOnes_id,  bm::pnl::pnlHSIMilesOnes_vrt,   0.0, animMilesOnes_.GetCurrent() * RollOffset);
-    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSIMilesTens_id,  bm::pnl::pnlHSIMilesTens_vrt,  0.0, animMilesTens_.GetCurrent() * RollOffset);
-    // bco::TranslateUVQuad(mesh, bm::pnl::pnlHSIMilesHunds_id, bm::pnl::pnlHSIMilesHunds_vrt, 0.0, animMilesHunds_.GetCurrent() * RollOffset);
 }
 
 inline bool HSI::CalcNavMetrics(
@@ -314,18 +290,23 @@ inline bool HSI::CalcNavMetrics(
         navError = devB / Range * Slide;
 
         // Glide slope
-        slope = atan2(vessel.GetAltitude(), navDistance);
+        double altitudeAboveSource = vrad - rad;    // Vertical distance above the nav source, in meters.
+        slope = atan2(altitudeAboveSource, navDistance);
 
-        const double tgtslope = 3.0 * RAD;
-        const double tgtvar = 0.6 * RAD;
+        const double targetSlope = 3.0 * RAD;           // Hard coded target slope for glide slope, 3 degrees in radians.
+        const double targetSlopeVariance = 0.6 * RAD;   // Hard coded target slope variance for glide slope, 0.6 degrees in radians.
 
-        double dslope = slope - tgtslope;
-        if (dslope > tgtvar) dslope = tgtvar;
-        if (dslope < -tgtvar) dslope = -tgtvar;
+        double slopeError = slope - targetSlope;
+        
+        // Clamp the slope error to the target slope variance, so that the glide slope needle doesn't go off the scale.
+        if (slopeError > targetSlopeVariance) slopeError = targetSlopeVariance;
+        if (slopeError < -targetSlopeVariance) slopeError = -targetSlopeVariance;
 
-        glideSlope = 0.01218 * (dslope / tgtvar);
+        glideSlope = 0.01218 * (slopeError / targetSlopeVariance); // Scale the slope error to the glide slope needle range, which is 0.01218 meters.
 
         milesBeacon = navDistance / 1609.34; // convert to miles.
+        
+        // Clamp miles beacon to 999, since the HSI only has three digits for miles.
         if (milesBeacon > 999) milesBeacon = 999;
 
         result = true;

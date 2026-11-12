@@ -367,7 +367,7 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char* kstate)
         switch (key)
         {
         case OAPI_KEY_B:
-//            airBrake_.DecreaseDrag();
+            airBrake_.DecreaseBrake();
             return 1;
         }
     }
@@ -377,11 +377,11 @@ int SR71Vessel::clbkConsumeBufferedKey(DWORD key, bool down, char* kstate)
             return 1;
 
         case OAPI_KEY_B:
-//            airBrake_.IncreaseDrag();
+            airBrake_.IncreaseBrake();
             return 1;
 
         case OAPI_KEY_1:
-//            propulsion_.ToggleThrustLimit(*this);
+            propulsion_.ToggleThrustLimit();
             return 1;
         }
     }
@@ -446,12 +446,10 @@ void SR71Vessel::UpdateVCUI()
     airBrake_.UpdateVCUI(*this);
     canopy_.UpdateVCUI(*this);
     landingGear_.UpdateVCUI(*this);
-    hsi_.UpdateVCUI(*this, vcGlobalMesh_);
 }
 
 void SR71Vessel::UpdateMainPanelUI()
 {
     airBrake_.UpdateMainPanelUI(panelGlobalMesh_);
     landingGear_.UpdateMainPanelUI(panelGlobalMesh_);
-    hsi_.UpdateMainPanelUI(panelGlobalMesh_);
 }

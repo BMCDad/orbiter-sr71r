@@ -1,5 +1,5 @@
-// Auto generated code file.  Blender: 5.0.0  Blender Tools: (2, 2, 0)
-// Date: Thu Apr 30 06:27:22 2026
+// Auto generated code file.  Blender: 5.2.3 LTS  Blender Tools: 2.3.0
+// Date: Sat Nov  7 06:33:40 2026
 
 
 #include "orbitersdk.h"
@@ -425,11 +425,6 @@ namespace bm
     {0.0597f, 0.9242f, 15.2044f, -0.7151f, -0.6113f, -0.3392f, 0.9667f, 0.0675f},
     {0.1871f, 0.9526f, 14.9490f, -0.7588f, -0.5997f, -0.2541f, 0.9147f, 0.0684f},
     {0.4044f, 0.6517f, 14.9687f, -0.7569f, -0.6004f, -0.2583f, 0.9192f, 0.1256f}    };
-    const NTVERTEX HSIExoFlag_vrt[4] = {
-    {-0.0464f, 0.6284f, 15.2749f, 0.0000f, 0.0000f, -1.0000f, 0.3939f, 0.6330f},
-    {-0.0337f, 0.6284f, 15.2749f, 0.0000f, 0.0000f, -1.0000f, 0.4183f, 0.6330f},
-    {-0.0464f, 0.6157f, 15.2749f, 0.0000f, 0.0000f, -1.0000f, 0.3939f, 0.6574f},
-    {-0.0337f, 0.6157f, 15.2749f, 0.0000f, 0.0000f, -1.0000f, 0.4183f, 0.6574f}    };
     const NTVERTEX SpeedFlagOff_vrt[4] = {
     {-0.1198f, 0.6702f, 15.2751f, 0.0000f, 0.0000f, -1.0000f, 0.3457f, 0.6083f},
     {-0.1075f, 0.6733f, 15.2751f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6083f},
@@ -588,14 +583,13 @@ namespace bm
     const UINT CanopyWindowInside_id = 143;
     const UINT CanopyWindowSI_id = 144;
     const UINT vcAlt10Hand_id = 145;
-    const UINT HSIExoFlag_id = 146;
-    const UINT SpeedFlagOff_id = 147;
-    const UINT HUD_id = 148;
-    const UINT vcAlt1Hand_id = 149;
-    const UINT HUDGlass_id = 150;
-    const UINT CompassFaceTop_id = 151;
-    const UINT Cylinder_id = 152;
-    const UINT CylinderHeading_id = 153;
+    const UINT SpeedFlagOff_id = 146;
+    const UINT HUD_id = 147;
+    const UINT vcAlt1Hand_id = 148;
+    const UINT HUDGlass_id = 149;
+    const UINT CompassFaceTop_id = 150;
+    const UINT Cylinder_id = 151;
+    const UINT CylinderHeading_id = 152;
     constexpr VECTOR3 ABTargetDecrease_loc =     {-0.2396, 0.4599, 15.2645};
     constexpr VECTOR3 ABTargetIncrease_loc =     {-0.2396, 0.4223, 15.2645};
     constexpr VECTOR3 AccelAxis_loc =     {-0.1379, 0.5817, 15.2616};
