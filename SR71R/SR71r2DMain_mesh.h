@@ -1,5 +1,5 @@
-// Auto generated code file.  Blender: 4.3.2  Blender Tools: (2, 2, 0)
-// Date: Thu Oct  2 15:20:18 2025
+// Auto generated code file.  Blender: 5.2.3 LTS  Blender Tools: 2.3.0
+// Date: Sat Nov  7 06:38:50 2026
 
 
 #include "orbitersdk.h"
@@ -464,11 +464,6 @@ namespace bm
     {1590.6918f, 126.5698f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.3559f, 0.4253f},
     {1621.2819f, 310.1099f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.4488f, 0.4105f},
     {1590.6918f, 310.1099f, 0.0000f, 0.0000f, -0.0000f, -1.0000f, 0.4488f, 0.4253f}    };
-    const NTVERTEX pnlHSIExoFlag_vrt[4] = {
-    {1097.4680f, 510.9513f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3939f, 0.6330f},
-    {1146.0221f, 510.9513f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4183f, 0.6330f},
-    {1097.4680f, 559.5055f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3939f, 0.6574f},
-    {1146.0221f, 559.5055f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.4183f, 0.6574f}    };
     const NTVERTEX pnlSpeedFlagOff_vrt[4] = {
     {828.3621f, 177.0893f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3457f, 0.6083f},
     {876.7556f, 164.9441f, 0.0000f, 0.0000f, 0.0000f, -1.0000f, 0.3694f, 0.6083f},
@@ -587,9 +582,8 @@ namespace bm
     const UINT pnlSpeedVelocityFlag_id = 100;
     const UINT pnlAOANeedle_id = 101;
     const UINT pnlAlt10Hand_id = 102;
-    const UINT pnlHSIExoFlag_id = 103;
-    const UINT pnlSpeedFlagOff_id = 104;
-    const UINT pnlAlt1Hand_id = 105;
+    const UINT pnlSpeedFlagOff_id = 103;
+    const UINT pnlAlt1Hand_id = 104;
     const double MainPanel_Width = 2560.0;
     const double MainPanel_Height = 812.0;
     constexpr RECT pnlNavKillrot_RC = {1499, 601, 1569, 657};

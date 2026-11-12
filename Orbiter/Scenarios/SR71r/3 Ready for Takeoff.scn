@@ -2,7 +2,7 @@ BEGIN_HYPERDESC
 <h1>Ready for Takeoff to the IIS</h1>
 <p>The scenario begins with the plane powered up and configured for our flight to the ISS.  
 We will takeoff and ascend into orbit and establish an orbit at about 365 kilometers.  
-Watch your Mach speed on the speed indicator so that you don’t go to fast before you have gained enough altitude.  
+Watch your Mach speed on the speed indicator so that you donï¿½t go to fast before you have gained enough altitude.  
 Rotation speed in the SR71r is about 280-300 knots.</p>
 
 <u>General ascent advice:</u>
@@ -11,6 +11,14 @@ Pull back and take a fairly steep ascent angle while watching that your speed do
 At about 40-50k feet you can enable full thrust [CTRL-1].  Continue a steep ascent until about 100k feet then level off.
 Also at about 80-100k feet enable RCS in Rotation mode [CTRL-/].  If you are targeting RInc in Align Planes, use the [1] and [3] keys adjust heading.  
 Kill Rot [5] can also help you hold your ascent pitch.  Finally, keep an eye on the Orbit MFD so you can hit the target altitude.</p>
+
+<p>
+Kennedy 28.6
+IIS 74.5
+Azimuth = ASIN( COS(74.5) / COS(28.5) )  <-- Heading at launch
+Launch heading: 17.7
+
+</p>
 
 END_HYPERDESC
 
